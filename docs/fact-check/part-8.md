@@ -1,4 +1,4 @@
-# Fact-check: Part VIII (Ch 30–34) and the wrap-up (Ch 35–37)
+# Fact-check: Part VIII (Ch 30–34) and the wrap-up (Ch 35–38)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-8-facts.test.ts` (the recorded data says what the prose says),
@@ -69,7 +69,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Ch 35. Recap
 
-The diagram restates earlier chapters; each box links to its chapter. The quiz moved to Ch 37 in
+The diagram restates earlier chapters; each box links to its chapter. The quiz moved to Ch 38 in
 milestone 20.
 
 ## Ch 36. From message to reply
@@ -97,7 +97,7 @@ existing recordings, labeled in the widget:
 - [x] The closing box's one-line summaries match Ch 30–34 (both-ways attention; part of the network
       per token; fixed-size memory; picture patches as tokens; refined from noise).
 
-## Ch 37. Check yourself
+## Ch 38. Check yourself
 
 Fourteen questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
 has at least one. Each answer restates its linked chapter:
@@ -123,6 +123,6 @@ has at least one. Each answer restates its linked chapter:
   caption embedding yet.
 - **Ch 34 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
   turned it into a blob in the training time a page visit allows.
-- **The wrap-up** (Ch 35–37) is checked here, with the last Part; its URLs never change.
+- **The wrap-up** (Ch 35–38) is checked here, with the last Part; its URLs never change.
 - **Part order.** This was Part VII (Ch 22–27, with Thinking before answering) until milestone 19
   moved reasoning models to Part V and this Part to the end.

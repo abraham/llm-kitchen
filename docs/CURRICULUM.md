@@ -128,11 +128,12 @@ _What else is built from the same pieces?_
 
 _How does it all fit together?_ Unnumbered Part.
 
-| Ch  | Title                    | Slug         | Builds on |
-| --- | ------------------------ | ------------ | --------- |
-| 35  | Recap: the whole picture | `recap`      | —         |
-| 36  | From message to reply    | `end-to-end` | —         |
-| 37  | Check yourself           | `quiz`       | —         |
+| Ch  | Title                    | Slug              | Builds on                  |
+| --- | ------------------------ | ----------------- | -------------------------- |
+| 35  | Recap: the whole picture | `recap`           | —                          |
+| 36  | From message to reply    | `end-to-end`      | —                          |
+| 37  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 27, 31, 33 |
+| 38  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -224,8 +225,9 @@ and Generating text, and model names use both (`qat`, `Q4_0`, `-assistant`).
 
 ## Status
 
-The site has used this order since milestone 21, which added Ch 13 and Ch 14 to Part V and moved
-every later chapter up by two (see the milestone 20 mapping). Milestone 19 set the Part order.
-Before it, Part VI was Harnesses (Ch 15–21), Part VII was Other kinds of models with Thinking before
-answering (Ch 22–27), Part VIII was Prompt engineering (Ch 28–32), and Text is just numbers was
-Ch 1; the milestone 18 mapping records that move.
+The site has used this order since milestone 22, which added Picking a model (Ch 37) to the
+Wrap-up and moved the quiz from Ch 37 to Ch 38. Milestone 21 added Ch 13 and Ch 14 to Part V and
+moved every later chapter up by two (see the milestone 20 mapping). Milestone 19 set the Part
+order. Before it, Part VI was Harnesses (Ch 15–21), Part VII was Other kinds of models with Thinking
+before answering (Ch 22–27), Part VIII was Prompt engineering (Ch 28–32), and Text is just numbers
+was Ch 1; the milestone 18 mapping records that move.

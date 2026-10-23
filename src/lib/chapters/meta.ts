@@ -111,6 +111,8 @@ const rows: Row[] = [
 		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.'],
 	['end-to-end', 'From message to reply', 'wrapup', [],
 		'Follow one message through every stage, from the prompt the harness builds to the tokens the model picks and the tool it calls.'],
+	['picking-a-model', 'Picking a model', 'wrapup', [12, 13, 14, 15, 27, 31, 33],
+		'Model names pack in size, tuning, experts, and bits per weight. Learn to read them, and see whether a model fits your device.'],
 	['quiz', 'Check yourself', 'wrapup', [],
 		'Fourteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
 ];

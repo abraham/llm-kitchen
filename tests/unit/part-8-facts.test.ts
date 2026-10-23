@@ -145,7 +145,7 @@ describe('Ch 36: from message to reply', () => {
 	});
 });
 
-describe('Ch 37: check yourself', () => {
+describe('Ch 38: check yourself', () => {
 	it('asks at least one question from every Part I–VIII', () => {
 		const parts = new Set(
 			QUESTIONS.flatMap((q) => q.chapters.map((n) => chapterByNumber(n).part.number))

@@ -126,7 +126,7 @@ test('Ch 36: step through one message and follow a link', async ({ page }) => {
 	await expect(page).toHaveURL(/\/the-model-is-not-the-product\/?$/);
 });
 
-test('Ch 37: take the quiz and see what to revisit', async ({ page }) => {
+test('Ch 38: take the quiz and see what to revisit', async ({ page }) => {
 	await gotoHydrated(page, '/quiz');
 	const quiz = page.getByRole('region', { name: 'Quick check' });
 	for (const answer of [
