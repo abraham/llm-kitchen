@@ -13,17 +13,12 @@ import {
 // CDN), so they get long-lived caching and the page CSP can stay 'self'.
 import asyncifyMjs from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url';
 import asyncifyWasm from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
-import plainMjs from 'onnxruntime-web/ort-wasm-simd-threaded.mjs?url';
-import plainWasm from 'onnxruntime-web/ort-wasm-simd-threaded.wasm?url';
-import { runtimeBuild } from '#lib/models/onnx-runtime.ts';
 
 env.allowLocalModels = false;
 const abs = (url: string) => new URL(url, self.location.href).href;
+// One build for every supported browser; only Safari older than 26 (no WebGPU) needed another.
 if (env.backends.onnx.wasm) {
-	env.backends.onnx.wasm.wasmPaths =
-		runtimeBuild(navigator) === 'plain'
-			? { mjs: abs(plainMjs), wasm: abs(plainWasm) }
-			: { mjs: abs(asyncifyMjs), wasm: abs(asyncifyWasm) };
+	env.backends.onnx.wasm.wasmPaths = { mjs: abs(asyncifyMjs), wasm: abs(asyncifyWasm) };
 }
 
 export type WorkerRequest =

@@ -1,18 +1,11 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import type { BrowserModel } from '#lib/models/browser-model.svelte.ts';
-	import { RUNTIME_MB, runtimeBuild, type RuntimeBuild } from '#lib/models/onnx-runtime.ts';
+	import { RUNTIME_MB } from '#lib/models/onnx-runtime.ts';
 
 	let { model, purpose }: { model: BrowserModel; purpose: string } = $props();
 
 	const id = $props.id();
-	// The prerendered page assumes the usual build; the browser corrects it after hydration.
-	let build = $state<RuntimeBuild>('asyncify');
-	onMount(() => {
-		build = runtimeBuild(navigator);
-	});
-	const runtimeMB = $derived(RUNTIME_MB[build]);
-	const downloadMB = $derived(model.spec.modelMB + runtimeMB);
+	const downloadMB = $derived(model.spec.modelMB + RUNTIME_MB);
 </script>
 
 <div class="consent">
@@ -20,7 +13,7 @@
 		<p id="{id}-title" class="title">Run a real model in your browser?</p>
 		<p>
 			{purpose} This downloads <strong>{model.spec.label}</strong>: about {model.spec.modelMB} MB for
-			the model plus {runtimeMB} MB for the code that runs it, about {downloadMB}
+			the model plus {RUNTIME_MB} MB for the code that runs it, about {downloadMB}
 			MB in total. Your browser keeps a copy, so it's only downloaded once. Everything runs on your device;
 			nothing you type is sent anywhere.
 		</p>
