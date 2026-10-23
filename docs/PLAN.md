@@ -144,7 +144,7 @@ Every chapter has the same structure:
 
 - _Try it:_ Show the "chat" formatting that wraps a conversation, revealing that a chat is still just text being continued.
 - _Animation:_ Three stages: pretraining (internet text) → instruction tuning (example conversations) → preference tuning (thumbs up/down nudging the model).
-- _Live option:_ Give the same prompt to a **base** model and to an **instruct** model side by side.
+- _Live option:_ Give the same prompt to a **base** model and to an **instruct** model side by side. v1 shows recorded outputs (Qwen2.5-0.5B base and instruct, with and without the chat template, plus GPT-2); a live T3 version is a future improvement.
 
 **Ch 14. Quirks and limits**
 
@@ -380,8 +380,8 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
 8. **Part IV (Ch 8–10)**
    - Attention viewer (T0 recorded GPT-2 attention), transformer block assembly, residual stream with a logit lens.
 9. **Part V (Ch 11–14)**
-   - Glass-box generator (the main demo), scale explorer, base vs. instruct (T3), quirks lab.
-   - Optional bring-your-own-key provider (T4).
+   - Glass-box generator (the main demo, T0 with recorded branches, plus live GPT-2 via T2), scale explorer and scaling-law chart, base vs. instruct (T0 recordings of Qwen2.5-0.5B base and instruct), quirks lab (the glass-box generator with recorded quirk prompts).
+   - T3 (WebLLM) and T4 (bring your own key) were not built in this milestone; see Future improvements.
 10. **Part VI (Ch 15–20)**
     - Prompt inspector, toy tools and tool registry, agent stepper (T0 traces of agent runs), context budget with retrieval, prompt injection demo, recap.
     - Live tool calling via T3/T4, limited to the toy tools.
@@ -432,3 +432,4 @@ A chapter isn't done until its fact-check is done in the same PR:
 - **Math sidebar:** a short, optional per-chapter panel with the equations behind each concept, for visitors who want them. Out of scope for v1.
 - **Localization:** v1 is English-only (prose, example corpora, and recorded traces). Translating later means deciding whether to also swap the example corpora and re-record traces per language.
 - **Live attention (Ch 9):** the standard GPT-2 ONNX export used by Transformers.js has no attention outputs, so v1 shows attention recorded from PyTorch for 5 sentences. A custom ONNX export with attention outputs would let visitors type their own sentence.
+- **T3 and T4 tiers:** a WebLLM chat model (live base vs. instruct in Ch 13, live tool calling in Part VI) and bring-your-own-key providers. v1 covers these chapters with recorded runs (T0) and the live GPT-2 (T2). Both need a WebGPU or provider test setup that the CI and local headless browsers don't have.

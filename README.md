@@ -41,6 +41,12 @@ scripts/.venv/bin/python scripts/build-traces.py
 
 The script checks `models/canonical.json` against the model's own config before writing anything.
 
+Other recorded data has its own script in the same environment:
+
+- `scripts/build-embeddings.py`: the Ch 5 embedding map (`static/embeddings/`).
+- `scripts/build-chat.py`: the Ch 13 base vs. instruct comparison (`static/chat/`; downloads
+  Qwen2.5-0.5B and Qwen2.5-0.5B-Instruct, about 1 GB each).
+
 ### Citations and fact-checks
 
 Sources are in `src/lib/references.json` and cited in chapters with `<Cite id="..." />`. Each

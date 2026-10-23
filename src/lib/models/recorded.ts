@@ -35,6 +35,13 @@ export class RecordedProvider implements ModelProvider {
 		throw new NotAvailableError(`A recording for "${text}"`);
 	}
 
+	/** Whether some recording has a next-token distribution for exactly this text. */
+	has(text: string): boolean {
+		return this.traces.some((trace) =>
+			trace.steps.some((_, step) => textAfter(trace, step) === text)
+		);
+	}
+
 	async tokenize(text: string): Promise<Token[]> {
 		const { trace, step } = this.locate(text);
 		return trace.steps[step].context;

@@ -236,5 +236,69 @@
 		"venue": "LessWrong",
 		"year": 2020,
 		"url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens"
+	},
+	{
+		"id": "kaplan2020",
+		"authors": ["Jared Kaplan", "Sam McCandlish", "Tom Henighan", "Tom B. Brown"],
+		"title": "Scaling Laws for Neural Language Models",
+		"venue": "arXiv",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2001.08361"
+	},
+	{
+		"id": "brown2020",
+		"authors": ["Tom B. Brown", "Benjamin Mann", "Nick Ryder", "Melanie Subbiah"],
+		"title": "Language Models are Few-Shot Learners",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2005.14165"
+	},
+	{
+		"id": "hoffmann2022",
+		"authors": ["Jordan Hoffmann", "Sebastian Borgeaud", "Arthur Mensch", "Elena Buchatskaya"],
+		"title": "Training Compute-Optimal Large Language Models",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2203.15556"
+	},
+	{
+		"id": "grattafiori2024",
+		"authors": ["Aaron Grattafiori", "Abhimanyu Dubey", "Abhinav Jauhri", "Abhinav Pandey"],
+		"title": "The Llama 3 Herd of Models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2407.21783"
+	},
+	{
+		"id": "ouyang2022",
+		"authors": ["Long Ouyang", "Jeff Wu", "Xu Jiang", "Diogo Almeida"],
+		"title": "Training language models to follow instructions with human feedback",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2203.02155"
+	},
+	{
+		"id": "qwen2024",
+		"authors": ["Qwen Team", "An Yang", "Baosong Yang", "Beichen Zhang"],
+		"title": "Qwen2.5 Technical Report",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2412.15115"
+	},
+	{
+		"id": "ji2023",
+		"authors": ["Ziwei Ji", "Nayeon Lee", "Rita Frieske", "Tiezheng Yu"],
+		"title": "Survey of Hallucination in Natural Language Generation",
+		"venue": "ACM Computing Surveys",
+		"year": 2023,
+		"url": "https://doi.org/10.1145/3571730"
+	},
+	{
+		"id": "sclar2024",
+		"authors": ["Melanie Sclar", "Yejin Choi", "Yulia Tsvetkov", "Alane Suhr"],
+		"title": "Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design",
+		"venue": "ICLR 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2310.11324"
 	}
 ]

@@ -88,6 +88,36 @@ SPECS = [
         max_new_tokens=1,
         attention=True,
     ),
+    # Ch 11: what follows if you pick another of the top first words (the glass-box generator
+    # follows these when the visitor overrides the model's choice without the live model).
+    *[
+        Spec(
+            f"the-cat-sat-{word}",
+            f"The cat sat on the {word}",
+            max_new_tokens=11,
+            top_k=50,
+            note="Ch 11: branch of the-cat-sat, greedy.",
+        )
+        for word in ["bed", "couch", "ground", "edge"]
+    ],
+    # Ch 14: quirks and limits, greedy with the top 50 at each step.
+    *[
+        Spec(name, prompt, max_new_tokens=n, top_k=50, note=f"Ch 14: {note}")
+        for name, prompt, n, note in [
+            ("quirk-moon", "The first person to walk on the moon was", 16, "hallucination"),
+            (
+                "quirk-painter",
+                "The famous painter Zorbulon Fiddleworth is best known for his painting",
+                16,
+                "hallucination about a made-up person",
+            ),
+            ("quirk-iphone", "The latest iPhone model is the iPhone", 8, "knowledge cutoff"),
+            ("quirk-math", "2 + 2 =", 6, "arithmetic"),
+            ("quirk-france", "The capital of France is", 12, "wording"),
+            ("quirk-france-qa", "Q: What is the capital of France?\nA:", 8, "wording"),
+            ("quirk-loop", "The cat sat on the bed", 24, "repetition"),
+        ]
+    ],
 ]
 
 

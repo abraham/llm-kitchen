@@ -12,6 +12,8 @@ describe('models/canonical.json', () => {
 			'displayName',
 			'huggingFaceId',
 			'onnxId',
+			'onnxFile',
+			'onnxMB',
 			'tokenizer',
 			'parameters',
 			'layers',

@@ -7,6 +7,9 @@ export interface CanonicalModel {
 	displayName: string;
 	huggingFaceId: string;
 	onnxId: string;
+	/** ONNX file in `onnxId` to run (without the `_quantized` suffix), and its 8-bit size. */
+	onnxFile: string;
+	onnxMB: number;
 	tokenizer: string;
 	parameters: number;
 	layers: number;

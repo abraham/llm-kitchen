@@ -9,6 +9,7 @@ package-lock.json
 
 # Generated data
 /static/traces/
+/static/chat/
 
 # mdsvex chapters: Prettier has no mdsvex parser and would mangle the Svelte syntax.
 *.svx

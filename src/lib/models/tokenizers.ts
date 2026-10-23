@@ -41,3 +41,9 @@ export async function tokenize(name: TokenizerName, text: string): Promise<Token
 	const enc = await encoding(name);
 	return enc.encode(text).map((id) => ({ id, text: enc.decode([id]) }));
 }
+
+/** The text of each token id on its own. */
+export async function tokensFor(name: TokenizerName, ids: number[]): Promise<Token[]> {
+	const enc = await encoding(name);
+	return ids.map((id) => ({ id, text: enc.decode([id]) }));
+}

@@ -100,6 +100,29 @@ export const GLOSSARY = {
 			'The model design used by modern LLMs: a stack of repeated blocks built around attention.',
 		chapter: 10
 	},
+	'scaling-law': {
+		term: 'scaling law',
+		definition:
+			'A formula, fitted to many training runs, that predicts how much a model improves as it gets bigger or reads more text.',
+		chapter: 12
+	},
+	'base-model': {
+		term: 'base model',
+		definition:
+			'A model trained only to predict the next token of ordinary text, before any tuning to act as an assistant.',
+		chapter: 13
+	},
+	'chat-template': {
+		term: 'chat template',
+		definition:
+			'The fixed text format, with special marker tokens, that turns a conversation into one piece of text for the model.',
+		chapter: 13
+	},
+	hallucination: {
+		term: 'hallucination',
+		definition: 'Fluent, confident text that is false or made up.',
+		chapter: 14
+	},
 	harness: {
 		term: 'harness',
 		definition:
