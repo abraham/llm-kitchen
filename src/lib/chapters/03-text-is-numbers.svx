@@ -39,5 +39,5 @@ one.<Cite id="radford2019" />
 
 </RecapCard>
 
-**Next question:** now the text is numbers. What's the simplest way to use numbers to guess the next
-word?
+**Next question:** now the text is numbers, one per character. But GPT-2 doesn't read single
+letters, or whole words either. So what does it actually read?

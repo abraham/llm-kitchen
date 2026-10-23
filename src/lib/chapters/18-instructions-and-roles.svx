@@ -1,13 +1,16 @@
 <script lang="ts">
 	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/layout/RecapCard.svelte';
 	import SystemPrompts from '#lib/components/widgets/SystemPrompts.svelte';
 </script>
 
 ## The slot at the top
 
-Every chat starts with a system prompt (Ch 21), placed in a slot of the chat template (Ch 13) ahead
-of your message. Chat models were tuned on examples of an assistant following instructions, and on
+The chat template (Ch 13) has a slot ahead of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
+instructions that apply to the whole chat. In a chat app, its makers write it and you never see
+it; when you use a model directly, you write it yourself. Chat models were tuned on examples of an
+assistant following instructions, and on
 people's ratings of which replies were better.<Cite id="ouyang2022" /> So instructions there tend
 to be followed. But what kind of instructions help?
 

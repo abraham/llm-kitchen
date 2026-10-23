@@ -132,8 +132,8 @@ export const GLOSSARY = {
 	'system-prompt': {
 		term: 'system prompt',
 		definition:
-			'Instructions the app adds at the start of every conversation, usually hidden from the user.',
-		chapter: 21
+			'Instructions in a slot at the start of the chat template that apply to the whole conversation; in apps, usually hidden from the user.',
+		chapter: 18
 	},
 	retrieval: {
 		term: 'retrieval',

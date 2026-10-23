@@ -45,5 +45,5 @@ how the guessing works, and how much can be built on top of it.
 
 </RecapCard>
 
-**Next question:** a computer can't read. So how does it get from letters on a page to something
-it can calculate with?
+**Next question:** you used everything you know about English to make your guess. What's the
+simplest way a program could make the same guess?

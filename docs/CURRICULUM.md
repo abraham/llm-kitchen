@@ -5,7 +5,8 @@ Part holds, their order, numbers, titles, and slugs, and what each chapter build
 inside a chapter (its hook, widget, animation, and key idea) is described in
 [PLAN.md §3](PLAN.md#3-curriculum). When the two disagree about placement, this document wins.
 
-The organization below is the target. The site doesn't use it yet; see [Status](#status).
+The site uses the organization below; `tests/unit/curriculum.test.ts` checks that
+`src/lib/chapters/meta.ts` matches its tables. See [Status](#status).
 
 ## Principles
 
@@ -131,7 +132,7 @@ _How does it all fit together?_ Unnumbered Part.
 
 ## Why this order
 
-Compared with the current site (see the mapping below), four chapters or Parts move:
+Compared with the order before milestone 19 (see the mapping below), four chapters or Parts move:
 
 - **Text is just numbers joins Representation.** Text → numbers → tokens → vectors is one story.
   Part I can then stay on prediction itself: guess, count, sample. Counting word pairs needs words,
@@ -160,7 +161,7 @@ Chapter contents change only where the new order requires:
   answered in Part VII, instead of pointing back to prompt injection.
 - The recap's paragraph and diagram follow the new Part order.
 
-## Mapping from the current site
+## Mapping from the milestone 18 order
 
 | Slug                           | Now  | Target |
 | ------------------------------ | ---- | ------ |
@@ -203,7 +204,6 @@ Chapter contents change only where the new order requires:
 
 ## Status
 
-The site still uses the order from milestone 18: Part VI is Harnesses (Ch 15–21), Part VII is Other
-kinds of models with Thinking before answering (Ch 22–27), Part VIII is Prompt engineering
-(Ch 28–32), and Text is just numbers is Ch 1. Moving to the order above is milestone 19 in
-[PLAN.md](PLAN.md#7-milestones).
+The site has used this order since milestone 19. Before it, Part VI was Harnesses (Ch 15–21), Part
+VII was Other kinds of models with Thinking before answering (Ch 22–27), Part VIII was Prompt
+engineering (Ch 28–32), and Text is just numbers was Ch 1; the mapping above records the move.

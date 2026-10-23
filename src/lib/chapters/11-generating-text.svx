@@ -42,7 +42,7 @@ a 500-token answer means 500 runs.
 The loop has to end somehow. GPT-2's vocabulary includes a special token, `<|endoftext|>` (number
 50,256), that means "end of text". When the model picks it, the program stops.<Cite id="gpt2-config" />
 Otherwise, the program stops at a length limit it was given. Chat models work the same way
-with their own end-of-turn token, as Ch 13 shows.
+with their own end-of-turn token.
 
 ## Run it live
 

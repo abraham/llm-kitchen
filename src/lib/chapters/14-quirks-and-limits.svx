@@ -32,7 +32,7 @@ painter looks like many real ones. Nothing in the loop from Ch 11 checks whether
 
 Tuning helps: in the InstructGPT tests, the tuned models made up information about half as often as
 GPT-3, 21% of the time instead of 41%.<Cite id="ouyang2022" /> But the cause is the same, so it never
-goes away completely. That's one reason assistants are given tools to look things up (Ch 22).
+goes away completely. That's one reason assistants are given tools to look things up.
 
 ## Frozen in time
 

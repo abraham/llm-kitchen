@@ -30,8 +30,8 @@ order.
 
 The price is memory. GPT-2 small stores a key and a value in each of its 12 blocks for every token:
 2 × 12 × 768 = 18,432 numbers per token. For large models and long prompts the cache runs to
-gigabytes, and keeping it small is a big part of serving them efficiently.<Cite id="pope2022" /> The
-recurrent models in Ch 30 avoid it by keeping a fixed-size memory instead.
+gigabytes, and keeping it small is a big part of serving them efficiently.<Cite id="pope2022" /> Some
+other kinds of models avoid it by keeping a fixed-size memory instead.
 
 ## Caching across calls
 

@@ -60,5 +60,5 @@ picked and each one makes the next guess harder.
 
 </RecapCard>
 
-**Next question:** these probabilities came from GPT-2, but GPT-2 doesn't read whole words or single
-letters. So what does it actually read?
+**Next question:** a computer can't read. So how does a model get from letters on a page to something
+it can calculate with?

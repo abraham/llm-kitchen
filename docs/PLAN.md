@@ -57,20 +57,14 @@ Every chapter has the same structure:
 - _Key idea:_ An LLM is a machine that predicts the next piece of text, over and over.
 - _Live option:_ The model completes the same prompt and shows its top 5 guesses with probabilities.
 
-**Ch 1. Text is just numbers**
-
-- _Try it:_ Type text and see each character turn into its code number (bytes and Unicode).
-- _Animation:_ Letters flip like a split-flap display and land on their numbers.
-- _Key idea:_ Computers only work with numbers, so the first step is turning text into numbers.
-
-**Ch 2. Predicting by counting**
+**Ch 1. Predicting by counting**
 
 - _Try it:_ Build a **bigram model** from a tiny text (nursery rhymes). Then click "generate" and watch it produce gibberish that still looks a bit like the source.
 - _Animation:_ A count table fills in cell by cell as a cursor moves through the text. The table then turns into probability bars.
 - _Key idea:_ Prediction is "what usually comes next?", and counting is the simplest way to answer it.
 - _Next question:_ "Why is the output bad? It only looks one word back."
 
-**Ch 3. Probability and sampling**
+**Ch 2. Probability and sampling**
 
 - _Try it:_ Adjust **temperature** and **top-k** sliders on a probability distribution, then sample 20 times.
 - _Animation:_ Bars sharpen or flatten as temperature changes. A spinner wheel whose slice sizes match the bars picks the next word.
@@ -78,6 +72,12 @@ Every chapter has the same structure:
 - _Live option:_ Run the same prompt at temperatures 0, 0.7, and 1.5 side by side.
 
 ### Part II — Representation
+
+**Ch 3. Text is just numbers**
+
+- _Try it:_ Type text and see each character turn into its code number (bytes and Unicode).
+- _Animation:_ Letters flip like a split-flap display and land on their numbers.
+- _Key idea:_ Computers only work with numbers, so the first step is turning text into numbers.
 
 **Ch 4. Tokens: the model's alphabet**
 
@@ -104,7 +104,7 @@ Every chapter has the same structure:
 
 **Ch 7. Learning from mistakes**
 
-- _Try it:_ Press "train" and watch a tiny network fit a curve. Then train a **tiny character-level model** live in the browser on the rhymes from Ch 2 (a hand-written MLP, under 50k parameters).
+- _Try it:_ Press "train" and watch a tiny network fit a curve. Then train a **tiny character-level model** live in the browser on the rhymes from Ch 1 (a hand-written MLP, under 50k parameters).
 - _Animation:_ A ball rolls down a loss landscape (gradient descent). A loss curve falls next to sample text that gets better as it trains.
 - _Key idea:_ Training means nudging the weights so that the correct next token becomes more likely.
 - _Live option:_ The visitor trains the model themselves. This runs entirely in the browser and is the most hands-on demo on the site.
@@ -155,74 +155,128 @@ Every chapter has the same structure:
 - Hallucination ("the most likely continuation is not the same as the truth"), knowledge cutoff, context limits, tokenization blind spots, and sensitivity to prompt wording.
 - _Live option:_ Guided experiments the visitor can run against the live model.
 
-### Part VI — Harnesses
+**Ch 15. Thinking before answering (reasoning models)**
+
+- _Hook:_ "Some models pause to 'think' before they answer. What is the thinking?"
+- _Try it:_ The same small puzzles asked with thinking off and on, stepping through the tokens the model writes before its answer. A tally compares correct answers and tokens used.
+- _Animation:_ The Ch 11 token loop, with a stretch of "scratch work" tokens before the answer that the harness hides from the chat bubble.
+- _Key idea:_ A reasoning model is still a next-token predictor. It has been trained, often with rewards for answers that can be checked, to write out its working first, spending more tokens (and compute) on each answer.
+- _Data:_ Recorded runs (T0) of a small open model with a thinking switch, such as Qwen3.
+
+### Part VI — Prompt engineering
+
+Prompt engineering is choosing the text a model continues. Everything in this Part follows from the earlier chapters: the prompt is the context (Ch 8), attention decides which parts of it matter (Ch 9), and every word shifts the probabilities of the next token (Ch 2). Each chapter shows a technique, then shows _why_ it works in those terms, and is honest about what is known to work and what is folklore.
+
+Demos reuse models the site already records: GPT-2 small for the raw effect of wording on next-token probabilities (recorded, plus live via T2), and the Qwen2.5 instruct models also used in Part V and VII for instructions and system prompts (recorded, T0). No new downloads are needed.
+
+**Ch 16. A prompt is the start of a document**
+
+- _Hook:_ "Why does the same question get a better answer when you word it differently?"
+- _Try it:_ Change one part of a prompt at a time ("Q: … A:" framing, a title, a sentence that sets the scene) and watch GPT-2's next-token bars move. The visitor can type their own variant in the live option.
+- _Animation:_ The probability bars from Ch 2 shift as words are added to the prompt; the added words light up in the attention lines from Ch 9.
+- _Key idea:_ A model doesn't "understand a request"; it continues a document. A good prompt makes the answer you want the most likely continuation.
+- _Live option:_ Live GPT-2 (T2) on the visitor's own prompt variants.
+
+**Ch 17. Learning from examples in the prompt (few-shot)**
+
+- _Hook:_ "Show a model three examples of a made-up rule. Does it learn the rule without any training?"
+- _Try it:_ A made-up task (e.g. turning words into their opposites, or a nonsense label for each animal) with 0, 1, 2, and 4 examples. A chart shows the probability of the right answer as examples are added.
+- _Animation:_ Attention from the new question reaches back to the matching parts of the examples, the "copy the pattern" behavior of induction heads.
+- _Key idea:_ The weights don't change; the examples are just context that attention can copy patterns from. This is in-context learning.
+- _Data:_ Recorded probabilities and attention from GPT-2 small and a small instruct model (T0).
+
+**Ch 18. Instructions, roles, and the system prompt**
+
+- _Hook:_ "Does telling a model 'You are an expert' make it one?"
+- _Try it:_ The same question with different system prompts (none, a persona, specific instructions about format and audience) side by side, with the chat template from Ch 13 showing where each piece goes.
+- _Animation:_ The chat template from Ch 13 with the system prompt slot filled in different ways.
+- _Key idea:_ Instruction-tuned models were trained on conversations that follow instructions, so clear, specific instructions work. A persona changes style more reliably than it changes correctness.
+- _Data:_ Recorded runs of Qwen2.5-0.5B/1.5B-Instruct (T0).
+
+**Ch 19. Asking for steps and structure**
+
+- _Hook:_ "Why does 'Let's think step by step' help?"
+- _Try it:_ The Ch 15 puzzles asked plainly, with "think step by step", and with a required answer format (e.g. a final line or JSON). A tally shows right answers and how often the output can be parsed by code.
+- _Animation:_ The Ch 11 generation loop, with the working tokens feeding back into the context before the answer.
+- _Key idea:_ Asking for steps gives the model room to write intermediate results it can build on (the same reason reasoning models think, Ch 15). Asking for a fixed format makes the output usable by programs; Ch 22's tool calls build on this.
+- _Data:_ Recorded runs of a small instruct model (T0).
+
+**Ch 20. Where prompts break**
+
+- _Hook:_ "Why does reordering the examples change the answer?"
+- _Try it:_ Swap the order of few-shot examples, change harmless formatting (spacing, labels), or move a key fact to the middle of a long prompt, and see the answers change.
+- _Animation:_ A long context with the key fact sliding from the start to the middle to the end, and the answer's probability rising and falling.
+- _Key idea:_ Small, meaningless changes can swing results, and facts in the middle of long prompts get used less. Good prompting means testing variants, not trusting one wording. Its Next question turns to prompts the visitor didn't write, which Part VII takes up.
+- _Data:_ Recorded runs (T0).
+
+### Part VII — Harnesses
 
 The model only turns text into a next-token distribution. Everything else in a chat app or coding agent is ordinary code wrapped around it: the **harness**. Harness demos default to a scripted model (T0 traces of real runs). Their tools are toys that run in the browser: a calculator, a lookup over a small bundled corpus, and a fake file system. They never touch the network or the visitor's real files.
 
 v1 records the runs with Qwen2.5-1.5B-Instruct in a small Python harness (`scripts/build-agent-traces.py`) whose tools mirror the browser ones (`src/lib/harness/tools.ts`; tests check they give identical results). The prompt inspector shows a recorded conversation rather than the visitor's own typing, since there is no live chat model yet.
 
-**Ch 15. The model is not the product**
+**Ch 21. The model is not the product**
 
 - _Hook:_ "When you chat with an assistant, what does the model actually see?"
 - _Try it:_ A **prompt inspector**. The visitor types _"Finish this: The cat sat on the"_ into a chat box, then expands the exact text the harness sends to the model: system prompt, chat template markers (from Ch 13), earlier turns, and tool definitions, all colored by where they came from.
 - _Animation:_ The visitor's short message gets wrapped layer by layer until it is a small part of a long prompt. The model's reply is then unwrapped back into a chat bubble.
 - _Key idea:_ A harness is the code around the model. It builds the prompt, calls the model, and decides what to do with the output.
 
-**Ch 16. Tools**
+**Ch 22. Tools**
 
 - _Try it:_ Ask _"What is 1234 × 5678?"_ with tools off and with tools on. With tools off, the model guesses digits token by token. With tools on, it writes a calculator call, the harness runs it, and the model reads the result.
 - _Animation:_ The model's output text turns into a structured `ToolCallCard` (tool name + arguments). The harness runs the tool, and the result slides back into the context as new tokens.
-- _Format:_ Part VI uses a simplified, made-up tool-calling format that is easy to read (e.g. `<call calculator>1234 * 5678</call>`), not a real provider's JSON schema. Recorded traces are converted to it, and live T3/T4 responses are mapped to it for display.
+- _Format:_ Part VII uses a simplified, made-up tool-calling format that is easy to read (e.g. `<call calculator>1234 * 5678</call>`), not a real provider's JSON schema. Recorded traces are converted to it, and live T3/T4 responses are mapped to it for display.
 - _Key idea:_ A tool call is just text in an agreed format. The model never runs anything itself; the harness parses the text and acts on it.
 - _Live option:_ T3 or T4 with a model that supports tool calling, limited to the same in-browser toy tools.
 
-**Ch 17. The agent loop**
+**Ch 23. The agent loop**
 
-- _Try it:_ Give a small task ("Find which rhyme from Ch 2 mentions a cat and count its words") and step through the run: think, call a tool, read the result, repeat, then answer.
+- _Try it:_ Give a small task ("Find which rhyme from Ch 1 mentions a cat and count its words") and step through the run: think, call a tool, read the result, repeat, then answer.
 - _Animation:_ Two nested loops. The inner loop is the token loop from Ch 11. The outer loop is the harness loop: call the model, run tools, append results, call again. A step counter and a stop condition (final answer or step limit) sit on the outer loop.
 - _Key idea:_ An agent is a model called in a loop by a harness that feeds tool results back in until the task is done.
 
-**Ch 18. Managing the context**
+**Ch 24. Managing the context**
 
-- _Try it:_ A **context budget** bar. As the agent from Ch 17 keeps working, the bar fills. The visitor picks a strategy when it overflows: drop the oldest turns, summarize them, or retrieve only relevant snippets.
+- _Try it:_ A **context budget** bar. As the agent from Ch 23 keeps working, the bar fills. The visitor picks a strategy when it overflows: drop the oldest turns, summarize them, or retrieve only relevant snippets.
 - _Animation:_ Retrieval reuses the embedding map from Ch 5. The question becomes a point, the nearest document chunks light up, and only those are copied into the prompt.
 - _Key idea:_ The context window is finite (Ch 8, Ch 14), so the harness decides what the model gets to see. Retrieval, summaries, and memory notes are all ways of choosing text to put back in.
 
-**Ch 19. Reusing the work (caching)**
+**Ch 25. Reusing the work (caching)**
 
-- _Hook:_ "The agent from Ch 17 sent almost the same long prompt to the model on every step. Does the model really start from scratch each time?"
+- _Hook:_ "The agent from Ch 23 sent almost the same long prompt to the model on every step. Does the model really start from scratch each time?"
 - _Try it:_ Two views of the same idea.
   - **Inside one reply (the KV cache):** step through the Ch 11 generation loop with the cache off and on. With it off, every new token reruns the whole text so far through every block. With it on, each token's keys and values (Ch 9) are stored as it is processed, and only the new token is computed. A counter tallies the work for each, and shows that the output is the same.
-  - **Across calls (prompt caching):** the model calls from a recorded Part VI agent run, lined up as rows of token chips. The part of each call that matches the start of an earlier one is shaded as cached. The visitor makes the edits harnesses make: append a turn, change a word in the system prompt, put the time at the top, or drop the oldest turn (Ch 18). The shading, an illustrative cost, and the time to the first token update.
+  - **Across calls (prompt caching):** the model calls from a recorded Part VII agent run, lined up as rows of token chips. The part of each call that matches the start of an earlier one is shaded as cached. The visitor makes the edits harnesses make: append a turn, change a word in the system prompt, put the time at the top, or drop the oldest turn (Ch 24). The shading, an illustrative cost, and the time to the first token update.
 - _Animation:_ The Ch 9 attention grid gains one row per new token. Earlier tokens' keys and values sit on a "cache" shelf and are reused instead of recomputed; the new token still attends to all of them.
 - _Key idea:_ With the causal mask (Ch 9), a token's keys and values depend only on the text before it, so they can be computed once and reused. Model providers keep that cache between calls for a prompt's exact opening, so a harness that keeps the start of its prompt fixed (system prompt, tool definitions, earlier turns) and only appends gets cheaper and faster calls. Changing anything early invalidates everything after it. The cache saves work; it doesn't change the answer, and it isn't memory that carries over between conversations.
 - _Data:_ Work counts computed from GPT-2 small's config (`models/canonical.json`) and token counts from the recorded agent runs (T0). Provider caching rules (minimum length, discount, how long a cache lives, automatic or requested) are cited from provider docs with accessed dates and labeled as varying by provider; the cost view uses round illustrative prices.
 - _Live option:_ Time live GPT-2 (T2) generating with and without its cache, if Transformers.js exposes the switch.
 
-**Ch 20. Prompt injection**
+**Ch 26. Prompt injection**
 
 - _Hook:_ "If a web page says 'Ignore your instructions', why would a model listen?"
-- _Try it:_ A **prompt injection lab**. A harness asks a model to summarize an email or web page that contains a hidden instruction. The visitor picks an attack and a defense and sees the exact prompt (the Ch 15 inspector) and the recorded reply. A tally shows how often the injected instruction won for each pair.
+- _Try it:_ A **prompt injection lab**. A harness asks a model to summarize an email or web page that contains a hidden instruction. The visitor picks an attack and a defense and sees the exact prompt (the Ch 21 inspector) and the recorded reply. A tally shows how often the injected instruction won for each pair.
   - **Attacks:** a plain "ignore your instructions", an instruction dressed as a system notice, a fake end of the document followed by a fake user turn written with the chat template markers from Ch 13, and text a person wouldn't see on the page (an HTML comment, white-on-white text, alt text).
   - **Defenses in the prompt:** none, a warning in the system prompt, delimiters around the untrusted text, repeating the task after it, marking every untrusted line, and the harness removing chat template markers from untrusted text.
   - The injected goal is harmless and checkable by code (e.g. end the reply with a code word), so the tally is graded automatically.
 - _Animation:_ The user's request and the fetched page are colored by where they came from, then flatten into one row of token chips that attention (Ch 9) treats the same. A fake role marker in the page turns into the same tokens as a real one.
-- _Key idea:_ The model reads one stream of tokens and was tuned to follow instructions (Ch 13). Nothing in that stream marks which words are the user's and which came from a document, so any text that reaches the context can steer the model. Direct injection comes from the person typing; indirect injection hides in content the harness fetched (Ch 16). Prompt defenses lower the success rate but none reach zero, so the damage depends on what the harness lets a steered model do: run tools, or render a link that sends data away. That is Ch 21.
-- _Data:_ Recorded runs (T0) of Qwen2.5-1.5B-Instruct, already used in Part VI, over several documents per attack and defense pair. Results are from one small model and labeled as such.
+- _Key idea:_ The model reads one stream of tokens and was tuned to follow instructions (Ch 13). Nothing in that stream marks which words are the user's and which came from a document, so any text that reaches the context can steer the model. Direct injection comes from the person typing; indirect injection hides in content the harness fetched (Ch 22). Prompt defenses lower the success rate but none reach zero, so the damage depends on what the harness lets a steered model do: run tools, or render a link that sends data away. That is Ch 27.
+- _Data:_ Recorded runs (T0) of Qwen2.5-1.5B-Instruct, already used in Part VII, over several documents per attack and defense pair. Results are from one small model and labeled as such.
 
-**Ch 21. Trust and guardrails**
+**Ch 27. Trust and guardrails**
 
-- _Try it:_ A **prompt injection** demo with real consequences. The agent reads a (fake) web page whose text tells it to delete all files (v1: the text fakes the end of the tool result and a new user message, which the recorded model followed; Ch 20 explains why). The visitor toggles guardrails and sees what changes.
+- _Try it:_ A **prompt injection** demo with real consequences. The agent reads a (fake) web page whose text tells it to delete all files (v1: the text fakes the end of the tool result and a new user message, which the recorded model followed; Ch 26 explains why). The visitor toggles guardrails and sees what changes.
 - _Animation:_ Text from a tool result flows into the same context as the user's instructions, colored differently, but the model reads it all as one stream of tokens.
-- _Key idea:_ To the model, tool output is just more text, and Ch 20 showed that prompt defenses alone don't stop it from following that text. The harness has to supply the safety: permission prompts, tool allowlists, sandboxes, and step limits.
+- _Key idea:_ To the model, tool output is just more text, and Ch 26 showed that prompt defenses alone don't stop it from following that text. The harness has to supply the safety: permission prompts, tool allowlists, sandboxes, and step limits.
 
-### Part VII — Other kinds of models
+### Part VIII — Other kinds of models
 
-Everything so far has been one kind of model: a decoder-only transformer that reads text and predicts the next token. Part VII shows how other models change one piece of that recipe and keep the rest, so each chapter starts from what changed ("same as Ch N, except…") and reuses the earlier widgets and visual elements. It closes with what these models share.
+Everything so far has been one kind of model: a decoder-only transformer that reads text and predicts the next token. Part VIII shows how other models change one piece of that recipe and keep the rest, so each chapter starts from what changed ("same as Ch N, except…") and reuses the earlier widgets and visual elements. It closes with what these models share.
 
 Demos follow the same tiers as before: recorded runs of real models by default (T0), computed toys trained or run in the browser where a real model is too big, and optional live models where a small one exists. Toy versions are labeled as simplified.
 
-**Ch 22. Reading both ways (encoders)**
+**Ch 28. Reading both ways (encoders)**
 
 - _Hook:_ "GPT-2 fills in the blank at the end of a sentence. What if the blank is in the middle?"
 - _Try it:_ Fill in _"The cat sat on the [MASK] and purred."_ with an encoder (BERT-style, masked language model) and with GPT-2, which can only use the words before the blank. Toggle the attention mask between "earlier tokens only" and "every token" on the Ch 9 attention grid.
@@ -230,7 +284,7 @@ Demos follow the same tiers as before: recorded runs of real models by default (
 - _Key idea:_ Encoders read the whole text at once, so they are good at understanding (search, classification, embeddings) but can't generate text one token at a time. The embedding model from Ch 5 is one.
 - _Live option:_ A small fill-mask model via Transformers.js (T2), if its download is reasonable; otherwise recorded (T0).
 
-**Ch 23. Many experts (mixture of experts)**
+**Ch 29. Many experts (mixture of experts)**
 
 - _Hook:_ "How can a model have hundreds of billions of numbers but only use a fraction of them for each token?"
 - _Try it:_ Watch the tokens of a sentence pass through a block whose MLP is split into several **experts**. A small **router** scores the experts for each token and sends it to the top 2. The visitor sees which expert each token went to and the count of total vs. active numbers.
@@ -238,14 +292,14 @@ Demos follow the same tiers as before: recorded runs of real models by default (
 - _Key idea:_ Mixture-of-experts models grow their total size without growing the work per token: each token only runs through a few experts.
 - _Data:_ Real figures (e.g. Mixtral 8x7B: 8 experts, 2 per token). Routing recorded from a small open MoE (e.g. OLMoE-1B-7B) if recording it is practical; otherwise a computed toy router, labeled as simplified.
 
-**Ch 24. Remembering without attention (RNNs and state-space models)**
+**Ch 30. Remembering without attention (RNNs and state-space models)**
 
 - _Hook:_ "Attention looks back at every earlier token. What if the model could only keep a short summary instead?"
-- _Try it:_ A tiny character-level **recurrent** model, trained in the browser on the Ch 2 rhymes like Ch 7's model. Step through a sentence and watch its fixed-size memory (a `VectorStrip`) update one character at a time. A chart beside it compares memory use as the text grows: attention's grows with every token (the KV cache from Ch 19), the recurrent model's stays the same.
+- _Try it:_ A tiny character-level **recurrent** model, trained in the browser on the Ch 1 rhymes like Ch 7's model. Step through a sentence and watch its fixed-size memory (a `VectorStrip`) update one character at a time. A chart beside it compares memory use as the text grows: attention's grows with every token (the KV cache from Ch 25), the recurrent model's stays the same.
 - _Animation:_ The Ch 8 sliding window is replaced by a single box that the text flows through, keeping only a summary.
 - _Key idea:_ Recurrent and state-space models (such as Mamba) carry a fixed-size state instead of looking back at everything. That makes long texts cheap, at the cost of having to decide what to forget.
 
-**Ch 25. Seeing pictures (vision and multimodal models)**
+**Ch 31. Seeing pictures (vision and multimodal models)**
 
 - _Hook:_ "How can a model that reads tokens look at a photo?"
 - _Try it:_ Pick an image and cut it into a grid of patches. Each patch becomes a vector, like a token in Ch 5, and the patches go through the same transformer. Then explore a shared map of images and captions, where matching pictures and words land close together.
@@ -254,72 +308,18 @@ Demos follow the same tiers as before: recorded runs of real models by default (
 - _Data:_ Recorded CLIP-style embeddings for a small set of bundled, openly licensed images and their captions (T0).
 - _Live option:_ Embed the visitor's own caption with the text half of the model (T2) and see which images it lands near.
 
-**Ch 26. Painting from noise (diffusion models)**
+**Ch 32. Painting from noise (diffusion models)**
 
 - _Hook:_ "Image generators don't draw one pixel at a time. So how do they work?"
 - _Try it:_ A 2D toy: a cloud of random points steps back into a shape (a spiral, or the letters "LLM"), denoised by a tiny network trained in the browser with Ch 7's hand-written MLP. A slider moves through the denoising steps, and the visitor can retrain on a shape of their own.
 - _Animation:_ Side by side, Ch 11's generation adds one token at a time from left to right, while diffusion refines the whole picture at once, a little at every step.
 - _Key idea:_ Diffusion models learn to remove a little noise at a time. Starting from pure noise and repeating that many times produces a new image.
 
-**Ch 27. Thinking before answering (reasoning models)**
-
-- _Hook:_ "Some models pause to 'think' before they answer. What is the thinking?"
-- _Try it:_ The same small puzzles asked with thinking off and on, stepping through the tokens the model writes before its answer. A tally compares correct answers and tokens used.
-- _Animation:_ The Ch 11 token loop, with a stretch of "scratch work" tokens before the answer that the harness hides from the chat bubble.
-- _Key idea:_ A reasoning model is still a next-token predictor. It has been trained, often with rewards for answers that can be checked, to write out its working first, spending more tokens (and compute) on each answer.
-- _Data:_ Recorded runs (T0) of a small open model with a thinking switch, such as Qwen3.
-
-### Part VIII — Prompt engineering
-
-Prompt engineering is choosing the text a model continues. Everything in this Part follows from the earlier chapters: the prompt is the context (Ch 8), attention decides which parts of it matter (Ch 9), and every word shifts the probabilities of the next token (Ch 3). Each chapter shows a technique, then shows _why_ it works in those terms, and is honest about what is known to work and what is folklore.
-
-Demos reuse models the site already records: GPT-2 small for the raw effect of wording on next-token probabilities (recorded, plus live via T2), and the Qwen2.5 instruct models already used in Part V and VI for instructions and system prompts (recorded, T0). No new downloads are needed.
-
-**Ch 28. A prompt is the start of a document**
-
-- _Hook:_ "Why does the same question get a better answer when you word it differently?"
-- _Try it:_ Change one part of a prompt at a time ("Q: … A:" framing, a title, a sentence that sets the scene) and watch GPT-2's next-token bars move. The visitor can type their own variant in the live option.
-- _Animation:_ The probability bars from Ch 3 shift as words are added to the prompt; the added words light up in the attention lines from Ch 9.
-- _Key idea:_ A model doesn't "understand a request"; it continues a document. A good prompt makes the answer you want the most likely continuation.
-- _Live option:_ Live GPT-2 (T2) on the visitor's own prompt variants.
-
-**Ch 29. Learning from examples in the prompt (few-shot)**
-
-- _Hook:_ "Show a model three examples of a made-up rule. Does it learn the rule without any training?"
-- _Try it:_ A made-up task (e.g. turning words into their opposites, or a nonsense label for each animal) with 0, 1, 2, and 4 examples. A chart shows the probability of the right answer as examples are added.
-- _Animation:_ Attention from the new question reaches back to the matching parts of the examples, the "copy the pattern" behavior of induction heads.
-- _Key idea:_ The weights don't change; the examples are just context that attention can copy patterns from. This is in-context learning.
-- _Data:_ Recorded probabilities and attention from GPT-2 small and a small instruct model (T0).
-
-**Ch 30. Instructions, roles, and the system prompt**
-
-- _Hook:_ "Does telling a model 'You are an expert' make it one?"
-- _Try it:_ The same question with different system prompts (none, a persona, specific instructions about format and audience) side by side, using the prompt inspector from Ch 15 to show where each piece goes.
-- _Animation:_ The chat template from Ch 13 with the system prompt slot filled in different ways.
-- _Key idea:_ Instruction-tuned models were trained on conversations that follow instructions, so clear, specific instructions work. A persona changes style more reliably than it changes correctness.
-- _Data:_ Recorded runs of Qwen2.5-0.5B/1.5B-Instruct (T0).
-
-**Ch 31. Asking for steps and structure**
-
-- _Hook:_ "Why does 'Let's think step by step' help?"
-- _Try it:_ The Ch 27 puzzles asked plainly, with "think step by step", and with a required answer format (e.g. a final line or JSON). A tally shows right answers and how often the output can be parsed by code.
-- _Animation:_ The Ch 11 generation loop, with the working tokens feeding back into the context before the answer.
-- _Key idea:_ Asking for steps gives the model room to write intermediate results it can build on (the same reason reasoning models think, Ch 27). Asking for a fixed format makes the output usable by a harness (Ch 16).
-- _Data:_ Recorded runs of a small instruct model (T0).
-
-**Ch 32. Where prompts break**
-
-- _Hook:_ "Why does reordering the examples change the answer?"
-- _Try it:_ Swap the order of few-shot examples, change harmless formatting (spacing, labels), or move a key fact to the middle of a long prompt, and see the answers change.
-- _Animation:_ A long context with the key fact sliding from the start to the middle to the end, and the answer's probability rising and falling.
-- _Key idea:_ Small, meaningless changes can swing results, and facts in the middle of long prompts get used less. Good prompting means testing variants, not trusting one wording. Instructions in untrusted text are a risk (Ch 20).
-- _Data:_ Recorded runs (T0).
-
 ### Wrap-up
 
 **Ch 33. Recap: the whole picture**
 
-- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop, with Part VII's models shown as variations on the same pieces and Part VIII's techniques shown as ways of shaping the context. A short quiz checks understanding.
+- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop, with Part VIII's models shown as variations on the same pieces and Part VI's techniques shown as ways of shaping the context. A short quiz checks understanding.
 
 ---
 
@@ -331,9 +331,9 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------- |
 | **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                                                                  | Accurate visuals from real models with zero setup                           | Every chapter           |
 | **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                                                                        | Live tokenization of any text                                               | Ch 4, 11, 14            |
-| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11, 26   |
-| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19        |
-| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19 |
+| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 2, 5, 9, 11, 32   |
+| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 22–25        |
+| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 2, 11, 12, 14, 22–25 |
 
 **Rules**
 
@@ -342,7 +342,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 - **Canonical small model:** GPT-2 small to start (best attention-visualization tooling). It is defined in one place, `models/canonical.json` (Hugging Face ID, tokenizer, layer and head counts, context length, display name), so switching to another model such as SmolLM2-135M is a config change plus re-running `build-traces.py`:
   - The T2 worker, the T0 trace builder, and widgets all read that file. No widget hard-codes a model name, vocabulary size, or layer/head count.
   - Traces are stored per model under `static/traces/<model-id>/`, so the old and new models' traces can sit side by side while switching.
-  - Tokens shown with the canonical model (Ch 0, 3, 9, 11) use that model's own tokenizer, so token IDs always match the logits and attention.
+  - Tokens shown with the canonical model (Ch 0, 2, 9, 11) use that model's own tokenizer, so token IDs always match the logits and attention.
 - Before any download, show a **consent dialog with the download size**, check for WebGPU and fall back to WASM, run model inference in a **Web Worker**, and show a progress bar.
 - Security for bring-your-own keys:
   - Keep the key in memory or `sessionStorage` only, never `localStorage`.
@@ -350,7 +350,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
   - Set a strict CSP `connect-src` allowlist. The CSP is emitted by SvelteKit (`csp` in `vite.config.ts`, hash mode, so its inline scripts are allowed without `'unsafe-inline'`), and `firebase.json` adds the header-only `frame-ancestors 'none'`.
   - Show a clear warning that this sends the visitor's prompt to the provider.
   - Never ship a key in the site.
-- Harness demos (Part VI) only expose in-browser toy tools. Live models can call those tools but never get network, file system, or `eval` access, regardless of tier.
+- Harness demos (Part VII) only expose in-browser toy tools. Live models can call those tools but never get network, file system, or `eval` access, regardless of tier.
 - Optional later step: a rate-limited serverless proxy for a hosted demo. This is outside the static scope, so treat it as a separate decision.
 
 ---
@@ -566,6 +566,7 @@ Each chapter milestone (5–10, 14, 15, and 18) includes the [per-chapter fact-c
     - **Then the content changes** CURRICULUM.md lists: the new openings for Ch 3 and Ch 15, the system prompt introduced in Ch 18, structured output in Ch 19 leading into tools in Ch 22, Ch 20's forward-looking Next question, the Next questions at every new Part boundary, and the recap's paragraph, diagram, and quiz in the new order.
     - **Keep the spec and the code in step:** a unit test checks that the Parts, numbers, titles, slugs, and builds-on lists in `meta.ts` match CURRICULUM.md's tables. Reorder §3 of this plan to match, and update CURRICULUM.md's Status.
     - _Done when:_ the site reads in the new order, every chapter's Next question is answered by the chapter after it, every chapter number in prose, tests, and docs matches the new curriculum, the old URLs still load the same chapters, and the spec test passes.
+    - v1: done. The renumbering is its own commit; §3 of this plan now follows the new order. Besides the listed content changes, forward references that the move created (in Ch 11, 14, 22, and 25) were reworded, the system prompt's glossary entry now points at Ch 18, reasoning models sit with the model in the recap diagram, and the quiz follows the new order. The fact-check, unit, and e2e files named by Part moved with their chapters.
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, and 18)
 
@@ -607,5 +608,5 @@ A chapter isn't done until its fact-check is done in the same PR:
 - **Math sidebar:** a short, optional per-chapter panel with the equations behind each concept, for visitors who want them. Out of scope for v1.
 - **Localization:** v1 is English-only (prose, example corpora, and recorded traces). Translating later means deciding whether to also swap the example corpora and re-record traces per language.
 - **Live attention (Ch 9):** the standard GPT-2 ONNX export used by Transformers.js has no attention outputs, so v1 shows attention recorded from PyTorch for 5 sentences. A custom ONNX export with attention outputs would let visitors type their own sentence.
-- **T3 and T4 tiers:** a WebLLM chat model (live base vs. instruct in Ch 13, live tool calling in Part VI) and bring-your-own-key providers. v1 covers these chapters with recorded runs (T0) and the live GPT-2 (T2). Both need a WebGPU or provider test setup that the CI and local headless browsers don't have.
-- **Live Part VII models (T2):** a small fill-mask encoder for Ch 22 and CLIP's text half for Ch 25, so visitors can try their own sentences and captions. v1 uses recordings.
+- **T3 and T4 tiers:** a WebLLM chat model (live base vs. instruct in Ch 13, live tool calling in Part VII) and bring-your-own-key providers. v1 covers these chapters with recorded runs (T0) and the live GPT-2 (T2). Both need a WebGPU or provider test setup that the CI and local headless browsers don't have.
+- **Live Part VIII models (T2):** a small fill-mask encoder for Ch 28 and CLIP's text half for Ch 31, so visitors can try their own sentences and captions. v1 uses recordings.

@@ -121,7 +121,7 @@
 			what: 'Turns text into probabilities for the next token, one token at a time.',
 			chapters: [0, 11],
 			color: 'prob',
-			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick', 'variants']
+			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick', 'reasoning', 'variants']
 		},
 		tokens: {
 			id: 'tokens',
@@ -186,7 +186,7 @@
 			what: 'The same pieces, with one of them changed.',
 			chapters: [28],
 			color: 'weight',
-			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion', 'reasoning']
+			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion']
 		},
 		encoders: {
 			id: 'encoders',
@@ -226,7 +226,7 @@
 		reasoning: {
 			id: 'reasoning',
 			name: 'Reasoning models',
-			what: 'Write scratch work before the answer.',
+			what: 'The same model, tuned to write scratch work before the answer.',
 			chapters: [15],
 			color: 'prob'
 		}

@@ -36,6 +36,28 @@
 			why: 'Attention weights earlier tokens by relevance (Ch 9).'
 		},
 		{
+			q: 'What does a reasoning model do differently from an ordinary chat model?',
+			options: [
+				'It looks answers up in a database',
+				'It runs a separate logic engine',
+				'It writes scratch work as tokens before answering',
+				'It never makes mistakes'
+			],
+			answer: 2,
+			why: 'It is still predicting tokens; it was trained to write its working first (Ch 15).'
+		},
+		{
+			q: 'You add four worked examples to a prompt. What changes inside the model?',
+			options: [
+				'Its weights are updated to learn the task',
+				'Nothing but its context: attention can copy the pattern from the examples',
+				'It switches to a different, specialized model',
+				'Its vocabulary grows'
+			],
+			answer: 1,
+			why: 'In-context learning uses the examples as context; no weights change (Ch 17).'
+		},
+		{
 			q: 'When an assistant uses a calculator, who actually runs it?',
 			options: ['The model', 'The harness', 'The tokenizer', 'The user'],
 			answer: 1,
@@ -84,28 +106,6 @@
 			],
 			answer: 1,
 			why: 'An encoder lets every token see every other token, both before and after (Ch 28).'
-		},
-		{
-			q: 'What does a reasoning model do differently from an ordinary chat model?',
-			options: [
-				'It looks answers up in a database',
-				'It runs a separate logic engine',
-				'It writes scratch work as tokens before answering',
-				'It never makes mistakes'
-			],
-			answer: 2,
-			why: 'It is still predicting tokens; it was trained to write its working first (Ch 15).'
-		},
-		{
-			q: 'You add four worked examples to a prompt. What changes inside the model?',
-			options: [
-				'Its weights are updated to learn the task',
-				'Nothing but its context: attention can copy the pattern from the examples',
-				'It switches to a different, specialized model',
-				'Its vocabulary grows'
-			],
-			answer: 1,
-			why: 'In-context learning uses the examples as context; no weights change (Ch 17).'
 		}
 	];
 

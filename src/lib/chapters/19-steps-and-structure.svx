@@ -32,7 +32,7 @@ without the reasoning holding up.
 ## Formats are for programs
 
 The last ending asked for the answer on a final line, "Answer: …", so that a program could read it.
-The model did that only once in six tries. A harness that parses replies (Ch 22) can't assume the
+The model did that only once in six tries. A program that reads the replies can't assume the
 format was followed: it has to check, and ask again or fall back when it wasn't. Asking for a format
 makes the reply easier to use, not guaranteed.
 

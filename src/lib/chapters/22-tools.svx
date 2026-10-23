@@ -19,7 +19,7 @@ Without tools, the model wrote out a long multiplication and got 7,050,952. The 
 ## A tool call is just text
 
 The model can't press buttons or run programs. A <GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
-format. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
+format, like the answer line in Ch 19, but for the harness to act on. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
 Then:
 
 1. The harness watches the model's output for that format and stops it there.
@@ -33,7 +33,7 @@ On this site, calls are shown in a simpler made-up form, like
 The tools in these chapters are toys that run in your browser: a calculator, a search over the six
 nursery rhymes from Ch 1, a word counter, a fake web page, and a pretend file list. Real assistants
 use the same pattern for web search, code execution, sending email, and more, which is exactly why
-the harness has to be careful about which tools it runs (Ch 27).
+the harness has to be careful about which tools it runs.
 
 <RecapCard>
 

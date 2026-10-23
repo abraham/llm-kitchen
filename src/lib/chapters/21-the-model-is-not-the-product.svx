@@ -7,8 +7,8 @@
 
 ## What does the model actually see?
 
-Everything so far has been about the model: a program that turns text into probabilities for the
-next token. But nobody chats with a bare model. Chat apps and coding agents wrap it in ordinary
+Everything so far has been about the model and the text you give it. But in a chat app you only
+write a small part of that text. Chat apps and coding agents wrap the model in ordinary
 code, the <GlossaryPopover term="harness">harness</GlossaryPopover>, which decides what text the
 model gets and what to do with what it writes.
 
