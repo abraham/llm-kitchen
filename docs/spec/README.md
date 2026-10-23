@@ -19,7 +19,8 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 ## Rules
 
 - **Present tense.** A spec says what the site does and, when it isn't obvious, why. History lives in
-  git and pull requests.
+  git and pull requests. A spec may instead describe a target design, as
+  [architecture.md](architecture.md) does, if it lists where the code doesn't match yet.
 - **Chapter numbers only in curriculum.md.** Everywhere else, link a chapter by its spec file, e.g.
   [Attention](chapters/attention.md), so moving a chapter changes no other spec.
 - **Chapter specs are named by slug,** which never changes.
