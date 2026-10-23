@@ -36,4 +36,5 @@ unchanged start saves so much work, and why a tool result has to be treated as u
 
 </RecapCard>
 
-**Next question:** how much of this stuck?
+**Next question:** that is how one model works, end to end. With hundreds of models to choose from,
+how do you pick one?

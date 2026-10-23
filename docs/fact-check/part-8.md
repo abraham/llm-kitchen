@@ -97,6 +97,27 @@ existing recordings, labeled in the widget:
 - [x] The closing box's one-line summaries match Ch 30–34 (both-ways attention; part of the network
       per token; fixed-size memory; picture patches as tokens; refined from noise).
 
+## Ch 37. Picking a model
+
+The decoder's names (`src/lib/data/model-names.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
+and Gemma 4 QAT Q4_0 collections and the models this site uses, as listed on 2026-10-23. Lineups
+and suffixes change often, so re-check the list in the final fact review. The unit test checks that
+every name splits into known parts that spell it back.
+
+| Claim                                                                                                                   | Backing                                                            |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up              | Cite `gemma4-model-card` (Dense Models table and the note on "E")  |
+| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                    | Cite `gemma4-model-card` (MoE table and the note on "A")           |
+| 12B: 11.95B; 31B: 30.7B                                                                                                 | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4) |
+| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0       | Cite `gemma4-model-card`                                           |
+| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM | Cite `gemma4-qat`                                                  |
+| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                         | Cite `gguf-quant-types`                                            |
+| `-assistant` models are speculative-decoding drafters                                                                   | Cite `gemma4-assistant` (Ch 14)                                    |
+| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                      | Cite `diffusiongemma-model-card`                                   |
+| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                | Collection listing, 2026-10-23                                     |
+| E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")               |
+| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names         |
+
 ## Ch 38. Check yourself
 
 Fourteen questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
@@ -124,5 +145,10 @@ has at least one. Each answer restates its linked chapter:
 - **Ch 34 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
   turned it into a blob in the training time a page visit allows.
 - **The wrap-up** (Ch 35–38) is checked here, with the last Part; its URLs never change.
+- **Ch 37 memory calculator** shows the weights only and says the KV cache, runtime, and everything
+  else on the device need more. The plan's context-length slider was dropped: Gemma 4's configs mix
+  sliding-window and full-attention layers, share some layers' keys and values, and use different
+  head sizes for global layers, so a per-token figure from the config couldn't be checked against a
+  published number.
 - **Part order.** This was Part VII (Ch 22–27, with Thinking before answering) until milestone 19
   moved reasoning models to Part V and this Part to the end.

@@ -4,6 +4,8 @@ import canonicalJson from '../../models/canonical.json';
 import { chapterByNumber } from '../../src/lib/chapters/meta.ts';
 import { STAGES, VARIANTS, type StageGroup } from '../../src/lib/data/end-to-end.ts';
 import { QUESTIONS } from '../../src/lib/data/quiz.ts';
+import { COLLECTIONS, MEMORY_MODELS, decodeName } from '../../src/lib/data/model-names.ts';
+import { weightBytes } from '../../src/lib/math/quantize.ts';
 import { RHYMES } from '../../src/lib/data/rhymes.ts';
 import { MOE_MODELS } from '../../src/lib/data/moe.ts';
 import { CharRNN, RNNTrainer } from '../../src/lib/math/rnn.ts';
@@ -142,6 +144,51 @@ describe('Ch 36: from message to reply', () => {
 		expect(kv.generated).toHaveLength(500);
 		expect(Math.round(kv.totalMs.cache / 1000)).toBe(10);
 		expect(Math.round(kv.totalMs.noCache / 1000)).toBe(43);
+	});
+});
+
+describe('Ch 37: picking a model', () => {
+	const ids = COLLECTIONS.flatMap((c) => c.ids);
+	const kinds = (id: string) => decodeName(id).parts.map((p) => `${p.text}:${p.kind}`);
+
+	it('splits every listed name into known parts that spell it back', () => {
+		for (const id of ids) {
+			const { org, parts } = decodeName(id);
+			expect([org, parts.map((p) => p.text).join('-')].join('/')).toBe(id);
+			for (const p of parts) {
+				expect(p.meaning, `${id} ${p.text}`).toMatch(/\.$/);
+				for (const n of p.chapters) expect(n).toBeLessThan(37);
+			}
+		}
+	});
+
+	it('reads sizes, tuning, drafters, and quantization', () => {
+		expect(kinds('google/gemma-4-26B-A4B-it')).toEqual([
+			'gemma-4:family',
+			'26B:size',
+			'A4B:active',
+			'it:tuning'
+		]);
+		expect(kinds('google/gemma-4-E2B-it-qat-mobile-transformers')).toEqual([
+			'gemma-4:family',
+			'E2B:effective',
+			'it:tuning',
+			'qat:quantization',
+			'mobile:quantization',
+			'transformers:format'
+		]);
+		expect(kinds('google/gemma-4-31B-it-assistant').at(-1)).toBe('assistant:drafter');
+		expect(decodeName('google/gemma-4-E2B').base).toBe(true);
+		expect(decodeName('Qwen/Qwen2.5-1.5B-Instruct').base).toBe(false);
+		expect(decodeName('google/diffusiongemma-26B-A4B-it').parts[0].chapters).toEqual([34]);
+	});
+
+	it('matches the model cards: 30.7B weights take about 61 GB at 16 bits and 15 GB at 4', () => {
+		const big = MEMORY_MODELS.find((m) => m.name === 'Gemma 4 31B')!;
+		expect(Math.round(weightBytes(big.stored, 16) / 1e9)).toBe(61);
+		expect(Math.round(weightBytes(big.stored, 4) / 1e9)).toBe(15);
+		const moe = MEMORY_MODELS.find((m) => m.name === 'Gemma 4 26B A4B')!;
+		expect([moe.stored, moe.perToken]).toEqual([25.2e9, 3.8e9]);
 	});
 });
 

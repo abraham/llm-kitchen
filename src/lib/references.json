@@ -633,5 +633,23 @@
 		"year": 2026,
 		"url": "https://huggingface.co/google/gemma-4-E2B-it-assistant",
 		"accessed": "2026-10-23"
+	},
+	{
+		"id": "gemma4-model-card",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 model card (google/gemma-4-26B-A4B-it)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "diffusiongemma-model-card",
+		"authors": ["Google DeepMind"],
+		"title": "DiffusionGemma model card (google/diffusiongemma-26B-A4B-it)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/diffusiongemma-26B-A4B-it",
+		"accessed": "2026-10-23"
 	}
 ]
