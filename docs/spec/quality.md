@@ -54,6 +54,14 @@ failure.
 - **Visual (`tests/visual/`):** full-page screenshots, run locally only because baselines differ by
   operating system.
 
+## Browser support
+
+The site supports the two most recent major versions of Chrome, Edge, Firefox, and Safari, on
+desktop and mobile (Safari on macOS, iOS, and iPadOS). Bugs in older versions aren't fixed, and
+code needn't carry workarounds for them. The recorded tier is plain HTML, CSS, and a little
+JavaScript, so it usually still works there; the live models may not. Automated tests run in
+Chromium only.
+
 ## Accessibility
 
 - Everything is keyboard-navigable; stepped figures respond to ← and →.

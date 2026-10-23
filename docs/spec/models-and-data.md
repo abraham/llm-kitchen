@@ -56,7 +56,9 @@ data is registered, checked, and loaded.
 ## Live model rules
 
 - Before any download, `ModelConsent` asks, showing the download size: the model plus the ONNX
-  Runtime build this browser will load (27 MB, or 14 MB in Safari without WebGPU). A unit test checks
+  Runtime build this browser will load (27 MB, or 14 MB in Safari without WebGPU; that's only Safari
+  older than the [supported versions](quality.md#browser-support), but Transformers.js picks that
+  build for it anyway, so the size stays accurate). A unit test checks
   both runtime sizes against the bundled files.
 - Live models download a pinned Hugging Face commit (`onnxRevision`), so the files, and their size,
   can't change under the site. `scripts/.venv/bin/python -m scripts.record check live` checks that
