@@ -1,7 +1,8 @@
 <script>
 	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/layout/RecapCard.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import GenerationStepper from '#lib/components/widgets/GenerationStepper.svelte';
+	import { sampleTrace } from '#lib/models/sample-trace.ts';
 </script>
 
 ## Finish this sentence
@@ -11,11 +12,10 @@
 You probably thought of a word straight away. A <GlossaryPopover term="llm">large language model</GlossaryPopover>
 does the same thing: it looks at the text so far and guesses what comes next.
 
-<WidgetFrame title="Guess the next word" source={{ kind: 'recorded' }}>
+This chapter is a placeholder while the site is being built. The widget below steps through a
+made-up example; the real chapter comes in the Part I milestone.
 
-This chapter is a placeholder while the site is being built. The real widget comes in the Part I milestone.
-
-</WidgetFrame>
+<GenerationStepper trace={sampleTrace} />
 
 <RecapCard>
 

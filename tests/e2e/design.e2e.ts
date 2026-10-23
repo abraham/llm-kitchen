@@ -22,8 +22,9 @@ for (const colorScheme of ['light', 'dark'] as const) {
 test('the chapter shell renders its parts', async ({ page }) => {
 	await page.goto('/guessing-game');
 	await expect(page.getByRole('complementary', { name: 'Ingredients' })).toBeVisible();
-	await expect(page.getByRole('region', { name: 'Guess the next word' })).toBeVisible();
-	await expect(page.getByText('Recorded', { exact: true })).toBeVisible();
+	const widget = page.locator('section.widget').first();
+	await expect(widget).toBeVisible();
+	await expect(widget.locator('.badge')).toBeVisible();
 	await expect(page.getByRole('region', { name: 'Recap' })).toBeVisible();
 });
 

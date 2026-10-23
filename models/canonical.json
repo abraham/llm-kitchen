@@ -1,0 +1,13 @@
+{
+	"id": "gpt2",
+	"displayName": "GPT-2 small",
+	"huggingFaceId": "openai-community/gpt2",
+	"onnxId": "Xenova/gpt2",
+	"tokenizer": "r50k_base",
+	"parameters": 124439808,
+	"layers": 12,
+	"heads": 12,
+	"embeddingSize": 768,
+	"vocabularySize": 50257,
+	"contextLength": 1024
+}
