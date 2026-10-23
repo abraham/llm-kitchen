@@ -87,7 +87,7 @@
 						.map((w) => formatPercent(w))
 						.join(' / ')}{/if}. Each token runs through {k} of {EXPERTS} experts, so it uses {Math.round(
 					(k / EXPERTS) * 1000
-				) / 10}% of the experts' weights. weights.
+				) / 10}% of the experts' weights.
 			</p>
 			<p class="note">
 				Simplified: this router's weights are random rather than trained, and it reads each token's
