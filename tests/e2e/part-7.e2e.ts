@@ -21,7 +21,7 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 20: BERT reads both sides of the blank; GPT-2 only the left', async ({ page }) => {
+test('Ch 22: BERT reads both sides of the blank; GPT-2 only the left', async ({ page }) => {
 	await gotoHydrated(page, '/encoders');
 	const fill = page.getByRole('region', { name: 'Fill in the blank' });
 	await expect(fill.getByRole('rowheader', { name: 'top' })).toBeVisible();
@@ -34,7 +34,7 @@ test('Ch 20: BERT reads both sides of the blank; GPT-2 only the left', async ({ 
 	await expect(mask.getByText(/can look at 10 of 10 tokens/)).toBeVisible();
 });
 
-test('Ch 21: each token goes to k of 8 experts', async ({ page }) => {
+test('Ch 23: each token goes to k of 8 experts', async ({ page }) => {
 	await gotoHydrated(page, '/mixture-of-experts');
 	const widget = page.getByRole('region', { name: 'Send each token to a few experts' });
 	await expect(widget.getByText('(chosen)')).toHaveCount(10);
@@ -44,7 +44,7 @@ test('Ch 21: each token goes to k of 8 experts', async ({ page }) => {
 	await expect(widget.getByText(/uses 12.5% of the experts' weights/)).toBeVisible();
 });
 
-test('Ch 22: the recurrent model trains; attention memory grows', async ({ page }) => {
+test('Ch 24: the recurrent model trains; attention memory grows', async ({ page }) => {
 	await gotoHydrated(page, '/recurrent-models');
 	const rnn = page.getByRole('region', { name: 'A model with a memory' });
 	await rnn.getByRole('button', { name: 'Train' }).click();
@@ -60,7 +60,7 @@ test('Ch 22: the recurrent model trains; attention memory grows', async ({ page 
 	await expect(growth.getByText('32 numbers', { exact: true })).toBeVisible();
 });
 
-test('Ch 23: patches and matching captions', async ({ page }) => {
+test('Ch 25: patches and matching captions', async ({ page }) => {
 	await gotoHydrated(page, '/seeing-pictures');
 	const patches = page.getByRole('region', { name: 'Cut a picture into tokens' });
 	await patches.getByRole('slider', { name: /Patch/ }).fill('0');
@@ -71,7 +71,7 @@ test('Ch 23: patches and matching captions', async ({ page }) => {
 	await expect(match.locator('li.best img')).toHaveAttribute('alt', 'A blue star');
 });
 
-test('Ch 24: the diffusion toy trains and paints', async ({ page }) => {
+test('Ch 26: the diffusion toy trains and paints', async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await gotoHydrated(page, '/diffusion');
 	const widget = page.getByRole('region', { name: 'Painting from noise' });
@@ -80,7 +80,7 @@ test('Ch 24: the diffusion toy trains and paints', async ({ page }) => {
 	await expect(widget.getByText(/Done: the noise has become a new ring/)).toBeVisible();
 });
 
-test('Ch 25: thinking fixes strawberry, at a cost', async ({ page }) => {
+test('Ch 27: thinking fixes strawberry, at a cost', async ({ page }) => {
 	await gotoHydrated(page, '/reasoning-models');
 	const widget = page.getByRole('region', { name: 'Thinking off, thinking on' });
 	await widget.getByLabel('Puzzle').selectOption({ index: 2 });

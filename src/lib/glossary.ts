@@ -157,59 +157,59 @@ export const GLOSSARY = {
 		term: 'prompt injection',
 		definition:
 			'Instructions hidden in text the model reads (like a web page) that try to override the real instructions.',
-		chapter: 19
+		chapter: 21
 	},
 	encoder: {
 		term: 'encoder',
 		definition:
 			'A transformer that reads the whole text at once, words before and after, to understand it rather than continue it.',
-		chapter: 20
+		chapter: 22
 	},
 	'mixture-of-experts': {
 		term: 'mixture of experts (MoE)',
 		definition:
 			'A model whose MLPs are split into many experts, with a router sending each token to only a few of them.',
-		chapter: 21
+		chapter: 23
 	},
 	'recurrent-model': {
 		term: 'recurrent model',
 		definition:
 			'A model that reads one token at a time and carries a fixed-size memory from each token to the next.',
-		chapter: 22
+		chapter: 24
 	},
 	multimodal: {
 		term: 'multimodal model',
 		definition: 'A model that takes in more than one kind of input, such as text and pictures.',
-		chapter: 23
+		chapter: 25
 	},
 	diffusion: {
 		term: 'diffusion model',
 		definition:
 			'A model that makes pictures (or other data) by starting from random noise and removing a little of it at each step.',
-		chapter: 24
+		chapter: 26
 	},
 	'reasoning-model': {
 		term: 'reasoning model',
 		definition:
 			'A language model trained to write out its working before it answers, spending more tokens to get more right.',
-		chapter: 25
+		chapter: 27
 	},
 	'prompt-engineering': {
 		term: 'prompt engineering',
 		definition:
 			'Choosing the text a model continues so that the answer you want becomes the likely continuation.',
-		chapter: 26
+		chapter: 28
 	},
 	'in-context-learning': {
 		term: 'in-context learning',
 		definition:
 			'A model picking up a task from examples in its prompt, without any change to its weights.',
-		chapter: 27
+		chapter: 29
 	},
 	'chain-of-thought': {
 		term: 'chain of thought',
 		definition: 'Working written out step by step before the answer, by the model itself.',
-		chapter: 29
+		chapter: 31
 	}
 } as const satisfies Record<string, GlossaryEntry>;
 

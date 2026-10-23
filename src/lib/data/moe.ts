@@ -1,4 +1,4 @@
-/** Mixture-of-experts models for Ch 21: total size vs. the part each token actually uses. */
+/** Mixture-of-experts models for Ch 23: total size vs. the part each token actually uses. */
 export interface MoeModel {
 	name: string;
 	year: number;

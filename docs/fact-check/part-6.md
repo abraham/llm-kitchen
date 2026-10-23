@@ -1,4 +1,4 @@
-# Fact-check: Part VI (Ch 15–19)
+# Fact-check: Part VI (Ch 15–21)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-6-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -49,7 +49,7 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | Retrieval by embedding similarity (MiniLM) picked the cat task, and the answer was right | Test; cite `lewis2020`                                         |
 | The map uses the Ch 5 projection                                                         | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
 
-## Ch 19. Trust and guardrails
+## Ch 21. Trust and guardrails
 
 | Claim                                                                     | Backing                            |
 | ------------------------------------------------------------------------- | ---------------------------------- |
@@ -72,4 +72,4 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 - **Injection text.** The page fakes the end of the tool result and a new user message. A plain
   "ignore your instructions" note didn't make the model delete anything in testing.
 - **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
-- **The recap** (now Ch 26) moved to [part-7.md](part-7.md) when Part VII was added.
+- **The recap** moved to [part-7.md](part-7.md) when Part VII was added.

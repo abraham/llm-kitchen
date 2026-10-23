@@ -50,7 +50,7 @@
 				'Nothing can help'
 			],
 			answer: 1,
-			why: 'To the model, the page is just more text; the harness has to supply the safety (Ch 19).'
+			why: 'To the model, the page is just more text; the harness has to supply the safety (Ch 21).'
 		},
 		{
 			q: 'Why can BERT fill in a blank in the middle of a sentence better than GPT-2?',
@@ -61,7 +61,7 @@
 				'It uses a higher temperature'
 			],
 			answer: 1,
-			why: 'An encoder lets every token see every other token, both before and after (Ch 20).'
+			why: 'An encoder lets every token see every other token, both before and after (Ch 22).'
 		},
 		{
 			q: 'What does a reasoning model do differently from an ordinary chat model?',
@@ -72,7 +72,7 @@
 				'It never makes mistakes'
 			],
 			answer: 2,
-			why: 'It is still predicting tokens; it was trained to write its working first (Ch 25).'
+			why: 'It is still predicting tokens; it was trained to write its working first (Ch 27).'
 		},
 		{
 			q: 'You add four worked examples to a prompt. What changes inside the model?',
@@ -83,7 +83,7 @@
 				'Its vocabulary grows'
 			],
 			answer: 1,
-			why: 'In-context learning uses the examples as context; no weights change (Ch 27).'
+			why: 'In-context learning uses the examples as context; no weights change (Ch 29).'
 		}
 	];
 

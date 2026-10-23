@@ -1,4 +1,4 @@
-# Fact-check: Part VIII (Ch 26–30) and the recap (Ch 31)
+# Fact-check: Part VIII (Ch 28–32) and the recap (Ch 33)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-8-facts.test.ts` (the recorded data says what the prose says),
@@ -8,7 +8,7 @@ Data: `scripts/build-prompts.py` writes `static/prompts/`, using only models oth
 download: GPT-2 small (the canonical model) and Qwen2.5-1.5B-Instruct. Greedy decoding throughout;
 the pinned revision is in each file. Probabilities of an answer cover all of its tokens.
 
-## Ch 26. A prompt is the start of a document
+## Ch 28. A prompt is the start of a document
 
 | Claim                                                                                              | Backing                              |
 | -------------------------------------------------------------------------------------------------- | ------------------------------------ |
@@ -20,7 +20,7 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 | Chat models were tuned so a question is followed by an answer                                      | Ch 13; cite `ouyang2022` there       |
 | GPT-3 did new tasks from a description and examples with no weight updates                         | Cite `brown2020` (abstract)          |
 
-## Ch 27. Learning from examples in the prompt
+## Ch 29. Learning from examples in the prompt
 
 | Claim                                                                                                                                        | Backing                      |
 | -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
@@ -32,7 +32,7 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 | Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it | Cite `olsson2022` (abstract) |
 | GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                          | Test (recorded attention)    |
 
-## Ch 28. Instructions, roles, and the system prompt
+## Ch 30. Instructions, roles, and the system prompt
 
 | Claim                                                                                                   | Backing                                   |
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
@@ -42,7 +42,7 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 | "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                       | Test                                      |
 | Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random       | Cite `zheng2024` (abstract)               |
 
-## Ch 29. Asking for steps and structure
+## Ch 31. Asking for steps and structure
 
 | Claim                                                                                  | Backing                       |
 | -------------------------------------------------------------------------------------- | ----------------------------- |
@@ -55,7 +55,7 @@ The replies don't share a format, so they were graded by reading them. `GRADES` 
 records each grade with a phrase from the reply it was given for, and the script stops if a rerun
 changes a reply.
 
-## Ch 30. Where prompts break
+## Ch 32. Where prompts break
 
 | Claim                                                                                                  | Backing                     |
 | ------------------------------------------------------------------------------------------------------ | --------------------------- |
@@ -66,20 +66,20 @@ changes a reply.
 | 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                | Test                        |
 | Models use information at the start and end of long prompts better than in the middle                  | Cite `liu2024` (abstract)   |
 
-## Ch 31. Recap
+## Ch 33. Recap
 
 The diagram and quiz restate earlier chapters; each box links to its chapter. Quiz answers are
 checked by e2e.
 
 ## Changes from the plan
 
-- **Ch 27 models.** Probabilities come from Qwen2.5-1.5B-Instruct (reading the prompt as plain text)
+- **Ch 29 models.** Probabilities come from Qwen2.5-1.5B-Instruct (reading the prompt as plain text)
   and GPT-2 small; the attention view is GPT-2's, since that's the model the site shows attention
   for.
-- **Ch 28** shows the chat template with the system prompt highlighted, in its own widget, rather
+- **Ch 30** shows the chat template with the system prompt highlighted, in its own widget, rather
   than reusing the Ch 15 prompt inspector.
-- **Ch 29 grading.** Hand-graded replies (see above) instead of an automatic check, which misread
+- **Ch 31 grading.** Hand-graded replies (see above) instead of an automatic check, which misread
   several replies in testing.
-- **Ch 30 position.** A short list of 30 lines rather than a long multi-document prompt, so the
+- **Ch 32 position.** A short list of 30 lines rather than a long multi-document prompt, so the
   effect shows as a handful of misses in the middle rather than a smooth U-shaped curve.
-- **The recap** moved again, to Ch 31; its URL (`/recap`) is unchanged.
+- **The recap** moved again, to Ch 31 (Ch 33 since milestone 18); its URL (`/recap`) is unchanged.

@@ -26,7 +26,7 @@
 			id: 'you',
 			name: 'You',
 			what: 'You type a message and read the reply. Your words are the start of the document the model continues.',
-			chapters: [15, 26],
+			chapters: [15, 28],
 			color: 'prob',
 			children: ['wording', 'examples', 'instructions', 'steps', 'fragile']
 		},
@@ -34,35 +34,35 @@
 			id: 'wording',
 			name: 'Wording',
 			what: 'Every word shifts the next-token probabilities.',
-			chapters: [26],
+			chapters: [28],
 			color: 'token'
 		},
 		examples: {
 			id: 'examples',
 			name: 'Examples',
 			what: 'A few examples in the prompt can teach a task, with no change to the weights.',
-			chapters: [27],
+			chapters: [29],
 			color: 'attention'
 		},
 		instructions: {
 			id: 'instructions',
 			name: 'Instructions and roles',
 			what: 'Specific instructions help; a persona changes style, not ability.',
-			chapters: [28],
+			chapters: [30],
 			color: 'harness'
 		},
 		steps: {
 			id: 'steps',
 			name: 'Steps and formats',
 			what: 'Working written out first; a fixed format for programs to read.',
-			chapters: [29],
+			chapters: [31],
 			color: 'prob'
 		},
 		fragile: {
 			id: 'fragile',
 			name: 'Fragile prompts',
 			what: 'Order, layout, and position can change the answer: test variants.',
-			chapters: [30],
+			chapters: [32],
 			color: 'loss'
 		},
 		harness: {
@@ -105,7 +105,7 @@
 			id: 'guards',
 			name: 'Guardrails',
 			what: 'Permission prompts, tool allowlists, sandboxes, and step limits.',
-			chapters: [19],
+			chapters: [21],
 			color: 'loss'
 		},
 		model: {
@@ -177,7 +177,7 @@
 			id: 'variants',
 			name: 'Other kinds of models',
 			what: 'The same pieces, with one of them changed.',
-			chapters: [20],
+			chapters: [22],
 			color: 'weight',
 			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion', 'reasoning']
 		},
@@ -185,42 +185,42 @@
 			id: 'encoders',
 			name: 'Encoders',
 			what: 'Attention that looks both ways, for understanding rather than writing.',
-			chapters: [20],
+			chapters: [22],
 			color: 'attention'
 		},
 		experts: {
 			id: 'experts',
 			name: 'Mixture of experts',
 			what: 'Many MLPs per block; a router sends each token to a few.',
-			chapters: [21],
+			chapters: [23],
 			color: 'weight'
 		},
 		recurrent: {
 			id: 'recurrent',
 			name: 'Recurrent models',
 			what: 'A fixed-size memory instead of looking back at every token.',
-			chapters: [22],
+			chapters: [24],
 			color: 'vector'
 		},
 		vision: {
 			id: 'vision',
 			name: 'Vision models',
 			what: 'Patches of a picture become the tokens.',
-			chapters: [23],
+			chapters: [25],
 			color: 'token'
 		},
 		diffusion: {
 			id: 'diffusion',
 			name: 'Diffusion models',
 			what: 'Make a picture by removing noise, a little at every step.',
-			chapters: [24],
+			chapters: [26],
 			color: 'weight'
 		},
 		reasoning: {
 			id: 'reasoning',
 			name: 'Reasoning models',
 			what: 'Write scratch work before the answer.',
-			chapters: [25],
+			chapters: [27],
 			color: 'prob'
 		}
 	};

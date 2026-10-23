@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record fill-in-the-blank guesses for Ch 20 (tier T0).
+"""Record fill-in-the-blank guesses for Ch 22 (tier T0).
 
 Usage: scripts/.venv/bin/python scripts/build-encoder.py
 

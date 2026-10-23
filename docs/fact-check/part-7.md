@@ -1,4 +1,4 @@
-# Fact-check: Part VII (Ch 20–25)
+# Fact-check: Part VII (Ch 22–27)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-7-facts.test.ts` (the recorded data says what the prose says),
@@ -15,7 +15,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
   card's recommended settings and a fixed seed, by `scripts/build-reasoning.py`. Answers are graded
   on the last `\boxed{}`, which the prompt asks for.
 
-## Ch 20. Reading both ways
+## Ch 22. Reading both ways
 
 | Claim                                                                                    | Backing                                                             |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -27,7 +27,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | The Ch 5 embedding model is an encoder of the same design as BERT                        | all-MiniLM-L6-v2 config: `model_type: bert`                         |
 | The original transformer had an encoder and a decoder                                    | Cite `vaswani2017`                                                  |
 
-## Ch 21. Many experts
+## Ch 23. Many experts
 
 | Claim                                                                                          | Backing                                                               |
 | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -37,7 +37,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | Mixtral's experts show no obvious topic pattern; `self` and indentation go to the same experts | Cite `jiang2024` (§5 Routing analysis)                                |
 | The widget's router                                                                            | Labeled simplification: random weights, reads Ch 5's token embeddings |
 
-## Ch 22. Remembering without attention
+## Ch 24. Remembering without attention
 
 | Claim                                                                      | Backing                                         |
 | -------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -50,7 +50,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | Mamba's state update depends on the input; cost grows linearly with length | Cite `gu2023` (abstract)                        |
 | Fixed-state models struggle to copy long passages that transformers copy   | Cite `jelassi2024` (abstract)                   |
 
-## Ch 23. Seeing pictures
+## Ch 25. Seeing pictures
 
 | Claim                                                                                                                                                   | Backing                               |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
@@ -61,7 +61,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                  |
 | Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                        |
 
-## Ch 24. Painting from noise
+## Ch 26. Painting from noise
 
 | Claim                                                                     | Backing                                   |
 | ------------------------------------------------------------------------- | ----------------------------------------- |
@@ -70,7 +70,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | Latent diffusion works on a compressed image and can be steered by text   | Cite `rombach2022`                        |
 | The original recipe used 1,000 steps; the toy uses 50                     | Cite `ho2020` (T = 1000); `STEPS` in code |
 
-## Ch 25. Thinking before answering
+## Ch 27. Thinking before answering
 
 | Claim                                                                                        | Backing                    |
 | -------------------------------------------------------------------------------------------- | -------------------------- |
@@ -84,16 +84,16 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Changes from the plan
 
-- **Ch 20 live option.** Recorded only (T0); a live fill-mask model is left for later.
-- **Ch 21 routing.** A computed toy router, labeled as simplified, instead of recorded routing:
+- **Ch 22 live option.** Recorded only (T0); a live fill-mask model is left for later.
+- **Ch 23 routing.** A computed toy router, labeled as simplified, instead of recorded routing:
   recording a real mixture-of-experts model (several GB) wasn't practical on the available disk.
-- **Ch 22** keeps the memory comparison in its own small widget next to the trainer.
-- **Ch 23 pictures and map.** Simple colored shapes drawn by the script instead of photos, so there
+- **Ch 24** keeps the memory comparison in its own small widget next to the trainer.
+- **Ch 25 pictures and map.** Simple colored shapes drawn by the script instead of photos, so there
   are no licensing questions. Every caption–picture similarity falls between 0.18 and 0.36, so a 2D
   map wouldn't show the matches clearly; the widget ranks pictures for each caption instead. No live
   caption embedding yet.
-- **Ch 24 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
+- **Ch 26 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
   turned it into a blob in the training time a page visit allows.
-- **Ch 25 results.** The small model's thinking gave a mixed result, and the chapter says so.
+- **Ch 27 results.** The small model's thinking gave a mixed result, and the chapter says so.
 - **The recap** became Ch 26 under a new unnumbered "Wrap-up" part; its URL (`/recap`) is unchanged.
-  It is now Ch 31; see [part-8.md](part-8.md).
+  It is now Ch 33; see [part-8.md](part-8.md).

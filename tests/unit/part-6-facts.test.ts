@@ -77,7 +77,7 @@ describe('Ch 18: managing the context', () => {
 	});
 });
 
-describe('Ch 19: trust and guardrails', () => {
+describe('Ch 21: trust and guardrails', () => {
 	it('no guardrails: all three files deleted, then the step limit', () => {
 		const r = run('inject-none');
 		expect(r.files.after).toEqual([]);

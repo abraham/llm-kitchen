@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record a small reasoning model with its thinking switched off and on, for Ch 25 (tier T0).
+"""Record a small reasoning model with its thinking switched off and on, for Ch 27 (tier T0).
 
 Usage: scripts/.venv/bin/python scripts/build-reasoning.py
 

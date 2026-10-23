@@ -8,7 +8,7 @@ import { seededRandom } from '../../src/lib/math/sampling.ts';
 
 const json = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 
-describe('Ch 20: encoders', () => {
+describe('Ch 22: encoders', () => {
 	const d = json('static/encoders/fill-mask.json');
 
 	it('BERT uses the words after the blank; GPT-2 cannot', () => {
@@ -26,7 +26,7 @@ describe('Ch 20: encoders', () => {
 	});
 });
 
-describe('Ch 21: mixture of experts', () => {
+describe('Ch 23: mixture of experts', () => {
 	it('Mixtral uses about a quarter of its weights per token, DeepSeek-V3 about 6%', () => {
 		const share = (name: string) => {
 			const m = MOE_MODELS.find((x) => x.name === name)!;
@@ -37,7 +37,7 @@ describe('Ch 21: mixture of experts', () => {
 	});
 });
 
-describe('Ch 22: recurrent models', () => {
+describe('Ch 24: recurrent models', () => {
 	it('keeps 2 × layers × embedding size numbers per token with attention', () => {
 		expect(2 * canonicalJson.layers * canonicalJson.embeddingSize).toBe(18432);
 	});
@@ -64,7 +64,7 @@ describe('Ch 22: recurrent models', () => {
 	}, 60_000);
 });
 
-describe('Ch 23: seeing pictures', () => {
+describe('Ch 25: seeing pictures', () => {
 	const d = json('static/vision/clip.json');
 	const names: string[] = d.images.map((i: { name: string }) => i.name);
 	const best = (c: { similarity: number[] }) =>
@@ -94,7 +94,7 @@ describe('Ch 23: seeing pictures', () => {
 	});
 });
 
-describe('Ch 25: reasoning models', () => {
+describe('Ch 27: reasoning models', () => {
 	const d = json('static/reasoning/thinking.json');
 	type Run = {
 		correct: boolean;

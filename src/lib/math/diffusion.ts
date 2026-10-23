@@ -1,5 +1,5 @@
 /**
- * A toy diffusion model on 2D points for Ch 24 (after Ho et al., 2020): noise is added to points from
+ * A toy diffusion model on 2D points for Ch 26 (after Ho et al., 2020): noise is added to points from
  * a shape in many small steps, and a tiny network learns to predict the noise so it can be removed
  * one step at a time. Hand-written network and backpropagation; tests check the gradients.
  */

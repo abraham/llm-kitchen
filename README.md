@@ -60,14 +60,14 @@ Other recorded data has its own script in the same environment:
 - `scripts/build-agent-traces.py`: the Part VI agent runs (`static/agent/`; downloads
   Qwen2.5-1.5B-Instruct, about 3 GB). Its toy tools must stay in sync with
   `src/lib/harness/tools.ts`; the unit tests compare them.
-- `scripts/build-encoder.py`: the Ch 20 fill-in-the-blank guesses (`static/encoders/`; downloads
+- `scripts/build-encoder.py`: the Ch 22 fill-in-the-blank guesses (`static/encoders/`; downloads
   BERT base, about 440 MB).
-- `scripts/build-clip.py`: the Ch 23 pictures and CLIP data (`static/vision/`; downloads CLIP
+- `scripts/build-clip.py`: the Ch 25 pictures and CLIP data (`static/vision/`; downloads CLIP
   ViT-B/32, about 600 MB).
-- `scripts/build-reasoning.py`: the Ch 25 thinking off/on runs (`static/reasoning/`; downloads
+- `scripts/build-reasoning.py`: the Ch 27 thinking off/on runs (`static/reasoning/`; downloads
   Qwen3-0.6B, about 1.5 GB).
 - `scripts/build-prompts.py`: the Part VIII prompt experiments (`static/prompts/`; reuses GPT-2
-  small and Qwen2.5-1.5B-Instruct, and reads the Ch 25 puzzles from `static/reasoning/`). Pass job
+  small and Qwen2.5-1.5B-Instruct, and reads the Ch 27 puzzles from `static/reasoning/`). Pass job
   names (`wording`, `fewshot`, `system`, `steps`, `fragile`) to rerun only some.
 
 ### Citations and fact-checks

@@ -1,5 +1,13 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { CURRICULUM, chapterFileName, chapterFiles, writtenChapters } from './index.ts';
+import { GLOSSARY } from '#lib/glossary.ts';
+import {
+	CURRICULUM,
+	chapterByNumber,
+	chapterFileName,
+	chapterFiles,
+	writtenChapters
+} from './index.ts';
 
 describe('chapters', () => {
 	it('numbers the curriculum 0..N in order with unique slugs', () => {
@@ -20,5 +28,15 @@ describe('chapters', () => {
 
 	it('has at least one written chapter', () => {
 		expect(writtenChapters().length).toBeGreaterThan(0);
+	});
+
+	it('points each glossary term at a chapter that mentions it', () => {
+		for (const [id, entry] of Object.entries(GLOSSARY)) {
+			const file = chapterFileName(chapterByNumber(entry.chapter));
+			const text = readFileSync(new URL(`./${file}`, import.meta.url), 'utf8').toLowerCase();
+			const name = entry.term.replace(/\s*\(.*\)$/, '').toLowerCase();
+			const mentioned = text.includes(`term="${id}"`) || text.includes(name);
+			expect(mentioned, `${id} in ${file}`).toBe(true);
+		}
 	});
 });

@@ -61,7 +61,7 @@ test('Ch 18: strategies change what the model can answer', async ({ page }) => {
 	await expect(widget.locator('.answer')).toContainText('30 words');
 });
 
-test('Ch 19: guardrails protect the files', async ({ page }) => {
+test('Ch 21: guardrails protect the files', async ({ page }) => {
 	await gotoHydrated(page, '/trust-and-guardrails');
 	const widget = page.getByRole('region', { name: 'A poisoned web page' });
 	await expect(widget.getByText('taxes.pdf (deleted)')).toBeVisible();

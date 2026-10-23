@@ -1,11 +1,17 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-import { CURRICULUM } from '../../src/lib/chapters/meta.ts';
+import { CURRICULUM, chapterFileName } from '../../src/lib/chapters/meta.ts';
 import { gotoHydrated } from './helpers.ts';
 
-/** Every page on the site: the menu and all chapters. */
-const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`)];
+/** Every page on the site: the menu and all written chapters. */
+const PAGES = [
+	'/',
+	...CURRICULUM.filter((c) => existsSync(`src/lib/chapters/${chapterFileName(c)}`)).map(
+		(c) => `/${c.slug}`
+	)
+];
 
 /** Pages whose widgets run the GPT-2 tokenizer in the page (tier T1). */
 const TOKENIZER_PAGES = new Set(['/tokens', '/quirks-and-limits']);
