@@ -27,6 +27,9 @@
   `abraham/firebase-wif`, which exchanges the job's GitHub OIDC token for short-lived Google
   credentials. Its `credentials_json` and `project_id` outputs feed
   `FirebaseExtended/action-hosting-deploy`.
+- The action downloads `firebase-tools` itself, `latest` by default. The deploy jobs pass
+  `firebaseToolsVersion` set to the version in `package-lock.json`, so the code that runs with
+  production credentials is pinned and updated by Dependabot like any other dependency.
 - **Setup:** `npx @abraham/firebase-wif setup` creates the workload identity pool and provider
   (trusting only this repo), a Hosting-only deploy service account, the `FIREBASE_WIF_PROVIDER` and
   `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables, and the `production` environment. Run it again with
