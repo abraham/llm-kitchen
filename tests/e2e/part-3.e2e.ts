@@ -23,6 +23,19 @@ test('Ch 6: the neuron multiplies, adds, and squashes', async ({ page }) => {
 	await expect(widget.getByText('= −1.80 → −1.80')).toBeVisible();
 });
 
+test('Ch 6: a layer of neurons fences off a triangle', async ({ page }) => {
+	await gotoHydrated(page, '/a-neuron');
+	const widget = page.getByRole('region', { name: 'A layer of neurons' });
+	// Defaults (0.5, 1): neuron 1 gives 1 − 0.8 = 0.2, so the output is 1 − 3×0.2 = 0.4.
+	await expect(widget.getByText('= 0.40 → relu = 0.40')).toBeVisible();
+	await widget.getByRole('slider', { name: /Input 2/ }).fill('0');
+	await expect(widget.getByText('= 1.00 → relu = 1.00')).toBeVisible();
+	await widget.getByRole('slider', { name: /Input 2/ }).fill('2');
+	await expect(widget.getByText('= −2.60 → relu = 0.00')).toBeVisible();
+	await widget.getByRole('checkbox', { name: '1' }).uncheck();
+	await expect(widget.getByText('= 1.00 → relu = 1.00')).toBeVisible();
+});
+
 test('Ch 7: gradient descent steps downhill', async ({ page }) => {
 	await gotoHydrated(page, '/learning-from-mistakes');
 	const widget = page.getByRole('region', { name: 'Rolling downhill' });

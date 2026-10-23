@@ -2,6 +2,7 @@
 	import Cite from '#lib/components/layout/Cite.svelte';
 	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import LayerPlayground from '#lib/components/widgets/LayerPlayground.svelte';
 	import NeuronPlayground from '#lib/components/widgets/NeuronPlayground.svelte';
 </script>
 
@@ -36,6 +37,13 @@ Real brain cells are far more complicated; the name stuck anyway.
 One neuron can only draw one simple boundary. The power comes from numbers: put many neurons side
 by side in a **layer**, feed their outputs into the next layer, and the network can represent
 complicated patterns.
+
+Below, a layer of three neurons reads the same two inputs. Each one draws its own straight line and
+fires only on the far side of it. A second layer, here a single output neuron, adds up what they say
+with negative weights, so it stays above 0 only where none of them fire: inside a triangle. Turn
+neurons off to see what fewer can do. One gives a single straight edge, two a wedge. Try it:
+
+<LayerPlayground />
 
 GPT-2 small has a layer of 3,072 neurons in each of its 12 blocks, and each of those neurons reads
 all 768 numbers of a token's vector.<Cite id="gpt2-config" /> Its activation function is GELU, a

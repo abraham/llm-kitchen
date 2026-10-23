@@ -7,8 +7,10 @@ import {
 	CurveTrainer,
 	activate,
 	charExamples,
+	layer,
 	neuron,
-	sampleChars
+	sampleChars,
+	triangleNet
 } from './mlp.ts';
 import { seededRandom } from './sampling.ts';
 
@@ -40,6 +42,35 @@ describe('neuron (Ch 6)', () => {
 		expect(activate('sigmoid', 0)).toBe(0.5);
 		expect(activate('tanh', 0)).toBe(0);
 		expect(activate('none', -3)).toBe(-3);
+	});
+
+	it('a layer runs every neuron on the same inputs', () => {
+		const out = layer(
+			[1, 2],
+			[
+				[0.5, -1],
+				[1, 1]
+			],
+			[0.25, 0],
+			'relu'
+		);
+		expect(out.map((n) => n.output)).toEqual([0, 3]);
+	});
+
+	it('three neurons and an output fence off a triangle; one alone draws a straight edge', () => {
+		const out = (x: number, y: number, on?: boolean[]) => triangleNet([x, y], on).out.output;
+		expect(out(0, 0)).toBe(1);
+		for (const [x, y] of [
+			[0, 1.5],
+			[-1.5, -1],
+			[1.5, -1]
+		])
+			expect(out(x, y)).toBe(0);
+
+		const first = [true, false, false];
+		expect(out(-2, -1.5, first)).toBe(1);
+		expect(out(2, -1.5, first)).toBe(1);
+		expect(out(0, 1.5, first)).toBe(0);
 	});
 });
 

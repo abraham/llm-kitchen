@@ -25,6 +25,34 @@ export function neuron(inputs: number[], weights: number[], bias: number, kind: 
 	return { sum, output: activate(kind, sum) };
 }
 
+/** A layer: neurons side by side, each reading all the same inputs with its own weights and bias. */
+export function layer(inputs: number[], weights: number[][], biases: number[], kind: Activation) {
+	return weights.map((w, i) => neuron(inputs, w, biases[i], kind));
+}
+
+/** Ch 6's network: three ReLU neurons, one per triangle edge, feed an output that is 1 inside. */
+export const TRIANGLE = {
+	weights: [
+		[0, 1],
+		[-0.87, -0.5],
+		[0.87, -0.5]
+	],
+	biases: [-0.8, -0.8, -0.8],
+	outWeight: -3,
+	outBias: 1
+};
+
+export function triangleNet(inputs: number[], on: boolean[] = [true, true, true]) {
+	const hidden = layer(inputs, TRIANGLE.weights, TRIANGLE.biases, 'relu');
+	const out = neuron(
+		hidden.map((h) => h.output),
+		on.map((o) => (o ? TRIANGLE.outWeight : 0)),
+		TRIANGLE.outBias,
+		'relu'
+	);
+	return { hidden, out };
+}
+
 function gaussian(random: () => number): number {
 	const u = 1 - random();
 	const v = random();
