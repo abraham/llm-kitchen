@@ -8,9 +8,10 @@ export default defineConfig({
 	reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
 	use: { baseURL: 'http://localhost:4173' },
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+	// The Firebase Hosting emulator applies firebase.json (clean URLs, 404 page, headers) like production.
 	webServer: {
-		command: 'npm run build && npm run preview -- --port 4173 --strictPort',
-		port: 4173,
+		command: 'npm run build && npm run serve',
+		url: 'http://localhost:4173',
 		reuseExistingServer: !process.env.CI
 	}
 });

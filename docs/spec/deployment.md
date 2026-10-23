@@ -35,7 +35,11 @@
 
 ## Headers
 
-Set in `firebase.json` (`tests/unit/hosting.test.ts` checks clean URLs, caching, and framing):
+Set in `firebase.json`. `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
+checks what is actually served: the e2e suite runs against the Firebase Hosting emulator
+(`npm run serve`, project `demo-llm-kitchen`, port 4173), which applies `firebase.json` like
+production. `firebase-tools` is a dev dependency; its `superstatic` is overridden to 11, the first
+major that supports Node 26.
 
 - **Content Security Policy:** SvelteKit emits the page CSP (`csp` in `vite.config.ts`, hash mode, so
   its inline scripts need no `'unsafe-inline'`): `default-src 'self'`, scripts `'self'` plus

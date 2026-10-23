@@ -4,15 +4,15 @@
 
 Every check is an `npm run` script, so CI and local runs match:
 
-| Script         | Command                                                | Fails when                                                                 |
-| -------------- | ------------------------------------------------------ | -------------------------------------------------------------------------- |
-| `format:check` | `prettier --check .`                                   | A file isn't Prettier-formatted (`npm run format` fixes it).               |
-| `lint`         | `eslint .`                                             | Any lint error.                                                            |
-| `check`        | `svelte-kit sync && svelte-check --fail-on-warnings`   | Type errors or Svelte warnings, including a11y warnings.                   |
-| `test`         | `vitest run`                                           | A unit test fails.                                                         |
-| `build`        | `node scripts/build-og.ts && vite build`               | Prerendering fails, e.g. a broken internal link or a chapter that throws.  |
-| `test:e2e`     | `playwright test` (Chromium) against `vite preview`    | A page or widget test fails, or an accessibility, layout, or budget check. |
-| `test:visual`  | `playwright test --config playwright.visual.config.ts` | Local only: a screenshot differs from its baseline.                        |
+| Script         | Command                                                            | Fails when                                                                          |
+| -------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `format:check` | `prettier --check .`                                               | A file isn't Prettier-formatted (`npm run format` fixes it).                        |
+| `lint`         | `eslint .`                                                         | Any lint error.                                                                     |
+| `check`        | `svelte-kit sync && svelte-check --fail-on-warnings`               | Type errors or Svelte warnings, including a11y warnings.                            |
+| `test`         | `vitest run`                                                       | A unit test fails.                                                                  |
+| `build`        | `node scripts/build-og.ts && vite build`                           | Prerendering fails, e.g. a broken internal link or a chapter that throws.           |
+| `test:e2e`     | `playwright test` (Chromium) against the Firebase Hosting emulator | A page or widget test fails, or an accessibility, layout, budget, or hosting check. |
+| `test:visual`  | `playwright test --config playwright.visual.config.ts`             | Local only: a screenshot differs from its baseline.                                 |
 
 svelte-check doesn't type-check `.svx` files, so a chapter error may only show up in `build`.
 
