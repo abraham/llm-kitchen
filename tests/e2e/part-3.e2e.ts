@@ -46,6 +46,21 @@ test('Ch 7: gradient descent steps downhill', async ({ page }) => {
 	expect(await lossOf()).toBeLessThan(before);
 });
 
+test('Ch 7: one training step nudges every number of the curve fitter', async ({ page }) => {
+	await gotoHydrated(page, '/learning-from-mistakes');
+	const curve = page.getByRole('region', { name: 'Train a tiny network' });
+	const first = curve.locator('tbody tr').first().locator('td').first();
+	const before = await first.locator('.mono').textContent();
+	await curve.getByRole('button', { name: 'Take 1 step' }).click();
+	await expect(curve.getByText(/^step 1 ·/)).toBeVisible();
+	// Adam's first step moves every number by the step size, 0.02.
+	await expect(
+		curve.getByText(/nudged all 49 numbers below, each by at\s+most\s+0\.020/)
+	).toBeVisible();
+	await expect(first.locator('.mono')).not.toHaveText(before!);
+	await expect(curve.locator('.arrow.up, .arrow.down')).toHaveCount(49);
+});
+
 test('Ch 7: the curve fitter and the tiny language model train', async ({ page }) => {
 	await gotoHydrated(page, '/learning-from-mistakes');
 	const curve = page.getByRole('region', { name: 'Train a tiny network' });

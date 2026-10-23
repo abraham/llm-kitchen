@@ -10,7 +10,9 @@
 ## Start random, then improve
 
 A new network's weights are random numbers, so its predictions are nonsense. Training fixes that
-one small nudge at a time. Press *Train* and watch 16 neurons learn to follow a wavy line.
+one small nudge at a time. The network below has 16 neurons and 49 numbers, all listed under it.
+Press *Take 1 step* to see every number nudged once, or *Train* to watch them learn to follow a wavy
+line.
 
 <CurveFitter />
 

@@ -23,6 +23,7 @@ Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests: `src/li
 | Claim                                                                                       | Backing                                             |
 | ------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | Training lowers the loss (curve fit)                                                        | Test (`CurveTrainer` loss falls 10×)                |
+| The curve fitter has 16 neurons and 49 numbers, and one step nudges every one of them       | `CurveNet` (16 × 3 + 1); e2e (49 arrows, max 0.020) |
 | For a language model, loss is how surprised it was by the real next token                   | Cross-entropy implementation; test                  |
 | Large steps overshoot; small steps can settle in a dip that isn't lowest                    | Shown by the widget on its bumpy loss               |
 | Backpropagation finds the direction for every weight at once                                | Cite `rumelhart1986`; gradient checks in tests      |
