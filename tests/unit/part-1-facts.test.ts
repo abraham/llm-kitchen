@@ -5,6 +5,7 @@ import canonical from '../../models/canonical.json';
 import { RHYMES } from '../../src/lib/data/rhymes.ts';
 import { bigramCounts, words } from '../../src/lib/math/bigram.ts';
 import { encodeText } from '../../src/lib/math/encoding.ts';
+import { applyTemperature, softmax } from '../../src/lib/math/sampling.ts';
 import { parseTrace } from '../../src/lib/models/trace.ts';
 
 const trace = (name: string) =>
@@ -83,5 +84,24 @@ describe('Ch 3: probability and sampling', () => {
 
 	it('the widget has GPT-2’s ten most likely next words to show', () => {
 		expect(trace('the-cat-sat').steps[0].candidates.length).toBeGreaterThanOrEqual(10);
+	});
+
+	it('dividing scores (log probabilities) by T gives the same chances as the temperature widget', () => {
+		const probs = trace('the-cat-sat')
+			.steps[0].candidates.slice(0, 6)
+			.map((c) => c.prob);
+		const scores = probs.map(Math.log);
+		for (const t of [0.3, 1, 1.7]) {
+			const divided = softmax(scores, t);
+			applyTemperature(probs, t).forEach((p, i) => expect(divided[i]).toBeCloseTo(p, 12));
+			// "top is e^(gap / T) times as likely as the second"
+			expect(divided[0] / divided[1]).toBeCloseTo(Math.exp((scores[0] - scores[1]) / t), 10);
+		}
+		// Adding the same constant to every score (GPT-2's real raw scores) changes nothing.
+		const shifted = softmax(
+			scores.map((s) => s + 42),
+			0.7
+		);
+		softmax(scores, 0.7).forEach((p, i) => expect(shifted[i]).toBeCloseTo(p, 12));
 	});
 });

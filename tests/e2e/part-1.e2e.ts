@@ -71,3 +71,13 @@ test('Ch 3: temperature 0 puts everything on the top word', async ({ page }) => 
 
 	await expect(page.getByText(/Temperature 1\.5/)).toBeVisible();
 });
+
+test('Ch 3: dividing scores by a small temperature widens the gap', async ({ page }) => {
+	await gotoHydrated(page, '/probability-and-sampling');
+	const widget = page.getByRole('region', { name: 'Divide by the temperature' });
+	const readout = widget.locator('.readout');
+	await expect(readout).toContainText('1.17×');
+	await widget.getByRole('slider', { name: /Temperature/ }).press('Home');
+	await expect(widget.getByRole('columnheader', { name: '÷ 0.10' })).toBeVisible();
+	await expect(readout).toContainText('Divided by 0.10');
+});

@@ -3,6 +3,7 @@
 	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/layout/RecapCard.svelte';
 	import RecordedRuns from '#lib/components/widgets/RecordedRuns.svelte';
+	import TemperatureMath from '#lib/components/widgets/TemperatureMath.svelte';
 	import TemperatureSampler from '#lib/components/widgets/TemperatureSampler.svelte';
 </script>
 
@@ -27,8 +28,12 @@ dull text that can get stuck repeating itself.<Cite id="holtzman2020" />
 
 **Temperature** controls how adventurous the pick is. Below 1, it makes the likely words even
 likelier. Above 1, it evens the chances out, so unusual words get picked more often. At 0 it becomes
-greedy: always the top word. (Under the hood, the model's raw scores are divided by the temperature
-before they become probabilities.)
+greedy: always the top word.
+
+Under the hood, the model gives every word a raw score, and the scores are divided by the
+temperature before they become probabilities. Try it:
+
+<TemperatureMath />
 
 ## Top-k
 

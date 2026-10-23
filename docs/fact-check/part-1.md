@@ -38,14 +38,15 @@ test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-fact
 
 ## Ch 3. Probability and sampling
 
-| Claim                                                                                | Backing                              |
-| ------------------------------------------------------------------------------------ | ------------------------------------ |
-| Always picking the top word tends to give dull, repetitive text                      | Cite `holtzman2020`                  |
-| Temperature divides raw scores before softmax; <1 sharpens, >1 flattens; 0 is greedy | Test (`applyTemperature`, `softmax`) |
-| Top-k keeps only the k most likely                                                   | Cite `fan2018`, test (`topK`)        |
-| Widget uses only the top 10, rescaled                                                | Labeled "Simplified:" in the text    |
-| Real model has 50,257 options                                                        | Test (`canonical.json`)              |
-| Recorded runs: 16 tokens at T = 0, 0.7, 1.5; T = 0 matches greedy                    | Test (traces)                        |
+| Claim                                                                                                     | Backing                                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Always picking the top word tends to give dull, repetitive text                                           | Cite `holtzman2020`                                                                             |
+| Temperature divides raw scores before softmax; <1 sharpens, >1 flattens; 0 is greedy                      | Test (`applyTemperature`, `softmax`)                                                            |
+| "Divide by the temperature": log probabilities stand in for raw scores; top is e^(gap/T) times the second | Test (same chances as the temperature widget; adding a constant to every score changes nothing) |
+| Top-k keeps only the k most likely                                                                        | Cite `fan2018`, test (`topK`)                                                                   |
+| Widget uses only the top 10, rescaled                                                                     | Labeled "Simplified:" in the text                                                               |
+| Real model has 50,257 options                                                                             | Test (`canonical.json`)                                                                         |
+| Recorded runs: 16 tokens at T = 0, 0.7, 1.5; T = 0 matches greedy                                         | Test (traces)                                                                                   |
 
 ## Changes from the plan
 
