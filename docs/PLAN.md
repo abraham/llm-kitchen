@@ -205,14 +205,36 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 
 ## 5. Visual and animation system
 
-- **Concept colors** (consistent across the site): text/tokens = amber, vectors/embeddings = teal, weights/neurons = violet, attention = pink, probabilities = blue, loss/error = red, harness/tools = green.
+### Design direction
+
+- **Feel:** warm and editorial, with the interactive figures as the main attraction. References: Bartosz Ciechanowski's explainers and Distill. Use a warm off-white page in light mode and a warm charcoal in dark mode (following `prefers-color-scheme`), generous white space, and almost no decoration. Concept colors appear only where their concept does, so they stay meaningful.
+- **Kitchen theme in words and structure, not illustration:**
+  - Each chapter opens with an "Ingredients" box linking the earlier chapters it builds on.
+  - The recap card is styled as a recipe card.
+  - The landing page reads like a menu.
+  - No food illustrations competing with the figures.
+- **Layout:**
+  - Text sits in a single ~68ch column. Widgets break out wider, up to ~1100px.
+  - On desktop, scroll-driven animations sit in a sticky figure beside the text. On mobile they appear inline with Prev/Next buttons, and no interaction depends on hover.
+- **Widget frame:** every widget uses the same `WidgetFrame`, with a "Try it" label, a reset button, step controls, and a `DataSourceBadge` showing **Recorded** or **Live · <model display name>**. The badge keeps it honest about which demos are real.
+- **Typography:**
+  - Serif for prose (Source Serif 4 or Literata), monospace for tokens and numbers (JetBrains Mono or IBM Plex Mono), and a plain system sans for buttons and labels.
+  - Fonts are self-hosted, variable, and subset to the characters needed, to fit the 150 KB budget for text-only pages.
+- **Charts:** thin lines with direct labels instead of legends, and no gridlines unless needed. Token chips have a thin outline and the token ID in small mono text underneath, and look the same in every chapter.
+
+### Concept colors and shapes
+
+- **Concept colors** (consistent across the site): text/tokens = amber, vectors/embeddings = teal, weights/neurons = violet, attention = pink, probabilities = blue, loss/error = red, harness/tools = slate. Slate rather than green avoids the red/green pair that color-blind visitors most often confuse, and a neutral color fits "the harness is ordinary code".
+- **Never color alone:** each concept also has a shape, such as rounded chips for tokens, square cells for vectors, arcs for attention, bars for probabilities, and a dashed card outline for tool calls.
+- Colors are defined in `tokens.css` with separate light and dark versions. Every text-on-color pair must pass WCAG AA contrast.
+
+### Shared elements and motion
 - **Shared visual elements**, built once and reused everywhere: `TokenChip`, `VectorStrip` (a row of colored cells), `ProbBars`, `SamplerWheel`, `AttentionLines`, `NeuronNode`, `LayerStack`, `LossCurve`, `ToolCallCard`, `ContextBudget`.
 - **Transitions between representations** use shared-element morphs (Svelte `crossfade` with shared keys, plus `flip` for reordering): a `TokenChip` becomes a `VectorStrip`, which becomes a point in `EmbeddingMap`. These morphs carry the main teaching point.
 - **Motion rules:**
   - 200–600 ms easing, one main motion at a time.
   - Every animation can be paused and stepped with ← and → and scrubbed by scrolling.
   - Reduced-motion mode shows the start and end states with a fade.
-- **Typography:** a readable serif for prose and a monospace font for tokens and numbers. Use a generous measure (~68ch).
 
 ---
 
@@ -246,13 +268,14 @@ llm-kitchen/
       components/
         primitives/          # TokenChip, VectorStrip, ProbBars, SamplerWheel, ...
         widgets/             # BigramBuilder, BPEStepper, EmbeddingMap, AttentionViewer, GlassBoxGenerator, TinyTrainer, PromptInspector, AgentStepper, ...
-        layout/              # StepController, RecapCard, ProgressNav, GlossaryPopover
+        layout/              # StepController, WidgetFrame, DataSourceBadge, IngredientsBox, RecapCard, ProgressNav, GlossaryPopover
       stores/                # progress.svelte.ts, motion-prefs.svelte.ts, model-tier.svelte.ts (rune-based shared state)
       models/                # ModelProvider + recorded/transformers/webllm/remote impls
       harness/               # toy agent loop, tool registry, in-browser toy tools
       workers/               # inference.worker.ts, trainer.worker.ts (imported with Vite `?worker`)
       math/                  # tiny tensor ops, softmax, sampling, PCA, hand-written MLP + backprop for Ch 7
-    styles/tokens.css        # design tokens and concept colors
+    styles/tokens.css        # design tokens, concept colors (light + dark)
+  static/fonts/              # self-hosted, subset variable fonts
   static/traces/<model-id>/  # pre-computed JSON traces (T0) per model, fetched on demand
   models/canonical.json      # canonical small model config, read by the site and build-traces.py
   scripts/
@@ -299,7 +322,7 @@ llm-kitchen/
    - SvelteKit + adapter-static + mdsvex scaffold, chapter layout, step controller, design tokens, reduced-motion support (`prefersReducedMotion` from `svelte/motion`).
    - Prettier, ESLint, `svelte-check`, Vitest, and Playwright set up with `npm run` scripts, plus the `ci.yml` workflow and Dependabot.
    - Firebase Hosting project, `firebase.json`, Workload Identity Federation via `npx @abraham/firebase-wif setup`, and GitHub Actions for live deploys and PR preview channels.
-   - Primitives: `TokenChip`, `ProbBars`, `SamplerWheel`.
+   - Primitives: `TokenChip`, `ProbBars`, `SamplerWheel`, plus `WidgetFrame`, `DataSourceBadge`, light/dark themes, and self-hosted fonts.
 2. **Part I (Ch 0–3)**
    - Bigram builder, temperature/top-k widget.
    - T0 traces pipeline (`build-traces.py`).
