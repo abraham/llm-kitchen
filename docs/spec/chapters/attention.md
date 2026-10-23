@@ -5,8 +5,10 @@
 **Key idea:** Attention lets each token pull in information from any earlier token, weighted by
 relevance. Each token makes a query, a key, and a value: query times key gives a score, softmax turns
 the scores into weights, and the weights blend the values. A token can only look back, never ahead.
-GPT-2 has 12 heads in each of its 12 layers; a few have clear jobs, like finding the name that comes
-next, and most are harder to read.
+Attention alone ignores word order, so GPT-2 adds a learned position vector for each place in the
+text (1,024 of them, one per place in its context window); newer models rotate queries and keys by
+position instead. GPT-2 has 12 heads in each of its 12 layers; a few have clear jobs, like finding
+the name that comes next, and most are harder to read.
 
 ## Widgets
 
@@ -29,3 +31,7 @@ Recorded GPT-2 small attention for 5 sentences, all 144 heads (`attn-*` traces).
 - For the trophy sentence, GPT-2 small's attention from "it" is the same for "big" and "small" (the
   clue comes later), and the model doesn't clearly resolve the pronoun. The chapter says so rather
   than presenting a cherry-picked head as the answer.
+- Word order is taught here, where the score formula makes the problem visible, rather than in
+  [Meaning as position](embeddings.md). The chapter says the two kinds of "position" differ. The
+  order-blindness example ("the dog chased the cat." and its swap) is prose, checked by a test on
+  the toy attention code, not a widget.

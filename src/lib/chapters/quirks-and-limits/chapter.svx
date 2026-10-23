@@ -77,5 +77,5 @@ loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
 
 </RecapCard>
 
-**Next question:** chat apps and coding agents work around many of these limits. What are they
-doing besides calling the model?
+**Next question:** several of these quirks come from answering straight away. What is a model doing
+when it pauses to "think" first?

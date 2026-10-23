@@ -84,6 +84,12 @@ export const GLOSSARY = {
 			'The step where each token gathers information from the earlier tokens it finds relevant.',
 		chapter: 'attention'
 	},
+	'position-vector': {
+		term: 'position vector',
+		definition:
+			'A learned vector for each place in the text, added to the token’s vector so the model knows word order.',
+		chapter: 'attention'
+	},
 	'attention-head': {
 		term: 'attention head',
 		definition:
@@ -138,6 +144,24 @@ export const GLOSSARY = {
 			'The fixed text format, with special marker tokens, that turns a conversation into one piece of text for the model.',
 		chapter: 'predictor-to-assistant'
 	},
+	'fine-tuning': {
+		term: 'fine-tuning',
+		definition:
+			'Training an existing model further on examples of one task, so it does that task better.',
+		chapter: 'predictor-to-assistant'
+	},
+	lora: {
+		term: 'LoRA',
+		definition:
+			'Fine-tuning that freezes a model’s weights and trains small add-on tables next to some of its big tables of weights.',
+		chapter: 'predictor-to-assistant'
+	},
+	distillation: {
+		term: 'distillation',
+		definition:
+			'Training a smaller model, the student, to copy the outputs of a bigger one, the teacher.',
+		chapter: 'predictor-to-assistant'
+	},
 	hallucination: {
 		term: 'hallucination',
 		definition: 'Fluent, confident text that is false or made up.',
@@ -165,6 +189,12 @@ export const GLOSSARY = {
 		term: 'tool call',
 		definition:
 			'Text the model writes in an agreed format asking the harness to run a tool, such as a calculator.',
+		chapter: 'tools'
+	},
+	mcp: {
+		term: 'Model Context Protocol (MCP)',
+		definition:
+			'An open standard for how a harness finds tools offered by another program and passes the model’s calls to them.',
 		chapter: 'tools'
 	},
 	agent: {

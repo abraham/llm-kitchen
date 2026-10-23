@@ -45,6 +45,12 @@ hard math competition rose from 15.6% to 71.0%.<Cite id="deepseek2025" /> The mo
 predicting one token at a time. What changed is that it learned which kinds of scratch work tend to
 lead to right answers.
 
+Small reasoning models usually learn from a big one instead, by distillation (<ChapterRef to="predictor-to-assistant" />).
+DeepSeek tuned small Qwen and Llama models on 800,000 examples made with its big model, and
+released them with names like `DeepSeek-R1-Distill-Qwen-1.5B`. For a 32-billion-weight Qwen model,
+this worked much better than training it with rewards directly.<Cite id="deepseek2025" /> Qwen3-0.6B,
+the model above, was also tuned to copy the probabilities of larger Qwen3 models.<Cite id="qwen3" />
+
 The recommended settings for Qwen3's thinking mode leave room for up to 32,768 tokens of output, and
 warn against always picking the most likely token, which can make it repeat itself
 endlessly.<Cite id="qwen3-model-card" /> Thinking is bought with tokens, and tokens take time and

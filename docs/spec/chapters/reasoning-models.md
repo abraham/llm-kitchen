@@ -7,7 +7,8 @@ to "think" first?
 rewards for answers that can be checked, to write scratch work before its answer, and every token it
 writes becomes context for the next. Writing the steps out can fix mistakes, like counting letters by
 spelling the word first, but it costs many more tokens and can still go in circles or get the answer
-wrong.
+wrong. Small reasoning models are usually distilled from big ones: DeepSeek's `R1-Distill` models,
+and Qwen3-0.6B itself.
 
 ## Widgets
 

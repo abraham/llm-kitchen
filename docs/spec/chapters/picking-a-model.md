@@ -11,7 +11,8 @@ runtime. Narrow by task, inputs, device, speed, context, and license, then test 
 
 ## Widgets
 
-- `NameDecoder`: pick a real model ID from Google's Gemma 4 collections or the models this site uses.
+- `NameDecoder`: pick a real model ID from Google's Gemma 4 collections, two of DeepSeek's
+  R1-Distill models, or the models this site uses.
   Each part of the name lights up, and clicking a part highlights its explanation and the chapter
   behind it:
   - **Family and generation** (`gemma-4`, `Qwen2.5`): who made it and which release.
@@ -24,6 +25,9 @@ runtime. Narrow by task, inputs, device, speed, context, and license, then test 
   - **Tuning** (`-it`, `-Instruct`, or nothing): instruction-tuned, or a base model
     ([From predictor to assistant](predictor-to-assistant.md)).
   - **Drafter** (`-assistant`): a drafter for [speculative decoding](speculative-decoding.md).
+  - **Distilled** (`DeepSeek-R1-Distill-Qwen-1.5B`): the teacher, `Distill`, then the student's
+    family and size ([From predictor to assistant](predictor-to-assistant.md),
+    [Thinking before answering](reasoning-models.md)).
   - **Quantization** (`-qat`, `Q4_0`, `w4a16`, `wNa8o8`): bits for weights and activations, and
     whether the model was trained for it ([Fewer bits per number](quantization.md)).
   - **Target and file format** (`-mobile`, `-transformers`, `-ct`, `.gguf`): the same model packaged

@@ -55,7 +55,7 @@ which parts matter for the word it's working on.
 Modern models still have a limit, called the <GlossaryPopover term="context-window">context window</GlossaryPopover>, but it is much larger.
 GPT-2 can look at up to 1,024 tokens at once.<Cite id="radford2019" /> Llama 3, from 2024, can look
 at up to 128K (about 128,000), more than 100 times as many.<Cite id="grattafiori2024" />
-Within that window, every token can use any earlier token. The next chapter shows how.
+Within that window, every token can use any earlier token.
 
 <RecapCard>
 

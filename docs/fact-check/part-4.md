@@ -23,21 +23,24 @@ GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
 
 ## Ch 9. Attention
 
-| Claim                                                                                          | Backing                                                                 |
-| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| The transformer (2017) is built around attention; GPT-2 uses it                                | Cite `vaswani2017`, `radford2019`                                       |
-| Query·key scores, divided by a fixed number (√d), softmaxed, then used to blend values         | Cite `vaswani2017` (scaled dot-product attention); test (`attend`)      |
-| Tokens can't look ahead                                                                        | Test (masked scores); every recorded row checked by `parseTrace`        |
-| The toy example's "it" looks mostly at "trophy"                                                | Test (made-up numbers, labelled as such)                                |
-| GPT-2 predicts " Mary" after "When Mary and John went to the store, John gave a drink to"      | Test (recorded trace)                                                   |
-| Head 9.9 looks from the last word at "Mary" far more than at either "John"                     | Test (also 9.6; > 30% on Mary)                                          |
-| Wang et al. found heads including 9.6 and 9.9 that find and copy the right name                | Cite `wang2022` (name mover heads 9.6, 9.9, 10.0)                       |
-| Head 9.0 looks from "its" to "lamb"; from "it" mostly to "suitcase" in both trophy sentences   | Test (> 85%; > 50%, trophy < 10%)                                       |
-| Attention from "it" is identical in the big/small versions                                     | Test (exact equality across all 144 heads); follows from causal masking |
-| The largest GPT-2 got 70.70% on the Winograd Schema Challenge; guessing gets 50%               | Cite `radford2019` §3.4 (273 examples; binary choice)                   |
-| 12 heads per layer, 12 layers, 144 heads; numbered from 0                                      | `canonical.json`, checked against the model config                      |
-| Heads often put most attention on the first word: more than half the time from the 4th word on | Test (61–72% across the recorded sentences)                             |
-| Researchers think the first token acts as a resting spot ("attention sink")                    | Cite `xiao2024`                                                         |
+| Claim                                                                                                                         | Backing                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| The transformer (2017) is built around attention; GPT-2 uses it                                                               | Cite `vaswani2017`, `radford2019`                                                      |
+| Query·key scores, divided by a fixed number (√d), softmaxed, then used to blend values                                        | Cite `vaswani2017` (scaled dot-product attention); test (`attend`)                     |
+| Tokens can't look ahead                                                                                                       | Test (masked scores); every recorded row checked by `parseTrace`                       |
+| Without position information, one attention step blends "the dog chased the cat." and its swap the same way at "."            | Test (`attention/facts.test.ts`, identical outputs)                                    |
+| GPT-2 adds a learned position vector for each place: 1,024 of them, one per place in its context window                       | GPT-2's `wpe` table (1,024 × 768, `n_positions` in the config); test (parameter count) |
+| Llama 3 turns queries and keys by an angle that grows with position, so scores depend on distance (rotary position embedding) | Cite `su2024` (abstract), `grattafiori2024` (RoPE)                                     |
+| The toy example's "it" looks mostly at "trophy"                                                                               | Test (made-up numbers, labelled as such)                                               |
+| GPT-2 predicts " Mary" after "When Mary and John went to the store, John gave a drink to"                                     | Test (recorded trace)                                                                  |
+| Head 9.9 looks from the last word at "Mary" far more than at either "John"                                                    | Test (also 9.6; > 30% on Mary)                                                         |
+| Wang et al. found heads including 9.6 and 9.9 that find and copy the right name                                               | Cite `wang2022` (name mover heads 9.6, 9.9, 10.0)                                      |
+| Head 9.0 looks from "its" to "lamb"; from "it" mostly to "suitcase" in both trophy sentences                                  | Test (> 85%; > 50%, trophy < 10%)                                                      |
+| Attention from "it" is identical in the big/small versions                                                                    | Test (exact equality across all 144 heads); follows from causal masking                |
+| The largest GPT-2 got 70.70% on the Winograd Schema Challenge; guessing gets 50%                                              | Cite `radford2019` §3.4 (273 examples; binary choice)                                  |
+| 12 heads per layer, 12 layers, 144 heads; numbered from 0                                                                     | `canonical.json`, checked against the model config                                     |
+| Heads often put most attention on the first word: more than half the time from the 4th word on                                | Test (61–72% across the recorded sentences)                                            |
+| Researchers think the first token acts as a resting spot ("attention sink")                                                   | Cite `xiao2024`                                                                        |
 
 ## Ch 10. The transformer block
 

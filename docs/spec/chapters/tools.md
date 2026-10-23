@@ -5,7 +5,9 @@
 **Key idea:** Models are unreliable at exact work like arithmetic, because every digit is a predicted
 token. A tool call is text in an agreed format: the model asks, the harness parses the text and runs
 the tool, adds the result to the prompt, and calls the model again. The model never runs anything
-itself.
+itself. The Model Context Protocol (MCP) is a shared way for a harness to find tools offered by
+other programs and pass calls to them; the model still only reads descriptions and writes calls in
+its own format.
 
 ## Widgets
 
@@ -27,3 +29,5 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/math-no-tools.json`,
   network.
 - Tool calls are presented as structured output, building on
   [Asking for steps and structure](steps-and-structure.md).
+- MCP is described, not demonstrated: the toy tools are local functions, and the chapter says the
+  model never sees the protocol. The spec is cited with an accessed date because it changes.

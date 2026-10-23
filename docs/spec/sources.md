@@ -32,17 +32,19 @@ Each Part cites at least these:
 - **Representation:** Sennrich et al. 2016 (BPE) and Mikolov et al. 2013 (word vectors and
   analogies).
 - **Learning:** Rumelhart et al. 1986 (backpropagation).
-- **Context:** Levesque et al. 2012 (Winograd Schema Challenge, for the trophy/suitcase example) and
-  Vaswani et al. 2017 (attention and transformers).
+- **Context:** Levesque et al. 2012 (Winograd Schema Challenge, for the trophy/suitcase example),
+  Vaswani et al. 2017 (attention and transformers), and Su et al. 2024 (rotary position embedding).
 - **Putting it together:** Radford et al. 2019 (GPT-2); Kaplan et al. 2020 and Hoffmann et al. 2022
   (scaling laws); Jacob et al. 2018 and Dettmers et al. 2022 (quantization); Leviathan et al. 2023
   and Chen et al. 2023 (speculative decoding); Ouyang et al. 2022 (instruction and preference
-  tuning); Wei et al. 2022 (chain of thought) and DeepSeek-AI 2025 (DeepSeek-R1).
+  tuning), Hu et al. 2022 (LoRA), and Hinton et al. 2015 (distillation); Wei et al. 2022 (chain of
+  thought) and DeepSeek-AI 2025 (DeepSeek-R1).
 - **Prompt engineering:** Brown et al. 2020 (GPT-3, few-shot prompting), Olsson et al. 2022 (induction
   heads and in-context learning), Kojima et al. 2022 ("Let's think step by step"), Lu et al. 2022
   (example order), Sclar et al. 2024 (formatting sensitivity), and Liu et al. 2024 ("Lost in the
   Middle").
-- **Harnesses:** Schick et al. 2023 (Toolformer), Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG),
+- **Harnesses:** Schick et al. 2023 (Toolformer), the Model Context Protocol announcement and
+  specification, Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG),
   Pope et al. 2022 (KV caching), the providers' prompt caching docs, Perez and Ribeiro 2022 and
   Greshake et al. 2023 (prompt injection), and Hines et al. 2024 (spotlighting) and Wallace et al.
   2024 (instruction hierarchy) for the defenses.

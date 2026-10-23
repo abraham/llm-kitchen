@@ -39,6 +39,10 @@ export const COLLECTIONS: { name: string; ids: string[] }[] = [
 		]
 	},
 	{
+		name: 'Distilled from DeepSeek-R1',
+		ids: ['deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B', 'deepseek-ai/DeepSeek-R1-Distill-Llama-8B']
+	},
+	{
 		name: 'Used on this site',
 		ids: [
 			'openai-community/gpt2',
@@ -70,6 +74,22 @@ const WORDS: Record<string, Omit<NamePart, 'text'>> = {
 		meaning:
 			'A small drafter for this model: it guesses several tokens ahead and the big model checks them in one pass, for the same text, faster.',
 		chapters: ['speculative-decoding']
+	},
+	distill: {
+		kind: 'tuning',
+		meaning:
+			'Distilled: a smaller model tuned on examples made with the model named before this part, the teacher. The size after it is the student’s, not the teacher’s.',
+		chapters: ['predictor-to-assistant', 'reasoning-models']
+	},
+	qwen: {
+		kind: 'family',
+		meaning: 'The student: underneath, this is a model from the Qwen family.',
+		chapters: []
+	},
+	llama: {
+		kind: 'family',
+		meaning: 'The student: underneath, this is a model from Meta’s Llama family.',
+		chapters: []
 	},
 	qat: {
 		kind: 'quantization',
@@ -156,6 +176,17 @@ function family(name: string): [NamePart, string] {
 				kind: 'family',
 				meaning: `Qwen, a family of open models from Alibaba, generation ${m[1]}.`,
 				chapters: []
+			},
+			name.slice(m[0].length)
+		];
+	m = name.match(/^DeepSeek-R(\d+)(?:-|$)/);
+	if (m)
+		return [
+			{
+				text: `DeepSeek-R${m[1]}`,
+				kind: 'family',
+				meaning: `DeepSeek-R${m[1]}, a large reasoning model from DeepSeek.`,
+				chapters: ['reasoning-models']
 			},
 			name.slice(m[0].length)
 		];

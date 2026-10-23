@@ -53,12 +53,33 @@ A 2022 paper on InstructGPT describes this recipe. People preferred the answers 
 Qwen2.5's tuning used over a million examples in the second stage, followed by several stages of
 the third.<Cite id="qwen2024" />
 
+## Tuning for your own job
+
+Tuning is just more training, the same measure-and-nudge loop as in <ChapterRef to="learning-from-mistakes" />, and it works for
+any job, not only chat. <GlossaryPopover term="fine-tuning">Fine-tuning</GlossaryPopover> a model on
+your own examples, such as support questions with the replies you'd want, teaches it your task,
+format, and wording. Two tricks make it cheaper:
+
+- **Train a small add-on.** Changing every weight of a big model takes memory for all of them and a
+  full copy of the model for each job. <GlossaryPopover term="lora">LoRA</GlossaryPopover> leaves
+  the weights alone and trains two thin tables next to some of the big tables of weights; their
+  product is added to the big table. GPT-2 small turns a token's vector into its query with a
+  768 × 768 table: 589,824 weights. Two thin tables, 768 × 8 and 8 × 768, hold 12,288 numbers,
+  about 2% as many. On GPT-3, LoRA trained 10,000 times fewer numbers than changing every weight,
+  needed a third of the memory, and did about as well.<Cite id="hu2022" />
+- **Learn from a bigger model.** <GlossaryPopover term="distillation">Distillation</GlossaryPopover>
+  trains a small model, the student, to copy a big one, the teacher. The student can learn from the
+  teacher's whole list of probabilities (<ChapterRef to="probability-and-sampling" />), not just from which token came next,
+  so it also learns which other answers were nearly right.<Cite id="hinton2015" />
+
 <RecapCard>
 
 - A chat is written out as one text in a chat template, and the model continues it.
 - A base model just continues text; tuning teaches it to answer in the chat format and stop.
 - Tuning has two usual stages after pretraining: learning from example answers, then from people's
   preferences between answers.
+- Fine-tuning trains a model further for your own task. LoRA trains a small add-on instead of every
+  weight; distillation trains a small model to copy a big one's probabilities.
 
 </RecapCard>
 

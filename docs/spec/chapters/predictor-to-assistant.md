@@ -6,7 +6,9 @@ become an assistant that answers questions?
 **Key idea:** A chat is written out as one text in a chat template, and the model continues it. A
 base model just continues text; tuning teaches it to answer in the chat format and stop. Tuning
 usually has two stages after pretraining: learning from example answers, then from people's
-preferences between answers.
+preferences between answers. The same training adapts a model to any task (fine-tuning); LoRA
+trains small add-on tables instead of every weight, and distillation trains a small model to copy a
+big one's probabilities.
 
 ## Widgets
 
@@ -28,3 +30,6 @@ Qwen2.5-0.5B-Instruct, greedy.
 - The training stages are a simplification of real pipelines, labeled as such.
 - The chat template's system slot introduced here is what
   [Instructions, roles, and the system prompt](instructions-and-roles.md) builds on.
+- Fine-tuning, LoRA, and distillation sit here, as more of the same training, because the curriculum
+  keeps models that are trained differently with training. They are prose without a widget; the
+  LoRA arithmetic uses GPT-2 small's query table and is tested.

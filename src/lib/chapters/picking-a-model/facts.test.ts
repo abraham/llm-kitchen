@@ -38,6 +38,13 @@ describe('picking a model', () => {
 		expect(decodeName('google/gemma-4-E2B').base).toBe(true);
 		expect(decodeName('Qwen/Qwen2.5-1.5B-Instruct').base).toBe(false);
 		expect(decodeName('google/diffusiongemma-26B-A4B-it').parts[0].chapters).toEqual(['diffusion']);
+		expect(kinds('deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B')).toEqual([
+			'DeepSeek-R1:family',
+			'Distill:tuning',
+			'Qwen:family',
+			'1.5B:size'
+		]);
+		expect(decodeName('deepseek-ai/DeepSeek-R1-Distill-Llama-8B').base).toBe(false);
 	});
 
 	it('matches the model cards: 30.7B weights take about 61 GB at 16 bits and 15 GB at 4', () => {

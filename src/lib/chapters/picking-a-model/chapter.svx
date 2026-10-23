@@ -11,7 +11,8 @@
 Open models are shared on sites like Hugging Face, and one release can come in a dozen versions
 with names like `gemma-4-26B-A4B-it` or `gemma-4-E2B-it-qat-mobile-transformers`. Each part of a
 name like that is something an earlier chapter explained. Pick a name, from Google's Gemma 4
-models or the ones this site uses, and click a part to see what it means:
+models, two models distilled from DeepSeek-R1, or the ones this site uses, and click a part to see
+what it means:
 
 <NameDecoder />
 
@@ -29,6 +30,9 @@ A few parts are worth a closer look:
 - **`it` means instruction-tuned**, for chat and tools; a name without it is a base model that only
   continues text (<ChapterRef to="predictor-to-assistant" />). Base models are a common starting point for training your own version.
 - **`assistant` is a drafter** for speculative decoding (<ChapterRef to="speculative-decoding" />), not a model to use on its own.
+- **`Distill` names a teacher and a student.** `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5-billion-weight
+  Qwen model tuned on examples made with DeepSeek-R1, a far bigger reasoning model
+  (<ChapterRef to="reasoning-models" />). The size is the student's, not the teacher's.<Cite id="deepseek2025" />
 - **`qat`, `q4_0`, and `w4a16` are about bits per weight** (<ChapterRef to="quantization" />). Gemma 4 comes in four QAT
   versions: unquantized 16-bit QAT weights for people who round them with their own tools, Q4_0 in a
   GGUF file for llama.cpp, a mobile version with some 2-bit layers, and 4-bit weights with 16-bit

@@ -100,23 +100,25 @@ existing recordings, labeled in the widget:
 ## Ch 37. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
-and Gemma 4 QAT Q4_0 collections and the models this site uses, as listed on 2026-10-23. Lineups
+and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
+uses, as listed on 2026-10-23. Lineups
 and suffixes change often, so re-check the list in the final fact review. The unit test checks that
 every name splits into known parts that spell it back.
 
-| Claim                                                                                                                   | Backing                                                            |
-| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up              | Cite `gemma4-model-card` (Dense Models table and the note on "E")  |
-| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                    | Cite `gemma4-model-card` (MoE table and the note on "A")           |
-| 12B: 11.95B; 31B: 30.7B                                                                                                 | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4) |
-| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0       | Cite `gemma4-model-card`                                           |
-| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM | Cite `gemma4-qat`                                                  |
-| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                         | Cite `gguf-quant-types`                                            |
-| `-assistant` models are speculative-decoding drafters                                                                   | Cite `gemma4-assistant` (Ch 14)                                    |
-| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                      | Cite `diffusiongemma-model-card`                                   |
-| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                | Collection listing, 2026-10-23                                     |
-| E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")               |
-| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names         |
+| Claim                                                                                                                   | Backing                                                               |
+| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up              | Cite `gemma4-model-card` (Dense Models table and the note on "E")     |
+| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                    | Cite `gemma4-model-card` (MoE table and the note on "A")              |
+| 12B: 11.95B; 31B: 30.7B                                                                                                 | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4)    |
+| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0       | Cite `gemma4-model-card`                                              |
+| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM | Cite `gemma4-qat`                                                     |
+| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                         | Cite `gguf-quant-types`                                               |
+| `-assistant` models are speculative-decoding drafters                                                                   | Cite `gemma4-assistant` (Ch 14)                                       |
+| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                      | Cite `diffusiongemma-model-card`                                      |
+| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                | Collection listing, 2026-10-23                                        |
+| E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")                  |
+| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names            |
+| `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                            | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts) |
 
 ## Ch 38. Check yourself
 

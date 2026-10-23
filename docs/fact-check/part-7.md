@@ -20,14 +20,17 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 
 ## Ch 24. Tools
 
-| Claim                                                                     | Backing                                                     |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Without tools the model answered 7,050,952; the right answer is 7,006,652 | Test (recorded output; calculator)                          |
-| With a calculator it answered 7006652                                     | Test                                                        |
-| Models can be trained to write tool calls at the right moments            | Cite `schick2023`                                           |
-| Qwen writes JSON between `<tool_call>` tags                               | Recorded outputs and chat template                          |
-| The site's `<call name>…</call>` form is simplified and made up           | Stated in the chapter; `simpleCall` in `harness/tools.ts`   |
-| The toy tools run in the browser, never `eval`, never the network         | `harness/tools.ts` (hand-written parser; test rejects code) |
+| Claim                                                                                                                                                                               | Backing                                                           |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Without tools the model answered 7,050,952; the right answer is 7,006,652                                                                                                           | Test (recorded output; calculator)                                |
+| With a calculator it answered 7006652                                                                                                                                               | Test                                                              |
+| Models can be trained to write tool calls at the right moments                                                                                                                      | Cite `schick2023`                                                 |
+| Qwen writes JSON between `<tool_call>` tags                                                                                                                                         | Recorded outputs and chat template                                |
+| The site's `<call name>…</call>` form is simplified and made up                                                                                                                     | Stated in the chapter; `simpleCall` in `harness/tools.ts`         |
+| The toy tools run in the browser, never `eval`, never the network                                                                                                                   | `harness/tools.ts` (hand-written parser; test rejects code)       |
+| Anthropic released MCP as an open standard in November 2024                                                                                                                         | Cite `anthropic-mcp` (Nov 25, 2024)                               |
+| An MCP server lists tools with a name, a description, and an input schema; harnesses list them and send calls to the server (`get_weather` with a `location` is the spec's example) | Cite `mcp-spec` (`tools/list`, `tools/call`; accessed 2026-10-23) |
+| The model never sees MCP; the harness sits between model and server                                                                                                                 | Cite `mcp-spec` (message flow: the client talks to both)          |
 
 ## Ch 25. The agent loop
 

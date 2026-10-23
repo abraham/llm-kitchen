@@ -81,17 +81,22 @@ The script asserts the result equals GPT-2 medium's own greedy output.
 
 ## Ch 15. From predictor to assistant
 
-| Claim                                                                                 | Backing                                                                                        |
-| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| The ChatML template text, including Qwen's default system prompt                      | Test: `chatTemplate` equals `apply_chat_template` output from the real tokenizer               |
-| Qwen2.5 is a 2024 model family with base and instruct versions                        | Cite `qwen2024`                                                                                |
-| Base Qwen answers "boil an egg" with a question and a multiple-choice quiz            | Recorded output; test                                                                          |
-| Instruct without the template keeps going (Python code; a stray template line)        | Recorded output; test                                                                          |
-| Instruct in its chat format answers and stops                                         | Recorded output (`stopped: true`); test                                                        |
-| Tuning: example answers, then preference comparisons and a reward model               | Cite `ouyang2022` (Fig. 2)                                                                     |
-| People preferred 1.3B InstructGPT over 175B GPT-3                                     | Cite `ouyang2022` (abstract)                                                                   |
-| Qwen2.5's tuning used over a million examples, then multistage reinforcement learning | Cite `qwen2024` (abstract)                                                                     |
-| Stage 1 example output                                                                | Real Qwen2.5-0.5B output (recorded); stage 2–3 examples are illustrations (widget is "sample") |
+| Claim                                                                                                  | Backing                                                                                        |
+| ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| The ChatML template text, including Qwen's default system prompt                                       | Test: `chatTemplate` equals `apply_chat_template` output from the real tokenizer               |
+| Qwen2.5 is a 2024 model family with base and instruct versions                                         | Cite `qwen2024`                                                                                |
+| Base Qwen answers "boil an egg" with a question and a multiple-choice quiz                             | Recorded output; test                                                                          |
+| Instruct without the template keeps going (Python code; a stray template line)                         | Recorded output; test                                                                          |
+| Instruct in its chat format answers and stops                                                          | Recorded output (`stopped: true`); test                                                        |
+| Tuning: example answers, then preference comparisons and a reward model                                | Cite `ouyang2022` (Fig. 2)                                                                     |
+| People preferred 1.3B InstructGPT over 175B GPT-3                                                      | Cite `ouyang2022` (abstract)                                                                   |
+| Qwen2.5's tuning used over a million examples, then multistage reinforcement learning                  | Cite `qwen2024` (abstract)                                                                     |
+| Stage 1 example output                                                                                 | Real Qwen2.5-0.5B output (recorded); stage 2–3 examples are illustrations (widget is "sample") |
+| Fine-tuning adapts a pretrained model to a task with more training                                     | Cite `hu2022` (abstract)                                                                       |
+| LoRA freezes the weights and trains two low-rank tables whose product is added, in some layers         | Cite `hu2022` (§4; applied to attention weights)                                               |
+| GPT-2 small's query table is 768 × 768 (589,824); rank-8 tables hold 12,288, about 2%                  | Test; `canonical.json` (embedding size)                                                        |
+| On GPT-3, LoRA trained 10,000× fewer numbers, used a third of the memory, and matched full fine-tuning | Cite `hu2022` (abstract)                                                                       |
+| Distillation trains a student on the teacher's probabilities, which show near-miss answers             | Cite `hinton2015` (soft targets)                                                               |
 
 ## Ch 16. Quirks and limits
 
@@ -110,12 +115,15 @@ The script asserts the result equals GPT-2 medium's own greedy output.
 
 ## Ch 17. Thinking before answering
 
-| Claim                                                                                        | Backing                    |
-| -------------------------------------------------------------------------------------------- | -------------------------- |
-| Asking large models for step-by-step working improved math word problems                     | Cite `wei2022`             |
-| Qwen3's thinking can be switched off                                                         | Cite `qwen3`; model card   |
-| Strawberry: 2 with thinking off, 3 with thinking on, after spelling it out                   | Test (recorded data)       |
-| About 24 times as many tokens with thinking on; 4 of 6 right both ways                       | Test                       |
-| Twice the thinking hit the 6,000-token limit without answering                               | Test                       |
-| DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
-| Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
+| Claim                                                                                        | Backing                                              |
+| -------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Asking large models for step-by-step working improved math word problems                     | Cite `wei2022`                                       |
+| Qwen3's thinking can be switched off                                                         | Cite `qwen3`; model card                             |
+| Strawberry: 2 with thinking off, 3 with thinking on, after spelling it out                   | Test (recorded data)                                 |
+| About 24 times as many tokens with thinking on; 4 of 6 right both ways                       | Test                                                 |
+| Twice the thinking hit the 6,000-token limit without answering                               | Test                                                 |
+| DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2)                           |
+| Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`                              |
+| DeepSeek tuned Qwen and Llama models on 800,000 examples made with R1 (`R1-Distill`)         | Cite `deepseek2025` §2.4                             |
+| For Qwen-32B, distillation beat training with rewards directly                               | Cite `deepseek2025` §4.1 (Table 6)                   |
+| Qwen3-0.6B was distilled from larger Qwen3 models' probabilities                             | Cite `qwen3` §4.5 (logits of Qwen3-32B or 235B-A22B) |
