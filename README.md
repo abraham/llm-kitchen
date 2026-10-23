@@ -93,8 +93,8 @@ Both outputs are git-ignored.
   `npx @abraham/firebase-wif setup --environment preview --any-branch` for PR previews. Check with
   `npx @abraham/firebase-wif status`. This creates the `FIREBASE_WIF_PROVIDER` and
   `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables the deploy workflows read.
-- **Custom domain (optional):** add it in the Firebase console under Hosting, then create the DNS
-  records it shows, and set `SITE_ORIGIN` in `src/lib/site.ts` to it.
+- **Custom domain:** the site is live at https://llm.kitchen, set up in the Firebase console
+  under Hosting with the DNS records it shows. `SITE_ORIGIN` in `src/lib/site.ts` must match it.
 
 ## Deploys
 

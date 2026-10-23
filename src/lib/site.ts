@@ -8,8 +8,8 @@ export const SITE_TAGLINE = 'How a large language model works, one idea at a tim
 export const SITE_DESCRIPTION =
 	'An interactive guide to how large language models work, from guessing the next word to agents, image models, and prompting.';
 
-/** Origin for canonical and Open Graph URLs. Switch to the custom domain once it is live. */
-export const SITE_ORIGIN = 'https://llm-kitchen-aaa2b.web.app';
+/** Origin for canonical and Open Graph URLs. */
+export const SITE_ORIGIN = 'https://llm.kitchen';
 
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
