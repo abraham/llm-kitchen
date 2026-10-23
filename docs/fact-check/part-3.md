@@ -1,6 +1,6 @@
 # Fact-check: Part III (Ch 6–7)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests: `src/lib/math/mlp.test.ts`
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests: `src/lib/math/mlp.test.ts`
 (including numerical gradient checks of every hand-written backward pass),
 `tests/unit/canonical.test.ts`, `tests/e2e/part-3.e2e.ts`.
 

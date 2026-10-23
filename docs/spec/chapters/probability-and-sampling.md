@@ -1,0 +1,27 @@
+# Probability and sampling
+
+**Question:** The model gives probabilities, but something has to decide which word to use. How does
+that choice work, and can we control it?
+
+**Key idea:** A model outputs a probability distribution; sampling picks the actual word.
+Temperature sharpens (below 1) or flattens (above 1) the distribution, and temperature 0 always picks
+the top word. Top-k only allows the k most likely words.
+
+## Widgets
+
+- `TemperatureSampler`: temperature and top-k sliders reshape GPT-2's distribution for the running
+  example (`ProbBars`), and a `SamplerWheel` with matching slices picks words.
+- `TemperatureMath`: shows the arithmetic of dividing by the temperature.
+- `RecordedRuns`: the same prompt continued at temperatures 0, 0.7, and 1.5 side by side.
+
+## Data
+
+Recorded GPT-2 small traces, including one run per temperature.
+
+## Decisions
+
+- The sliders use only GPT-2's top 10 tokens, rescaled to add up to 100%. The text labels this as a
+  simplification.
+- Log probabilities stand in for the raw scores when dividing by the temperature; adding a constant
+  to every score changes nothing, so the chances are the same.
+- The temperature comparison is recorded; a live version is on the [roadmap](../roadmap.md).

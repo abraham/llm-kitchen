@@ -1,6 +1,6 @@
 # Fact-check: Part II (Ch 3–5)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `src/lib/models/tokenizers.test.ts`, `src/lib/math/bpe.test.ts`, `src/lib/math/vectors.test.ts`,
 `tests/unit/canonical.test.ts`, `tests/unit/part-2-facts.test.ts`, `tests/e2e/part-2.e2e.ts`.
 
@@ -45,12 +45,3 @@ Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 | man → woman partly lines up with king → queen, but not on the flat map | Test (cosine above 0.2, more aligned than over 90% of word-pair steps; under 0.5 in 2D)           |
 | The king/queen example was first shown in 2013 with word2vec vectors   | Cite `mikolov2013`                                                                                |
 | Live option: ~23 MB model + ~27 MB runtime, cached, runs on device     | Hugging Face file size (22,972,370 B); ORT asyncify wasm (26.9 MB); Transformers.js browser cache |
-
-## Changes from the plan
-
-- The embedding map lets visitors pick a word (not drag it): dragging a point in the 2D picture
-  wouldn't change its real 384-number vector, so neighbors computed after a drag would be
-  misleading.
-- ONNX Runtime's WebAssembly files are bundled with the site (hashed, long-cached) instead of
-  loaded from a CDN, so the page CSP stays `'self'`. The worker's `connect-src` (in
-  `firebase.json`) allows Hugging Face for model downloads.

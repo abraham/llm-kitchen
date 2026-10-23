@@ -1,6 +1,6 @@
 # Fact-check: Part I (Ch 0–2)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Each claim is cited, checked by a
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Each claim is cited, checked by a
 test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-facts.test.ts`,
 `src/lib/math/*.test.ts`, `tests/unit/traces.test.ts`, `tests/unit/canonical.test.ts`.
 
@@ -38,11 +38,3 @@ test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-fact
 | Widget uses only the top 10, rescaled                                                                     | Labeled "Simplified:" in the text                                                               |
 | Real model has 50,257 options                                                                             | Test (`canonical.json`)                                                                         |
 | Recorded runs: 16 tokens at T = 0, 0.7, 1.5; T = 0 matches greedy                                         | Test (traces)                                                                                   |
-
-## Changes from the plan
-
-- Ch 0's "guesses from other people" word cloud was dropped: there is no real survey data, and
-  made-up crowd data would be presented as fact. The widget compares the visitor's guess with
-  GPT-2's recorded top 50 instead.
-- Live (T2) options for Ch 0 and Ch 2 come with the in-browser model in later milestones; Ch 2's
-  temperature comparison uses recorded runs for now.

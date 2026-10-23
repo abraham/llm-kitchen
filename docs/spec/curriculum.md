@@ -1,12 +1,11 @@
-# LLM Kitchen — Curriculum
+# Curriculum
 
 This document owns how the site's content is organized: which Parts there are, which chapters each
 Part holds, their order, numbers, titles, and slugs, and what each chapter builds on. What happens
-inside a chapter (its hook, widget, animation, and key idea) is described in
-[PLAN.md §3](PLAN.md#3-curriculum). When the two disagree about placement, this document wins.
+inside a chapter (its hook, widgets, and key idea) is in [chapters/](chapters/), one file per slug.
+This is the only spec that uses chapter numbers.
 
-The site uses the organization below; `tests/unit/curriculum.test.ts` checks that
-`src/lib/chapters/meta.ts` matches its tables. See [Status](#status).
+`tests/unit/curriculum.test.ts` checks that `src/lib/chapters/meta.ts` matches the tables below.
 
 ## Principles
 
@@ -137,97 +136,36 @@ _How does it all fit together?_ Unnumbered Part.
 
 ## Why this order
 
-Compared with the order before milestone 19 (see the milestone 18 mapping below), four chapters or Parts move:
-
-- **Text is just numbers joins Representation.** Text → numbers → tokens → vectors is one story.
-  Part I can then stay on prediction itself: guess, count, sample. Counting word pairs needs words,
-  not numbers.
-- **Reasoning models join Part V.** A reasoning model is the same transformer with more training
-  (Ch 15's tuning, plus rewards for checkable answers), not a new architecture. It follows Quirks and
-  limits as one answer to them, and it sets up Ch 21, which asks for steps in the prompt instead.
+- **Prediction comes first, with words.** Part I stays on prediction itself: guess, count, sample.
+  Counting word pairs needs words, not numbers.
+- **Text is just numbers opens Representation.** Text → numbers → tokens → vectors is one story.
+- **Part V is the whole model at work.** After Generating text and Scale come the two chapters about
+  running a big model on real hardware, Fewer bits per number and Guessing ahead. They need only
+  Scale and Generating text, and model names use both (`qat`, `Q4_0`, `-assistant`). Thinking before
+  answering stays in Part V because a reasoning model is the same transformer with more training
+  (Ch 15's tuning, plus rewards for checkable answers), not a new architecture. It follows Quirks
+  and limits as one answer to them, and it sets up Ch 21, which asks for steps in the prompt
+  instead.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
   template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
   familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
   (Ch 24). Prompt injection (Ch 28) then reads as prompting by an attacker.
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
   they draw on every earlier Part, including the KV cache (Ch 27) that recurrent models avoid.
-
-Chapter contents changed only where that order required:
-
-- Ch 3 (Text is just numbers) opens from Ch 2's question about how a model can compute with words.
-- Ch 17 (Thinking before answering) drops Part VII's "same as Ch N, except…" framing and opens from
-  the quirks in Ch 16.
-- Ch 20 (Instructions, roles, and the system prompt) introduces the system prompt itself, from the
-  chat template's system slot (Ch 15), instead of pointing to the prompt inspector. Ch 23 refers back
-  to it.
-- Ch 21 (Steps and structure) says a fixed format makes output usable by programs; Ch 24 (Tools)
-  then calls a tool call structured output in an agreed format.
-- Ch 22 (Where prompts break) ends with instructions in text you didn't write as its Next question,
-  answered in Part VII, instead of pointing back to prompt injection.
-- The recap's paragraph and diagram follow the new Part order.
-
-Milestone 21 then added two chapters to Part V after Scale: Fewer bits per number (Ch 13) and
-Guessing ahead (Ch 14). Both are about running a big model on real hardware, they need only Scale
-and Generating text, and model names use both (`qat`, `Q4_0`, `-assistant`).
-
-## Mapping from the milestone 20 order
-
-| Slug                                   | Now   | Target |
-| -------------------------------------- | ----- | ------ |
-| `guessing-game` … `scale`              | 0–12  | 0–12   |
-| `quantization` (new)                   | —     | 13     |
-| `speculative-decoding` (new)           | —     | 14     |
-| `predictor-to-assistant` … `diffusion` | 13–32 | 15–34  |
-| `recap`                                | 33    | 35     |
-| `end-to-end`                           | 34    | 36     |
-| `quiz`                                 | 35    | 37     |
-
-## Mapping from the milestone 18 order
-
-| Slug                           | Now  | Target |
-| ------------------------------ | ---- | ------ |
-| `guessing-game`                | 0    | 0      |
-| `text-is-numbers`              | 1    | 3      |
-| `predicting-by-counting`       | 2    | 1      |
-| `probability-and-sampling`     | 3    | 2      |
-| `tokens` … `quirks-and-limits` | 4–14 | 4–14   |
-| `the-model-is-not-the-product` | 15   | 21     |
-| `tools`                        | 16   | 22     |
-| `the-agent-loop`               | 17   | 23     |
-| `managing-the-context`         | 18   | 24     |
-| `caching`                      | 19   | 25     |
-| `prompt-injection`             | 20   | 26     |
-| `trust-and-guardrails`         | 21   | 27     |
-| `encoders`                     | 22   | 28     |
-| `mixture-of-experts`           | 23   | 29     |
-| `recurrent-models`             | 24   | 30     |
-| `seeing-pictures`              | 25   | 31     |
-| `diffusion`                    | 26   | 32     |
-| `reasoning-models`             | 27   | 15     |
-| `prompts-as-documents`         | 28   | 16     |
-| `few-shot`                     | 29   | 17     |
-| `instructions-and-roles`       | 30   | 18     |
-| `steps-and-structure`          | 31   | 19     |
-| `where-prompts-break`          | 32   | 20     |
-| `recap`                        | 33   | 33     |
+- **The Wrap-up puts it together.** The recap shows what the pieces are, From message to reply shows
+  the order they run in, Picking a model reads real model names with everything taught so far, and
+  the quiz comes last.
 
 ## Changing the organization
 
 1. Decide the change here first: which Part's question the chapter answers, where it sits, what it
    builds on, and how the Next questions around it change.
 2. Update `src/lib/chapters/meta.ts` (`PARTS`, the curriculum rows, and `buildsOn`) and rename the
-   chapter files to their new numbers.
-3. Remap every "Ch N" cross-reference with a script from the old-to-new table, then review each
-   change by hand: prose, widgets, data comments, the glossary, the recap diagram and quiz, tests,
-   and `docs/fact-check/`. Historical notes keep the numbers they had.
+   chapter files to their new numbers, through temporary names when the move isn't a simple shift.
+3. Remap every "Ch N" cross-reference with a script from an old-to-new table (put the table in the
+   pull request), then review each change by hand: prose, widgets, data comments, the glossary, the
+   recap diagram, the end-to-end stages, the quiz, tests, and `docs/fact-check/`. Not every number
+   after "Ch" is a cross-reference. The chapter specs need no change, since they link by slug.
 4. Do the renumbering in its own commit, with all tests passing, before changing any chapter's
    content.
-
-## Status
-
-The site has used this order since milestone 22, which added Picking a model (Ch 37) to the
-Wrap-up and moved the quiz from Ch 37 to Ch 38. Milestone 21 added Ch 13 and Ch 14 to Part V and
-moved every later chapter up by two (see the milestone 20 mapping). Milestone 19 set the Part
-order. Before it, Part VI was Harnesses (Ch 15–21), Part VII was Other kinds of models with Thinking
-before answering (Ch 22–27), Part VIII was Prompt engineering (Ch 28–32), and Text is just numbers
-was Ch 1; the milestone 18 mapping records that move.
+5. For a new chapter, add `docs/spec/chapters/<slug>.md`.

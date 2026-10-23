@@ -1,6 +1,6 @@
 # Fact-check: Part VIII (Ch 30–34) and the wrap-up (Ch 35–38)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `tests/unit/part-8-facts.test.ts` (the recorded data says what the prose says),
 `src/lib/math/part-8-models.test.ts` (gradient checks and training for the in-browser models),
 `tests/e2e/part-8.e2e.ts`.
@@ -131,24 +131,3 @@ has at least one. Each answer restates its linked chapter:
       milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 24, 27, 28, 29,
       30). The e2e test answers all fourteen and checks the revisit list.
-
-## Changes from the plan
-
-- **Ch 30 live option.** Recorded only (T0); a live fill-mask model is left for later.
-- **Ch 31 routing.** A computed toy router, labeled as simplified, instead of recorded routing:
-  recording a real mixture-of-experts model (several GB) wasn't practical on the available disk.
-- **Ch 32** keeps the memory comparison in its own small widget next to the trainer.
-- **Ch 33 pictures and map.** Simple colored shapes drawn by the script instead of photos, so there
-  are no licensing questions. Every caption–picture similarity falls between 0.18 and 0.36, so a 2D
-  map wouldn't show the matches clearly; the widget ranks pictures for each caption instead. No live
-  caption embedding yet.
-- **Ch 34 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
-  turned it into a blob in the training time a page visit allows.
-- **The wrap-up** (Ch 35–38) is checked here, with the last Part; its URLs never change.
-- **Ch 37 memory calculator** shows the weights only and says the KV cache, runtime, and everything
-  else on the device need more. The plan's context-length slider was dropped: Gemma 4's configs mix
-  sliding-window and full-attention layers, share some layers' keys and values, and use different
-  head sizes for global layers, so a per-token figure from the config couldn't be checked against a
-  published number.
-- **Part order.** This was Part VII (Ch 22–27, with Thinking before answering) until milestone 19
-  moved reasoning models to Part V and this Part to the end.
