@@ -333,12 +333,62 @@
 		"url": "https://arxiv.org/abs/2005.11401"
 	},
 	{
+		"id": "pope2022",
+		"authors": ["Reiner Pope", "Sholto Douglas", "Aakanksha Chowdhery", "Jacob Devlin"],
+		"title": "Efficiently Scaling Transformer Inference",
+		"venue": "arXiv preprint (MLSys 2023)",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.05102"
+	},
+	{
+		"id": "openai-prompt-caching",
+		"authors": ["OpenAI"],
+		"title": "Prompt caching",
+		"venue": "OpenAI API documentation",
+		"year": 2026,
+		"url": "https://developers.openai.com/api/docs/guides/prompt-caching",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "anthropic-prompt-caching",
+		"authors": ["Anthropic"],
+		"title": "Prompt caching",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+		"accessed": "2026-10-23"
+	},
+	{
 		"id": "greshake2023",
 		"authors": ["Kai Greshake", "Sahar Abdelnabi", "Shailesh Mishra", "Christoph Endres"],
 		"title": "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
 		"venue": "AISec 2023",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2302.12173"
+	},
+	{
+		"id": "perez2022",
+		"authors": ["Fábio Perez", "Ian Ribeiro"],
+		"title": "Ignore Previous Prompt: Attack Techniques For Language Models",
+		"venue": "NeurIPS 2022 ML Safety Workshop",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.09527"
+	},
+	{
+		"id": "hines2024",
+		"authors": ["Keegan Hines", "Gary Lopez", "Matthew Hall", "Federico Zarfati"],
+		"title": "Defending Against Indirect Prompt Injection Attacks With Spotlighting",
+		"venue": "arXiv preprint",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2403.14720"
+	},
+	{
+		"id": "wallace2024",
+		"authors": ["Eric Wallace", "Kai Xiao", "Reimar Leike", "Lilian Weng"],
+		"title": "The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions",
+		"venue": "arXiv preprint",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.13208"
 	},
 	{
 		"id": "devlin2019",

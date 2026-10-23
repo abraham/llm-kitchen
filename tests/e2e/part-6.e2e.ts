@@ -7,6 +7,8 @@ const PAGES = [
 	'/tools',
 	'/the-agent-loop',
 	'/managing-the-context',
+	'/caching',
+	'/prompt-injection',
 	'/trust-and-guardrails'
 ];
 
@@ -59,6 +61,32 @@ test('Ch 18: strategies change what the model can answer', async ({ page }) => {
 	await widget.getByLabel(/Retrieve/).check();
 	await expect(widget.getByRole('img', { name: /task 1 is the closest/ })).toBeVisible();
 	await expect(widget.locator('.answer')).toContainText('30 words');
+});
+
+test('Ch 19: the KV cache and the prompt cache', async ({ page }) => {
+	await gotoHydrated(page, '/caching');
+	const kv = page.getByRole('region', { name: 'Reusing keys and values' });
+	for (let i = 0; i < 4; i++) await kv.getByRole('button', { name: 'Next →' }).click();
+	await expect(kv.locator('.readout')).toContainText('run 35 token positions with the cache off');
+	await kv.getByRole('radio', { name: 'On', exact: true }).check();
+	await expect(kv.locator('.readout')).toContainText('run 9 token positions with the cache on');
+
+	const view = page.getByRole('region', { name: 'What the provider can reuse' });
+	await expect(view.getByText('6,100 (80%)')).toBeVisible();
+	await view.getByLabel('Put the time at the top').check();
+	await expect(view.getByText('0 (0%)')).toBeVisible();
+});
+
+test('Ch 20: an injected claim reaches the summary', async ({ page }) => {
+	await gotoHydrated(page, '/prompt-injection');
+	const lab = page.getByRole('region', { name: 'The prompt injection lab' });
+	await expect(lab.getByText(/has been cancelled due to unforeseen circumstances/)).toBeVisible();
+	await expect(lab.getByText('The attacker’s claim made it into the summary.')).toBeVisible();
+	await lab
+		.getByRole('button', { name: /A fake new message from you, Remove chat markers/ })
+		.click();
+	await lab.getByLabel('Color by source').uncheck();
+	await expect(lab.locator('.note')).toContainText('with 3 role markers');
 });
 
 test('Ch 21: guardrails protect the files', async ({ page }) => {

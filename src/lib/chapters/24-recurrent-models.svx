@@ -27,8 +27,8 @@ next.
 ## Fixed memory, growing text
 
 The appeal is cost. A transformer's memory grows with the text, because it keeps something for
-every token so later tokens can look back. A recurrent model's memory stays the same size however
-long the text gets:
+every token so later tokens can look back: the KV cache from Ch 19. A recurrent model's memory
+stays the same size however long the text gets:
 
 <MemoryGrowth />
 

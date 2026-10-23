@@ -71,7 +71,7 @@
 			what: 'Ordinary code that builds the prompt, calls the model in a loop, runs tools, and decides what the model gets to see.',
 			chapters: [15, 17],
 			color: 'harness',
-			children: ['template', 'tools', 'loop', 'context', 'guards']
+			children: ['template', 'tools', 'loop', 'context', 'cache', 'guards']
 		},
 		template: {
 			id: 'template',
@@ -101,11 +101,18 @@
 			chapters: [8, 18],
 			color: 'weight'
 		},
+		cache: {
+			id: 'cache',
+			name: 'Prompt cache',
+			what: 'Reuses the work on a prompt’s unchanged start, so long conversations stay cheap and fast.',
+			chapters: [19],
+			color: 'vector'
+		},
 		guards: {
 			id: 'guards',
 			name: 'Guardrails',
-			what: 'Permission prompts, tool allowlists, sandboxes, and step limits.',
-			chapters: [21],
+			what: 'Text the model reads can carry instructions, so permission prompts, tool allowlists, sandboxes, and step limits cap the damage.',
+			chapters: [20, 21],
 			color: 'loss'
 		},
 		model: {

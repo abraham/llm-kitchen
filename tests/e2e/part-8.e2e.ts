@@ -88,6 +88,8 @@ test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
 		'It reads tokens, not letters',
 		'It lets each token pull in information from any earlier token',
 		'The harness',
+		'The provider reuses its work on the unchanged start of the prompt',
+		'The model reads the page and your request as one stream of text',
 		'Guardrails in the harness, like asking you first',
 		'Its attention can look at the words after the blank too',
 		'It writes scratch work as tokens before answering',
@@ -96,5 +98,5 @@ test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
 		await quiz.getByLabel(answer, { exact: true }).check();
 	}
 	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('8 of 8 right.')).toBeVisible();
+	await expect(quiz.getByText('10 of 10 right.')).toBeVisible();
 });

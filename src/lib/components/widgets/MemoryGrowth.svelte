@@ -44,7 +44,7 @@
 		a value (Ch 9) for every token it has read, in each of its {canonical.layers} blocks: 2 × {canonical.layers}
 		× {canonical.embeddingSize} = {fmt(PER_TOKEN)} numbers per token, up to its limit of {fmt(
 			canonical.contextLength
-		)} tokens. The recurrent model keeps only its memory.
+		)} tokens. This store is the KV cache (Ch 19). The recurrent model keeps only its memory.
 	</p>
 </WidgetFrame>
 

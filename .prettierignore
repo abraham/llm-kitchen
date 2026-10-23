@@ -16,3 +16,5 @@ package-lock.json
 *.svx
 /static/embeddings/
 /static/vectors/
+/static/caching/
+/static/injection/

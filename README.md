@@ -60,6 +60,11 @@ Other recorded data has its own script in the same environment:
 - `scripts/build-agent-traces.py`: the Part VI agent runs (`static/agent/`; downloads
   Qwen2.5-1.5B-Instruct, about 3 GB). Its toy tools must stay in sync with
   `src/lib/harness/tools.ts`; the unit tests compare them.
+- `scripts/build-caching.py`: the Ch 19 KV-cache timings (`static/caching/`; reuses GPT-2 small).
+  The times are measured on the machine that runs it, so rerunning changes the numbers in the prose
+  and their tests.
+- `scripts/build-injection.py`: the Ch 20 prompt-injection lab (`static/injection/`; reuses
+  Qwen2.5-1.5B-Instruct).
 - `scripts/build-encoder.py`: the Ch 22 fill-in-the-blank guesses (`static/encoders/`; downloads
   BERT base, about 440 MB).
 - `scripts/build-clip.py`: the Ch 25 pictures and CLIP data (`static/vision/`; downloads CLIP

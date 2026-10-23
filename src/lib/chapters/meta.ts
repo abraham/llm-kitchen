@@ -79,7 +79,7 @@ const rows: Row[] = [
 		'A model can reuse the work it already did on the start of a prompt. See the KV cache, and why harnesses keep their prompts\' openings fixed.'],
 	['prompt-injection', 'Prompt injection', 'harnesses', [13, 15, 16],
 		'Text a model reads can carry instructions of its own. See why a model follows them, and how well defenses written into the prompt hold up.'],
-	['trust-and-guardrails', 'Trust and guardrails', 'harnesses', [17],
+	['trust-and-guardrails', 'Trust and guardrails', 'harnesses', [17, 20],
 		'A web page can hide instructions that an agent then follows. See prompt injection happen, and what different guardrails change.'],
 	['encoders', 'Reading both ways', 'others', [5, 9],
 		'Encoder models read the whole text at once, in both directions. That makes them good at filling blanks and understanding, not writing.'],
@@ -101,7 +101,7 @@ const rows: Row[] = [
 		'System prompts and roles are just text in the chat template. See how one model answers the same question under different system prompts.'],
 	['steps-and-structure', 'Asking for steps and structure', 'prompting', [16, 27],
 		'Asking a model to think step by step gives it room to work, and asking for a fixed format makes its answers usable by programs.'],
-	['where-prompts-break', 'Where prompts break', 'prompting', [14, 21, 29],
+	['where-prompts-break', 'Where prompts break', 'prompting', [14, 20, 29],
 		'The order of examples, the layout, and where an instruction sits can all change the answer. See how fragile prompts are, and what helps.'],
 	['recap', 'Recap: the whole picture', 'wrapup', [],
 		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.']

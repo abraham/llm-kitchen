@@ -43,5 +43,5 @@ model and put back into the prompt later.
 
 </RecapCard>
 
-**Next question:** the harness puts tool results and retrieved text into the same prompt as your
-instructions. What if that text contains instructions of its own?
+**Next question:** every call re-sends the whole conversation, and the model reads all of it again.
+Does it really redo all that work every time?

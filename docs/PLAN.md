@@ -555,6 +555,7 @@ Each chapter milestone (5–10, 14, 15, and 18) includes the [per-chapter fact-c
     - **Links between chapters:** Ch 18's next question leads into caching; Ch 21 builds on Ch 20 for the mechanism and keeps its agent demo for the guardrails; Ch 24's memory chart names the KV cache; Ch 32 points at Ch 20. Add both chapters to the recap diagram and quiz.
     - **Fact-check:** add both chapters' claims to `docs/fact-check/part-6.md`, with the Part VI sources above. Provider caching rules change often, so they are cited with accessed dates and re-checked in the final fact review.
     - _Done when:_ both chapters have their widgets, recap cards, sources, and fact-check entries; every chapter number in the prose, tests, and docs matches the new curriculum; and the old chapter URLs still load the same chapters.
+    - v1: done. The renumbering is its own commit, with a new test that each glossary term's chapter mentions it. Ch 19's KV-cache timing is measured offline on a laptop CPU by `scripts/build-caching.py` (no live timing yet), and its prompt-cache view is computed from the Ch 18 session. Ch 20's attacks try to slip a false claim into the summary (45 of 72 attacked runs succeeded; the best defense still let 6 of 12 through), recorded by `scripts/build-injection.py`. See [docs/fact-check/part-6.md](fact-check/part-6.md) for changes from this plan.
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, and 18)
 

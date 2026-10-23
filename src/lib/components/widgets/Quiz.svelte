@@ -42,6 +42,28 @@
 			why: 'The model only writes a tool call as text; the harness runs it (Ch 16).'
 		},
 		{
+			q: 'An agent re-sends its whole, growing conversation on every call. Why is that often cheaper than it sounds?',
+			options: [
+				'The model remembers the earlier calls',
+				'The provider reuses its work on the unchanged start of the prompt',
+				'The harness compresses the text',
+				'Long prompts are free'
+			],
+			answer: 1,
+			why: 'Prompt caching keeps the keys and values for a prompt’s exact start; the model itself remembers nothing (Ch 19).'
+		},
+		{
+			q: 'Why can a hidden line in a web page change what a summarizer writes?',
+			options: [
+				'The page breaks into the computer running the model',
+				'The model reads the page and your request as one stream of text',
+				'Web pages were part of its training',
+				'It can’t; models ignore instructions in documents'
+			],
+			answer: 1,
+			why: 'Nothing marks which words came from you and which from the page (Ch 20).'
+		},
+		{
 			q: 'A web page tells the agent to delete your files. What stops it?',
 			options: [
 				'The model always ignores web pages',

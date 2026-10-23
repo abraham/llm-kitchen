@@ -1,0 +1,63 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import InjectionLab from '#lib/components/widgets/InjectionLab.svelte';
+</script>
+
+## Instructions in the data
+
+A harness that summarizes your email has to put the email into the prompt. The model then reads
+your request and the email as one stream of tokens. The prompt inspector in Ch 15 colored each part
+by where it came from, but the model sees no colors, and it was tuned to follow instructions (Ch
+13) wherever they appear. So an instruction written into the email can steer it. This is <GlossaryPopover term="prompt-injection">prompt injection</GlossaryPopover>.<Cite id="perez2022" />
+
+When the instruction comes from the person typing, it's *direct* injection. When it hides in
+content the harness fetched, like an email, a web page, or a tool result (Ch 16), it's *indirect*,
+and the person using the app may never see it.<Cite id="greshake2023" />
+
+Below, a harness asks Qwen2.5-1.5B-Instruct for a one-sentence summary of three short documents.
+Each can carry one of four attacks that try to slip a false claim into the summary, and the harness
+can use one of six defenses written into the prompt. Every reply was graded by checking for the
+attacker's claim:
+
+<InjectionLab />
+
+With no defense, the attacks got their claim into 7 of 12 summaries. Of an email that never
+mentions it, the model wrote "The plant swap scheduled for Saturday has been cancelled due to
+unforeseen circumstances": it followed the instruction and made up a reason. The plain "Ignore your
+previous instructions" worked best, in 16 of its 18 runs. The HTML comment, which a person reading
+the page in a browser never sees, worked in 11 of 18.
+
+## Why prompt defenses fall short
+
+None of the six defenses stopped every attack. The best one here, marking every word of the
+document, still let 6 of 12 through. A warning in the system prompt and tags around the document did
+worse than no defense at all, 9 of 12 each against 7.
+
+The fake message shows why. It writes the chat markers from Ch 13 into the email, and they become
+the very same tokens as the markers the harness wrote: the model reads 4 role markers where the
+harness put 3. Removing markers from untrusted text stops that trick, but the words left behind
+still read as an instruction, and the attack worked just as often without them.
+
+Larger models, and models trained against these attacks, do much better. Marking untrusted text cut
+attacks from over half to under 2% for the GPT models its authors tested,<Cite id="hines2024" /> and
+training a model to rank the system prompt above text from tools makes it far harder to
+fool.<Cite id="wallace2024" /> But no defense written into the prompt is known to stop every attack,
+and attackers keep finding new wording. A 1.5-billion-weight model is easier to fool than the models
+in chat apps, so these results show how injection works, not how often real products fall for it.
+
+What matters most is what a fooled model can do. A wrong summary is bad. An agent that can run tools
+(Ch 16), send email, or show you a link that carries your data to someone else's server is worse.
+
+<RecapCard>
+
+- The model reads your request and everything the harness adds as one stream of tokens, and it was
+  tuned to follow instructions.
+- Prompt injection hides instructions in that content, often where the person using the app never
+  looks.
+- Defenses written into the prompt can lower the odds, but none stops every attack.
+
+</RecapCard>
+
+**Next question:** if the model can be fooled, what stops a fooled agent from doing real damage?

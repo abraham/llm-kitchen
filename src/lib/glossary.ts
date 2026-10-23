@@ -153,11 +153,23 @@ export const GLOSSARY = {
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
 		chapter: 17
 	},
+	'kv-cache': {
+		term: 'KV cache',
+		definition:
+			'The keys and values a model has already worked out for earlier tokens, stored so each new token only has to compute its own.',
+		chapter: 19
+	},
+	'prompt-caching': {
+		term: 'prompt caching',
+		definition:
+			'A provider keeping the KV cache for the start of a prompt, so a later prompt that starts the same way is cheaper and faster.',
+		chapter: 19
+	},
 	'prompt-injection': {
 		term: 'prompt injection',
 		definition:
 			'Instructions hidden in text the model reads (like a web page) that try to override the real instructions.',
-		chapter: 21
+		chapter: 20
 	},
 	encoder: {
 		term: 'encoder',
