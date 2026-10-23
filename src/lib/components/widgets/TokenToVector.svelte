@@ -59,7 +59,17 @@
 		margin: 0;
 		display: grid;
 		gap: var(--space-2);
-		min-height: 11rem;
+	}
+
+	/* Same height in both steps, and the outgoing and incoming views overlap while they cross-fade. */
+	.rows li {
+		display: grid;
+		align-items: center;
+		height: 3rem;
+	}
+
+	.rows li > :global(*) {
+		grid-area: 1 / 1;
 	}
 
 	.vector-row {
