@@ -37,9 +37,13 @@
 				<span class="mono">{displayToken(last.text)}</span>, block by block.
 			</p>
 			<div class="slider">
-				<label for="{id}-stage" class="label"
-					>Read the stream <strong>{stageName(stage)}</strong></label
-				>
+				<label for="{id}-stage" class="label stage">
+					<span>Read the stream <strong>{stageName(stage)}</strong></span>
+					<!-- Hidden copies of every stage's text keep the label at its widest. -->
+					{#each d.logitLens.map((_, i) => stageName(i)) as name (name)}
+						<span class="sizer" aria-hidden="true">Read the stream <strong>{name}</strong></span>
+					{/each}
+				</label>
 				<input id="{id}-stage" type="range" min="0" max={canonical.layers} bind:value={stage} />
 			</div>
 			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -106,6 +110,18 @@
 	input[type='range'] {
 		accent-color: var(--c-vector);
 		min-width: 12rem;
+	}
+
+	.stage {
+		display: inline-grid;
+	}
+
+	.stage > span {
+		grid-area: 1 / 1;
+	}
+
+	.sizer {
+		visibility: hidden;
 	}
 
 	table {
