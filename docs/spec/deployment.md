@@ -27,6 +27,9 @@
   `abraham/firebase-wif`, which exchanges the job's GitHub OIDC token for short-lived Google
   credentials. Its `credentials_json` and `project_id` outputs feed
   `FirebaseExtended/action-hosting-deploy`.
+- The action downloads `firebase-tools` itself, `latest` by default. The deploy jobs pass
+  `firebaseToolsVersion` set to the version in `package-lock.json`, so the code that runs with
+  production credentials is pinned and updated by Dependabot like any other dependency.
 - **Setup:** `npx @abraham/firebase-wif setup` creates the workload identity pool and provider
   (trusting only this repo), a Hosting-only deploy service account, the `FIREBASE_WIF_PROVIDER` and
   `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables, and the `production` environment. Run it again with
@@ -35,20 +38,27 @@
 
 ## Headers
 
-Set in `firebase.json` (`tests/unit/hosting.test.ts` checks clean URLs, caching, and framing):
+Set in `firebase.json`. `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
+checks what is actually served: the e2e suite runs against the Firebase Hosting emulator
+(`npm run serve`, project `demo-llm-kitchen`, port 4173), which applies `firebase.json` like
+production. `firebase-tools` is a dev dependency; its `superstatic` is overridden to 11, the first
+major that supports Node 26.
 
 - **Content Security Policy:** SvelteKit emits the page CSP (`csp` in `vite.config.ts`, hash mode, so
   its inline scripts need no `'unsafe-inline'`): `default-src 'self'`, scripts `'self'` plus
-  `'wasm-unsafe-eval'` for ONNX Runtime, workers `'self'` and `blob:`, and `connect-src 'self'`.
+  `'wasm-unsafe-eval'` for ONNX Runtime, styles `'self'` plus `'unsafe-inline'` for Svelte's style
+  attributes, workers `'self'` and `blob:`, and `connect-src 'self'`.
   `firebase.json` adds the header-only `frame-ancestors 'none'` and a `connect-src` that also allows
-  Hugging Face for model downloads.
+  Hugging Face. Browsers enforce both policies on a page, so the page itself can only fetch from
+  `'self'`; model downloads work because they run in the inference worker, whose script is loaded
+  from a URL and gets only the header's policy.
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a
   `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB, and
   `Cross-Origin-Opener-Policy: same-origin`.
 
 ## Caching
 
-- Hashed assets under `/_app/immutable/`: `public, max-age=31536000, immutable`.
-- Fonts under `/fonts/`: 30 days.
+- Hashed assets under `/_app/immutable/`, including the self-hosted fonts:
+  `public, max-age=31536000, immutable`.
 - Everything else, including HTML and recorded JSON: `public, max-age=300, must-revalidate`, so
   updates show up within minutes.

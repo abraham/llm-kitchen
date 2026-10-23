@@ -13,6 +13,7 @@ npm install
 npm start.             # dev server
 npm run build          # social images, then the static build in build/
 npm run preview        # serve the build on :4173
+npm run serve          # serve the build through the Firebase Hosting emulator on :4173
 ```
 
 Checks (the same scripts CI runs):

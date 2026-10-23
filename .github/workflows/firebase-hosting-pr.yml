@@ -32,6 +32,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # Deploy with the firebase-tools version in package-lock.json, not the action's default of latest.
+      - id: firebase-tools
+        run: echo "version=$(node -p "require('firebase-tools/package.json').version")" >> "$GITHUB_OUTPUT"
       # firebase-tools (superstatic) supports Node 20, 22, and 24, and .npmrc sets engine-strict.
       - uses: actions/setup-node@v7.1.0
         with:
@@ -49,3 +52,4 @@ jobs:
           projectId: ${{ steps.wif.outputs.project_id }}
           channelId: pr-${{ github.event.pull_request.number }}
           expires: 7d
+          firebaseToolsVersion: ${{ steps.firebase-tools.outputs.version }}
