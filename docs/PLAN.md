@@ -29,8 +29,11 @@ A static site that teaches how a large language model works. It starts with "gue
 | Tokenizer | `gpt-tokenizer` / `js-tiktoken` | Real BPE tokenization in the browser with no model download. |
 | In-browser models | **Transformers.js** (ONNX/WebGPU/WASM) and optionally **WebLLM** | Lets the site show real logits, attention, and embeddings with no server. |
 | Styling | CSS custom properties and a small design-token file | Gives each concept a consistent color (see §5). |
-| Hosting | GitHub Pages, Cloudflare Pages, or Netlify | Static hosting only. |
+| Hosting | **Firebase Hosting**, deployed from GitHub Actions (`FirebaseExtended/action-hosting-deploy`) authenticated with [`abraham/firebase-wif`](https://github.com/abraham/firebase-wif) | Static hosting with CDN, headers (CSP) set in `firebase.json`, a temporary **preview channel** per pull request, and no long-lived deploy keys. |
 | Testing | Vitest for logic, Playwright for widget smoke tests and visual snapshots | |
+| Formatting | **Prettier** + `prettier-plugin-svelte` | One format for TS, JS, Svelte, CSS, JSON, Markdown, and YAML. Checked in CI. |
+| Linting and type checks | **ESLint** (flat config, `typescript-eslint`, `eslint-plugin-svelte`, `eslint-config-prettier`) and `svelte-check` | Catches bugs and type errors without fighting Prettier over style. |
+| CI | **GitHub Actions** | Every push and pull request runs format check, lint, type check, unit tests, build, and Playwright tests. |
 
 ---
 
@@ -187,7 +190,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 - Security for bring-your-own keys:
   - Keep the key in memory or `sessionStorage` only, never `localStorage`.
   - Call the provider directly from the browser and never send the key anywhere else.
-  - Set a strict CSP `connect-src` allowlist.
+  - Set a strict CSP `connect-src` allowlist (as a header in `firebase.json`).
   - Show a clear warning that this sends the visitor's prompt to the provider.
   - Never ship a key in the site.
 - Harness demos (Part VI) only expose in-browser toy tools. Live models can call those tools but never get network, file system, or `eval` access, regardless of tier.
@@ -214,6 +217,17 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 llm-kitchen/
   svelte.config.js           # adapter-static + mdsvex preprocessor
   vite.config.ts
+  eslint.config.js           # flat config: typescript-eslint, eslint-plugin-svelte, eslint-config-prettier
+  .prettierrc.json           # Prettier config + prettier-plugin-svelte
+  .prettierignore            # build/, .svelte-kit/, static/traces/
+  firebase.json              # hosting config: public dir = build/, headers (CSP, caching), cleanUrls
+  .firebaserc                # Firebase project alias
+  .github/
+    dependabot.yml           # npm and GitHub Actions updates
+    workflows/
+      ci.yml                      # format, lint, type check, unit tests, build, Playwright, ci-success
+      firebase-hosting-pr.yml     # build, deploy a preview channel per PR
+      firebase-hosting-merge.yml  # build, deploy to the live channel on merge to main
   src/
     routes/
       +layout.svelte         # ChapterLayout shell, progress rail
@@ -243,12 +257,42 @@ llm-kitchen/
 - **Navigation:** a linear chapter flow with a progress rail. Progress is saved in `localStorage`, and a "skip ahead" glossary is available.
 - **Glossary popovers:** the first use of each term links to its chapter.
 
+### CI
+
+`ci.yml` runs on every push to `main` and every pull request (including forks). Each check is an `npm run` script, so CI and local runs match:
+
+| Script | Command | Fails when |
+|---|---|---|
+| `format:check` | `prettier --check .` | Any file isn't Prettier-formatted (`npm run format` fixes it). |
+| `lint` | `eslint .` | Any lint error. |
+| `check` | `svelte-kit sync && svelte-check --fail-on-warnings` | Type errors or Svelte warnings (including a11y warnings). |
+| `test` | `vitest run` | Any unit test fails. |
+| `build` | `vite build` | Prerendering fails, e.g. a broken internal link or a chapter that throws. |
+| `test:e2e` | `playwright test` (Chromium) against `vite preview` | A widget smoke test or visual snapshot fails. |
+
+- Format, lint, type check, and unit tests run as one fast job. Build and Playwright run in a second job that uploads the Playwright report as an artifact on failure.
+- A final `ci-success` job `needs` every other CI job and runs with `if: always()`. It fails if any needed job's result is `failure`, `cancelled`, or `skipped`, and passes only when all of them succeeded.
+- Node version comes from `.nvmrc`. Dependencies install with `npm ci` and the npm cache. Playwright browsers are cached by version.
+- Workflows use `permissions: contents: read` by default, pin third-party actions to full versions, and cancel superseded runs on the same branch with `concurrency`.
+- `main` is branch-protected with `ci-success` as the only required status check, so adding, renaming, or splitting CI jobs doesn't require updating branch protection. New jobs must be added to its `needs` list.
+
+### Deployment
+
+- **Live:** every merge to `main` that passes CI builds the static site and deploys it to the Firebase Hosting live channel from the `production` GitHub environment, which only the default branch can use.
+- **PR previews:** every pull request deploys to its own preview channel (e.g. `pr-42`). The action comments the preview URL on the PR and updates it on each push. Channels expire after 7 days. The preview job uses a separate `preview` environment that allows non-default branches.
+- **Auth:** no service account keys or `FIREBASE_TOKEN`. Each deploy job has `id-token: write` and runs `abraham/firebase-wif` (pinned to a full version, updated by Dependabot), which exchanges the job's GitHub OIDC token for short-lived Google credentials. Its `credentials_json` and `project_id` outputs feed `FirebaseExtended/action-hosting-deploy`.
+- **Setup:** `npx @abraham/firebase-wif setup` creates the workload identity pool and provider (trusting only this repo), a Hosting-only deploy service account, the `FIREBASE_WIF_PROVIDER` / `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables, and the `production` environment. Run it again with `--environment preview --any-branch` for PR previews. `npx @abraham/firebase-wif status` checks the setup.
+- **Fork PRs:** they can't get OIDC tokens, so the deploy step is guarded with `if: github.event.pull_request.head.repo.full_name == github.repository`. Fork PRs only build and test; a maintainer can push the branch to the repo if a preview is needed.
+- **Caching:** hashed assets under `_app/immutable/` get `Cache-Control: public, max-age=31536000, immutable`. HTML and `static/traces/` JSON get short cache times so updates show up.
+
 ---
 
 ## 7. Milestones
 
 1. **Foundation**
    - SvelteKit + adapter-static + mdsvex scaffold, chapter layout, step controller, design tokens, reduced-motion support (`prefersReducedMotion` from `svelte/motion`).
+   - Prettier, ESLint, `svelte-check`, Vitest, and Playwright set up with `npm run` scripts, plus the `ci.yml` workflow and Dependabot.
+   - Firebase Hosting project, `firebase.json`, Workload Identity Federation via `npx @abraham/firebase-wif setup`, and GitHub Actions for live deploys and PR preview channels.
    - Primitives: `TokenChip`, `ProbBars`, `SamplerWheel`.
 2. **Part I (Ch 0–3)**
    - Bigram builder, temperature/top-k widget.
@@ -267,7 +311,7 @@ llm-kitchen/
    - Prompt inspector, toy tools and tool registry, agent stepper (T0 traces of agent runs), context budget with retrieval, prompt injection demo, recap.
    - Live tool calling via T3/T4, limited to the toy tools.
 8. **Polish**
-   - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, deploy.
+   - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, custom domain on Firebase Hosting.
 
 ---
 
@@ -285,6 +329,7 @@ llm-kitchen/
 - Which small model should be canonical for T0 and T2 (GPT-2 small vs. SmolLM2-135M)? GPT-2 has the best attention-viz tooling, while SmolLM2 gives better-quality text.
 - Should Ch 7's tiny trainer be hand-written (more transparent) or TF.js (faster to build)?
 - Which tool-calling format should Part VI show (a provider's JSON schema, or a simplified made-up format that is easier to read)?
+- How should `.svx` chapters be formatted? Prettier has no mdsvex parser; options are the Markdown parser via an override (may mangle `<script>` blocks and Svelte syntax) or adding `*.svx` to `.prettierignore`.
 
 ---
 
