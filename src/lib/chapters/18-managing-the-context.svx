@@ -8,8 +8,7 @@
 ## The prompt keeps growing
 
 Every tool result and every reply is added to the prompt, and the model re-reads all of it on every
-call. But a model can only read so much at once: its
-<GlossaryPopover term="context-window">context window</GlossaryPopover> (Ch 8). Long before that
+call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover> (Ch 8). Long before that
 limit, long prompts also get slower and more expensive. So the harness has to choose what the model
 sees.
 

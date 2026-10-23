@@ -16,8 +16,7 @@ one small nudge at a time. Press *Train* and watch 16 neurons learn to follow a 
 
 ## Measuring the mistake
 
-To improve, the network needs a score for how wrong it is: the
-<GlossaryPopover term="loss">loss</GlossaryPopover>. For the curve above, the loss is the average
+To improve, the network needs a score for how wrong it is: the <GlossaryPopover term="loss">loss</GlossaryPopover>. For the curve above, the loss is the average
 squared distance between the line and the dots. For a language model, it's how surprised the model
 was by the word that actually came next: if it gave the right word a high probability, the loss is
 low; if it gave it a tiny probability, the loss is high.
@@ -28,8 +27,7 @@ Training means changing the weights so that the loss goes down.
 
 Imagine the loss as a landscape, where your position is the setting of every weight and the height
 is how wrong the network is. Training is like a ball rolling downhill: find which way is down, take
-a small step that way, and repeat. This is
-<GlossaryPopover term="gradient-descent">gradient descent</GlossaryPopover>. Here it is with a
+a small step that way, and repeat. This is <GlossaryPopover term="gradient-descent">gradient descent</GlossaryPopover>. Here it is with a
 single weight, so the landscape is just a curve:
 
 <LossLandscape />

@@ -9,8 +9,7 @@
 
 ## A chat is still just text
 
-A model trained on web text is a
-<GlossaryPopover term="base-model">base model</GlossaryPopover>: it continues whatever it's given.
+A model trained on web text is a <GlossaryPopover term="base-model">base model</GlossaryPopover>: it continues whatever it's given.
 So how does a chat app get answers out of one? It writes the conversation out as a single piece of
 text, in a fixed format with special marker tokens, and lets the model continue it. That format is
 the <GlossaryPopover term="chat-template">chat template</GlossaryPopover>. Here is the real one used

@@ -8,8 +8,7 @@
 
 ## Assembling the pieces
 
-You've now met every ingredient of a
-<GlossaryPopover term="transformer">transformer</GlossaryPopover>: token vectors (Ch 5), layers of
+You've now met every ingredient of a <GlossaryPopover term="transformer">transformer</GlossaryPopover>: token vectors (Ch 5), layers of
 neurons (Ch 6), and attention (Ch 9). A transformer arranges them into a **block** and stacks that
 block many times.<Cite id="vaswani2017" /> Build GPT-2 small one piece at a time:
 
@@ -31,8 +30,7 @@ Attention, the star of the last chapter, has fewer than a quarter.
 
 ## Watch a guess take shape
 
-That highway is called the
-<GlossaryPopover term="residual-stream">residual stream</GlossaryPopover>. Every block reads from
+That highway is called the <GlossaryPopover term="residual-stream">residual stream</GlossaryPopover>. Every block reads from
 it and writes back to it, and the final stream becomes the prediction. So what if you stopped early
 and asked for a prediction from the middle of the stack? Researchers do exactly that, a trick
 called the logit lens.<Cite id="nostalgebraist2020" /> Here it is on "The cat sat on the":

@@ -26,8 +26,7 @@ GPT-2 runs for each one; run GPT-2 live to try your own.
 ## Likely isn't the same as true
 
 Ask GPT-2 who first walked on the moon and it writes that it was "a man named John, who was born in
-1829." Ask about a painter who doesn't exist, and it describes his famous painting. This is called
-<GlossaryPopover term="hallucination">hallucination</GlossaryPopover>.<Cite id="ji2023" /> The model
+1829." Ask about a painter who doesn't exist, and it describes his famous painting. This is called <GlossaryPopover term="hallucination">hallucination</GlossaryPopover>.<Cite id="ji2023" /> The model
 was trained to produce text that *looks like* its training text, and a confident sentence about a
 painter looks like many real ones. Nothing in the loop from Ch 11 checks whether it's true.
 

@@ -8,10 +8,8 @@
 
 ## The model doesn't choose
 
-A language model's output isn't a word. It's a
-<GlossaryPopover term="distribution">probability distribution</GlossaryPopover>: a chance for every
-possible next piece of text, all adding up to 100%. Choosing the word is a separate step, called
-<GlossaryPopover term="sampling">sampling</GlossaryPopover>, and it has its own settings.
+A language model's output isn't a word. It's a <GlossaryPopover term="distribution">probability distribution</GlossaryPopover>: a chance for every
+possible next piece of text, all adding up to 100%. Choosing the word is a separate step, called <GlossaryPopover term="sampling">sampling</GlossaryPopover>, and it has its own settings.
 
 Below are GPT-2's ten most likely next words after *The cat sat on the*. Spin the wheel, then move
 the sliders and watch the bars change.

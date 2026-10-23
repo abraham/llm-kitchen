@@ -8,8 +8,7 @@
 ## The smallest working part
 
 The last chapter ended with vectors: lists of numbers for each token. What does the model do with
-them? It feeds them through millions of tiny calculators called
-<GlossaryPopover term="neuron">neurons</GlossaryPopover>. Each one is simple enough to work out by
+them? It feeds them through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>. Each one is simple enough to work out by
 hand. Move the sliders and watch the numbers flow.
 
 <NeuronPlayground />

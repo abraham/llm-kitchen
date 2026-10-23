@@ -9,8 +9,7 @@
 ## From ID to a list of numbers
 
 A token ID is just a label: 3797 for *" cat"* says nothing about cats. So the first thing GPT-2 does
-with each token is look up a list of 768 numbers for it, called an
-<GlossaryPopover term="embedding">embedding</GlossaryPopover> or a vector. Step through to see the
+with each token is look up a list of 768 numbers for it, called an <GlossaryPopover term="embedding">embedding</GlossaryPopover> or a vector. Step through to see the
 running example become vectors. (Only the first 48 numbers are drawn; striped cells are negative.)
 
 <TokenToVector />

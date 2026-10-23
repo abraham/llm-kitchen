@@ -18,8 +18,7 @@ Without tools, the model wrote out a long multiplication and got 7,050,952. The 
 
 ## A tool call is just text
 
-The model can't press buttons or run programs. A
-<GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
+The model can't press buttons or run programs. A <GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
 format. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
 Then:
 

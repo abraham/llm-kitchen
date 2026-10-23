@@ -26,8 +26,7 @@ mostly don't publish these numbers.
 In 2020, researchers trained many language models of different sizes and found that the loss
 (Ch 7) falls along a smooth, predictable curve as models get bigger, as long as they have enough
 text to learn from.<Cite id="kaplan2020" /> The same held for more training text and more compute.
-A formula like this is called a
-<GlossaryPopover term="scaling-law">scaling law</GlossaryPopover>. Slide along theirs:
+A formula like this is called a <GlossaryPopover term="scaling-law">scaling law</GlossaryPopover>. Slide along theirs:
 
 <ScalingLawChart />
 

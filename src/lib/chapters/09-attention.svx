@@ -8,11 +8,10 @@
 
 ## A spotlight on the past
 
-<GlossaryPopover term="attention">Attention</GlossaryPopover> is how a model lets each token look
+A model uses <GlossaryPopover term="attention">attention</GlossaryPopover> to let each token look
 back over everything before it and pull in what's useful. Picture each token holding a spotlight. It
 shines on the earlier tokens, brightly on the relevant ones and dimly on the rest, and takes in a
-blend of whatever it lights up. Attention is the core idea of the
-<GlossaryPopover term="transformer">transformer</GlossaryPopover>, the design introduced in 2017
+blend of whatever it lights up. Attention is the core idea of the <GlossaryPopover term="transformer">transformer</GlossaryPopover>, the design introduced in 2017
 that almost every modern LLM uses, GPT-2 included.<Cite id="vaswani2017" />
 
 ## Queries, keys, and values
@@ -62,8 +61,7 @@ read are a few bright spots in a mostly murky picture.
 
 ## Many heads, many layers
 
-One set of queries, keys, and values is called an
-<GlossaryPopover term="attention-head">attention head</GlossaryPopover>. Each layer of GPT-2 runs
+One set of queries, keys, and values is called an <GlossaryPopover term="attention-head">attention head</GlossaryPopover>. Each layer of GPT-2 runs
 12 heads side by side, each with its own weights, so each can look for something different. With
 12 layers, that's 144 heads. Layers and heads are numbered from 0, as in research papers.
 

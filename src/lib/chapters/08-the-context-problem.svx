@@ -51,8 +51,7 @@ which parts matter for the word it's working on.
 
 ## The context window
 
-Modern models still have a limit, called the
-<GlossaryPopover term="context-window">context window</GlossaryPopover>, but it is much larger.
+Modern models still have a limit, called the <GlossaryPopover term="context-window">context window</GlossaryPopover>, but it is much larger.
 GPT-2 can look at up to 1,024 tokens at once.<Cite id="radford2019" />
 Within that window, every token can use any earlier token. The next chapter shows how.
 

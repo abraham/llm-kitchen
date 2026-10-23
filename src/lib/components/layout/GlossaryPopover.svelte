@@ -26,12 +26,20 @@
 <svelte:window onkeydown={onwindowkeydown} onclick={onwindowclick} />
 
 <span class="term" bind:this={root}>
-	<button
-		type="button"
+	<!-- A <button> can't wrap across lines, so multi-word terms would jump to a line of their own. -->
+	<span
 		class="trigger"
+		role="button"
+		tabindex="0"
 		aria-expanded={open}
 		aria-controls={id}
-		onclick={() => (open = !open)}>{@render children()}</button
+		onclick={() => (open = !open)}
+		onkeydown={(event) => {
+			if (event.key === 'Enter' || event.key === ' ') {
+				event.preventDefault();
+				open = !open;
+			}
+		}}>{@render children()}</span
 	><span class="popover" {id} role="note" hidden={!open}>
 		<strong>{entry.term}</strong>: {entry.definition}
 		{#if linkable}
@@ -48,7 +56,6 @@
 	}
 
 	.trigger {
-		all: unset;
 		cursor: help;
 		border-bottom: 1px dotted currentColor;
 	}

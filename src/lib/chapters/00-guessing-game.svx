@@ -11,8 +11,7 @@
 *The cat sat on the ___*
 
 You probably thought of a word straight away. Maybe *mat*, maybe *floor*. Before reading on, try
-it below, and see how your guess compares with a real
-<GlossaryPopover term="llm">large language model</GlossaryPopover>.
+it below, and see how your guess compares with a real <GlossaryPopover term="llm">large language model</GlossaryPopover>.
 
 <GuessTheWord />
 
