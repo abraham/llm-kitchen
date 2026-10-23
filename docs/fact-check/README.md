@@ -8,7 +8,8 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 - [Part III: Learning (Ch 6–7)](part-3.md)
 - [Part IV: Context (Ch 8–10)](part-4.md)
 - [Part V: Putting it together (Ch 11–14)](part-5.md)
-- [Part VI: Harnesses (Ch 15–20)](part-6.md)
+- [Part VI: Harnesses (Ch 15–19)](part-6.md)
+- [Part VII: Other kinds of models (Ch 20–25) and the recap (Ch 26)](part-7.md)
 
 ## Final review (milestone 12)
 

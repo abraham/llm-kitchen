@@ -7,8 +7,7 @@ const PAGES = [
 	'/tools',
 	'/the-agent-loop',
 	'/managing-the-context',
-	'/trust-and-guardrails',
-	'/recap'
+	'/trust-and-guardrails'
 ];
 
 for (const path of PAGES) {
@@ -69,25 +68,4 @@ test('Ch 19: guardrails protect the files', async ({ page }) => {
 	await widget.getByLabel('Ask before deleting').check();
 	await expect(widget.getByText('taxes.pdf (deleted)')).toHaveCount(0);
 	await expect(widget.getByText('blocked by the harness').first()).toBeVisible();
-});
-
-test('Ch 20: zoom into the model and take the quiz', async ({ page }) => {
-	await gotoHydrated(page, '/recap');
-	const picture = page.getByRole('region', { name: 'The whole picture' });
-	await picture.getByRole('button', { name: 'Zoom in on the model' }).click();
-	await picture.getByRole('button', { name: /Zoom in on 12 transformer blocks/ }).click();
-	await expect(picture.getByRole('link', { name: /Ch 9: Attention/ })).toBeVisible();
-
-	const quiz = page.getByRole('region', { name: 'Quick check' });
-	for (const answer of [
-		'Probabilities for the next token',
-		'It reads tokens, not letters',
-		'It lets each token pull in information from any earlier token',
-		'The harness',
-		'Guardrails in the harness, like asking you first'
-	]) {
-		await quiz.getByLabel(answer, { exact: true }).check();
-	}
-	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('5 of 5 right.')).toBeVisible();
 });

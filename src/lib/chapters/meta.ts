@@ -1,5 +1,6 @@
 export interface Part {
-	number: string;
+	/** Roman numeral, or null for the closing wrap-up. */
+	number: string | null;
 	title: string;
 }
 
@@ -18,7 +19,9 @@ export const PARTS = {
 	learning: { number: 'III', title: 'Learning' },
 	context: { number: 'IV', title: 'Context' },
 	together: { number: 'V', title: 'Putting it together' },
-	harnesses: { number: 'VI', title: 'Harnesses' }
+	harnesses: { number: 'VI', title: 'Harnesses' },
+	others: { number: 'VII', title: 'Other kinds of models' },
+	wrapup: { number: null, title: 'Wrap-up' }
 } as const satisfies Record<string, Part>;
 
 type Row = [slug: string, title: string, part: keyof typeof PARTS, buildsOn: number[]];
@@ -45,7 +48,13 @@ const rows: Row[] = [
 	['the-agent-loop', 'The agent loop', 'harnesses', [11, 16]],
 	['managing-the-context', 'Managing the context', 'harnesses', [5, 8, 17]],
 	['trust-and-guardrails', 'Trust and guardrails', 'harnesses', [17]],
-	['recap', 'Recap: the whole picture', 'harnesses', []]
+	['encoders', 'Reading both ways', 'others', [5, 9]],
+	['mixture-of-experts', 'Many experts', 'others', [6, 10]],
+	['recurrent-models', 'Remembering without attention', 'others', [7, 8]],
+	['seeing-pictures', 'Seeing pictures', 'others', [5, 10]],
+	['diffusion', 'Painting from noise', 'others', [7, 11]],
+	['reasoning-models', 'Thinking before answering', 'others', [11, 13]],
+	['recap', 'Recap: the whole picture', 'wrapup', []]
 ];
 
 /** The full curriculum, in reading order. Chapter files are `NN-slug.svx` in this folder. */
@@ -61,6 +70,11 @@ export const CURRICULUM: readonly ChapterMeta[] = rows.map(
 
 export function chapterFileName(chapter: ChapterMeta): string {
 	return `${String(chapter.number).padStart(2, '0')}-${chapter.slug}.svx`;
+}
+
+/** "Part VII: Other kinds of models", or just the title for the unnumbered wrap-up. */
+export function partLabel(part: Part, separator = ': '): string {
+	return part.number ? `Part ${part.number}${separator}${part.title}` : part.title;
 }
 
 export function findChapter(slug: string): ChapterMeta | undefined {

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { writtenChapters, type ChapterMeta } from '#lib/chapters/index.ts';
+	import { partLabel, writtenChapters, type ChapterMeta } from '#lib/chapters/index.ts';
 	import { progress } from '#lib/stores/progress.svelte.ts';
 
 	let { current }: { current?: string } = $props();
 
 	const written = writtenChapters();
 	const parts = [...new Set(written.map((c) => c.part))].map((part) => ({
-		title: `Part ${part.number}: ${part.title}`,
+		title: partLabel(part),
 		chapters: written.filter((c) => c.part === part) as ChapterMeta[]
 	}));
 </script>

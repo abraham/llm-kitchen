@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { chapterByNumber, type ChapterMeta } from '#lib/chapters/index.ts';
+	import { chapterByNumber, partLabel, type ChapterMeta } from '#lib/chapters/index.ts';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
@@ -29,7 +29,7 @@
 	<div class="column">
 		<main id="content" class="prose">
 			<header>
-				<p class="label">Part {meta.part.number} · {meta.part.title}</p>
+				<p class="label">{partLabel(meta.part, ' · ')}</p>
 				<h1><span class="num">Ch {meta.number}.</span> {meta.title}</h1>
 			</header>
 

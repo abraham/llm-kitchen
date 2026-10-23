@@ -1,4 +1,4 @@
-# Fact-check: Part VI (Ch 15–20)
+# Fact-check: Part VI (Ch 15–19)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-6-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -60,11 +60,6 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | A 3-step limit still loses one file                                       | Test (replay of the first 3 steps) |
 | Sandboxes isolate code execution                                          | General practice (no demo)         |
 
-## Ch 20. Recap
-
-The diagram and quiz restate earlier chapters; each box links to its chapter. Quiz answers are
-checked by e2e.
-
 ## Changes from the plan
 
 - **Model for Part VI recordings.** Qwen2.5-1.5B-Instruct (about 3 GB, recorded offline), not a
@@ -77,4 +72,4 @@ checked by e2e.
 - **Injection text.** The page fakes the end of the tool result and a new user message. A plain
   "ignore your instructions" note didn't make the model delete anything in testing.
 - **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
-- **Ch 20** uses a click-to-zoom set of boxes rather than a free pan-and-zoom diagram.
+- **The recap** (now Ch 26) moved to [part-7.md](part-7.md) when Part VII was added.

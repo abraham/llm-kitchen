@@ -51,6 +51,28 @@
 			],
 			answer: 1,
 			why: 'To the model, the page is just more text; the harness has to supply the safety (Ch 19).'
+		},
+		{
+			q: 'Why can BERT fill in a blank in the middle of a sentence better than GPT-2?',
+			options: [
+				'It has a bigger vocabulary',
+				'Its attention can look at the words after the blank too',
+				'It was trained on more text',
+				'It uses a higher temperature'
+			],
+			answer: 1,
+			why: 'An encoder lets every token see every other token, both before and after (Ch 20).'
+		},
+		{
+			q: 'What does a reasoning model do differently from an ordinary chat model?',
+			options: [
+				'It looks answers up in a database',
+				'It runs a separate logic engine',
+				'It writes scratch work as tokens before answering',
+				'It never makes mistakes'
+			],
+			answer: 2,
+			why: 'It is still predicting tokens; it was trained to write its working first (Ch 25).'
 		}
 	];
 

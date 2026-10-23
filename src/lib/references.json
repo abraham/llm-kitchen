@@ -339,5 +339,150 @@
 		"venue": "AISec 2023",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2302.12173"
+	},
+	{
+		"id": "devlin2019",
+		"authors": ["Jacob Devlin", "Ming-Wei Chang", "Kenton Lee", "Kristina Toutanova"],
+		"title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+		"venue": "NAACL 2019",
+		"year": 2019,
+		"url": "https://arxiv.org/abs/1810.04805"
+	},
+	{
+		"id": "shazeer2017",
+		"authors": ["Noam Shazeer", "Azalia Mirhoseini", "Krzysztof Maziarz", "Andy Davis"],
+		"title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+		"venue": "ICLR 2017",
+		"year": 2017,
+		"url": "https://arxiv.org/abs/1701.06538"
+	},
+	{
+		"id": "jiang2024",
+		"authors": ["Albert Q. Jiang", "Alexandre Sablayrolles", "Antoine Roux", "Arthur Mensch"],
+		"title": "Mixtral of Experts",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2401.04088"
+	},
+	{
+		"id": "deepseek2024",
+		"authors": ["DeepSeek-AI"],
+		"title": "DeepSeek-V3 Technical Report",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2412.19437"
+	},
+	{
+		"id": "elman1990",
+		"authors": ["Jeffrey L. Elman"],
+		"title": "Finding Structure in Time",
+		"venue": "Cognitive Science 14(2)",
+		"year": 1990,
+		"url": "https://doi.org/10.1207/s15516709cog1402_1"
+	},
+	{
+		"id": "hochreiter1997",
+		"authors": ["Sepp Hochreiter", "Jürgen Schmidhuber"],
+		"title": "Long Short-Term Memory",
+		"venue": "Neural Computation 9(8)",
+		"year": 1997,
+		"url": "https://doi.org/10.1162/neco.1997.9.8.1735"
+	},
+	{
+		"id": "gu2023",
+		"authors": ["Albert Gu", "Tri Dao"],
+		"title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.00752"
+	},
+	{
+		"id": "jelassi2024",
+		"authors": ["Samy Jelassi", "David Brandfonbrener", "Sham M. Kakade", "Eran Malach"],
+		"title": "Repeat After Me: Transformers are Better than State Space Models at Copying",
+		"venue": "ICML 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.01032"
+	},
+	{
+		"id": "dosovitskiy2021",
+		"authors": ["Alexey Dosovitskiy", "Lucas Beyer", "Alexander Kolesnikov", "Dirk Weissenborn"],
+		"title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+		"venue": "ICLR 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2010.11929"
+	},
+	{
+		"id": "radford2021",
+		"authors": ["Alec Radford", "Jong Wook Kim", "Chris Hallacy", "Aditya Ramesh"],
+		"title": "Learning Transferable Visual Models From Natural Language Supervision",
+		"venue": "ICML 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2103.00020"
+	},
+	{
+		"id": "liu2023",
+		"authors": ["Haotian Liu", "Chunyuan Li", "Qingyang Wu", "Yong Jae Lee"],
+		"title": "Visual Instruction Tuning",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2304.08485"
+	},
+	{
+		"id": "sohl-dickstein2015",
+		"authors": ["Jascha Sohl-Dickstein", "Eric Weiss", "Niru Maheswaranathan", "Surya Ganguli"],
+		"title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+		"venue": "ICML 2015",
+		"year": 2015,
+		"url": "https://arxiv.org/abs/1503.03585"
+	},
+	{
+		"id": "ho2020",
+		"authors": ["Jonathan Ho", "Ajay Jain", "Pieter Abbeel"],
+		"title": "Denoising Diffusion Probabilistic Models",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2006.11239"
+	},
+	{
+		"id": "rombach2022",
+		"authors": ["Robin Rombach", "Andreas Blattmann", "Dominik Lorenz", "Patrick Esser"],
+		"title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+		"venue": "CVPR 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2112.10752"
+	},
+	{
+		"id": "wei2022",
+		"authors": ["Jason Wei", "Xuezhi Wang", "Dale Schuurmans", "Maarten Bosma"],
+		"title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2201.11903"
+	},
+	{
+		"id": "deepseek2025",
+		"authors": ["DeepSeek-AI"],
+		"title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2501.12948"
+	},
+	{
+		"id": "qwen3",
+		"authors": ["An Yang", "Anfeng Li", "Baosong Yang", "Beichen Zhang"],
+		"title": "Qwen3 Technical Report",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2505.09388"
+	},
+	{
+		"id": "qwen3-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3-0.6B model card",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+		"accessed": "2026-10-23"
 	}
 ]

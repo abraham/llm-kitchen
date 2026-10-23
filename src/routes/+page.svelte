@@ -23,17 +23,22 @@
 		<p class="label">Today's menu</p>
 		<h1>llm-kitchen</h1>
 		<p class="lede">
-			How a large language model works, one idea at a time. Start with guessing the next word and
-			finish with an agent that uses tools.
+			How a large language model works, one idea at a time. Start with guessing the next word, build
+			up to an agent that uses tools, and finish with other kinds of models made from the same
+			pieces.
 		</p>
 		{#if first}
 			<a class="start" href={resolve('/[chapter]', { chapter: first.slug })}>Start with Ch 0 →</a>
 		{/if}
 	</header>
 
-	{#each parts as { part, chapters } (part.number)}
-		<section aria-labelledby="part-{part.number}">
-			<h2 id="part-{part.number}"><span class="label">Part {part.number}</span> {part.title}</h2>
+	{#each parts as { part, chapters } (part.title)}
+		{@const id = `part-${part.number ?? 'wrap-up'}`}
+		<section aria-labelledby={id}>
+			<h2 {id}>
+				{#if part.number}<span class="label">Part {part.number}</span>{/if}
+				{part.title}
+			</h2>
 			<ol>
 				{#each chapters as chapter (chapter.slug)}
 					<li>

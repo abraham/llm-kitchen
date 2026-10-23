@@ -53,18 +53,18 @@ export function triangleNet(inputs: number[], on: boolean[] = [true, true, true]
 	return { hidden, out };
 }
 
-function gaussian(random: () => number): number {
+export function gaussian(random: () => number): number {
 	const u = 1 - random();
 	const v = random();
 	return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-function init(n: number, scale: number, random: () => number): Float64Array {
+export function init(n: number, scale: number, random: () => number): Float64Array {
 	return Float64Array.from({ length: n }, () => gaussian(random) * scale);
 }
 
 /** Adam optimizer state for one parameter array (Kingma & Ba, 2015). */
-class Adam {
+export class Adam {
 	private m: Float64Array;
 	private v: Float64Array;
 	private t = 0;

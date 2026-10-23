@@ -78,7 +78,7 @@
 			what: 'Turns text into probabilities for the next token, one token at a time.',
 			chapters: [0, 11],
 			color: 'prob',
-			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick']
+			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick', 'variants']
 		},
 		tokens: {
 			id: 'tokens',
@@ -135,6 +135,56 @@
 			name: 'Pick and append',
 			what: 'Sample a token, add it, and repeat.',
 			chapters: [3, 11],
+			color: 'prob'
+		},
+		variants: {
+			id: 'variants',
+			name: 'Other kinds of models',
+			what: 'The same pieces, with one of them changed.',
+			chapters: [20],
+			color: 'weight',
+			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion', 'reasoning']
+		},
+		encoders: {
+			id: 'encoders',
+			name: 'Encoders',
+			what: 'Attention that looks both ways, for understanding rather than writing.',
+			chapters: [20],
+			color: 'attention'
+		},
+		experts: {
+			id: 'experts',
+			name: 'Mixture of experts',
+			what: 'Many MLPs per block; a router sends each token to a few.',
+			chapters: [21],
+			color: 'weight'
+		},
+		recurrent: {
+			id: 'recurrent',
+			name: 'Recurrent models',
+			what: 'A fixed-size memory instead of looking back at every token.',
+			chapters: [22],
+			color: 'vector'
+		},
+		vision: {
+			id: 'vision',
+			name: 'Vision models',
+			what: 'Patches of a picture become the tokens.',
+			chapters: [23],
+			color: 'token'
+		},
+		diffusion: {
+			id: 'diffusion',
+			name: 'Diffusion models',
+			what: 'Make a picture by removing noise, a little at every step.',
+			chapters: [24],
+			color: 'weight'
+		},
+		reasoning: {
+			id: 'reasoning',
+			name: 'Reasoning models',
+			what: 'Write scratch work before the answer.',
+			chapters: [25],
 			color: 'prob'
 		}
 	};

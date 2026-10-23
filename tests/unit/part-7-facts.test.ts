@@ -1,0 +1,127 @@
+import { readFileSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+import canonicalJson from '../../models/canonical.json';
+import { RHYMES } from '../../src/lib/data/rhymes.ts';
+import { MOE_MODELS } from '../../src/lib/data/moe.ts';
+import { CharRNN, RNNTrainer } from '../../src/lib/math/rnn.ts';
+import { seededRandom } from '../../src/lib/math/sampling.ts';
+
+const json = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+
+describe('Ch 20: encoders', () => {
+	const d = json('static/encoders/fill-mask.json');
+
+	it('BERT uses the words after the blank; GPT-2 cannot', () => {
+		const [fridge, bread] = d.sentences;
+		expect(fridge.gpt2[0].text).toBe(' floor');
+		expect(fridge.bert[0].text).toBe('top');
+		expect(bread.gpt2[0].text).toBe(' hospital');
+		expect(bread.bert[0].text).toBe('market');
+	});
+
+	it('the mask grid sentence has the blank at token 6 of 10', () => {
+		const tokens: string[] = d.sentences[0].tokens;
+		expect(tokens).toHaveLength(10);
+		expect(tokens.indexOf('[MASK]')).toBe(5);
+	});
+});
+
+describe('Ch 21: mixture of experts', () => {
+	it('Mixtral uses about a quarter of its weights per token, DeepSeek-V3 about 6%', () => {
+		const share = (name: string) => {
+			const m = MOE_MODELS.find((x) => x.name === name)!;
+			return m.activeParameters / m.totalParameters;
+		};
+		expect(share('Mixtral 8x7B')).toBeCloseTo(0.28, 2);
+		expect(Math.round(share('DeepSeek-V3') * 100)).toBe(6);
+	});
+});
+
+describe('Ch 22: recurrent models', () => {
+	it('keeps 2 × layers × embedding size numbers per token with attention', () => {
+		expect(2 * canonicalJson.layers * canonicalJson.embeddingSize).toBe(18432);
+	});
+
+	it('after the widget’s 1,500 training steps, it expects “u” after “humpty d”', () => {
+		const texts = RHYMES.map((r) => r.text.toLowerCase());
+		const vocab = [...new Set(texts.join(''))].sort();
+		const encode = (s: string) => [...s].map((c) => vocab.indexOf(c));
+		const random = seededRandom(1);
+		const trainer = new RNNTrainer(new CharRNN(vocab.length, 32, 1));
+		for (let i = 0; i < 1500; i++) {
+			trainer.step(
+				Array.from({ length: 16 }, () => {
+					const t = texts[Math.floor(random() * texts.length)];
+					const start = Math.floor(random() * (t.length - 24));
+					return encode(t.slice(start, start + 24));
+				})
+			);
+		}
+		let h: Float64Array = new Float64Array(32);
+		let probs: Float64Array = new Float64Array(vocab.length);
+		for (const c of encode('humpty d')) ({ h, probs } = trainer.model.step(h, c));
+		expect(vocab[probs.indexOf(Math.max(...probs))]).toBe('u');
+	}, 60_000);
+});
+
+describe('Ch 23: seeing pictures', () => {
+	const d = json('static/vision/clip.json');
+	const names: string[] = d.images.map((i: { name: string }) => i.name);
+	const best = (c: { similarity: number[] }) =>
+		names[c.similarity.indexOf(Math.max(...c.similarity))];
+
+	it('cuts 224-pixel pictures into a 7 × 7 grid of 32-pixel patches of 768 numbers', () => {
+		expect([d.imageSize, d.grid, d.patchSize, d.patchDimensions]).toEqual([224, 7, 32, 768]);
+	});
+
+	it('gives identical background patches identical vectors', () => {
+		const patches: number[][] = d.images[0].patches;
+		expect(patches[0]).toEqual(patches[48]);
+	});
+
+	it('picks the right picture first for all 12 exact descriptions', () => {
+		const exact = d.captions.slice(0, 12);
+		for (const c of exact) expect(best(c)).toBe(c.text.slice(2).replace(' ', '-'));
+	});
+
+	it('barely prefers a circle for “something round”; the cat matches nothing well', () => {
+		const caption = (t: string) => d.captions.find((c: { text: string }) => c.text === t);
+		expect(best(caption('something round'))).toMatch(/circle/);
+		const exactBest = Math.min(
+			...d.captions.slice(0, 12).map((c: { similarity: number[] }) => Math.max(...c.similarity))
+		);
+		expect(Math.max(...caption('a photo of a cat').similarity)).toBeLessThan(exactBest);
+	});
+});
+
+describe('Ch 25: reasoning models', () => {
+	const d = json('static/reasoning/thinking.json');
+	type Run = {
+		correct: boolean;
+		final: string | null;
+		thinkingTokens: number;
+		answerTokens: number;
+	};
+	const runs = (key: 'off' | 'on'): Run[] => d.puzzles.map((p: Record<string, Run>) => p[key]);
+	const tokens = (rs: Run[]) => rs.reduce((a, r) => a + r.thinkingTokens + r.answerTokens, 0);
+
+	it('gets 4 of 6 right both ways', () => {
+		expect(runs('off').filter((r) => r.correct)).toHaveLength(4);
+		expect(runs('on').filter((r) => r.correct)).toHaveLength(4);
+	});
+
+	it('counts the r’s in strawberry right only when thinking', () => {
+		const p = d.puzzles.find((q: { question: string }) => q.question.includes('strawberry'));
+		expect(p.off.final).toBe('2');
+		expect(p.on.final).toBe('3');
+		expect(p.on.thinking).toContain('S-T-R-A-W-B-E-R-R-Y');
+	});
+
+	it('writes about 24 times as many tokens when thinking; twice it never answers', () => {
+		expect(Math.round(tokens(runs('on')) / tokens(runs('off')))).toBe(24);
+		const unfinished = runs('on').filter((r) => r.final === null);
+		expect(unfinished).toHaveLength(2);
+		for (const r of unfinished) expect(r.thinkingTokens).toBe(d.settings.on.max_new_tokens);
+		expect(d.settings.on.max_new_tokens).toBe(6000);
+	});
+});
