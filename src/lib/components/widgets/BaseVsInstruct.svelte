@@ -59,8 +59,8 @@
 				{/each}
 			</div>
 			<p class="note">
-				Each model picks its most likely token every time, so these are repeatable. Grey text is the
-				prompt; the rest is what the model wrote.
+				Each model picks its most likely token every time, so these are repeatable. Shaded text is
+				the prompt; the rest is what the model wrote.
 			</p>
 		{/snippet}
 	</Loading>
@@ -117,6 +117,11 @@
 
 	.prompt {
 		color: var(--ink-muted);
+		background: color-mix(in oklch, var(--rule) 60%, transparent);
+		border-radius: 3px;
+		padding: 0 2px;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
 	}
 
 	.end {
