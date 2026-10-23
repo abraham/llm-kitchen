@@ -31,3 +31,17 @@ Chapters live in `src/lib/chapters/NN-slug.svx` and are registered in
 ## Manual setup (not automated)
 
 - **Branch protection on `main`:** require the `ci-success` status check.
+- **Firebase project:** create it (or change the `default` project in `.firebaserc` to an existing
+  one) and enable Hosting.
+- **Workload Identity Federation:** with `gcloud` and `gh` signed in, run
+  `npx @abraham/firebase-wif setup` for the `production` environment (default branch only), then
+  `npx @abraham/firebase-wif setup --environment preview --any-branch` for PR previews. Check with
+  `npx @abraham/firebase-wif status`. This creates the `FIREBASE_WIF_PROVIDER` and
+  `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables the deploy workflows read.
+
+## Deploys
+
+- `firebase-hosting-pr.yml`: every same-repo PR deploys to a `pr-<number>` preview channel that
+  expires after 7 days. Fork PRs only run CI.
+- `firebase-hosting-merge.yml`: after CI passes on `main`, deploys the same commit to the live
+  channel.

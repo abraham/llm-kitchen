@@ -218,7 +218,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 - Security for bring-your-own keys:
   - Keep the key in memory or `sessionStorage` only, never `localStorage`.
   - Call the provider directly from the browser and never send the key anywhere else.
-  - Set a strict CSP `connect-src` allowlist (as a header in `firebase.json`).
+  - Set a strict CSP `connect-src` allowlist. The CSP is emitted by SvelteKit (`csp` in `vite.config.ts`, hash mode, so its inline scripts are allowed without `'unsafe-inline'`), and `firebase.json` adds the header-only `frame-ancestors 'none'`.
   - Show a clear warning that this sends the visitor's prompt to the provider.
   - Never ship a key in the site.
 - Harness demos (Part VI) only expose in-browser toy tools. Live models can call those tools but never get network, file system, or `eval` access, regardless of tier.
@@ -270,7 +270,7 @@ llm-kitchen/
   eslint.config.js           # flat config: typescript-eslint, eslint-plugin-svelte, eslint-config-prettier
   prettier.config.js         # Prettier config + prettier-plugin-svelte
   .prettierignore            # build/, .svelte-kit/, static/traces/, *.svx (no mdsvex parser; would mangle Svelte syntax)
-  firebase.json              # hosting config: public dir = build/, headers (CSP, caching), cleanUrls
+  firebase.json              # hosting config: public dir = build/, security and caching headers, cleanUrls
   .firebaserc                # Firebase project alias
   .github/
     dependabot.yml           # npm and GitHub Actions updates
