@@ -109,5 +109,61 @@
 		"venue": "Hugging Face",
 		"year": 2021,
 		"url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+	},
+	{
+		"id": "mcculloch1943",
+		"authors": ["Warren S. McCulloch", "Walter Pitts"],
+		"title": "A Logical Calculus of the Ideas Immanent in Nervous Activity",
+		"venue": "Bulletin of Mathematical Biophysics 5",
+		"year": 1943,
+		"url": "https://doi.org/10.1007/BF02478259"
+	},
+	{
+		"id": "rosenblatt1958",
+		"authors": ["Frank Rosenblatt"],
+		"title": "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain",
+		"venue": "Psychological Review 65(6)",
+		"year": 1958,
+		"url": "https://doi.org/10.1037/h0042519"
+	},
+	{
+		"id": "hendrycks2016",
+		"authors": ["Dan Hendrycks", "Kevin Gimpel"],
+		"title": "Gaussian Error Linear Units (GELUs)",
+		"venue": "arXiv:1606.08415",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1606.08415"
+	},
+	{
+		"id": "gpt2-config",
+		"authors": ["OpenAI", "Hugging Face"],
+		"title": "GPT-2 small configuration (config.json)",
+		"venue": "Hugging Face",
+		"year": 2019,
+		"url": "https://huggingface.co/openai-community/gpt2/blob/main/config.json"
+	},
+	{
+		"id": "rumelhart1986",
+		"authors": ["David E. Rumelhart", "Geoffrey E. Hinton", "Ronald J. Williams"],
+		"title": "Learning Representations by Back-Propagating Errors",
+		"venue": "Nature 323",
+		"year": 1986,
+		"url": "https://doi.org/10.1038/323533a0"
+	},
+	{
+		"id": "bengio2003",
+		"authors": ["Yoshua Bengio", "Réjean Ducharme", "Pascal Vincent", "Christian Jauvin"],
+		"title": "A Neural Probabilistic Language Model",
+		"venue": "Journal of Machine Learning Research 3",
+		"year": 2003,
+		"url": "https://www.jmlr.org/papers/v3/bengio03a.html"
+	},
+	{
+		"id": "kingma2015",
+		"authors": ["Diederik P. Kingma", "Jimmy Ba"],
+		"title": "Adam: A Method for Stochastic Optimization",
+		"venue": "ICLR 2015",
+		"year": 2015,
+		"url": "https://arxiv.org/abs/1412.6980"
 	}
 ]

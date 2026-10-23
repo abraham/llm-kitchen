@@ -73,6 +73,7 @@ def check_config(model) -> None:
         "embeddingSize": c.n_embd,
         "vocabularySize": c.vocab_size,
         "contextLength": c.n_positions,
+        "mlpSize": c.n_inner or 4 * c.n_embd,
         "parameters": sum(p.numel() for p in model.parameters()),
     }
     mismatches = {k: (CANONICAL[k], v) for k, v in actual.items() if CANONICAL[k] != v}

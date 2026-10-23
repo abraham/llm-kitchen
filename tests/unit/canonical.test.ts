@@ -17,6 +17,7 @@ describe('models/canonical.json', () => {
 			'layers',
 			'heads',
 			'embeddingSize',
+			'mlpSize',
 			'vocabularySize',
 			'contextLength'
 		]) {
@@ -29,6 +30,7 @@ describe('models/canonical.json', () => {
 			layers: 12,
 			heads: 12,
 			embeddingSize: 768,
+			mlpSize: 3072,
 			vocabularySize: 50257,
 			contextLength: 1024
 		});

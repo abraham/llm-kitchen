@@ -8,6 +8,7 @@
 	"layers": 12,
 	"heads": 12,
 	"embeddingSize": 768,
+	"mlpSize": 3072,
 	"vocabularySize": 50257,
 	"contextLength": 1024
 }

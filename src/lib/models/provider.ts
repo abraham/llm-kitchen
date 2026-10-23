@@ -12,6 +12,8 @@ export interface CanonicalModel {
 	layers: number;
 	heads: number;
 	embeddingSize: number;
+	/** Neurons in each block's MLP. */
+	mlpSize: number;
 	vocabularySize: number;
 	contextLength: number;
 }
