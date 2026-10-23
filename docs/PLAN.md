@@ -1,6 +1,6 @@
 # llm-kitchen — Plan
 
-A static site that teaches how a large language model works. It starts with "guess the next word", builds up to a full transformer generating text, and ends with the harness that turns that text generator into an assistant or agent. Each chapter adds one idea, uses one main animation to reinforce it, and includes an optional live model demo where that helps.
+A static site that teaches how a large language model works. It starts with "guess the next word", builds up to a full transformer generating text, follows with the harness that turns that text generator into an assistant or agent, and ends with other kinds of models built from the same pieces. Each chapter adds one idea, uses one main animation to reinforce it, and includes an optional live model demo where that helps.
 
 ---
 
@@ -190,9 +190,64 @@ v1 records the runs with Qwen2.5-1.5B-Instruct in a small Python harness (`scrip
 - _Animation:_ Text from a tool result flows into the same context as the user's instructions, colored differently, but the model reads it all as one stream of tokens.
 - _Key idea:_ To the model, tool output is just more text. The harness has to supply the safety: permission prompts, tool allowlists, sandboxes, and step limits.
 
-**Ch 20. Recap: the whole picture**
+### Part VII — Other kinds of models
 
-- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop. A short quiz checks understanding.
+Everything so far has been one kind of model: a decoder-only transformer that reads text and predicts the next token. Part VII shows how other models change one piece of that recipe and keep the rest, so each chapter starts from what changed ("same as Ch N, except…") and reuses the earlier widgets and visual elements. It closes with what these models share.
+
+Demos follow the same tiers as before: recorded runs of real models by default (T0), computed toys trained or run in the browser where a real model is too big, and optional live models where a small one exists. Toy versions are labeled as simplified.
+
+**Ch 20. Reading both ways (encoders)**
+
+- _Hook:_ "GPT-2 fills in the blank at the end of a sentence. What if the blank is in the middle?"
+- _Try it:_ Fill in _"The cat sat on the [MASK] and purred."_ with an encoder (BERT-style, masked language model) and with GPT-2, which can only use the words before the blank. Toggle the attention mask between "earlier tokens only" and "every token" on the Ch 9 attention grid.
+- _Animation:_ The triangular causal mask from Ch 9 fills in to a full square. Arrows from later words now reach back to the blank.
+- _Key idea:_ Encoders read the whole text at once, so they are good at understanding (search, classification, embeddings) but can't generate text one token at a time. The embedding model from Ch 5 is one.
+- _Live option:_ A small fill-mask model via Transformers.js (T2), if its download is reasonable; otherwise recorded (T0).
+
+**Ch 21. Many experts (mixture of experts)**
+
+- _Hook:_ "How can a model have hundreds of billions of numbers but only use a fraction of them for each token?"
+- _Try it:_ Watch the tokens of a sentence pass through a block whose MLP is split into several **experts**. A small **router** scores the experts for each token and sends it to the top 2. The visitor sees which expert each token went to and the count of total vs. active numbers.
+- _Animation:_ The Ch 10 block, with its MLP replaced by a row of experts and a switch in front of it.
+- _Key idea:_ Mixture-of-experts models grow their total size without growing the work per token: each token only runs through a few experts.
+- _Data:_ Real figures (e.g. Mixtral 8x7B: 8 experts, 2 per token). Routing recorded from a small open MoE (e.g. OLMoE-1B-7B) if recording it is practical; otherwise a computed toy router, labeled as simplified.
+
+**Ch 22. Remembering without attention (RNNs and state-space models)**
+
+- _Hook:_ "Attention looks back at every earlier token. What if the model could only keep a short summary instead?"
+- _Try it:_ A tiny character-level **recurrent** model, trained in the browser on the Ch 2 rhymes like Ch 7's model. Step through a sentence and watch its fixed-size memory (a `VectorStrip`) update one character at a time. A chart beside it compares memory use as the text grows: attention's grows with every token, the recurrent model's stays the same.
+- _Animation:_ The Ch 8 sliding window is replaced by a single box that the text flows through, keeping only a summary.
+- _Key idea:_ Recurrent and state-space models (such as Mamba) carry a fixed-size state instead of looking back at everything. That makes long texts cheap, at the cost of having to decide what to forget.
+
+**Ch 23. Seeing pictures (vision and multimodal models)**
+
+- _Hook:_ "How can a model that reads tokens look at a photo?"
+- _Try it:_ Pick an image and cut it into a grid of patches. Each patch becomes a vector, like a token in Ch 5, and the patches go through the same transformer. Then explore a shared map of images and captions, where matching pictures and words land close together.
+- _Animation:_ An image splits into tiles that line up into a row of `VectorStrip`s, the same row of vectors a sentence becomes.
+- _Key idea:_ Anything that can be cut into pieces and turned into vectors can go through a transformer. Chat models that "see" put image tokens into the same context as text tokens.
+- _Data:_ Recorded CLIP-style embeddings for a small set of bundled, openly licensed images and their captions (T0).
+- _Live option:_ Embed the visitor's own caption with the text half of the model (T2) and see which images it lands near.
+
+**Ch 24. Painting from noise (diffusion models)**
+
+- _Hook:_ "Image generators don't draw one pixel at a time. So how do they work?"
+- _Try it:_ A 2D toy: a cloud of random points steps back into a shape (a spiral, or the letters "LLM"), denoised by a tiny network trained in the browser with Ch 7's hand-written MLP. A slider moves through the denoising steps, and the visitor can retrain on a shape of their own.
+- _Animation:_ Side by side, Ch 11's generation adds one token at a time from left to right, while diffusion refines the whole picture at once, a little at every step.
+- _Key idea:_ Diffusion models learn to remove a little noise at a time. Starting from pure noise and repeating that many times produces a new image.
+
+**Ch 25. Thinking before answering (reasoning models)**
+
+- _Hook:_ "Some models pause to 'think' before they answer. What is the thinking?"
+- _Try it:_ The same small puzzles asked with thinking off and on, stepping through the tokens the model writes before its answer. A tally compares correct answers and tokens used.
+- _Animation:_ The Ch 11 token loop, with a stretch of "scratch work" tokens before the answer that the harness hides from the chat bubble.
+- _Key idea:_ A reasoning model is still a next-token predictor. It has been trained, often with rewards for answers that can be checked, to write out its working first, spending more tokens (and compute) on each answer.
+- _Data:_ Recorded runs (T0) of a small open model with a thinking switch, such as Qwen3.
+
+### Wrap-up
+
+**Ch 26. Recap: the whole picture**
+
+- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop, with Part VII's models shown as variations on the same pieces. A short quiz checks understanding.
 
 ---
 
@@ -200,13 +255,13 @@ v1 records the runs with Qwen2.5-1.5B-Instruct in a small Python harness (`scrip
 
 Use a tiered approach. The site always works, and visitors opt in to heavier features.
 
-| Tier                                       | What it is                                                                                                                 | Cost / size                                                                                    | Gives us                                                                    | Used in                 |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------- |
-| **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                                                                  | Accurate visuals from real models with zero setup                           | Every chapter           |
-| **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                                                                        | Live tokenization of any text                                               | Ch 4, 11, 14            |
-| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11       |
-| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19        |
-| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19 |
+| Tier                                       | What it is                                                                                                                 | Cost / size                                                                                    | Gives us                                                                    | Used in                   |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------- |
+| **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                                                                  | Accurate visuals from real models with zero setup                           | Every chapter             |
+| **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                                                                        | Live tokenization of any text                                               | Ch 4, 11, 14              |
+| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11, 20, 23 |
+| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19          |
+| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19   |
 
 **Rules**
 
@@ -290,7 +345,7 @@ llm-kitchen/
         +page.ts             # load the matching .svx via import.meta.glob; entries() lists all slugs
         +page.svelte
     lib/
-      chapters/              # 00-guessing-game.svx … 20-recap.svx
+      chapters/              # 00-guessing-game.svx … 26-recap.svx
       components/
         primitives/          # TokenChip, VectorStrip, ProbBars, SamplerWheel, ...
         widgets/             # BigramBuilder, BPEStepper, EmbeddingMap, AttentionViewer, GlassBoxGenerator, TinyTrainer, PromptInspector, AgentStepper, ...
@@ -349,7 +404,7 @@ llm-kitchen/
 
 ## 7. Milestones
 
-Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510) for its chapters. Milestone 12 is a final review of those facts across the whole site.
+Each chapter milestone (5–10 and 14) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510-and-14) for its chapters. Milestone 12 is a final review of those facts across the whole site.
 
 1. **Foundation: scaffold and CI**
    - SvelteKit + adapter-static + mdsvex scaffold with the `[chapter]` route and one placeholder `.svx` chapter.
@@ -397,8 +452,15 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
     - Run the link check and fix or replace any dead sources.
     - _Done when:_ every claim checklist has been re-checked, the citation unit test and link check pass, and expert review has no open findings.
     - v1 status: see [docs/fact-check/README.md](fact-check/README.md). Everything except the expert review is done; the expert review needs a human reviewer.
+13. **Cleanup**
+    - Placeholder for miscellaneous fixes and polish found while reviewing v1 (wording, visuals, widget improvements).
+14. **Part VII (Ch 20–25)**
+    - Encoder fill-in-the-blank and attention-mask toggle, mixture-of-experts router, tiny recurrent model with a memory-use chart, image patches and an image–caption map, 2D diffusion toy, and a thinking on/off viewer.
+    - New recording scripts in `scripts/` for the encoder, CLIP-style embeddings, and reasoning runs (and MoE routing, if practical), with their outputs under `static/`.
+    - Move the recap to the end: rename `20-recap.svx` to `26-recap.svx` (the `recap` slug and URL stay the same), add Part VII to `PARTS` and the curriculum in `src/lib/chapters/meta.ts`, and add Part VII to the recap diagram and quiz. Update any "Ch 20" cross-references.
+    - _Done when:_ every Part VII chapter has its widget, recap card, sources, and `docs/fact-check/part-7.md`, and the recap covers all seven Parts.
 
-### Per-chapter fact-check (part of every chapter milestone, 5–10)
+### Per-chapter fact-check (part of every chapter milestone, 5–10 and 14)
 
 A chapter isn't done until its fact-check is done in the same PR:
 
@@ -412,12 +474,13 @@ A chapter isn't done until its fact-check is done in the same PR:
   - Part IV: Levesque et al. 2012 (Winograd Schema Challenge, for the trophy/suitcase example) and Vaswani et al. 2017 (attention and transformers).
   - Part V: Radford et al. 2019 (GPT-2), Kaplan et al. 2020 and Hoffmann et al. 2022 (scaling laws), and Ouyang et al. 2022 (instruction and preference tuning).
   - Part VI: Schick et al. 2023 (Toolformer), Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG), and Greshake et al. 2023 (prompt injection).
+  - Part VII: Devlin et al. 2019 (BERT), Shazeer et al. 2017 and Jiang et al. 2024 (mixture of experts, Mixtral), Hochreiter and Schmidhuber 1997 (LSTM) and Gu and Dao 2023 (Mamba), Dosovitskiy et al. 2021 (ViT) and Radford et al. 2021 (CLIP), Ho et al. 2020 (diffusion), and Wei et al. 2022 (chain of thought) and DeepSeek-AI 2025 (DeepSeek-R1).
 
 ---
 
 ## 8. Success criteria
 
-- A visitor with no ML background can explain "next-token prediction, tokens, embeddings, attention, sampling" and how a harness turns a model into an agent after finishing.
+- A visitor with no ML background can explain "next-token prediction, tokens, embeddings, attention, sampling" and how a harness turns a model into an agent after finishing, and can say how encoders, mixture-of-experts, recurrent, vision, diffusion, and reasoning models differ from it.
 - Every chapter works fully offline with recorded traces. Live model features are opt-in only.
 - Lighthouse scores ≥ 95 for performance and accessibility on chapter pages that have no live model.
 - All animations can be stepped through and respect reduced motion.
