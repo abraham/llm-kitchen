@@ -36,8 +36,10 @@ numbers.
 ## Directions mean something too
 
 Tick *Show king − man + woman*. Taking the vector for *king*, subtracting *man*, and adding *woman*
-gives a point whose nearest word on this map is *queen*. The step from *man* to *woman* points in
-roughly the same direction as the step from *king* to *queen*. This famous example was first shown in
+gives a list of numbers whose nearest word on this map, comparing all 384 numbers, is *queen*. That
+works because the step from *man* to *woman* partly lines up with the step from *king* to *queen*.
+Squashed onto the flat map, the two steps don't look alike: the map keeps too little of the detail.
+This famous example was first shown in
 2013 with word vectors from a model called word2vec.<Cite id="mikolov2013" /> It doesn't work for
 every analogy, and on this map it only has a few dozen words to choose from, but it shows that
 directions in the space can carry meaning.

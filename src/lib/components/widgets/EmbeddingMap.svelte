@@ -34,38 +34,89 @@
 		};
 	}
 
+	type Label = {
+		x: number;
+		y: number;
+		anchor: 'start' | 'end' | 'middle';
+		leader?: { x: number; y: number };
+	};
+	type Box = { x: number; y: number; w: number; h: number };
+
+	const overlap = (a: Box, b: Box) =>
+		Math.max(0, Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x)) *
+		Math.max(0, Math.min(a.y + a.h, b.y + b.h) - Math.max(a.y, b.y));
+
 	/**
-	 * Which words get a text label: the important ones always, the rest only where they don't
-	 * overlap a label already placed. Hidden ones still show their name on hover.
+	 * Where each word's label goes: the spot around its dot that covers the least of other labels and dots.
+	 * Important words always get a label, if need be a little way off with a leader line; others only if
+	 * a spot right next to their dot is free.
 	 */
-	function visibleLabels(
+	function placeLabels(
 		points: { word: string; x: number; y: number }[],
 		important: Set<string>,
+		fontSize: (word: string) => number,
 		sx: (x: number) => number,
 		sy: (y: number) => number
-	): Set<string> {
-		const order = [...points].sort(
-			(a, b) => Number(important.has(b.word)) - Number(important.has(a.word))
-		);
-		const boxes: { x: number; y: number; w: number; h: number }[] = [];
-		const shown: string[] = [];
+	): Record<string, Label> {
+		const order = [...points].sort((a, b) => fontSize(b.word) - fontSize(a.word));
+		// Keep other labels well clear of highlighted dots so no label looks like it belongs to them.
+		const dots = points.map((p) => {
+			const r = important.has(p.word) ? 10 : 5;
+			return { word: p.word, box: { x: sx(p.x) - r, y: sy(p.y) - r, w: 2 * r, h: 2 * r } };
+		});
+		const labels: Box[] = [];
+		const placed: Record<string, Label> = {};
 		for (const p of order) {
-			const big = important.has(p.word);
-			const box = {
-				x: sx(p.x) + 6,
-				y: sy(p.y) - (big ? 9 : 7),
-				w: p.word.length * (big ? 7.5 : 5.2),
-				h: big ? 13 : 10
+			const size = fontSize(p.word);
+			const [cx, cy] = [sx(p.x), sy(p.y)];
+			const w = p.word.length * size * 0.6;
+			const h = size;
+			const gap = 7;
+			const at = (x: number, y: number, anchor: Label['anchor']) => {
+				const left = anchor === 'start' ? x : anchor === 'end' ? x - w : x - w / 2;
+				return { x, y: y + h * 0.8, anchor, box: { x: left, y, w, h } };
 			};
-			const hit = boxes.some(
-				(b) => box.x < b.x + b.w && b.x < box.x + box.w && box.y < b.y + b.h && b.y < box.y + box.h
-			);
-			if (big || !hit) {
-				boxes.push(box);
-				shown.push(p.word);
+			// Spots right next to the dot, then (important words only) farther out with a leader line.
+			const rings = important.has(p.word) ? [gap, gap * 3] : [gap];
+			const options = rings.flatMap((g) => [
+				at(cx + g, cy - h / 2, 'start'),
+				at(cx - g, cy - h / 2, 'end'),
+				at(cx, cy - g - h, 'middle'),
+				at(cx, cy + g, 'middle'),
+				at(cx + g - 2, cy - g - h + 2, 'start'),
+				at(cx + g - 2, cy + g - 2, 'start'),
+				at(cx - g + 2, cy - g - h + 2, 'end'),
+				at(cx - g + 2, cy + g - 2, 'end')
+			]);
+			const offMap = (box: Box) =>
+				box.x < 0 || box.y < 0 || box.x + box.w > W || box.y + box.h > H ? 1e6 : 0;
+			const crowding = (box: Box) =>
+				offMap(box) +
+				labels.reduce((a, b) => a + overlap(box, b), 0) +
+				dots.reduce((a, d) => a + (d.word === p.word ? 0 : overlap(box, d.box)), 0);
+			const scored = options.map((o, i) => ({
+				o,
+				far: i >= 8,
+				c: crowding(o.box) + (i >= 8 ? 20 : 0)
+			}));
+			const best = scored.reduce((a, b) => (b.c < a.c ? b : a));
+			if (best.c === 0 || important.has(p.word)) {
+				const { box } = best.o;
+				labels.push(box);
+				placed[p.word] = {
+					x: best.o.x,
+					y: best.o.y,
+					anchor: best.o.anchor,
+					leader: best.far
+						? {
+								x: Math.min(Math.max(cx, box.x), box.x + box.w),
+								y: Math.min(Math.max(cy, box.y), box.y + box.h)
+							}
+						: undefined
+				};
 			}
 		}
-		return new Set(shown);
+		return placed;
 	}
 
 	async function addWord(d: EmbeddingMapData) {
@@ -108,16 +159,17 @@
 			{@const k = pos('king')}
 			{@const m = pos('man')}
 			{@const wo = pos('woman')}
-			{@const ax = k.x - m.x + wo.x}
-			{@const ay = k.y - m.y + wo.y}
-			{@const labels = visibleLabels(
+			{@const result = pos(d.analogy.nearest[0].word)}
+			{@const important = new Set([
+				current.word,
+				...current.neighbors.map((n) => n.word),
+				...(showAnalogy ? ['king', 'man', 'woman', result.word] : []),
+				...added.map((a) => a.word)
+			])}
+			{@const labels = placeLabels(
 				all,
-				new Set([
-					current.word,
-					...current.neighbors.map((n) => n.word),
-					...(showAnalogy ? ['king', 'man', 'woman', 'queen'] : []),
-					...added.map((a) => a.word)
-				]),
+				important,
+				(word) => (word === current.word ? 13 : important.has(word) ? 12 : 9),
 				sx,
 				sy
 			)}
@@ -180,26 +232,31 @@
 					<line
 						x1={sx(k.x)}
 						y1={sy(k.y)}
-						x2={sx(ax)}
-						y2={sy(ay)}
+						x2={sx(result.x)}
+						y2={sy(result.y)}
 						class="arrow"
 						marker-end="url(#{id}-arrow)"
 					/>
-					<circle cx={sx(ax)} cy={sy(ay)} r="7" class="target" />
 				{/if}
 				{#each all as w (w.word)}
 					<g
 						class="point"
 						class:selected={w.word === current.word}
 						class:neighbor={current.neighbors.some((n) => n.word === w.word)}
-						class:analogy={showAnalogy && ['king', 'man', 'woman', 'queen'].includes(w.word)}
+						class:analogy={showAnalogy && ['king', 'man', 'woman', result.word].includes(w.word)}
 						class:yours={w.group === 'yours'}
 						onclick={() => (selected = w.word)}
 						role="presentation"
 					>
 						<title>{w.word}</title>
 						<circle cx={sx(w.x)} cy={sy(w.y)} r={w.word === current.word ? 6 : 4} />
-						{#if labels.has(w.word)}<text x={sx(w.x) + 7} y={sy(w.y) + 4}>{w.word}</text>{/if}
+						{#if labels[w.word]}
+							{@const l = labels[w.word]}
+							{#if l.leader}
+								<line class="leader" x1={sx(w.x)} y1={sy(w.y)} x2={l.leader.x} y2={l.leader.y} />
+							{/if}
+							<text x={l.x} y={l.y} text-anchor={l.anchor}>{w.word}</text>
+						{/if}
 					</g>
 				{/each}
 			</svg>
@@ -224,7 +281,10 @@
 						)}), then {d.analogy.nearest
 							.slice(1)
 							.map((n) => n.word)
-							.join(' and ')}, among the words on this map.
+							.join(' and ')}, among the words on this map. The arrows show the two steps,
+						<i>man</i> → <i>woman</i> and <i>king</i> → <i>{result.word}</i>. In all
+						{d.dimensions} numbers they partly line up, which is why the sum lands there; squashed onto
+						this flat map, they don’t look alike.
 					</p>
 				{/if}
 				<p class="note">
@@ -304,6 +364,11 @@
 		opacity: 0.55;
 	}
 
+	.leader {
+		stroke: var(--ink-muted);
+		stroke-width: 1;
+	}
+
 	.point text {
 		fill: var(--ink-muted);
 		font-size: 9px;
@@ -358,13 +423,6 @@
 
 	.arrowhead {
 		fill: var(--c-attention);
-	}
-
-	.target {
-		fill: none;
-		stroke: var(--c-attention);
-		stroke-width: 2;
-		stroke-dasharray: 3 2;
 	}
 
 	.panel p {
