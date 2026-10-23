@@ -9,8 +9,9 @@ export default defineConfig({
 	use: { baseURL: 'http://localhost:4173' },
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 	// The Firebase Hosting emulator applies firebase.json (clean URLs, 404 page, headers) like production.
+	// CI builds in its own step first, so a build failure shows up there.
 	webServer: {
-		command: 'npm run build && npm run serve',
+		command: process.env.CI ? 'npm run serve' : 'npm run build && npm run serve',
 		url: 'http://localhost:4173',
 		reuseExistingServer: !process.env.CI
 	}

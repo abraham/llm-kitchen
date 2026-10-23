@@ -28,7 +28,8 @@ jobs:
           args: >-
             --config lychee.toml
             src/lib/references.json
-            'src/lib/chapters/*.svx'
+            'src/lib/chapters/**/*.svx'
+            'src/lib/chapters/**/*.svelte'
             'src/lib/components/**/*.svelte'
             README.md
             'docs/**/*.md'

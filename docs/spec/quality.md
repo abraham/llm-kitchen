@@ -32,21 +32,24 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
   `.github/workflows/actions.lock` by `gh actions-lock`; Dependabot proposes updates), and cancel
   superseded runs on the same branch with `concurrency`.
 
-`.github/workflows/links.yml` checks external links weekly (`lychee.toml`) and opens an issue on
-failure.
+`.github/workflows/links.yml` checks every cited source and documentation link (`lychee.toml`)
+weekly and on pull requests that touch them. It isn't part of `ci-success`, so an outside site being
+down never blocks a merge; a failure shows up as a failed run.
 
 ## Tests
 
 - **Unit (`*.test.ts` next to the code, plus `tests/unit/`):** math, harness, model, and curriculum
   logic; that each chapter's widgets and data produce the numbers its prose states (its
   `facts.test.ts`); every recorded dataset against its parser (`datasets`); GPT-2 numbers against
-  `models/canonical.json` (`consistency`); citations; the curriculum, spec layout, and derived
-  chapter numbers (`curriculum`); social images and descriptions (`branding`); hosting headers
-  (`hosting`); and color contrast (`tokens`).
-- **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, stepping and
-  keyboard (`interaction`), themes (`design`), page metadata (`branding`), and on every page
-  (`quality`):
+  `models/canonical.json` (`consistency`, `canonical`); citations; the curriculum, spec layout, and
+  derived chapter numbers (`curriculum`); chapter markup (`chapter-markup`); social images and
+  descriptions (`branding`); the hosting config (`hosting`); and color contrast (`tokens`).
+- **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, the menu and
+  a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), page metadata
+  (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
+  caching), and on every page (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded;
+  - no requests to another origin, so nothing downloads before consent;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
   - no sideways scrolling at phone width;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
