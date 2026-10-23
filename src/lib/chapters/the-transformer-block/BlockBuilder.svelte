@@ -12,7 +12,7 @@
 	const n = (x: number) => x.toLocaleString('en-US');
 
 	const STEPS = [
-		`Start: each token becomes its word vector plus a position vector (${label('embeddings')}). This running list of ${canonical.embeddingSize} numbers per token is the stream.`,
+		`Start: each token becomes its word vector (${label('embeddings')}) plus a position vector (${label('attention')}). This running list of ${canonical.embeddingSize} numbers per token is the stream.`,
 		`Attention: each token looks back at earlier tokens (${label('attention')}) and adds what it finds to its stream. The stream itself passes straight through.`,
 		`MLP: each token’s vector goes through a layer of ${n(canonical.mlpSize)} neurons (${label('a-neuron')}), and the result is added to the stream too.`,
 		'Layer norm: before attention and before the MLP, the numbers are rescaled to a steady size so training stays stable.',

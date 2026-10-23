@@ -1,5 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
+import canonical from '../../../../models/canonical.json';
+
+describe('LoRA on one GPT-2 table', () => {
+	const d = canonical.embeddingSize;
+
+	it('"a 768 × 768 table: 589,824 weights"; "768 × 8 and 8 × 768 hold 12,288, about 2%"', () => {
+		expect(d).toBe(768);
+		expect(d * d).toBe(589_824);
+		expect(d * 8 + 8 * d).toBe(12_288);
+		expect(Math.round((100 * 12_288) / 589_824)).toBe(2);
+	});
+});
 
 describe('base vs. instruct', () => {
 	const data = readDataset('chat/base-vs-instruct');

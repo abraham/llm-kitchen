@@ -36,11 +36,26 @@ nursery rhymes from <ChapterRef to="predicting-by-counting" />, a word counter, 
 use the same pattern for web search, code execution, sending email, and more, which is exactly why
 the harness has to be careful about which tools it runs.
 
+## One plug for many tools
+
+At first, every app wired up every tool its own way. The <GlossaryPopover term="mcp">Model Context Protocol (MCP)</GlossaryPopover>,
+which Anthropic released as an open standard in November 2024, gives tools a shared plug.<Cite id="anthropic-mcp" />
+A program called an MCP server offers some tools, each with a name, a description written for the
+model, and the inputs it takes, such as a `get_weather` tool that needs a `location`. Any harness
+that speaks MCP can ask a server for its list of tools, describe them in the prompt, and pass the
+model's calls on to the server to run.<Cite id="mcp-spec" />
+
+The model never sees MCP. It still reads tool descriptions and writes tool calls in its own
+format; the harness translates in both directions. Connecting a server means its descriptions and
+results end up in the prompt, so it has to be trusted like any other tool.
+
 <RecapCard>
 
 - Models are unreliable at exact work like arithmetic, because every digit is a predicted token.
 - A tool call is text in an agreed format. The model asks; the harness runs the tool.
 - The harness adds the result to the prompt and calls the model again.
+- MCP is a shared way for a harness to find tools offered by other programs and call them; the
+  model still just writes text.
 
 </RecapCard>
 

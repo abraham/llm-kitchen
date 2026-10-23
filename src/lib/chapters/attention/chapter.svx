@@ -37,6 +37,24 @@ Step through it with made-up numbers:
 Notice the blank cells: a token can't look at tokens that come after it. When the model is
 predicting the next word, those words don't exist yet.
 
+## Which word came first?
+
+Look again at how a score is made: one token's query times another token's key. Nothing in that
+says where either token sits in the text. Take "the dog chased the cat." and "the cat chased the
+dog." At the final ".", one attention step would see the same six tokens in both, just in another
+order, and blend them in exactly the same way. Who chased whom would be lost.
+
+So before the first layer, GPT-2 adds a second vector to each token's vector: a <GlossaryPopover term="position-vector">position vector</GlossaryPopover>,
+one for each place in the text, learned in training like the token vectors. (This is position in
+the text, not the position in meaning from <ChapterRef to="embeddings" />.) Now "dog" second and
+"dog" fifth start out as different vectors, and attention can tell the sentences apart. GPT-2 has
+1,024 position vectors, one for each place in its context window (<ChapterRef to="the-context-problem" />).
+There is no vector for place 1,025, which is one reason the window stops there.
+
+Newer models such as Llama 3 add no position vectors. Instead they turn each query and key by an
+angle that grows with its place in the text, so the score between two tokens also depends on how
+far apart they are.<Cite id="su2024" /><Cite id="grattafiori2024" />
+
 ## Real attention in GPT-2
 
 Here are attention patterns recorded from GPT-2. Each line runs from the word doing the looking
@@ -78,6 +96,8 @@ attention there.<Cite id="xiao2024" />
 - Each token makes a query, a key, and a value. Query times key gives a score; softmax turns scores
   into weights; the weights blend the values.
 - A token can only look back, never ahead.
+- Attention alone ignores word order, so GPT-2 adds a learned position vector to each token's
+  vector.
 - GPT-2 has 12 heads in each of its 12 layers. A few have clear jobs, like finding the name that
   comes next; most are harder to read.
 

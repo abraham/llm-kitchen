@@ -220,6 +220,14 @@
 		"url": "https://arxiv.org/abs/2309.17453"
 	},
 	{
+		"id": "su2024",
+		"authors": ["Jianlin Su", "Yu Lu", "Shengfeng Pan", "Ahmed Murtadha"],
+		"title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+		"venue": "Neurocomputing 568",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2104.09864"
+	},
+	{
 		"id": "he2016",
 		"authors": ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
 		"title": "Deep Residual Learning for Image Recognition",
@@ -285,6 +293,22 @@
 		"url": "https://arxiv.org/abs/2203.02155"
 	},
 	{
+		"id": "hu2022",
+		"authors": ["Edward J. Hu", "Yelong Shen", "Phillip Wallis", "Zeyuan Allen-Zhu"],
+		"title": "LoRA: Low-Rank Adaptation of Large Language Models",
+		"venue": "ICLR 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2106.09685"
+	},
+	{
+		"id": "hinton2015",
+		"authors": ["Geoffrey Hinton", "Oriol Vinyals", "Jeff Dean"],
+		"title": "Distilling the Knowledge in a Neural Network",
+		"venue": "NIPS 2014 Deep Learning Workshop",
+		"year": 2015,
+		"url": "https://arxiv.org/abs/1503.02531"
+	},
+	{
 		"id": "qwen2024",
 		"authors": ["Qwen Team", "An Yang", "Baosong Yang", "Beichen Zhang"],
 		"title": "Qwen2.5 Technical Report",
@@ -315,6 +339,23 @@
 		"venue": "NeurIPS 2023",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2302.04761"
+	},
+	{
+		"id": "anthropic-mcp",
+		"authors": ["Anthropic"],
+		"title": "Introducing the Model Context Protocol",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/news/model-context-protocol"
+	},
+	{
+		"id": "mcp-spec",
+		"authors": ["Model Context Protocol"],
+		"title": "Tools (Model Context Protocol specification)",
+		"venue": "modelcontextprotocol.io",
+		"year": 2026,
+		"url": "https://modelcontextprotocol.io/specification/latest/server/tools",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "yao2023",
