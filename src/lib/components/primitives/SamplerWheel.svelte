@@ -86,7 +86,6 @@
 					class="slice"
 					class:rest={arc.label === 'other'}
 					class:alt={arc.index % 2 === 1}
-					class:landed={landed === arc.index}
 				/>
 				{#if arc.sweep > 28}
 					{@const [x, y] = point(arc.center, R * 0.62)}
@@ -97,6 +96,10 @@
 					</text>
 				{/if}
 			{/each}
+			<circle cx={SIZE / 2} cy={SIZE / 2} r={R} class="rim" />
+			{#if landed !== null && arcs[landed]}
+				<path d={slicePath(arcs[landed].start, arcs[landed].end)} class="landed" />
+			{/if}
 		</g>
 		<polygon
 			points="{SIZE / 2 - 9},2 {SIZE / 2 + 9},2 {SIZE / 2},20"
@@ -133,23 +136,30 @@
 	.slice {
 		fill: var(--c-prob);
 		stroke: var(--surface);
-		stroke-width: 2;
+		stroke-width: 1.5;
+		/* Thin slices meet at the center; mitered corners there poke out as spikes. */
+		stroke-linejoin: round;
 	}
 
 	.slice.alt {
 		fill: var(--c-prob-tint);
-		stroke: var(--c-prob);
-		stroke-width: 1;
 	}
 
 	.slice.rest {
 		fill: var(--surface-2);
-		stroke: var(--rule);
 	}
 
-	.slice.landed {
+	.rim {
+		fill: none;
+		stroke: var(--c-prob);
+		stroke-width: 1.5;
+	}
+
+	.landed {
+		fill: none;
 		stroke: var(--ink);
 		stroke-width: 3;
+		stroke-linejoin: round;
 	}
 
 	.slice-label {
