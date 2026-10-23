@@ -1,6 +1,6 @@
 # llm-kitchen — Plan
 
-A static site that teaches how a large language model works. It starts with "guess the next word", builds up to a full transformer generating text, follows with the harness that turns that text generator into an assistant or agent, and ends with other kinds of models built from the same pieces. Each chapter adds one idea, uses one main animation to reinforce it, and includes an optional live model demo where that helps.
+A static site that teaches how a large language model works. It starts with "guess the next word", builds up to a full transformer generating text, follows with the harness that turns that text generator into an assistant or agent, looks at other kinds of models built from the same pieces, and ends with how to write prompts that work, and why they do. Each chapter adds one idea, uses one main animation to reinforce it, and includes an optional live model demo where that helps.
 
 ---
 
@@ -243,11 +243,57 @@ Demos follow the same tiers as before: recorded runs of real models by default (
 - _Key idea:_ A reasoning model is still a next-token predictor. It has been trained, often with rewards for answers that can be checked, to write out its working first, spending more tokens (and compute) on each answer.
 - _Data:_ Recorded runs (T0) of a small open model with a thinking switch, such as Qwen3.
 
+### Part VIII — Prompt engineering
+
+Prompt engineering is choosing the text a model continues. Everything in this Part follows from the earlier chapters: the prompt is the context (Ch 8), attention decides which parts of it matter (Ch 9), and every word shifts the probabilities of the next token (Ch 3). Each chapter shows a technique, then shows _why_ it works in those terms, and is honest about what is known to work and what is folklore.
+
+Demos reuse models the site already records: GPT-2 small for the raw effect of wording on next-token probabilities (recorded, plus live via T2), and the Qwen2.5 instruct models already used in Part V and VI for instructions and system prompts (recorded, T0). No new downloads are needed.
+
+**Ch 26. A prompt is the start of a document**
+
+- _Hook:_ "Why does the same question get a better answer when you word it differently?"
+- _Try it:_ Change one part of a prompt at a time ("Q: … A:" framing, a title, a sentence that sets the scene) and watch GPT-2's next-token bars move. The visitor can type their own variant in the live option.
+- _Animation:_ The probability bars from Ch 3 shift as words are added to the prompt; the added words light up in the attention lines from Ch 9.
+- _Key idea:_ A model doesn't "understand a request"; it continues a document. A good prompt makes the answer you want the most likely continuation.
+- _Live option:_ Live GPT-2 (T2) on the visitor's own prompt variants.
+
+**Ch 27. Learning from examples in the prompt (few-shot)**
+
+- _Hook:_ "Show a model three examples of a made-up rule. Does it learn the rule without any training?"
+- _Try it:_ A made-up task (e.g. turning words into their opposites, or a nonsense label for each animal) with 0, 1, 2, and 4 examples. A chart shows the probability of the right answer as examples are added.
+- _Animation:_ Attention from the new question reaches back to the matching parts of the examples, the "copy the pattern" behavior of induction heads.
+- _Key idea:_ The weights don't change; the examples are just context that attention can copy patterns from. This is in-context learning.
+- _Data:_ Recorded probabilities and attention from GPT-2 small and a small instruct model (T0).
+
+**Ch 28. Instructions, roles, and the system prompt**
+
+- _Hook:_ "Does telling a model 'You are an expert' make it one?"
+- _Try it:_ The same question with different system prompts (none, a persona, specific instructions about format and audience) side by side, using the prompt inspector from Ch 15 to show where each piece goes.
+- _Animation:_ The chat template from Ch 13 with the system prompt slot filled in different ways.
+- _Key idea:_ Instruction-tuned models were trained on conversations that follow instructions, so clear, specific instructions work. A persona changes style more reliably than it changes correctness.
+- _Data:_ Recorded runs of Qwen2.5-0.5B/1.5B-Instruct (T0).
+
+**Ch 29. Asking for steps and structure**
+
+- _Hook:_ "Why does 'Let's think step by step' help?"
+- _Try it:_ The Ch 25 puzzles asked plainly, with "think step by step", and with a required answer format (e.g. a final line or JSON). A tally shows right answers and how often the output can be parsed by code.
+- _Animation:_ The Ch 11 generation loop, with the working tokens feeding back into the context before the answer.
+- _Key idea:_ Asking for steps gives the model room to write intermediate results it can build on (the same reason reasoning models think, Ch 25). Asking for a fixed format makes the output usable by a harness (Ch 16).
+- _Data:_ Recorded runs of a small instruct model (T0).
+
+**Ch 30. Where prompts break**
+
+- _Hook:_ "Why does reordering the examples change the answer?"
+- _Try it:_ Swap the order of few-shot examples, change harmless formatting (spacing, labels), or move a key fact to the middle of a long prompt, and see the answers change.
+- _Animation:_ A long context with the key fact sliding from the start to the middle to the end, and the answer's probability rising and falling.
+- _Key idea:_ Small, meaningless changes can swing results, and facts in the middle of long prompts get used less. Good prompting means testing variants, not trusting one wording. Instructions in untrusted text are a risk (Ch 19).
+- _Data:_ Recorded runs (T0).
+
 ### Wrap-up
 
-**Ch 26. Recap: the whole picture**
+**Ch 31. Recap: the whole picture**
 
-- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop, with Part VII's models shown as variations on the same pieces. A short quiz checks understanding.
+- One zoomable diagram that links each part back to its chapter, from bytes to the harness loop, with Part VII's models shown as variations on the same pieces and Part VIII's techniques shown as ways of shaping the context. A short quiz checks understanding.
 
 ---
 
@@ -259,7 +305,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------- |
 | **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                                                                  | Accurate visuals from real models with zero setup                           | Every chapter           |
 | **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                                                                        | Live tokenization of any text                                               | Ch 4, 11, 14            |
-| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11       |
+| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11, 26   |
 | **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19        |
 | **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19 |
 
@@ -345,7 +391,7 @@ llm-kitchen/
         +page.ts             # load the matching .svx via import.meta.glob; entries() lists all slugs
         +page.svelte
     lib/
-      chapters/              # 00-guessing-game.svx … 26-recap.svx
+      chapters/              # 00-guessing-game.svx … 31-recap.svx
       components/
         primitives/          # TokenChip, VectorStrip, ProbBars, SamplerWheel, ...
         widgets/             # BigramBuilder, BPEStepper, EmbeddingMap, AttentionViewer, GlassBoxGenerator, TinyTrainer, PromptInspector, AgentStepper, ...
@@ -404,7 +450,7 @@ llm-kitchen/
 
 ## 7. Milestones
 
-Each chapter milestone (5–10 and 14) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510-and-14) for its chapters. Milestone 12 is a final review of those facts across the whole site.
+Each chapter milestone (5–10, 14, and 15) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510-14-and-15) for its chapters. Milestone 12 is a final review of those facts across the whole site.
 
 1. **Foundation: scaffold and CI**
    - SvelteKit + adapter-static + mdsvex scaffold with the `[chapter]` route and one placeholder `.svx` chapter.
@@ -460,8 +506,13 @@ Each chapter milestone (5–10 and 14) includes the [per-chapter fact-check](#pe
     - Move the recap to the end: rename `20-recap.svx` to `26-recap.svx` (the `recap` slug and URL stay the same), add Part VII to `PARTS` and the curriculum in `src/lib/chapters/meta.ts`, and add Part VII to the recap diagram and quiz. Update any "Ch 20" cross-references.
     - _Done when:_ every Part VII chapter has its widget, recap card, sources, and `docs/fact-check/part-7.md`, and the recap covers all seven Parts.
     - v1: all six chapters and the recap move are done; see [docs/fact-check/part-7.md](fact-check/part-7.md) for changes from this plan (recorded-only Ch 20 and 23, a toy router in Ch 21, simple drawn pictures in Ch 23, and ring/square/blob shapes in Ch 24).
+15. **Part VIII (Ch 26–30)**
+    - Prompt-variant explorer on GPT-2's next-token bars (T0 plus live T2), few-shot chart with attention to the examples, system-prompt comparison in the Ch 15 prompt inspector, step-by-step and output-format tally, and a prompt-sensitivity lab (example order, formatting, position in a long context).
+    - A recording script in `scripts/` for the prompt variants, reusing GPT-2 small and the Qwen2.5 instruct models already downloaded, with outputs under `static/`.
+    - Move the recap to the end again: rename `26-recap.svx` to `31-recap.svx` (the `recap` slug and URL stay the same), add Part VIII to `PARTS` and the curriculum in `src/lib/chapters/meta.ts`, point Ch 25's next question at Ch 26, and add Part VIII to the recap diagram and quiz.
+    - _Done when:_ every Part VIII chapter has its widget, recap card, sources, and `docs/fact-check/part-8.md`, and the recap covers all eight Parts.
 
-### Per-chapter fact-check (part of every chapter milestone, 5–10 and 14)
+### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, and 15)
 
 A chapter isn't done until its fact-check is done in the same PR:
 
@@ -476,12 +527,13 @@ A chapter isn't done until its fact-check is done in the same PR:
   - Part V: Radford et al. 2019 (GPT-2), Kaplan et al. 2020 and Hoffmann et al. 2022 (scaling laws), and Ouyang et al. 2022 (instruction and preference tuning).
   - Part VI: Schick et al. 2023 (Toolformer), Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG), and Greshake et al. 2023 (prompt injection).
   - Part VII: Devlin et al. 2019 (BERT), Shazeer et al. 2017 and Jiang et al. 2024 (mixture of experts, Mixtral), Hochreiter and Schmidhuber 1997 (LSTM) and Gu and Dao 2023 (Mamba), Dosovitskiy et al. 2021 (ViT) and Radford et al. 2021 (CLIP), Ho et al. 2020 (diffusion), and Wei et al. 2022 (chain of thought) and DeepSeek-AI 2025 (DeepSeek-R1).
+  - Part VIII: Brown et al. 2020 (GPT-3, few-shot prompting), Olsson et al. 2022 (induction heads and in-context learning), Kojima et al. 2022 ("Let's think step by step"), Wei et al. 2022 (chain of thought), Lu et al. 2022 (example order), Sclar et al. 2024 (sensitivity to prompt formatting), and Liu et al. 2024 ("Lost in the Middle").
 
 ---
 
 ## 8. Success criteria
 
-- A visitor with no ML background can explain "next-token prediction, tokens, embeddings, attention, sampling" and how a harness turns a model into an agent after finishing, and can say how encoders, mixture-of-experts, recurrent, vision, diffusion, and reasoning models differ from it.
+- A visitor with no ML background can explain "next-token prediction, tokens, embeddings, attention, sampling" and how a harness turns a model into an agent after finishing, and can say how encoders, mixture-of-experts, recurrent, vision, diffusion, and reasoning models differ from it, and can explain why common prompting techniques work in terms of context and next-token probabilities.
 - Every chapter works fully offline with recorded traces. Live model features are opt-in only.
 - Lighthouse scores ≥ 95 for performance and accessibility on chapter pages that have no live model.
 - All animations can be stepped through and respect reduced motion.
