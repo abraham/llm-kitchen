@@ -1,0 +1,40 @@
+<script lang="ts">
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import EndToEnd from '#lib/components/widgets/EndToEnd.svelte';
+</script>
+
+## One message
+
+The recap showed what the pieces are. This chapter shows the order they run in, for one real
+message: "Finish this: The cat sat on the", sent to a small assistant with a few tools. The
+harness, the prompt, the tool call, and the reply come from that recorded run. Inside the model,
+each step is shown with GPT-2 small's recorded run on the same last words: the stages run in the
+same order in both models, though the details differ.
+
+Step through the stages in order, or jump to any box. Each one links to the chapters that explain
+it.
+
+<EndToEnd />
+
+## Two loops
+
+Two loops run at once. The inner one is the model's: run once, pick one token, add it, and run
+again, until it writes an end-of-turn token. The outer one is the harness's: read what the model
+wrote, and if it asked for a tool, run it, add the result, and call the model again. Here the outer
+loop ran twice: once to ask for a nursery rhyme search, once to answer with what came back.
+
+Everything that passes through both loops is plain text. Your message, the system prompt, the tool's
+result, and the model's scratch work all end up as tokens in one prompt. That is why reusing the
+unchanged start saves so much work, and why a tool result has to be treated as untrusted.
+
+<RecapCard>
+
+- Sending a message runs the harness first, then the model once per token, then the harness again.
+- The model's loop adds one token per run; the harness's loop adds one tool result per call.
+- Everything the model sees, including tool results, is one stream of tokens in a single prompt.
+- Other kinds of models swap one stage and keep the rest of the order.
+
+</RecapCard>
+
+**Next question:** that is how one model works, end to end. With hundreds of models to choose from,
+how do you pick one?

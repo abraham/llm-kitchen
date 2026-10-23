@@ -1,0 +1,133 @@
+import type { ToolCall } from './tools.ts';
+
+/** One model call inside a recorded agent run (scripts/build-agent-traces.py). */
+export interface AgentStep {
+	/** The exact text the model was given. */
+	prompt: string;
+	promptTokens: number;
+	/** What the model wrote, up to and including its first tool call. */
+	output: string;
+	/** Text before the tool call (or the whole answer when there is no call). */
+	thought: string;
+	call?: ToolCall;
+	result?: string;
+	/** The harness refused to run the call. */
+	blocked?: boolean;
+}
+
+export interface ToolInfo {
+	name: string;
+	description: string;
+}
+
+export interface AgentRun {
+	model: { id: string; displayName: string; revision: string | null };
+	task: string;
+	system: string;
+	history: { role: 'user' | 'assistant'; content: string }[];
+	tools: ToolInfo[];
+	policy: 'none' | 'ask';
+	maxSteps: number;
+	steps: AgentStep[];
+	/** The model answered without a tool call before the step limit. */
+	finished: boolean;
+	files: { before: string[]; after: string[] };
+}
+
+export interface ContextTurn {
+	task: string;
+	text: string;
+	tokens: number;
+	answer: string;
+	similarity: number;
+	vector: number[];
+}
+
+export interface ContextStrategy {
+	kept: number[];
+	retrieved?: number[];
+	summary?: string;
+	/** Size of the summary or retrieved text added to the prompt. */
+	noteTokens?: number;
+	tokens: number;
+	answer: string;
+}
+
+/** The Ch 26 session: six agent tasks, then a question about the first one. */
+export interface ContextSession {
+	model: AgentRun['model'];
+	budget: number;
+	baseTokens: number;
+	question: string;
+	questionTokens: number;
+	turns: ContextTurn[];
+	questionVector: number[];
+	strategies: Record<'all' | 'dropOldest' | 'summarize' | 'retrieve', ContextStrategy>;
+}
+
+export type PromptPartKind =
+	'marker' | 'system' | 'tools' | 'history' | 'message' | 'call' | 'result' | 'assistant';
+
+export interface PromptPart {
+	kind: PromptPartKind;
+	text: string;
+}
+
+const MARKER = /<\|im_start\|>(system|user|assistant)\n|<\|im_end\|>\n?/g;
+
+/**
+ * Split a recorded ChatML prompt into colored parts: chat markers, the system prompt, tool
+ * definitions, earlier turns, the current message, tool calls, and tool results.
+ */
+export function segmentPrompt(text: string): PromptPart[] {
+	type Block = { role: string; start: number; end: number };
+	const parts: PromptPart[] = [];
+	const blocks: Block[] = [];
+	const markers: { index: number; text: string; role?: string }[] = [];
+	for (const m of text.matchAll(MARKER)) markers.push({ index: m.index, text: m[0], role: m[1] });
+
+	// Pair each start marker with the content up to the next marker.
+	markers.forEach((m, i) => {
+		const end = markers[i + 1]?.index ?? text.length;
+		const start = m.index + m.text.length;
+		if (m.role && end > start) blocks.push({ role: m.role, start, end });
+	});
+	const isResult = (b: Block) => text.slice(b.start, b.end).startsWith('<tool_response>');
+	const current = blocks.findLastIndex((b) => b.role === 'user' && !isResult(b));
+
+	let pos = 0;
+	const push = (kind: PromptPartKind, s: string) => {
+		if (s) parts.push({ kind, text: s });
+	};
+	for (const m of markers) {
+		const block = blocks.find((b) => b.start === m.index + m.text.length);
+		push('marker', text.slice(pos, m.index + m.text.length));
+		pos = m.index + m.text.length;
+		if (!block) continue;
+		const content = text.slice(block.start, block.end);
+		const index = blocks.indexOf(block);
+		if (block.role === 'system') {
+			const at = content.indexOf('\n\n# Tools\n\n');
+			if (at < 0) push('system', content);
+			else {
+				push('system', content.slice(0, at));
+				push('tools', content.slice(at));
+			}
+		} else if (isResult(block)) {
+			push('result', content);
+		} else if (block.role === 'assistant' && content.includes('<tool_call>')) {
+			const at = content.indexOf('<tool_call>');
+			push(index < current ? 'history' : 'assistant', content.slice(0, at));
+			push('call', content.slice(at));
+		} else if (index < current) {
+			push('history', content);
+		} else if (index === current) {
+			push('message', content);
+		} else {
+			push('assistant', content);
+		}
+		pos = block.end;
+	}
+	push('marker', text.slice(pos));
+	return parts;
+}

@@ -1,0 +1,96 @@
+/*
+ * Design tokens. Colors are hex so tests/unit/tokens.test.ts can check WCAG contrast.
+ * Each concept has a fill color (shapes, lines), an ink color (text on the page and on the tint),
+ * and a tint (chip and card backgrounds).
+ */
+:root {
+	color-scheme: light dark;
+
+	--page: #fbf8f3;
+	--surface: #ffffff;
+	--surface-2: #f3eee6;
+	--ink: #1f1b16;
+	--ink-muted: #5c5349;
+	--rule: #ddd4c6;
+	--focus: #1d4ed8;
+
+	--c-token: #d97706;
+	--c-token-ink: #8a3c0b;
+	--c-token-tint: #fdf0d5;
+	--c-vector: #0d9488;
+	--c-vector-ink: #115e59;
+	--c-vector-tint: #d5f2ee;
+	--c-weight: #7c3aed;
+	--c-weight-ink: #5b21b6;
+	--c-weight-tint: #ece4fd;
+	--c-attention: #db2777;
+	--c-attention-ink: #9d174d;
+	--c-attention-tint: #fbe0ec;
+	--c-prob: #2563eb;
+	--c-prob-ink: #1e40af;
+	--c-prob-tint: #dde8fd;
+	--c-loss: #dc2626;
+	--c-loss-ink: #991b1b;
+	--c-loss-tint: #fbe0de;
+	--c-harness: #64748b;
+	--c-harness-ink: #334155;
+	--c-harness-tint: #e6e9ee;
+
+	--font-serif: 'Source Serif 4 Variable', 'Iowan Old Style', Georgia, serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+	--measure: 68ch;
+	--wide: 1100px;
+	--radius: 6px;
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-12: 3rem;
+
+	--ease: cubic-bezier(0.2, 0, 0, 1);
+	--duration: 300ms;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--page: #1c1a17;
+		--surface: #24211d;
+		--surface-2: #2c2823;
+		--ink: #ece6dc;
+		--ink-muted: #b3a999;
+		--rule: #3f3932;
+		--focus: #93c5fd;
+
+		--c-token: #f59e0b;
+		--c-token-ink: #fbbf24;
+		--c-token-tint: #3d2f12;
+		--c-vector: #14b8a6;
+		--c-vector-ink: #2dd4bf;
+		--c-vector-tint: #12332f;
+		--c-weight: #a78bfa;
+		--c-weight-ink: #c4b5fd;
+		--c-weight-tint: #2a2342;
+		--c-attention: #f472b6;
+		--c-attention-ink: #f9a8d4;
+		--c-attention-tint: #3a1d2b;
+		--c-prob: #60a5fa;
+		--c-prob-ink: #93c5fd;
+		--c-prob-tint: #1c2a44;
+		--c-loss: #f87171;
+		--c-loss-ink: #fca5a5;
+		--c-loss-tint: #3d1d1d;
+		--c-harness: #94a3b8;
+		--c-harness-ink: #cbd5e1;
+		--c-harness-tint: #2a2f37;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--duration: 0ms;
+	}
+}

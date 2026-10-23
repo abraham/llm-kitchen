@@ -1,0 +1,47 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import StepsTally from '#lib/components/widgets/StepsTally.svelte';
+</script>
+
+## "Let's think step by step"
+
+A model writes one token at a time, and every token it writes becomes context for the next (Ch 11).
+If it has to give the answer as its very first token, all the working has to happen inside one
+forward pass. If it writes the working out first, a <GlossaryPopover term="chain-of-thought">chain of thought</GlossaryPopover>,
+each step can build on the ones before. Reasoning models are trained to do this (Ch 17); with other
+models, you can ask.
+
+Asking works on large models. Showing a few worked examples improved math word problems,<Cite id="wei2022" />
+and simply adding "Let's think step by step" raised one large model's accuracy on a set of arithmetic
+word problems from 17.7% to 78.7%.<Cite id="kojima2022" />
+
+## A small model, three ways
+
+Here are the puzzles from Ch 17, put to Qwen2.5-1.5B-Instruct with three different endings:
+
+<StepsTally />
+
+For this small model, the steps didn't raise the score: each way got 4 of the 6 right, but not the
+same 4. Asked for just the answer, it fell for the classic trap and said the ball costs 10 cents.
+Thinking step by step fixed the apples but talked itself into "0.2 minutes" for the widgets. Big
+gains from step-by-step prompting were found in much larger models; small ones can follow the form
+without the reasoning holding up.
+
+## Formats are for programs
+
+The last ending asked for the answer on a final line, "Answer: …", so that a program could read it.
+The model did that only once in six tries. A program that reads the replies can't assume the
+format was followed: it has to check, and ask again or fall back when it wasn't. Asking for a format
+makes the reply easier to use, not guaranteed.
+
+<RecapCard>
+
+- Writing the working out gives each step something to build on; it helped large models a lot.
+- On a small model the effect was mixed: the same score, with different mistakes.
+- Ask for a fixed format when a program reads the reply, and check that it was followed.
+
+</RecapCard>
+
+**Next question:** if wording matters this much, how much can harmless changes move the answer?

@@ -1,0 +1,35 @@
+name: Links
+
+# Checks every cited source and documentation link. Runs weekly (sources can disappear without any
+# change here) and on pull requests that touch them. Not part of ci-success, so an outside site
+# being down never blocks a merge; failures show up as a failed run to look at.
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/lib/references.json'
+      - 'src/lib/chapters/**'
+      - '**/*.md'
+      - 'lychee.toml'
+      - '.github/workflows/links.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  lychee:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: lycheeverse/lychee-action@v2.9.0
+        with:
+          args: >-
+            --config lychee.toml
+            src/lib/references.json
+            'src/lib/chapters/*.svx'
+            'src/lib/components/**/*.svelte'
+            README.md
+            'docs/**/*.md'
+          fail: true

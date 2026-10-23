@@ -1,0 +1,112 @@
+# LLM Kitchen
+
+A static site that teaches how a large language model works, from "guess the next word" to the
+harness that turns a model into an agent. See [docs/PLAN.md](docs/PLAN.md) for the full plan.
+
+## Development
+
+Requires Node 24 (see `.nvmrc`).
+
+```sh
+npm install
+npm start.             # dev server
+npm run build          # social images, then the static build in build/
+npm run preview        # serve the build on :4173
+```
+
+Checks (the same scripts CI runs):
+
+```sh
+npm run format:check   # Prettier (npm run format fixes it)
+npm run lint           # ESLint
+npm run check          # svelte-check, fails on warnings
+npm test               # Vitest unit tests
+npx playwright install chromium   # once
+npm run test:e2e       # Playwright against a production build
+```
+
+The e2e suite also checks every page for axe violations (light and dark), sideways scrolling on a
+phone-sized screen, and a JavaScript budget (150 KB gzipped; 350 KB on the two pages that run the
+GPT-2 tokenizer).
+
+Screenshot tests run locally only, because baselines differ between operating systems:
+
+```sh
+npm run test:visual                         # compare with tests/visual/*-snapshots
+npm run test:visual -- --update-snapshots=all   # accept intended changes
+```
+
+Chapters live in `src/lib/chapters/NN-slug.svx` and are registered in
+`src/lib/chapters/meta.ts`. `.svx` files are not formatted by Prettier.
+
+### Recorded traces
+
+The site ships pre-computed runs of GPT-2 small in `static/traces/`. To regenerate them (downloads
+the model, about 550 MB, on first run):
+
+```sh
+python3 -m venv scripts/.venv
+scripts/.venv/bin/pip install -r scripts/requirements.txt
+scripts/.venv/bin/python scripts/build-traces.py
+```
+
+The script checks `models/canonical.json` against the model's own config before writing anything.
+
+Other recorded data has its own script in the same environment:
+
+- `scripts/build-embeddings.py`: the Ch 5 embedding map (`static/embeddings/`).
+- `scripts/build-quantize.py`: the Ch 13 rounding demo (`static/quantize/`; reuses GPT-2 small).
+- `scripts/build-speculative.py`: the Ch 14 guess-and-check runs (`static/speculative/`; reuses
+  GPT-2 small and downloads GPT-2 medium, about 1.5 GB).
+- `scripts/build-chat.py`: the Ch 15 base vs. instruct comparison (`static/chat/`; downloads
+  Qwen2.5-0.5B and Qwen2.5-0.5B-Instruct, about 1 GB each).
+- `scripts/build-agent-traces.py`: the Part VII agent runs (`static/agent/`; downloads
+  Qwen2.5-1.5B-Instruct, about 3 GB). Its toy tools must stay in sync with
+  `src/lib/harness/tools.ts`; the unit tests compare them.
+- `scripts/build-caching.py`: the Ch 27 KV-cache timings (`static/caching/`; reuses GPT-2 small).
+  The times are measured on the machine that runs it, so rerunning changes the numbers in the prose
+  and their tests.
+- `scripts/build-injection.py`: the Ch 28 prompt-injection lab (`static/injection/`; reuses
+  Qwen2.5-1.5B-Instruct).
+- `scripts/build-encoder.py`: the Ch 30 fill-in-the-blank guesses (`static/encoders/`; downloads
+  BERT base, about 440 MB).
+- `scripts/build-clip.py`: the Ch 33 pictures and CLIP data (`static/vision/`; downloads CLIP
+  ViT-B/32, about 600 MB).
+- `scripts/build-reasoning.py`: the Ch 17 thinking off/on runs (`static/reasoning/`; downloads
+  Qwen3-0.6B, about 1.5 GB).
+- `scripts/build-prompts.py`: the Part VI prompt experiments (`static/prompts/`; reuses GPT-2
+  small and Qwen2.5-1.5B-Instruct, and reads the Ch 17 puzzles from `static/reasoning/`). Pass job
+  names (`wording`, `fewshot`, `system`, `steps`, `fragile`) to rerun only some.
+
+### Citations and fact-checks
+
+Sources are in `src/lib/references.json` and cited in chapters with `<Cite id="..." />`. Each
+Part's claim checklist is in `docs/fact-check/`.
+
+### Branding and link previews
+
+The site name, description, and origin for canonical and Open Graph URLs are in `src/lib/site.ts`;
+each chapter's description is in `src/lib/chapters/meta.ts`. `npm run build` first runs
+`scripts/build-og.ts`, which renders a 1200 × 630 social image per page into `static/og/` and the
+`apple-touch-icon.png`, from the favicon mark (`src/lib/assets/favicon.svg`) and the site's fonts.
+Both outputs are git-ignored.
+
+## Manual setup (not automated)
+
+- **Branch protection on `main`:** require the `ci-success` status check.
+- **Firebase project:** create it (or change the `default` project in `.firebaserc` to an existing
+  one) and enable Hosting.
+- **Workload Identity Federation:** with `gcloud` and `gh` signed in, run
+  `npx @abraham/firebase-wif setup` for the `production` environment (default branch only), then
+  `npx @abraham/firebase-wif setup --environment preview --any-branch` for PR previews. Check with
+  `npx @abraham/firebase-wif status`. This creates the `FIREBASE_WIF_PROVIDER` and
+  `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables the deploy workflows read.
+- **Custom domain:** the site is live at https://llm.kitchen, set up in the Firebase console
+  under Hosting with the DNS records it shows. `SITE_ORIGIN` in `src/lib/site.ts` must match it.
+
+## Deploys
+
+- `firebase-hosting-pr.yml`: every same-repo PR deploys to a `pr-<number>` preview channel that
+  expires after 7 days. Fork PRs only run CI.
+- `firebase-hosting-merge.yml`: after CI passes on `main`, deploys the same commit to the live
+  channel.

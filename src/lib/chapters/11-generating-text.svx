@@ -1,0 +1,63 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import GlassBoxGenerator from '#lib/components/widgets/GlassBoxGenerator.svelte';
+</script>
+
+## One token, then the next
+
+GPT-2 only ever does one thing: given some text, it gives a probability for every possible next
+token. That's the whole stack from Part IV, run once. Writing a paragraph is just a loop around it:
+
+1. run the model on the text so far,
+2. pick a token from its probabilities,
+3. add that token to the end of the text,
+4. repeat.
+
+Every model in a chat app writes this way. Try it yourself: each press runs the full model once.
+Click any word in the list to pick it instead of the model's favorite.
+
+<GlassBoxGenerator
+	title="Glass-box generator"
+	presets={[{ trace: 'the-cat-sat', label: 'The cat sat on the' }]}
+	branches={['the-cat-sat-bed', 'the-cat-sat-couch', 'the-cat-sat-ground', 'the-cat-sat-edge']}
+/>
+
+Keep pressing *Add the most likely* and GPT-2 writes "The cat sat on the floor, and the cat was
+still asleep." Go back and pick " bed" instead, and it gets stuck: ", and the cat sat on the bed, and
+the cat sat on the bed…". Always taking the single most likely token often falls into loops like
+this. Picking at random, weighted by the probabilities (the <GlossaryPopover term="temperature">temperature</GlossaryPopover> spinner from Ch 2), mostly
+avoids them, which is one reason most text generators sample instead.<Cite id="holtzman2020" />
+
+## No going back
+
+Each token is chosen once, and everything after it is built on top. The model doesn't plan a
+sentence, write a draft, or go back and fix an earlier word. If it picks " bed", it has to make the
+best of " bed". And each new token costs a full run through all 124 million of GPT-2's weights, so
+a 500-token answer means 500 runs.
+
+## Knowing when to stop
+
+The loop has to end somehow. GPT-2's vocabulary includes a special token, `<|endoftext|>` (number
+50,256), that means "end of text". When the model picks it, the program stops.<Cite id="gpt2-config" />
+Otherwise, the program stops at a length limit it was given. Chat models work the same way
+with their own end-of-turn token.
+
+## Run it live
+
+Everything above is recorded. To type your own beginning, pick any word, and change the temperature,
+press *Run it live* in the generator. It downloads a compressed copy of GPT-2 small (about 155 MB
+including the code that runs it) and runs it on your device. Nothing you type leaves your browser.
+
+<RecapCard>
+
+- A model only predicts the next token. Generating text is a loop: predict, pick, append, repeat.
+- Each token costs one full run of the model, and once picked it is never revised.
+- Always taking the top token can loop; sampling with a temperature mostly avoids that.
+- Generation stops at a special end token or a length limit.
+
+</RecapCard>
+
+**Next question:** GPT-2 writes fluent text that often makes no sense. What happens when the same
+recipe is made much bigger?

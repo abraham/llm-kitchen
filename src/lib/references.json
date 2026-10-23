@@ -1,0 +1,655 @@
+[
+	{
+		"id": "shannon1948",
+		"authors": ["Claude E. Shannon"],
+		"title": "A Mathematical Theory of Communication",
+		"venue": "Bell System Technical Journal 27(3)",
+		"year": 1948,
+		"url": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x"
+	},
+	{
+		"id": "shannon1951",
+		"authors": ["Claude E. Shannon"],
+		"title": "Prediction and Entropy of Printed English",
+		"venue": "Bell System Technical Journal 30(1)",
+		"year": 1951,
+		"url": "https://doi.org/10.1002/j.1538-7305.1951.tb01366.x"
+	},
+	{
+		"id": "radford2019",
+		"authors": [
+			"Alec Radford",
+			"Jeffrey Wu",
+			"Rewon Child",
+			"David Luan",
+			"Dario Amodei",
+			"Ilya Sutskever"
+		],
+		"title": "Language Models are Unsupervised Multitask Learners",
+		"venue": "OpenAI",
+		"year": 2019,
+		"url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+	},
+	{
+		"id": "gpt2-model-card",
+		"authors": ["OpenAI", "Hugging Face"],
+		"title": "GPT-2 model card (openai-community/gpt2)",
+		"venue": "Hugging Face",
+		"year": 2019,
+		"url": "https://huggingface.co/openai-community/gpt2",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "unicode",
+		"authors": ["The Unicode Consortium"],
+		"title": "The Unicode Standard",
+		"venue": "Unicode Consortium",
+		"year": 2025,
+		"url": "https://www.unicode.org/versions/latest/",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "rfc3629",
+		"authors": ["François Yergeau"],
+		"title": "UTF-8, a transformation format of ISO 10646 (RFC 3629)",
+		"venue": "IETF",
+		"year": 2003,
+		"url": "https://www.rfc-editor.org/rfc/rfc3629"
+	},
+	{
+		"id": "jurafsky-martin-ngrams",
+		"authors": ["Daniel Jurafsky", "James H. Martin"],
+		"title": "N-gram Language Models, in Speech and Language Processing (3rd ed. draft)",
+		"venue": "Stanford University",
+		"year": 2025,
+		"url": "https://web.stanford.edu/~jurafsky/slp3/",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "fan2018",
+		"authors": ["Angela Fan", "Mike Lewis", "Yann Dauphin"],
+		"title": "Hierarchical Neural Story Generation",
+		"venue": "ACL 2018",
+		"year": 2018,
+		"url": "https://aclanthology.org/P18-1082/"
+	},
+	{
+		"id": "holtzman2020",
+		"authors": ["Ari Holtzman", "Jan Buys", "Li Du", "Maxwell Forbes", "Yejin Choi"],
+		"title": "The Curious Case of Neural Text Degeneration",
+		"venue": "ICLR 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/1904.09751"
+	},
+	{
+		"id": "sennrich2016",
+		"authors": ["Rico Sennrich", "Barry Haddow", "Alexandra Birch"],
+		"title": "Neural Machine Translation of Rare Words with Subword Units",
+		"venue": "ACL 2016",
+		"year": 2016,
+		"url": "https://aclanthology.org/P16-1162/"
+	},
+	{
+		"id": "tiktoken",
+		"authors": ["OpenAI"],
+		"title": "tiktoken: model-to-encoding mapping (tiktoken/model.py)",
+		"venue": "GitHub",
+		"year": 2024,
+		"url": "https://github.com/openai/tiktoken/blob/main/tiktoken/model.py",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "mikolov2013",
+		"authors": ["Tomas Mikolov", "Wen-tau Yih", "Geoffrey Zweig"],
+		"title": "Linguistic Regularities in Continuous Space Word Representations",
+		"venue": "NAACL-HLT 2013",
+		"year": 2013,
+		"url": "https://aclanthology.org/N13-1090/"
+	},
+	{
+		"id": "minilm-model-card",
+		"authors": ["Sentence Transformers"],
+		"title": "all-MiniLM-L6-v2 model card",
+		"venue": "Hugging Face",
+		"year": 2021,
+		"url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "mcculloch1943",
+		"authors": ["Warren S. McCulloch", "Walter Pitts"],
+		"title": "A Logical Calculus of the Ideas Immanent in Nervous Activity",
+		"venue": "Bulletin of Mathematical Biophysics 5",
+		"year": 1943,
+		"url": "https://doi.org/10.1007/BF02478259"
+	},
+	{
+		"id": "rosenblatt1958",
+		"authors": ["Frank Rosenblatt"],
+		"title": "The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain",
+		"venue": "Psychological Review 65(6)",
+		"year": 1958,
+		"url": "https://doi.org/10.1037/h0042519"
+	},
+	{
+		"id": "hendrycks2016",
+		"authors": ["Dan Hendrycks", "Kevin Gimpel"],
+		"title": "Gaussian Error Linear Units (GELUs)",
+		"venue": "arXiv:1606.08415",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1606.08415"
+	},
+	{
+		"id": "gpt2-config",
+		"authors": ["OpenAI", "Hugging Face"],
+		"title": "GPT-2 small configuration (config.json)",
+		"venue": "Hugging Face",
+		"year": 2019,
+		"url": "https://huggingface.co/openai-community/gpt2/blob/main/config.json",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "rumelhart1986",
+		"authors": ["David E. Rumelhart", "Geoffrey E. Hinton", "Ronald J. Williams"],
+		"title": "Learning Representations by Back-Propagating Errors",
+		"venue": "Nature 323",
+		"year": 1986,
+		"url": "https://doi.org/10.1038/323533a0"
+	},
+	{
+		"id": "bengio2003",
+		"authors": ["Yoshua Bengio", "Réjean Ducharme", "Pascal Vincent", "Christian Jauvin"],
+		"title": "A Neural Probabilistic Language Model",
+		"venue": "Journal of Machine Learning Research 3",
+		"year": 2003,
+		"url": "https://www.jmlr.org/papers/v3/bengio03a.html"
+	},
+	{
+		"id": "kingma2015",
+		"authors": ["Diederik P. Kingma", "Jimmy Ba"],
+		"title": "Adam: A Method for Stochastic Optimization",
+		"venue": "ICLR 2015",
+		"year": 2015,
+		"url": "https://arxiv.org/abs/1412.6980"
+	},
+	{
+		"id": "levesque2012",
+		"authors": ["Hector J. Levesque", "Ernest Davis", "Leora Morgenstern"],
+		"title": "The Winograd Schema Challenge",
+		"venue": "KR 2012",
+		"year": 2012,
+		"url": "https://cdn.aaai.org/ocs/4492/4492-21843-1-PB.pdf"
+	},
+	{
+		"id": "vaswani2017",
+		"authors": [
+			"Ashish Vaswani",
+			"Noam Shazeer",
+			"Niki Parmar",
+			"Jakob Uszkoreit",
+			"Llion Jones",
+			"Aidan N. Gomez",
+			"Łukasz Kaiser",
+			"Illia Polosukhin"
+		],
+		"title": "Attention Is All You Need",
+		"venue": "NeurIPS 2017",
+		"year": 2017,
+		"url": "https://arxiv.org/abs/1706.03762"
+	},
+	{
+		"id": "wang2022",
+		"authors": [
+			"Kevin Wang",
+			"Alexandre Variengien",
+			"Arthur Conmy",
+			"Buck Shlegeris",
+			"Jacob Steinhardt"
+		],
+		"title": "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
+		"venue": "ICLR 2023",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.00593"
+	},
+	{
+		"id": "xiao2024",
+		"authors": ["Guangxuan Xiao", "Yuandong Tian", "Beidi Chen", "Song Han", "Mike Lewis"],
+		"title": "Efficient Streaming Language Models with Attention Sinks",
+		"venue": "ICLR 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2309.17453"
+	},
+	{
+		"id": "he2016",
+		"authors": ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
+		"title": "Deep Residual Learning for Image Recognition",
+		"venue": "CVPR 2016",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1512.03385"
+	},
+	{
+		"id": "ba2016",
+		"authors": ["Jimmy Lei Ba", "Jamie Ryan Kiros", "Geoffrey E. Hinton"],
+		"title": "Layer Normalization",
+		"venue": "arXiv",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1607.06450"
+	},
+	{
+		"id": "nostalgebraist2020",
+		"authors": ["nostalgebraist"],
+		"title": "interpreting GPT: the logit lens",
+		"venue": "LessWrong",
+		"year": 2020,
+		"url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "kaplan2020",
+		"authors": ["Jared Kaplan", "Sam McCandlish", "Tom Henighan", "Tom B. Brown"],
+		"title": "Scaling Laws for Neural Language Models",
+		"venue": "arXiv",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2001.08361"
+	},
+	{
+		"id": "brown2020",
+		"authors": ["Tom B. Brown", "Benjamin Mann", "Nick Ryder", "Melanie Subbiah"],
+		"title": "Language Models are Few-Shot Learners",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2005.14165"
+	},
+	{
+		"id": "hoffmann2022",
+		"authors": ["Jordan Hoffmann", "Sebastian Borgeaud", "Arthur Mensch", "Elena Buchatskaya"],
+		"title": "Training Compute-Optimal Large Language Models",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2203.15556"
+	},
+	{
+		"id": "grattafiori2024",
+		"authors": ["Aaron Grattafiori", "Abhimanyu Dubey", "Abhinav Jauhri", "Abhinav Pandey"],
+		"title": "The Llama 3 Herd of Models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2407.21783"
+	},
+	{
+		"id": "ouyang2022",
+		"authors": ["Long Ouyang", "Jeff Wu", "Xu Jiang", "Diogo Almeida"],
+		"title": "Training language models to follow instructions with human feedback",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2203.02155"
+	},
+	{
+		"id": "qwen2024",
+		"authors": ["Qwen Team", "An Yang", "Baosong Yang", "Beichen Zhang"],
+		"title": "Qwen2.5 Technical Report",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2412.15115"
+	},
+	{
+		"id": "ji2023",
+		"authors": ["Ziwei Ji", "Nayeon Lee", "Rita Frieske", "Tiezheng Yu"],
+		"title": "Survey of Hallucination in Natural Language Generation",
+		"venue": "ACM Computing Surveys",
+		"year": 2023,
+		"url": "https://doi.org/10.1145/3571730"
+	},
+	{
+		"id": "sclar2024",
+		"authors": ["Melanie Sclar", "Yejin Choi", "Yulia Tsvetkov", "Alane Suhr"],
+		"title": "Quantifying Language Models' Sensitivity to Spurious Features in Prompt Design",
+		"venue": "ICLR 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2310.11324"
+	},
+	{
+		"id": "schick2023",
+		"authors": ["Timo Schick", "Jane Dwivedi-Yu", "Roberto Dessì", "Roberta Raileanu"],
+		"title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.04761"
+	},
+	{
+		"id": "yao2023",
+		"authors": ["Shunyu Yao", "Jeffrey Zhao", "Dian Yu", "Nan Du"],
+		"title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2210.03629"
+	},
+	{
+		"id": "lewis2020",
+		"authors": ["Patrick Lewis", "Ethan Perez", "Aleksandra Piktus", "Fabio Petroni"],
+		"title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2005.11401"
+	},
+	{
+		"id": "pope2022",
+		"authors": ["Reiner Pope", "Sholto Douglas", "Aakanksha Chowdhery", "Jacob Devlin"],
+		"title": "Efficiently Scaling Transformer Inference",
+		"venue": "arXiv preprint (MLSys 2023)",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.05102"
+	},
+	{
+		"id": "openai-prompt-caching",
+		"authors": ["OpenAI"],
+		"title": "Prompt caching",
+		"venue": "OpenAI API documentation",
+		"year": 2026,
+		"url": "https://developers.openai.com/api/docs/guides/prompt-caching",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "anthropic-prompt-caching",
+		"authors": ["Anthropic"],
+		"title": "Prompt caching",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/prompt-caching",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "greshake2023",
+		"authors": ["Kai Greshake", "Sahar Abdelnabi", "Shailesh Mishra", "Christoph Endres"],
+		"title": "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
+		"venue": "AISec 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.12173"
+	},
+	{
+		"id": "perez2022",
+		"authors": ["Fábio Perez", "Ian Ribeiro"],
+		"title": "Ignore Previous Prompt: Attack Techniques For Language Models",
+		"venue": "NeurIPS 2022 ML Safety Workshop",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.09527"
+	},
+	{
+		"id": "hines2024",
+		"authors": ["Keegan Hines", "Gary Lopez", "Matthew Hall", "Federico Zarfati"],
+		"title": "Defending Against Indirect Prompt Injection Attacks With Spotlighting",
+		"venue": "arXiv preprint",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2403.14720"
+	},
+	{
+		"id": "wallace2024",
+		"authors": ["Eric Wallace", "Kai Xiao", "Reimar Leike", "Lilian Weng"],
+		"title": "The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions",
+		"venue": "arXiv preprint",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.13208"
+	},
+	{
+		"id": "devlin2019",
+		"authors": ["Jacob Devlin", "Ming-Wei Chang", "Kenton Lee", "Kristina Toutanova"],
+		"title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+		"venue": "NAACL 2019",
+		"year": 2019,
+		"url": "https://arxiv.org/abs/1810.04805"
+	},
+	{
+		"id": "shazeer2017",
+		"authors": ["Noam Shazeer", "Azalia Mirhoseini", "Krzysztof Maziarz", "Andy Davis"],
+		"title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+		"venue": "ICLR 2017",
+		"year": 2017,
+		"url": "https://arxiv.org/abs/1701.06538"
+	},
+	{
+		"id": "jiang2024",
+		"authors": ["Albert Q. Jiang", "Alexandre Sablayrolles", "Antoine Roux", "Arthur Mensch"],
+		"title": "Mixtral of Experts",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2401.04088"
+	},
+	{
+		"id": "deepseek2024",
+		"authors": ["DeepSeek-AI"],
+		"title": "DeepSeek-V3 Technical Report",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2412.19437"
+	},
+	{
+		"id": "elman1990",
+		"authors": ["Jeffrey L. Elman"],
+		"title": "Finding Structure in Time",
+		"venue": "Cognitive Science 14(2)",
+		"year": 1990,
+		"url": "https://doi.org/10.1207/s15516709cog1402_1"
+	},
+	{
+		"id": "hochreiter1997",
+		"authors": ["Sepp Hochreiter", "Jürgen Schmidhuber"],
+		"title": "Long Short-Term Memory",
+		"venue": "Neural Computation 9(8)",
+		"year": 1997,
+		"url": "https://doi.org/10.1162/neco.1997.9.8.1735"
+	},
+	{
+		"id": "gu2023",
+		"authors": ["Albert Gu", "Tri Dao"],
+		"title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.00752"
+	},
+	{
+		"id": "jelassi2024",
+		"authors": ["Samy Jelassi", "David Brandfonbrener", "Sham M. Kakade", "Eran Malach"],
+		"title": "Repeat After Me: Transformers are Better than State Space Models at Copying",
+		"venue": "ICML 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.01032"
+	},
+	{
+		"id": "dosovitskiy2021",
+		"authors": ["Alexey Dosovitskiy", "Lucas Beyer", "Alexander Kolesnikov", "Dirk Weissenborn"],
+		"title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+		"venue": "ICLR 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2010.11929"
+	},
+	{
+		"id": "radford2021",
+		"authors": ["Alec Radford", "Jong Wook Kim", "Chris Hallacy", "Aditya Ramesh"],
+		"title": "Learning Transferable Visual Models From Natural Language Supervision",
+		"venue": "ICML 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2103.00020"
+	},
+	{
+		"id": "liu2023",
+		"authors": ["Haotian Liu", "Chunyuan Li", "Qingyang Wu", "Yong Jae Lee"],
+		"title": "Visual Instruction Tuning",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2304.08485"
+	},
+	{
+		"id": "sohl-dickstein2015",
+		"authors": ["Jascha Sohl-Dickstein", "Eric Weiss", "Niru Maheswaranathan", "Surya Ganguli"],
+		"title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+		"venue": "ICML 2015",
+		"year": 2015,
+		"url": "https://arxiv.org/abs/1503.03585"
+	},
+	{
+		"id": "ho2020",
+		"authors": ["Jonathan Ho", "Ajay Jain", "Pieter Abbeel"],
+		"title": "Denoising Diffusion Probabilistic Models",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2006.11239"
+	},
+	{
+		"id": "rombach2022",
+		"authors": ["Robin Rombach", "Andreas Blattmann", "Dominik Lorenz", "Patrick Esser"],
+		"title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+		"venue": "CVPR 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2112.10752"
+	},
+	{
+		"id": "wei2022",
+		"authors": ["Jason Wei", "Xuezhi Wang", "Dale Schuurmans", "Maarten Bosma"],
+		"title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2201.11903"
+	},
+	{
+		"id": "deepseek2025",
+		"authors": ["DeepSeek-AI"],
+		"title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2501.12948"
+	},
+	{
+		"id": "qwen3",
+		"authors": ["An Yang", "Anfeng Li", "Baosong Yang", "Beichen Zhang"],
+		"title": "Qwen3 Technical Report",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2505.09388"
+	},
+	{
+		"id": "qwen3-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3-0.6B model card",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "olsson2022",
+		"authors": ["Catherine Olsson", "Nelson Elhage", "Neel Nanda", "Nicholas Joseph"],
+		"title": "In-context Learning and Induction Heads",
+		"venue": "Transformer Circuits Thread",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2209.11895"
+	},
+	{
+		"id": "zheng2024",
+		"authors": ["Mingqian Zheng", "Jiaxin Pei", "Lajanugen Logeswaran", "Moontae Lee"],
+		"title": "When \"A Helpful Assistant\" Is Not Really Helpful: Personas in System Prompts Do Not Improve Performances of Large Language Models",
+		"venue": "Findings of EMNLP 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2311.10054"
+	},
+	{
+		"id": "kojima2022",
+		"authors": ["Takeshi Kojima", "Shixiang Shane Gu", "Machel Reid", "Yutaka Matsuo"],
+		"title": "Large Language Models are Zero-Shot Reasoners",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2205.11916"
+	},
+	{
+		"id": "lu2022",
+		"authors": ["Yao Lu", "Max Bartolo", "Alastair Moore", "Sebastian Riedel"],
+		"title": "Fantastically Ordered Prompts and Where to Find Them: Overcoming Few-Shot Prompt Order Sensitivity",
+		"venue": "ACL 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2104.08786"
+	},
+	{
+		"id": "liu2024",
+		"authors": ["Nelson F. Liu", "Kevin Lin", "John Hewitt", "Ashwin Paranjape"],
+		"title": "Lost in the Middle: How Language Models Use Long Contexts",
+		"venue": "TACL 12",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2307.03172"
+	},
+	{
+		"id": "jacob2018",
+		"authors": ["Benoit Jacob", "Skirmantas Kligys", "Bo Chen", "Menglong Zhu"],
+		"title": "Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference",
+		"venue": "CVPR",
+		"year": 2018,
+		"url": "https://arxiv.org/abs/1712.05877"
+	},
+	{
+		"id": "dettmers2022",
+		"authors": ["Tim Dettmers", "Mike Lewis", "Younes Belkada", "Luke Zettlemoyer"],
+		"title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+		"venue": "NeurIPS",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2208.07339"
+	},
+	{
+		"id": "gguf-quant-types",
+		"authors": ["Hugging Face"],
+		"title": "GGUF: quantization types",
+		"venue": "Hugging Face Hub documentation",
+		"year": 2026,
+		"url": "https://huggingface.co/docs/hub/gguf",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "gemma4-qat",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 QAT model card (google/gemma-4-E2B-it-qat-mobile-transformers)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-E2B-it-qat-mobile-transformers",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "leviathan2023",
+		"authors": ["Yaniv Leviathan", "Matan Kalman", "Yossi Matias"],
+		"title": "Fast Inference from Transformers via Speculative Decoding",
+		"venue": "ICML",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2211.17192"
+	},
+	{
+		"id": "chen2023",
+		"authors": ["Charlie Chen", "Sebastian Borgeaud", "Geoffrey Irving", "Jean-Baptiste Lespiau"],
+		"title": "Accelerating Large Language Model Decoding with Speculative Sampling",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.01318"
+	},
+	{
+		"id": "gemma4-assistant",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 MTP drafter model card (google/gemma-4-E2B-it-assistant)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-E2B-it-assistant",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "gemma4-model-card",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 model card (google/gemma-4-26B-A4B-it)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "diffusiongemma-model-card",
+		"authors": ["Google DeepMind"],
+		"title": "DiffusionGemma model card (google/diffusiongemma-26B-A4B-it)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/diffusiongemma-26B-A4B-it",
+		"accessed": "2026-10-23"
+	}
+]

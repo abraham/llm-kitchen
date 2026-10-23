@@ -1,0 +1,60 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import AttentionMask from '#lib/components/widgets/AttentionMask.svelte';
+	import FillTheBlank from '#lib/components/widgets/FillTheBlank.svelte';
+</script>
+
+## A blank in the middle
+
+Every model so far has filled in a blank at the end of the text. Put the blank in the middle and
+GPT-2 has a problem: it only reads the words before the blank. In *The cat sat on the ___ of the
+fridge*, the clue comes after the gap, where GPT-2 can't look.
+
+A different kind of transformer, the <GlossaryPopover term="encoder">encoder</GlossaryPopover>,
+reads the whole text at once. The best known is BERT, trained by hiding 15% of the tokens in its
+training text and guessing each one from the words on both sides.<Cite id="devlin2019" /> Here are
+real guesses from BERT and GPT-2:
+
+<FillTheBlank />
+
+For the fridge, GPT-2's best guess is *floor*, a fine way to continue "The cat sat on the", while
+BERT's is *top*. GPT-2 sends the shopper for bread to the *hospital*; BERT, which can see "to buy
+some bread", says *market*.
+
+## The same blocks, a different mask
+
+The difference comes down to one setting in attention (Ch 9). In GPT-2, a *decoder*, each token can
+only look at itself and the tokens before it. In BERT, every token can look at every other token.
+Switch between the two:
+
+<AttentionMask />
+
+Everything else is the recipe you already know: tokens, embeddings, attention, MLPs, and a stack of
+blocks. BERT base even has the same size blocks as GPT-2 small: 12 of them, each working on vectors
+of 768 numbers.<Cite id="devlin2019" />
+
+## Good at understanding, not at writing
+
+The price of looking both ways is that an encoder needs the whole text before it starts. It can't
+write a story one token at a time, because the tokens after the one it's writing don't exist yet.
+So encoders are used for *understanding*: search, sorting email into spam or not, and embeddings.
+The embedding model behind the map in Ch 5 is a small encoder of the same design as BERT.
+
+The original transformer had both halves: an encoder to read a sentence in one language and a
+decoder to write it in another.<Cite id="vaswani2017" /> Many systems still pair them, like an
+encoder that finds the relevant documents (Ch 26) and a decoder that writes the answer.
+
+<RecapCard>
+
+- GPT-2 is a decoder: each token sees only earlier tokens, which is what lets it write left to
+  right.
+- An encoder like BERT lets every token see every other one, so it can use the words on both sides
+  of a blank.
+- Encoders are used for understanding: search, classification, and embeddings.
+
+</RecapCard>
+
+**Next question:** every one of GPT-2's weights works on every token. Could a model be huge but use
+only part of itself for each token?

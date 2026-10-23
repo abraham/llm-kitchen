@@ -1,0 +1,64 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import BaseVsInstruct from '#lib/components/widgets/BaseVsInstruct.svelte';
+	import ChatTemplate from '#lib/components/widgets/ChatTemplate.svelte';
+	import TrainingStages from '#lib/components/widgets/TrainingStages.svelte';
+</script>
+
+## A chat is still just text
+
+A model trained on web text is a <GlossaryPopover term="base-model">base model</GlossaryPopover>: it continues whatever it's given.
+So how does a chat app get answers out of one? It writes the conversation out as a single piece of
+text, in a fixed format with special marker tokens, and lets the model continue it. That format is
+the <GlossaryPopover term="chat-template">chat template</GlossaryPopover>. Here is the real one used
+by the Qwen2.5 chat models:<Cite id="qwen2024" />
+
+<ChatTemplate />
+
+The conversation ends with the marker that opens the assistant's turn, so the most likely
+continuation is an answer. When the model writes `<|im_end|>`, the chat app stops the loop from
+Ch 11 and shows the reply.
+
+## Base model or assistant?
+
+Here are the same prompts given to three models: GPT-2; Qwen2.5-0.5B, a small base model from 2024;
+and Qwen2.5-0.5B-Instruct, the same model after tuning it to be an assistant.
+
+<BaseVsInstruct />
+
+A few things to notice:
+
+- **Base models continue text.** Asked how to boil an egg, the Qwen base model writes another
+  question and a multiple-choice quiz, the way that question might continue on a web page. GPT-2
+  repeats itself.
+- **Modern base models already know a lot.** The Qwen base model answers the capital question and
+  writes a haiku. On the web, a question is often followed by its answer, so an answer is a likely
+  continuation.
+- **The format matters.** The tuned model, given the bare question without its chat template,
+  answers and then keeps going: about checking the answer with Python code, or with a stray line of
+  its own template. In its chat format, it answers and stops.
+
+## How the tuning works
+
+Turning a base model into an assistant usually takes two more rounds of training, after the long
+first one. Step through them:
+
+<TrainingStages />
+
+A 2022 paper on InstructGPT describes this recipe. People preferred the answers of a
+1.3-billion-weight tuned model over those of the 175-billion-weight GPT-3 it was built from.<Cite id="ouyang2022" />
+Qwen2.5's tuning used over a million examples in the second stage, followed by several stages of
+the third.<Cite id="qwen2024" />
+
+<RecapCard>
+
+- A chat is written out as one text in a chat template, and the model continues it.
+- A base model just continues text; tuning teaches it to answer in the chat format and stop.
+- Tuning has two usual stages after pretraining: learning from example answers, then from people's
+  preferences between answers.
+
+</RecapCard>
+
+**Next question:** even tuned assistants sometimes make things up or trip over simple questions. Why?

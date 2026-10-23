@@ -1,0 +1,51 @@
+name: Deploy live
+
+# Runs after CI finishes on main, and only deploys if CI passed.
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-live
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to the live channel
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://llm.kitchen
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - id: wif
+        uses: abraham/firebase-wif@v0.2.1
+        with:
+          workload_identity_provider: ${{ vars.FIREBASE_WIF_PROVIDER }}
+          service_account: ${{ vars.FIREBASE_WIF_SERVICE_ACCOUNT }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0.11.0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ steps.wif.outputs.credentials_json }}
+          projectId: ${{ steps.wif.outputs.project_id }}
+          channelId: live

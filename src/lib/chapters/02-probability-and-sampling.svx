@@ -1,0 +1,64 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import RecordedRuns from '#lib/components/widgets/RecordedRuns.svelte';
+	import TemperatureMath from '#lib/components/widgets/TemperatureMath.svelte';
+	import TemperatureSampler from '#lib/components/widgets/TemperatureSampler.svelte';
+</script>
+
+## The model doesn't choose
+
+A language model's output isn't a word. It's a <GlossaryPopover term="distribution">probability distribution</GlossaryPopover>: a chance for every
+possible next piece of text, all adding up to 100%. Choosing the word is a separate step, called <GlossaryPopover term="sampling">sampling</GlossaryPopover>, and it has its own settings.
+
+Below are GPT-2's ten most likely next words after *The cat sat on the*. Spin the wheel, then move
+the sliders and watch the bars change.
+
+<TemperatureSampler />
+
+*Simplified:* to keep the picture readable, the widget only uses GPT-2's ten most likely next words
+and rescales them to add up to 100%. The real model chooses from all 50,257 options.
+
+## Temperature
+
+The simplest choice is to always take the most likely word. That's called greedy decoding, and it
+gives the same output every time. With large models, always picking the top word tends to produce
+dull text that can get stuck repeating itself.<Cite id="holtzman2020" />
+
+**Temperature** controls how adventurous the pick is. Below 1, it makes the likely words even
+likelier. Above 1, it evens the chances out, so unusual words get picked more often. At 0 it becomes
+greedy: always the top word.
+
+Under the hood, the model gives every word a raw score, and the scores are divided by the
+temperature before they become probabilities. Try it:
+
+<TemperatureMath />
+
+## Top-k
+
+**Top-k** is a simpler control: only the *k* most likely words are allowed, and the rest are set to
+zero.<Cite id="fan2018" /> It stops the model from ever picking something very unlikely, which is
+where nonsense tends to come from.
+
+## The same prompt, three ways
+
+Here is GPT-2 continuing the same prompt for 16 more pieces of text, at three temperatures:
+
+<RecordedRuns />
+
+At temperature 0 the text is sensible but predictable, and it would be the same every time. At 0.7
+it varies but stays readable. At 1.5 it drifts into nonsense, because unlikely words keep getting
+picked and each one makes the next guess harder.
+
+<RecapCard>
+
+- A model outputs a probability distribution; sampling picks the actual word.
+- Temperature sharpens (below 1) or flattens (above 1) the distribution. Temperature 0 always picks
+  the top word.
+- Top-k only allows the k most likely words.
+
+</RecapCard>
+
+**Next question:** a computer can't read. So how does a model get from letters on a page to something
+it can calculate with?

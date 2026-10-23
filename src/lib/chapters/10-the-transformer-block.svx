@@ -1,0 +1,60 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import BlockBuilder from '#lib/components/widgets/BlockBuilder.svelte';
+	import ResidualStream from '#lib/components/widgets/ResidualStream.svelte';
+</script>
+
+## Assembling the pieces
+
+You've now met every ingredient of a <GlossaryPopover term="transformer">transformer</GlossaryPopover>: token vectors (Ch 5), layers of
+neurons (Ch 6), and attention (Ch 9). A transformer arranges them into a **block** and stacks that
+block many times.<Cite id="vaswani2017" /> Build GPT-2 small one piece at a time:
+
+<BlockBuilder />
+
+Two pieces are new:
+
+- **The "+" circles.** Attention and the neuron layer (called the **MLP**) don't replace a token's
+  vector; they add a change to it. The original passes straight through on a highway, and each
+  block adds its contribution. This trick, called a residual connection, makes very deep networks
+  much easier to train.<Cite id="he2016" />
+- **Layer norm.** Before each step, the numbers are rescaled to a steady size, which also helps
+  training stay stable.<Cite id="ba2016" /> GPT-2 puts it at the start of each step, plus once more
+  at the very end.<Cite id="radford2019" />
+
+The counter shows where GPT-2's 124 million weights live. About a third are in the token and
+position tables at the start. Almost half are in the MLPs, which take up two thirds of every block.
+Attention, the star of the last chapter, has fewer than a quarter.
+
+## Watch a guess take shape
+
+That highway is called the <GlossaryPopover term="residual-stream">residual stream</GlossaryPopover>. Every block reads from
+it and writes back to it, and the final stream becomes the prediction. So what if you stopped early
+and asked for a prediction from the middle of the stack? Researchers do exactly that, a trick
+called the logit lens.<Cite id="nostalgebraist2020" /> Here it is on "The cat sat on the":
+
+<ResidualStream />
+
+At the start, the stream is just the vectors for " the" and its position, and read as a guess it's
+nonsense. From block 1 to block 7 the top guess is " same", as in "sat on the same": a sensible kind
+of word, but not about cats. From block 8 on, " floor" is at or near the top (" ground" edges ahead
+once), and furniture appears: " table", " sofa", " bed". The last block spreads the bets out again,
+ending at " floor", " bed", and " couch", the same guesses you saw in Ch 0.
+
+No single block "knows" the answer. Each one nudges the stream, and the prediction sharpens as it
+goes.
+
+<RecapCard>
+
+- A transformer block is attention plus an MLP, each added onto the residual stream, with layer
+  norm before each.
+- GPT-2 small stacks 12 blocks. Most of its weights are in the MLPs and the token table, not in
+  attention.
+- Each block makes a small change; reading the stream partway through shows the guess forming.
+
+</RecapCard>
+
+**Next question:** the model gives probabilities for one next token. How does that become a whole
+paragraph?

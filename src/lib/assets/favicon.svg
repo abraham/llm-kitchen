@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+	<title>LLM Kitchen</title>
+	<style>
+		.bowl { fill: #1f1b16; }
+		.token { fill: #d97706; }
+		.vector { fill: #0d9488; }
+		.attention { fill: #db2777; }
+		@media (prefers-color-scheme: dark) {
+			.bowl { fill: #ece6dc; }
+			.token { fill: #f59e0b; }
+			.vector { fill: #14b8a6; }
+			.attention { fill: #f472b6; }
+		}
+	</style>
+	<circle class="token" cx="9" cy="12.5" r="5" />
+	<circle class="attention" cx="23" cy="12.5" r="5" />
+	<circle class="vector" cx="16" cy="9" r="5" />
+	<path class="bowl" d="M1 14.5h30a15 14 0 0 1-30 0z" />
+</svg>

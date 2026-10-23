@@ -1,0 +1,47 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import AgentStepper from '#lib/components/widgets/AgentStepper.svelte';
+</script>
+
+## A loop around the loop
+
+Some tasks need several tools in a row, where each step depends on the last. Take this one: "Find
+which nursery rhyme mentions a cat, and count its words." The model has to search, read the result,
+then count. An <GlossaryPopover term="agent">agent</GlossaryPopover> handles this with one more loop:
+the harness calls the model, runs the tool it asks for, adds the result, and calls it again, until
+the model answers without asking for a tool. Step through a real run:
+
+<AgentStepper />
+
+There are two loops here. Inside each model call is the token loop from Ch 11: predict, pick,
+append. Around it is the harness loop: call the model, run a tool, add the result, repeat. This
+pattern of interleaving a model's reasoning with actions was popularized by the ReAct
+paper.<Cite id="yao2023" />
+
+The model never saw the rhyme until the search returned it, and it never counted anything: it
+copied the rhyme into a call to the word counter, then reported the counter's answer, 30 words.
+
+## The harness makes the rules
+
+This run worked partly because of choices in the harness, not the model:
+
+- **One tool at a time.** The harness stops the model right after its first tool call, so it can't
+  write a second call before seeing the first result.
+- **Instructions.** The system prompt (Ch 23) told it to use a tool for counting instead of
+  guessing.
+- **A step limit.** The harness allows at most 8 model calls, so a confused agent can't loop
+  forever. Each call also re-reads the whole growing conversation: here 301, then 394, then 483
+  tokens.
+
+<RecapCard>
+
+- An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
+  back in.
+- The loop stops when the model answers without a tool call, or when it hits a step limit.
+- Each step re-sends the whole conversation, so the prompt keeps growing.
+
+</RecapCard>
+
+**Next question:** if the prompt grows with every step, what happens when it gets too big?

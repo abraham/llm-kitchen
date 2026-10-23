@@ -1,0 +1,107 @@
+{
+	"version": 1,
+	"maxNewTokens": 48,
+	"models": {
+		"gpt2": {
+			"id": "openai-community/gpt2",
+			"displayName": "GPT-2 small",
+			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+		},
+		"base": {
+			"id": "Qwen/Qwen2.5-0.5B",
+			"displayName": "Qwen2.5-0.5B",
+			"revision": "060db6499f32faf8b98477b0a26969ef7d8b9987"
+		},
+		"instruct": {
+			"id": "Qwen/Qwen2.5-0.5B-Instruct",
+			"displayName": "Qwen2.5-0.5B-Instruct",
+			"revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+		}
+	},
+	"prompts": [
+		{
+			"prompt": "How do I boil an egg?",
+			"template": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nHow do I boil an egg?<|im_end|>\n<|im_start|>assistant\n",
+			"gpt2": {
+				"text": "\n\nYou can boil an egg in a pot of water. You can boil an egg in a pot of water.\n\nHow do I boil an egg in a pot of water?\n\nYou can boil an egg in a pot",
+				"stopped": false
+			},
+			"base": {
+				"text": " What is the best way to boil an egg?\nDo those questions have the same meaning?\nOptions are:\n (1). no.\n (2). yes.\n(1).",
+				"stopped": true
+			},
+			"instructNoTemplate": {
+				"text": " To boil an egg, follow these steps:\n\n1. **Prepare the Egg**: Make sure your egg is clean and free of any dirt or yolk. If you're using a plastic container to hold the egg, make sure it's sealed",
+				"stopped": false
+			},
+			"instruct": {
+				"text": "Boiling an egg is a simple and effective way to cook it. Here's how you can do it:\n\n1. **Prepare the Egg**: Make sure your egg is clean and free of any dirt or yolk. If using a plastic",
+				"stopped": false
+			}
+		},
+		{
+			"prompt": "What is the capital of France?",
+			"template": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nWhat is the capital of France?<|im_end|>\n<|im_start|>assistant\n",
+			"gpt2": {
+				"text": "\n\nThe capital of France is Paris.\n\nThe capital of France is Paris.\n\nThe capital of France is Paris.\n\nThe capital of France is Paris.\n\nThe capital of France is Paris.\n\nThe",
+				"stopped": false
+			},
+			"base": {
+				"text": " The capital of France is Paris.",
+				"stopped": true
+			},
+			"instructNoTemplate": {
+				"text": " The capital of France is Paris. \n\nTo verify this, I will use a simple Python code snippet to confirm that Paris is indeed the capital city of France.\n\n```python\n# Define the capital city of France\ncapital_city = \"Paris",
+				"stopped": false
+			},
+			"instruct": {
+				"text": "The capital of France is Paris.",
+				"stopped": true
+			}
+		},
+		{
+			"prompt": "Write a haiku about a cat.",
+			"template": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nWrite a haiku about a cat.<|im_end|>\n<|im_start|>assistant\n",
+			"gpt2": {
+				"text": "\n\nThe cat is a cat.\n\nThe cat is a cat.\n\nThe cat is a cat.\n\nThe cat is a cat.\n\nThe cat is a cat.\n\nThe cat is a cat.",
+				"stopped": false
+			},
+			"base": {
+				"text": " A cat, in the night,\nWhispers secrets to the moon,\nA silent, silent night.",
+				"stopped": true
+			},
+			"instructNoTemplate": {
+				"text": " A fluffy feline,\nWhiskers twitching in the wind,\nNestled among the trees. \n\n(1 point) To answer this question, I will generate a haiku about a cat and then analyze it to identify any patterns",
+				"stopped": false
+			},
+			"instruct": {
+				"text": "Whiskers twitch,\nTail sways in the wind,\nCat sleeps soundly.",
+				"stopped": true
+			}
+		},
+		{
+			"prompt": "The cat sat on the",
+			"template": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nThe cat sat on the<|im_end|>\n<|im_start|>assistant\n",
+			"gpt2": {
+				"text": " floor, and the cat was still asleep.\n\n\"I'm sorry, I'm sorry,\" she said. \"I'm sorry. I'm sorry. I'm sorry. I'm sorry. I'm sorry. I'm sorry.",
+				"stopped": false
+			},
+			"base": {
+				"text": " mat. The cat sat on the mat. The cat sat on the mat. The cat sat on the mat. The cat sat on the mat. The cat sat on the mat. The cat sat on the mat. The cat sat on",
+				"stopped": false
+			},
+			"instructNoTemplate": {
+				"text": " couch, and the dog was sitting next to it. The cat stretched its long legs and wagged its tail. What did the dog do? The dog curled up in the corner of the room.\nYou are an AI assistant that helps people",
+				"stopped": false
+			},
+			"instruct": {
+				"text": "cat's back.",
+				"stopped": true
+			}
+		}
+	],
+	"generatedAt": "2026-10-23",
+	"source": {
+		"torch": "2.14.1"
+	}
+}

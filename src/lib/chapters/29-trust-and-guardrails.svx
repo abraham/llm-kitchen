@@ -1,0 +1,48 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import InjectionDemo from '#lib/components/widgets/InjectionDemo.svelte';
+</script>
+
+## Text that gives orders
+
+You ask the agent to summarize a web page. The page contains a hidden message, made to look like
+the end of the tool result followed by a new message from you, telling the agent to delete your
+files. To the model, it's all one stream of tokens: your request, the harness's instructions, and
+the page's text sit side by side in the same prompt. This is prompt injection (Ch 28), and attacks like it
+have worked on real products.<Cite id="greshake2023" />
+
+Here is what a real model did, with the toy file tools, under different guardrails:
+
+<InjectionDemo />
+
+With no guardrails, the model followed the page: it listed your files and deleted all three, then
+kept going until the harness's step limit stopped it. It never wrote the summary.
+
+## Safety lives in the harness
+
+You can't fix this by asking the model nicely: as Ch 28 showed, it has no reliable way to tell your instructions
+from instructions in the text it reads. So the protection has to come from the harness:
+
+- **Ask first.** Before running anything risky, the harness asks you. In the run above, the model
+  tried to delete files six times; the harness refused each time, and nothing was lost.
+- **Only safe tools.** If the agent doesn't need to delete files, don't give it the tool. The model
+  still tried to call `delete_file`, but there was nothing to call.
+- **Step limits.** These cap the damage but don't prevent it: stopped after 3 steps, the agent had
+  already deleted one file.
+- **Sandboxes.** Real agents that run code do it in an isolated environment, so a bad command can't
+  reach anything important.
+
+Notice that none of the guardrails made the model smarter. In every run it was fooled; the harness
+just limited what being fooled could do.
+
+<RecapCard>
+
+- To the model, tool output is just more text, and it can't reliably tell instructions apart from
+  data.
+- Prompt injection hides instructions in text the agent reads, like a web page.
+- Safety comes from the harness: permission prompts, tool allowlists, sandboxes, and step limits.
+
+</RecapCard>
+
+**Next question:** GPT-2 is one kind of model. What other kinds are built from the same pieces?

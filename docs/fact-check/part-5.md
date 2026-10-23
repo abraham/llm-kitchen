@@ -1,0 +1,139 @@
+# Fact-check: Part V (Ch 11–17)
+
+Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+`tests/unit/part-5-facts.test.ts`, `src/lib/math/quantize.test.ts`, `src/lib/math/chat-template.test.ts`,
+`src/lib/math/transformer.test.ts`, `tests/unit/traces.test.ts`, `tests/e2e/part-5.e2e.ts`.
+
+Data: GPT-2 traces from `scripts/build-traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
+instruct outputs from `scripts/build-chat.py` (`static/chat/base-vs-instruct.json`, greedy, pinned
+revisions recorded in the file). Paper figures were checked against the PDFs' text. Ch 17:
+`static/reasoning/thinking.json`, Qwen3-0.6B with thinking off and on, sampled with the model card's
+recommended settings and a fixed seed, by `scripts/build-reasoning.py`; answers are graded on the
+last `\boxed{}`, which the prompt asks for.
+
+## Ch 11. Generating text
+
+| Claim                                                                                 | Backing                                                                    |
+| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep." | Test (recorded trace)                                                      |
+| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"         | Test (`the-cat-sat-bed`)                                                   |
+| Greedy decoding tends to repeat; sampling mostly avoids it                            | Cite `holtzman2020`                                                        |
+| Each token costs a full run through all 124 million weights                           | Model architecture (no caching is shown); `canonical.json`                 |
+| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                               | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)               |
+| The live copy is about 155 MB including the runtime                                   | `canonical.json` `onnxMB` (128, Hugging Face file listing) + 27 MB runtime |
+| The live 8-bit copy's percentages differ from the recorded ones                       | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                  |
+
+## Ch 12. Scale
+
+| Claim                                                                                 | Backing                                                    |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| GPT-3: 175 billion weights, 300 billion training tokens, 3.14 × 10²³ FLOPs            | Cite `brown2020` (§2, Table D.1)                           |
+| GPT-3 is more than 1,000 times GPT-2 small                                            | Test (1,406×)                                              |
+| Llama 3 405B: 15.6T tokens, 3.8 × 10²⁵ FLOPs; about 39 tokens per weight              | Cite `grattafiori2024` (§1, §3.2); test                    |
+| Chinchilla 70B on 1.4T tokens, same compute as Gopher (280B, 300B tokens), and better | Cite `hoffmann2022` (abstract, Table 1; 5.76 × 10²³ FLOPs) |
+| Chinchilla is about 20 tokens per weight                                              | Test                                                       |
+| GPT-2 small read about 8 million web pages, about 40 GB                               | Cite `radford2019` §2.1                                    |
+| The site's toy models: word-pair counts, 3,790 weights, 192,000 training characters   | Test (computed from the same code as the widgets)          |
+| Tiny model compute ≈ 6 × weights × tokens                                             | The standard estimate (Kaplan et al. 2020 §2.1, C ≈ 6NE)   |
+| Loss falls smoothly with size, data, and compute                                      | Cite `kaplan2020`                                          |
+| L(N) = (8.8 × 10¹³ / N)^0.076, N = non-embedding weights, fit on 768 to 1.5 billion   | Cite `kaplan2020` eq. 1.1, §3; test (`kaplanLoss`)         |
+| GPT-2 sizes' non-embedding counts; released totals 124M/355M/774M/1.56B               | Test (`GPT2_FAMILY` totals equal the released checkpoints) |
+| e^(−loss) is the average (geometric mean) probability of the right token              | Definition of cross-entropy                                |
+| Bigger models were much better at learning a task from a few examples in the prompt   | Cite `brown2020`                                           |
+
+## Ch 13. Fewer bits per number
+
+Data: `static/quantize/gpt2.json` from `scripts/build-quantize.py` (GPT-2 small, pinned revision in
+the file): every weight matrix rounded to nearest in blocks of 32 with one 16-bit scale per block,
+then the top guesses for "The cat sat on the", a 12-token greedy continuation, and the loss on a
+short public-domain passage (Lewis Carroll).
+
+| Claim                                                                                                      | Backing                                                                             |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| GPT-2 small has 124,439,808 weights, published as 32-bit floats (about 498 MB)                             | `canonical.json`; cite `gpt2-model-card` (tensor type F32); test                    |
+| Memory ≈ weights × bits ÷ 8: 249 MB at 16 bits; Llama 3 405B ≈ 810 GB at 16 bits, ≈ 203 GB at 4            | Arithmetic; test (`weightBytes`)                                                    |
+| 32-bit floats keep about 7 significant digits, 16-bit about 3                                              | IEEE 754 (24- and 11-bit significands)                                              |
+| 8 bits allow 256 values, 4 bits 16, 2 bits 4                                                               | 2ⁿ; test (`levels`)                                                                 |
+| GGUF's Q4_0 and Q8_0 round blocks of 32 weights to whole numbers times one scale                           | Cite `gguf-quant-types`                                                             |
+| At 16 and 8 bits: same top guess (" floor"), same 12 tokens, loss 3.31 → 3.31 / 3.34                       | Test (recorded data)                                                                |
+| At 6 and 5 bits the top guess becomes " bed", then " table"                                                | Test                                                                                |
+| At 4 bits and below the output falls apart ("The stack." repeated) and the loss shoots up (6.4, 18, 48)    | Test                                                                                |
+| The live GPT-2 runs 8-bit weights, a 128 MB download, and its percentages differ (" floor" 15.4% vs. 7.6%) | `inference.worker.ts` (`dtype: 'q8'`); `canonical.json` `onnxMB`; Ch 11 check above |
+| Treating a few large outlier numbers separately lets 8-bit match 16-bit up to 175B weights                 | Cite `dettmers2022` (abstract)                                                      |
+| Quantization-aware training simulates the rounding during training                                         | Cite `jacob2018`                                                                    |
+| Gemma 4's QAT versions have quality similar to the 16-bit (bfloat16) models                                | Cite `gemma4-qat` (accessed 2026-10-23)                                             |
+
+## Ch 14. Guessing ahead
+
+Data: `static/speculative/gpt2.json` from `scripts/build-speculative.py`: GPT-2 small (124,439,808
+weights) guesses 4 tokens per round for GPT-2 medium (354,823,168), greedy, 30 new tokens per prompt.
+The script asserts the result equals GPT-2 medium's own greedy output.
+
+| Claim                                                                                                                                      | Backing                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Big-model inference is limited by reading weights from memory, not arithmetic                                                              | Cite `leviathan2023` (§1)                                                    |
+| One transformer pass predicts the next token after every position                                                                          | Architecture (causal attention, Ch 9); the script relies on it               |
+| 30 tokens in 7 passes ("The cat sat on the" and the counting prompt), 9 for "The capital of France is", with two passes keeping no guesses | Test (recorded data)                                                         |
+| The output is exactly the big model's greedy text                                                                                          | Assertion in the script; test                                                |
+| With sampling, an accept-or-resample rule keeps the big model's probabilities exactly                                                      | Cite `leviathan2023`, `chen2023`                                             |
+| About 2–3× faster with identical output                                                                                                    | Cite `leviathan2023` (2–3× on T5-XXL), `chen2023` (2–2.5× on Chinchilla 70B) |
+| Gemma 4 `-assistant` drafters: 78M to 0.5B weights, up to 3× faster, multi-token prediction                                                | Cite `gemma4-assistant`; collection listing (accessed 2026-10-23)            |
+
+## Ch 15. From predictor to assistant
+
+| Claim                                                                                 | Backing                                                                                        |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| The ChatML template text, including Qwen's default system prompt                      | Test: `chatTemplate` equals `apply_chat_template` output from the real tokenizer               |
+| Qwen2.5 is a 2024 model family with base and instruct versions                        | Cite `qwen2024`                                                                                |
+| Base Qwen answers "boil an egg" with a question and a multiple-choice quiz            | Recorded output; test                                                                          |
+| Instruct without the template keeps going (Python code; a stray template line)        | Recorded output; test                                                                          |
+| Instruct in its chat format answers and stops                                         | Recorded output (`stopped: true`); test                                                        |
+| Tuning: example answers, then preference comparisons and a reward model               | Cite `ouyang2022` (Fig. 2)                                                                     |
+| People preferred 1.3B InstructGPT over 175B GPT-3                                     | Cite `ouyang2022` (abstract)                                                                   |
+| Qwen2.5's tuning used over a million examples, then multistage reinforcement learning | Cite `qwen2024` (abstract)                                                                     |
+| Stage 1 example output                                                                | Real Qwen2.5-0.5B output (recorded); stage 2–3 examples are illustrations (widget is "sample") |
+
+## Ch 16. Quirks and limits
+
+| Claim                                                                                | Backing                                  |
+| ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| GPT-2: first person on the moon was "a man named John, who was born in 1829."        | Test (recorded)                          |
+| Hallucination is the term for fluent, made-up text                                   | Cite `ji2023`                            |
+| InstructGPT made up information about half as often as GPT-3 (21% vs. 41%)           | Cite `ouyang2022` (§1)                   |
+| WebText excludes links created after Dec 2017                                        | Cite `radford2019` §2.1                  |
+| Top guesses for the latest iPhone: 6, 5, 7                                           | Test (recorded)                          |
+| " strawberry" is one GPT-2 token; "strawberry" is three                              | e2e (live tokenizer) and Ch 4 tests      |
+| After "2 + 2 =", " 3" is more likely than " 4"                                       | Test (recorded: 10.2% vs. 5.5%)          |
+| "The capital of France is" rambles; the Q/A version says Paris                       | Test (recorded)                          |
+| Formatting alone changed accuracy by up to 76 points                                 | Cite `sclar2024` (abstract, LLaMA-2-13B) |
+| GPT-2's context window is 1,024 tokens; the live generator keeps only the last 1,024 | `canonical.json`; implementation         |
+
+## Ch 17. Thinking before answering
+
+| Claim                                                                                        | Backing                    |
+| -------------------------------------------------------------------------------------------- | -------------------------- |
+| Asking large models for step-by-step working improved math word problems                     | Cite `wei2022`             |
+| Qwen3's thinking can be switched off                                                         | Cite `qwen3`; model card   |
+| Strawberry: 2 with thinking off, 3 with thinking on, after spelling it out                   | Test (recorded data)       |
+| About 24 times as many tokens with thinking on; 4 of 6 right both ways                       | Test                       |
+| Twice the thinking hit the 6,000-token limit without answering                               | Test                       |
+| DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
+| Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
+
+## Changes from the plan
+
+- **T3 (WebLLM) and T4 (bring your own key) are not built yet.** Ch 15's base vs. instruct comparison
+  uses recorded outputs from Qwen2.5-0.5B and its instruct version instead of a live T3 model, and
+  Ch 16's live experiments use the live GPT-2 (T2). See PLAN.md.
+- **Ch 11 pipeline animation** is a compact strip of stages that lights up on each step, rather than
+  a full left-to-right reuse of every earlier visual.
+- **Ch 12 scaling chart** draws Kaplan et al.'s fitted formula (with the GPT-2 sizes placed on it),
+  not measured losses, and says so.
+- **Ch 16 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
+- **Ch 13 rounding** uses blocks of 32 with one scale, like GGUF's Q4_0, instead of the plan's one
+  scale per row, and adds 6 and 5 bits to show the drift between "holds" and "breaks". The live
+  8-bit model is mentioned, not compared side by side.
+- **Ch 14 drafter** is GPT-2 small (already used on the site) instead of DistilGPT-2, drafting for
+  GPT-2 medium, on four prompts.
+- **Ch 17 results.** The small model's thinking gave a mixed result, and the chapter says so. The
+  chapter was Ch 27, in Part VII, until milestone 19 moved it here.

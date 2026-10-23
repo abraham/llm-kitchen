@@ -1,0 +1,31 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+# Playwright
+test-results
+playwright-report
+scripts/.venv
+
+# Social images and touch icon, rendered by scripts/build-og.ts during npm run build
+/static/og/
+/static/apple-touch-icon.png

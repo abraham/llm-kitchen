@@ -1,0 +1,85 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import AttentionViewer from '#lib/components/widgets/AttentionViewer.svelte';
+	import QKVExplainer from '#lib/components/widgets/QKVExplainer.svelte';
+</script>
+
+## A spotlight on the past
+
+A model uses <GlossaryPopover term="attention">attention</GlossaryPopover> to let each token look
+back over everything before it and pull in what's useful. Picture each token holding a spotlight. It
+shines on the earlier tokens, brightly on the relevant ones and dimly on the rest, and takes in a
+blend of whatever it lights up. Attention is the core idea of the <GlossaryPopover term="transformer">transformer</GlossaryPopover>, the design introduced in 2017
+that almost every modern LLM uses, GPT-2 included.<Cite id="vaswani2017" />
+
+## Queries, keys, and values
+
+How does a token decide where to shine? Each token's vector is turned into three new vectors, using
+weights learned in training:
+
+- a **query**: what this token is looking for,
+- a **key**: what this token has to offer, to anyone looking,
+- a **value**: what this token passes on if it gets picked.
+
+To score how relevant one token is to another, multiply the first token's query with the second
+token's key, number by number, and add up the results. When the two vectors point in similar
+directions (think of the nearby words in Ch 5), the score is high. The scores are divided by a fixed number
+to keep them from getting too large, then softmax (Ch 2) turns them into percentages. Finally each
+token takes a weighted blend of the values.
+
+Step through it with made-up numbers:
+
+<QKVExplainer />
+
+Notice the blank cells: a token can't look at tokens that come after it. When the model is
+predicting the next word, those words don't exist yet.
+
+## Real attention in GPT-2
+
+Here are attention patterns recorded from GPT-2. Each line runs from the word doing the looking
+(right) to an earlier word (left); thicker lines mean more attention.
+
+<AttentionViewer />
+
+Some patterns are surprisingly readable:
+
+- **Who gets the drink?** In "When Mary and John went to the store, John gave a drink to", GPT-2
+  predicts " Mary" next. Layer 9, head 9 looks from the last word back at "Mary" far more than at
+  either "John" (the pull toward "When" is explained below).
+  Researchers who took this behavior apart found a small set of heads, including 9.6 and 9.9, that
+  find the right name and copy it forward.<Cite id="wang2022" />
+- **Whose fleece?** In the nursery rhyme, layer 9, head 0 looks from "its" back to "lamb".
+- **What was too big?** The same head looks from "it" mostly to "suitcase", in *both* versions of
+  the trophy sentence. That isn't a mistake in the viewer: "big" and "small" come after "it", and a
+  word can only look back. The model has to sort out "it" later, at the words after the clue.
+
+GPT-2 isn't very good at that last kind of puzzle. Even the largest GPT-2 answered 70.70% of
+Winograd questions correctly, where guessing gets 50%.<Cite id="radford2019" /> The patterns you can
+read are a few bright spots in a mostly murky picture.
+
+## Many heads, many layers
+
+One set of queries, keys, and values is called an <GlossaryPopover term="attention-head">attention head</GlossaryPopover>. Each layer of GPT-2 runs
+12 heads side by side, each with its own weights, so each can look for something different. With
+12 layers, that's 144 heads. Layers and heads are numbered from 0, as in research papers.
+
+Switch to other heads in the viewer and you'll see that many don't have a job you can name. You'll
+also see lots of heads putting most of their attention on the very first word. In these sentences,
+from the fourth word on, that happens more than half the time. Researchers think it's a resting
+spot: softmax always has to share out 100%, so a head with nothing useful to find parks its
+attention there.<Cite id="xiao2024" />
+
+<RecapCard>
+
+- Attention lets each token pull in information from any earlier token, weighted by relevance.
+- Each token makes a query, a key, and a value. Query times key gives a score; softmax turns scores
+  into weights; the weights blend the values.
+- A token can only look back, never ahead.
+- GPT-2 has 12 heads in each of its 12 layers. A few have clear jobs, like finding the name that
+  comes next; most are harder to read.
+
+</RecapCard>
+
+**Next question:** attention moves information between tokens. How does it fit into a whole model?
