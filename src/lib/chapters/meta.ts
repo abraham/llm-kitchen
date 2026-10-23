@@ -8,6 +8,8 @@ export interface ChapterMeta {
 	slug: string;
 	title: string;
 	part: Part;
+	/** Earlier chapters this one builds on, shown in its Ingredients box. */
+	buildsOn: number[];
 }
 
 export const PARTS = {
@@ -19,52 +21,43 @@ export const PARTS = {
 	harnesses: { number: 'VI', title: 'Harnesses' }
 } as const satisfies Record<string, Part>;
 
-const p = PARTS;
+type Row = [slug: string, title: string, part: keyof typeof PARTS, buildsOn: number[]];
+
+// prettier-ignore
+const rows: Row[] = [
+	['guessing-game', 'The guessing game', 'prediction', []],
+	['text-is-numbers', 'Text is just numbers', 'prediction', [0]],
+	['predicting-by-counting', 'Predicting by counting', 'prediction', [0, 1]],
+	['probability-and-sampling', 'Probability and sampling', 'prediction', [2]],
+	['tokens', "Tokens: the model's alphabet", 'representation', [1]],
+	['embeddings', 'Meaning as position', 'representation', [4]],
+	['a-neuron', 'A neuron', 'learning', [5]],
+	['learning-from-mistakes', 'Learning from mistakes', 'learning', [2, 6]],
+	['the-context-problem', 'The context problem', 'context', [2]],
+	['attention', 'Attention', 'context', [5, 8]],
+	['the-transformer-block', 'The transformer block', 'context', [6, 9]],
+	['generating-text', 'Generating text', 'together', [3, 10]],
+	['scale', 'Scale', 'together', [7, 11]],
+	['predictor-to-assistant', 'From predictor to assistant', 'together', [11]],
+	['quirks-and-limits', 'Quirks and limits', 'together', [4, 13]],
+	['the-model-is-not-the-product', 'The model is not the product', 'harnesses', [13]],
+	['tools', 'Tools', 'harnesses', [15]],
+	['the-agent-loop', 'The agent loop', 'harnesses', [11, 16]],
+	['managing-the-context', 'Managing the context', 'harnesses', [5, 8, 17]],
+	['trust-and-guardrails', 'Trust and guardrails', 'harnesses', [17]],
+	['recap', 'Recap: the whole picture', 'harnesses', []]
+];
 
 /** The full curriculum, in reading order. Chapter files are `NN-slug.svx` in this folder. */
-export const CURRICULUM: readonly ChapterMeta[] = [
-	{ number: 0, slug: 'guessing-game', title: 'The guessing game', part: p.prediction },
-	{ number: 1, slug: 'text-is-numbers', title: 'Text is just numbers', part: p.prediction },
-	{
-		number: 2,
-		slug: 'predicting-by-counting',
-		title: 'Predicting by counting',
-		part: p.prediction
-	},
-	{
-		number: 3,
-		slug: 'probability-and-sampling',
-		title: 'Probability and sampling',
-		part: p.prediction
-	},
-	{ number: 4, slug: 'tokens', title: "Tokens: the model's alphabet", part: p.representation },
-	{ number: 5, slug: 'embeddings', title: 'Meaning as position', part: p.representation },
-	{ number: 6, slug: 'a-neuron', title: 'A neuron', part: p.learning },
-	{ number: 7, slug: 'learning-from-mistakes', title: 'Learning from mistakes', part: p.learning },
-	{ number: 8, slug: 'the-context-problem', title: 'The context problem', part: p.context },
-	{ number: 9, slug: 'attention', title: 'Attention', part: p.context },
-	{ number: 10, slug: 'the-transformer-block', title: 'The transformer block', part: p.context },
-	{ number: 11, slug: 'generating-text', title: 'Generating text', part: p.together },
-	{ number: 12, slug: 'scale', title: 'Scale', part: p.together },
-	{
-		number: 13,
-		slug: 'predictor-to-assistant',
-		title: 'From predictor to assistant',
-		part: p.together
-	},
-	{ number: 14, slug: 'quirks-and-limits', title: 'Quirks and limits', part: p.together },
-	{
-		number: 15,
-		slug: 'the-model-is-not-the-product',
-		title: 'The model is not the product',
-		part: p.harnesses
-	},
-	{ number: 16, slug: 'tools', title: 'Tools', part: p.harnesses },
-	{ number: 17, slug: 'the-agent-loop', title: 'The agent loop', part: p.harnesses },
-	{ number: 18, slug: 'managing-the-context', title: 'Managing the context', part: p.harnesses },
-	{ number: 19, slug: 'trust-and-guardrails', title: 'Trust and guardrails', part: p.harnesses },
-	{ number: 20, slug: 'recap', title: 'Recap: the whole picture', part: p.harnesses }
-];
+export const CURRICULUM: readonly ChapterMeta[] = rows.map(
+	([slug, title, part, buildsOn], number) => ({
+		number,
+		slug,
+		title,
+		part: PARTS[part],
+		buildsOn
+	})
+);
 
 export function chapterFileName(chapter: ChapterMeta): string {
 	return `${String(chapter.number).padStart(2, '0')}-${chapter.slug}.svx`;
@@ -72,4 +65,10 @@ export function chapterFileName(chapter: ChapterMeta): string {
 
 export function findChapter(slug: string): ChapterMeta | undefined {
 	return CURRICULUM.find((chapter) => chapter.slug === slug);
+}
+
+export function chapterByNumber(number: number): ChapterMeta {
+	const chapter = CURRICULUM[number];
+	if (!chapter) throw new Error(`No chapter ${number}`);
+	return chapter;
 }

@@ -7,6 +7,12 @@ describe('chapters', () => {
 		expect(new Set(CURRICULUM.map((c) => c.slug)).size).toBe(CURRICULUM.length);
 	});
 
+	it('only builds on earlier chapters', () => {
+		for (const chapter of CURRICULUM) {
+			for (const n of chapter.buildsOn) expect(n).toBeLessThan(chapter.number);
+		}
+	});
+
 	it('only has chapter files that match a curriculum entry', () => {
 		const expected = new Set(CURRICULUM.map(chapterFileName));
 		for (const file of chapterFiles()) expect(expected).toContain(file);

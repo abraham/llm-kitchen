@@ -242,7 +242,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 - **Widget frame:** every widget uses the same `WidgetFrame`, with a "Try it" label, a reset button, step controls, and a `DataSourceBadge` showing **Recorded** or **Live · <model display name>**. The badge keeps it honest about which demos are real.
 - **Typography:**
   - Serif for prose (Source Serif 4 or Literata), monospace for tokens and numbers (JetBrains Mono or IBM Plex Mono), and a plain system sans for buttons and labels.
-  - Fonts are self-hosted, variable, and subset to the characters needed, to fit the 150 KB budget for text-only pages.
+  - Fonts are self-hosted variable fonts from `@fontsource-variable` (bundled by Vite with hashed names). Their `@font-face` rules use `unicode-range` subsets, so browsers only download the Latin files they need.
 - **Charts:** thin lines with direct labels instead of legends, and no gridlines unless needed. Token chips have a thin outline and the token ID in small mono text underneath, and look the same in every chapter.
 
 ### Concept colors and shapes
@@ -300,7 +300,7 @@ llm-kitchen/
       workers/               # inference.worker.ts, trainer.worker.ts (imported with Vite `?worker`)
       math/                  # tiny tensor ops, softmax, sampling, PCA, hand-written MLP + backprop for Ch 7
     styles/tokens.css        # design tokens, concept colors (light + dark)
-  static/fonts/              # self-hosted, subset variable fonts
+    styles/global.css        # base typography, .prose column, .breakout widths
   static/traces/<model-id>/  # pre-computed JSON traces (T0) per model, fetched on demand
   models/canonical.json      # canonical small model config, read by the site and build-traces.py
   scripts/

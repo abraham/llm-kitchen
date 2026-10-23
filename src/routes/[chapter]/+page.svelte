@@ -1,16 +1,22 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import ChapterLayout from '#lib/components/layout/ChapterLayout.svelte';
+	import { progress } from '#lib/stores/progress.svelte.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 	const Chapter = $derived(data.component);
+
+	$effect(() => {
+		const slug = data.meta.slug;
+		untrack(() => progress.visit(slug));
+	});
 </script>
 
 <svelte:head>
 	<title>Ch {data.meta.number}. {data.meta.title} · llm-kitchen</title>
 </svelte:head>
 
-<main>
-	<p>Part {data.meta.part.number}: {data.meta.part.title}</p>
-	<h1>Ch {data.meta.number}. {data.meta.title}</h1>
+<ChapterLayout meta={data.meta} next={data.next}>
 	<Chapter />
-</main>
+</ChapterLayout>

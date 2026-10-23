@@ -8,5 +8,6 @@ export const entries: EntryGenerator = () =>
 export const load: PageLoad = async ({ params }) => {
 	const chapter = await loadChapter(params.chapter);
 	if (!chapter) error(404, 'Chapter not found');
-	return chapter;
+	const next = writtenChapters().find((c) => c.number > chapter.meta.number);
+	return { ...chapter, next };
 };
