@@ -33,6 +33,8 @@ export default defineConfig({
 			}
 		})
 	],
+	// Tokenizers and Transformers.js are large but only loaded on demand (dynamic import / worker).
+	build: { chunkSizeWarningLimit: 3000 },
 	test: {
 		expect: { requireAssertions: true },
 		environment: 'node',

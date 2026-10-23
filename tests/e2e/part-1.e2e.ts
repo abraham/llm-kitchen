@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { gotoHydrated } from './helpers.ts';
 
 const chapters = [
 	'/guessing-game',
@@ -10,7 +11,7 @@ const chapters = [
 
 for (const path of chapters) {
 	test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
-		await page.goto(path);
+		await gotoHydrated(page, path);
 		await expect(page.getByText('Loading recorded data…')).toHaveCount(0);
 		await expect(page.getByRole('heading', { name: 'Sources' })).toBeVisible();
 		const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
@@ -19,7 +20,7 @@ for (const path of chapters) {
 }
 
 test('Ch 0: a guess is compared with the recorded model', async ({ page }) => {
-	await page.goto('/guessing-game');
+	await gotoHydrated(page, '/guessing-game');
 	await page.getByLabel('The cat sat on the …').fill('floor');
 	await page.getByRole('button', { name: /Compare with GPT-2 small/ }).click();
 	await expect(page.getByText(/its number 1 guess/)).toBeVisible();
@@ -30,7 +31,7 @@ test('Ch 0: a guess is compared with the recorded model', async ({ page }) => {
 });
 
 test('Ch 0: citations are numbered and link to the sources list', async ({ page }) => {
-	await page.goto('/guessing-game');
+	await gotoHydrated(page, '/guessing-game');
 	const first = page.locator('sup.cite a').first();
 	await expect(first).toHaveText('[1]');
 	await first.click();
@@ -38,7 +39,7 @@ test('Ch 0: citations are numbered and link to the sources list', async ({ page 
 });
 
 test('Ch 1: é takes two bytes and 🐱 takes four', async ({ page }) => {
-	await page.goto('/text-is-numbers');
+	await gotoHydrated(page, '/text-is-numbers');
 	await page.getByLabel('Type anything').fill('é🐱');
 	await page.getByLabel('UTF-8 bytes').check();
 	await expect(page.getByText('2 characters, 6 bytes.')).toBeVisible();
@@ -47,7 +48,7 @@ test('Ch 1: é takes two bytes and 🐱 takes four', async ({ page }) => {
 });
 
 test('Ch 2: counting builds the table, then the model generates', async ({ page }) => {
-	await page.goto('/predicting-by-counting');
+	await gotoHydrated(page, '/predicting-by-counting');
 	const widget = page.getByRole('region', { name: 'Build a bigram model' });
 	await widget.getByRole('button', { name: 'Next →' }).click();
 	await expect(widget.getByText('just counted mary → had')).toBeVisible();
@@ -59,7 +60,7 @@ test('Ch 2: counting builds the table, then the model generates', async ({ page 
 });
 
 test('Ch 3: temperature 0 puts everything on the top word', async ({ page }) => {
-	await page.goto('/probability-and-sampling');
+	await gotoHydrated(page, '/probability-and-sampling');
 	const widget = page.getByRole('region', { name: 'Temperature and top-k' });
 	await widget.getByRole('slider', { name: /Temperature/ }).press('Home');
 	await expect(widget.getByText('Temperature 0: always pick the most likely word.')).toBeVisible();

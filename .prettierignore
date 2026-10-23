@@ -12,3 +12,5 @@ package-lock.json
 
 # mdsvex chapters: Prettier has no mdsvex parser and would mangle the Svelte syntax.
 *.svx
+/static/embeddings/
+/static/vectors/

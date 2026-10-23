@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { gotoHydrated } from './helpers.ts';
 
 const pages = ['/', '/guessing-game'];
 
@@ -9,7 +10,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 
 		for (const path of pages) {
 			test(`${path} has no axe violations`, async ({ page }) => {
-				await page.goto(path);
+				await gotoHydrated(page, path);
 				const results = await new AxeBuilder({ page })
 					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
 					.analyze();
@@ -20,7 +21,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 }
 
 test('the chapter shell renders its parts', async ({ page }) => {
-	await page.goto('/guessing-game');
+	await gotoHydrated(page, '/guessing-game');
 	await expect(page.getByRole('complementary', { name: 'Ingredients' })).toBeVisible();
 	const widget = page.locator('section.widget').first();
 	await expect(widget).toBeVisible();
@@ -29,7 +30,7 @@ test('the chapter shell renders its parts', async ({ page }) => {
 });
 
 test('glossary terms open a definition and close with Escape', async ({ page }) => {
-	await page.goto('/guessing-game');
+	await gotoHydrated(page, '/guessing-game');
 	const trigger = page.getByRole('button', { name: 'large language model' });
 	await trigger.click();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
@@ -40,7 +41,7 @@ test('glossary terms open a definition and close with Escape', async ({ page }) 
 });
 
 test('visited chapters are remembered', async ({ page }) => {
-	await page.goto('/guessing-game');
+	await gotoHydrated(page, '/guessing-game');
 	await expect
 		.poll(() => page.evaluate(() => localStorage.getItem('llm-kitchen:visited')))
 		.toContain('guessing-game');

@@ -77,5 +77,37 @@
 		"venue": "ICLR 2020",
 		"year": 2020,
 		"url": "https://arxiv.org/abs/1904.09751"
+	},
+	{
+		"id": "sennrich2016",
+		"authors": ["Rico Sennrich", "Barry Haddow", "Alexandra Birch"],
+		"title": "Neural Machine Translation of Rare Words with Subword Units",
+		"venue": "ACL 2016",
+		"year": 2016,
+		"url": "https://aclanthology.org/P16-1162/"
+	},
+	{
+		"id": "tiktoken",
+		"authors": ["OpenAI"],
+		"title": "tiktoken: model-to-encoding mapping (tiktoken/model.py)",
+		"venue": "GitHub",
+		"year": 2024,
+		"url": "https://github.com/openai/tiktoken/blob/main/tiktoken/model.py"
+	},
+	{
+		"id": "mikolov2013",
+		"authors": ["Tomas Mikolov", "Wen-tau Yih", "Geoffrey Zweig"],
+		"title": "Linguistic Regularities in Continuous Space Word Representations",
+		"venue": "NAACL-HLT 2013",
+		"year": 2013,
+		"url": "https://aclanthology.org/N13-1090/"
+	},
+	{
+		"id": "minilm-model-card",
+		"authors": ["Sentence Transformers"],
+		"title": "all-MiniLM-L6-v2 model card",
+		"venue": "Hugging Face",
+		"year": 2021,
+		"url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
 	}
 ]

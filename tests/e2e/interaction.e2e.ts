@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { gotoHydrated } from './helpers.ts';
 
 for (const reducedMotion of ['no-preference', 'reduce'] as const) {
 	test(`steps through a recorded generation (${reducedMotion} motion)`, async ({ page }) => {
 		await page.emulateMedia({ reducedMotion });
-		await page.goto('/guessing-game');
+		await gotoHydrated(page, '/guessing-game');
 		const widget = page.getByRole('region', { name: 'The guessing game, repeated' });
 		await expect(widget.getByText('Recorded · GPT-2 small')).toBeVisible();
 

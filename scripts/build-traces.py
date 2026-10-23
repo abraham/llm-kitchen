@@ -155,6 +155,34 @@ def run(spec: Spec, model, tokenizer) -> dict:
     return trace
 
 
+def export_vectors(prompt: str, name: str, model, tokenizer) -> None:
+    """Token embeddings, position embeddings, and the last token's vector after every block."""
+    ids = tokenizer(prompt, return_tensors="pt").input_ids
+    with torch.no_grad():
+        out = model(ids, output_hidden_states=True)
+    wte = model.transformer.wte.weight[ids[0]]
+    wpe = model.transformer.wpe.weight[: ids.shape[1]]
+    r = lambda t: [[round(float(x), 4) for x in row] for row in t]  # noqa: E731
+    data = {
+        "model": CANONICAL["id"],
+        "modelDisplayName": CANONICAL["displayName"],
+        "prompt": prompt,
+        "tokens": [token(tokenizer, i) for i in ids[0].tolist()],
+        "dimensions": CANONICAL["embeddingSize"],
+        "tokenEmbeddings": r(wte),
+        "positionEmbeddings": r(wpe),
+        # hidden_states[0] is embeddings + positions; [i] is after block i (the last one is
+        # after the final layer norm in Hugging Face's GPT-2).
+        "lastTokenByLayer": r(torch.stack([h[0, -1] for h in out.hidden_states])),
+        "generatedAt": datetime.date.today().isoformat(),
+        "source": {"huggingFaceId": CANONICAL["huggingFaceId"], "revision": model_revision()},
+    }
+    out_dir = ROOT / "static" / "vectors" / CANONICAL["id"]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / f"{name}.json").write_text(json.dumps(data, separators=(",", ":")) + "\n")
+    print(f"static/vectors/{CANONICAL['id']}/{name}.json")
+
+
 def main(names: list[str]) -> None:
     out_dir = ROOT / "static" / "traces" / CANONICAL["id"]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -178,6 +206,9 @@ def main(names: list[str]) -> None:
 
     index = sorted(p.stem for p in out_dir.glob("*.json") if p.stem != "index")
     (out_dir / "index.json").write_text(json.dumps({"traces": index}, indent="\t") + "\n")
+
+    if not names:
+        export_vectors("The cat sat on the", "the-cat-sat", model, tokenizer)
 
 
 if __name__ == "__main__":

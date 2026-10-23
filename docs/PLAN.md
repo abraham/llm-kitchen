@@ -85,10 +85,10 @@ Every chapter has the same structure:
 
 **Ch 5. Meaning as position (embeddings)**
 
-- _Try it:_ A 2D map of words. Drag a word and see its nearest neighbors update.
+- _Try it:_ A 2D map of words. Pick a word (from the list or by clicking it) and see its nearest neighbors, computed from the full vectors. (Not dragging: moving a point in the 2D picture wouldn't change its real vector.)
 - _Animation:_ Each token becomes a list of numbers, then a point on the map. Similar words drift together. The classic "king − man + woman ≈ queen" example is shown as an arrow.
 - _Key idea:_ Each token becomes a vector, and nearby vectors have related meanings.
-- _Live option:_ Embed the visitor's own words with a small embedding model (e.g. `all-MiniLM-L6-v2`, ~25 MB) and plot them on the map (projected to 2D with PCA).
+- _Live option:_ Embed the visitor's own words with a small embedding model (`all-MiniLM-L6-v2`, ~23 MB quantized plus ~27 MB for the ONNX runtime) and plot them on the map (projected to 2D with the same PCA basis).
 
 ### Part III — Learning
 
@@ -198,13 +198,13 @@ The model only turns text into a next-token distribution. Everything else in a c
 
 Use a tiered approach. The site always works, and visitors opt in to heavier features.
 
-| Tier                                       | What it is                                                                                                                 | Cost / size                                        | Gives us                                                                    | Used in                 |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------- |
-| **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                      | Accurate visuals from real models with zero setup                           | Every chapter           |
-| **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                            | Live tokenization of any text                                               | Ch 4, 11, 14            |
-| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~150 MB quantized (8-bit), cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11       |
-| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                          | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19        |
-| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                       | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19 |
+| Tier                                       | What it is                                                                                                                 | Cost / size                                                                                    | Gives us                                                                    | Used in                 |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------- |
+| **T0 — Recorded traces** (default)         | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant                                                                                  | Accurate visuals from real models with zero setup                           | Every chapter           |
+| **T1 — Tokenizer only**                    | `gpt-tokenizer` in the browser                                                                                             | ~1–2 MB                                                                                        | Live tokenization of any text                                               | Ch 4, 11, 14            |
+| **T2 — Tiny in-browser model**             | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings                       | ~130 MB quantized GPT-2 (8-bit) or ~23 MB MiniLM, plus ~27 MB runtime, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types     | Ch 0, 3, 5, 9, 11       |
+| **T3 — Larger in-browser chat model**      | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model                                                                           | 0.5–1 GB, WebGPU required                                                                      | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19        |
+| **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs                                                          | Visitor pays                                                                                   | Frontier-quality output with top logprobs and tool calling                  | Ch 3, 11, 12, 14, 16–19 |
 
 **Rules**
 
@@ -302,9 +302,12 @@ llm-kitchen/
     styles/tokens.css        # design tokens, concept colors (light + dark)
     styles/global.css        # base typography, .prose column, .breakout widths
   static/traces/<model-id>/  # pre-computed JSON traces (T0) per model, fetched on demand
+  static/vectors/<model-id>/ # GPT-2 token/position embeddings and per-layer vectors (Ch 5, Ch 10)
+  static/embeddings/         # MiniLM word map: 2D PCA positions, neighbors, PCA basis, full vectors (Ch 5)
   models/canonical.json      # canonical small model config, read by the site and build-traces.py
   scripts/
     build-traces.py          # generate T0 traces from real models offline (model from models/canonical.json)
+    build-embeddings.py      # generate the Ch 5 embedding map with all-MiniLM-L6-v2
   tests/
 ```
 
