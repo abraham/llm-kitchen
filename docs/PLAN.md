@@ -31,7 +31,7 @@ A static site that teaches how a large language model works. It starts with "gue
 | Styling | CSS custom properties and a small design-token file | Gives each concept a consistent color (see §5). |
 | Hosting | **Firebase Hosting**, deployed from GitHub Actions (`FirebaseExtended/action-hosting-deploy`) authenticated with [`abraham/firebase-wif`](https://github.com/abraham/firebase-wif) | Static hosting with CDN, headers (CSP) set in `firebase.json`, a temporary **preview channel** per pull request, and no long-lived deploy keys. |
 | Testing | Vitest for logic, Playwright for widget smoke tests and visual snapshots | |
-| Formatting | **Prettier** + `prettier-plugin-svelte` | One format for TS, JS, Svelte, CSS, JSON, Markdown, and YAML. Checked in CI. |
+| Formatting | **Prettier** + `prettier-plugin-svelte` | One format for TS, JS, Svelte, CSS, JSON, Markdown, and YAML. Checked in CI. `.svx` chapters are excluded because Prettier has no mdsvex parser and would mangle them. |
 | Linting and type checks | **ESLint** (flat config, `typescript-eslint`, `eslint-plugin-svelte`, `eslint-config-prettier`) and `svelte-check` | Catches bugs and type errors without fighting Prettier over style. |
 | CI | **GitHub Actions** | Every push and pull request runs format check, lint, type check, unit tests, build, and Playwright tests. |
 
@@ -107,7 +107,7 @@ Every chapter has the same structure:
 - *Try it:* Click a token and see which earlier tokens it "looks at". Line thickness shows the attention weight.
 - *Animation:* Each token sends out a **query** that is matched against every **key**. The resulting weights blend the **values**. Built up in three steps: first as a spotlight analogy, then as a dot-product grid, then as a softmax-weighted mix.
 - *Key idea:* Each token collects information from the tokens it finds relevant.
-- *Live option:* Show real attention patterns from a small model (GPT-2 small or distilgpt2 via Transformers.js with `output_attentions`), with layer and head selectors.
+- *Live option:* Show real attention patterns from the canonical small model (GPT-2 small via Transformers.js with `output_attentions`), with layer and head selectors.
 
 **Ch 10. The transformer block**
 - *Animation:* The block is assembled piece by piece: embeddings + position, attention, a small MLP, the residual "highway" connections, and normalization. The block is then copied N times to form a stack.
@@ -147,7 +147,8 @@ The model only turns text into a next-token distribution. Everything else in a c
 
 **Ch 16. Tools**
 - *Try it:* Ask *"What is 1234 × 5678?"* with tools off and with tools on. With tools off, the model guesses digits token by token. With tools on, it writes a calculator call, the harness runs it, and the model reads the result.
-- *Animation:* The model's output text turns into a structured `ToolCallCard` (name + JSON arguments). The harness runs the tool, and the result slides back into the context as new tokens.
+- *Animation:* The model's output text turns into a structured `ToolCallCard` (tool name + arguments). The harness runs the tool, and the result slides back into the context as new tokens.
+- *Format:* Part VI uses a simplified, made-up tool-calling format that is easy to read (e.g. `<call calculator>1234 * 5678</call>`), not a real provider's JSON schema. Recorded traces are converted to it, and live T3/T4 responses are mapped to it for display.
 - *Key idea:* A tool call is just text in an agreed format. The model never runs anything itself; the harness parses the text and acts on it.
 - *Live option:* T3 or T4 with a model that supports tool calling, limited to the same in-browser toy tools.
 
@@ -179,13 +180,17 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 |---|---|---|---|---|
 | **T0 — Recorded traces** (default) | Pre-computed JSON of real model runs (top-k logprobs, attention, embeddings, tool-calling agent runs) for a set of prompts | ~KBs, instant | Accurate visuals from real models with zero setup | Every chapter |
 | **T1 — Tokenizer only** | `gpt-tokenizer` in the browser | ~1–2 MB | Live tokenization of any text | Ch 4, 11, 14 |
-| **T2 — Tiny in-browser model** | Transformers.js: `distilgpt2` / GPT-2 small / SmolLM2-135M, plus `all-MiniLM-L6-v2` for embeddings | 80–300 MB, cached after first load | Real logits, attention, and embeddings for any prompt the visitor types | Ch 0, 3, 5, 9, 11 |
+| **T2 — Tiny in-browser model** | Transformers.js: the canonical small model (**GPT-2 small**), plus `all-MiniLM-L6-v2` for embeddings | ~150 MB quantized (8-bit), cached after first load | Real logits, attention, and embeddings for any prompt the visitor types | Ch 0, 3, 5, 9, 11 |
 | **T3 — Larger in-browser chat model** | WebLLM (WebGPU), e.g. a ~0.5–1.5B instruct model | 0.5–1 GB, WebGPU required | Base vs. instruct comparison, a chat that feels real, and live tool calling | Ch 13, 14, 16–19 |
 | **T4 — Bring your own API key** (optional) | Visitor pastes their own key for a provider that returns logprobs | Visitor pays | Frontier-quality output with top logprobs and tool calling | Ch 3, 11, 12, 14, 16–19 |
 
 **Rules**
 - Every live widget has a T0 fallback with the same UI. The live model only replaces where the data comes from.
 - Create one shared `ModelProvider` interface (`tokenize`, `nextTokenDistribution`, `attention?`, `embed?`, `generate`) with implementations for recorded traces, Transformers.js, WebLLM, and remote APIs.
+- **Canonical small model:** GPT-2 small to start (best attention-visualization tooling). It is defined in one place, `models/canonical.json` (Hugging Face ID, tokenizer, layer and head counts, context length, display name), so switching to another model such as SmolLM2-135M is a config change plus re-running `build-traces.py`:
+  - The T2 worker, the T0 trace builder, and widgets all read that file. No widget hard-codes a model name, vocabulary size, or layer/head count.
+  - Traces are stored per model under `static/traces/<model-id>/`, so the old and new models' traces can sit side by side while switching.
+  - Tokens shown with the canonical model (Ch 0, 3, 9, 11) use that model's own tokenizer, so token IDs always match the logits and attention.
 - Before any download, show a **consent dialog with the download size**, check for WebGPU and fall back to WASM, run model inference in a **Web Worker**, and show a progress bar.
 - Security for bring-your-own keys:
   - Keep the key in memory or `sessionStorage` only, never `localStorage`.
@@ -219,7 +224,7 @@ llm-kitchen/
   vite.config.ts
   eslint.config.js           # flat config: typescript-eslint, eslint-plugin-svelte, eslint-config-prettier
   .prettierrc.json           # Prettier config + prettier-plugin-svelte
-  .prettierignore            # build/, .svelte-kit/, static/traces/
+  .prettierignore            # build/, .svelte-kit/, static/traces/, *.svx (no mdsvex parser; would mangle Svelte syntax)
   firebase.json              # hosting config: public dir = build/, headers (CSP, caching), cleanUrls
   .firebaserc                # Firebase project alias
   .github/
@@ -246,11 +251,12 @@ llm-kitchen/
       models/                # ModelProvider + recorded/transformers/webllm/remote impls
       harness/               # toy agent loop, tool registry, in-browser toy tools
       workers/               # inference.worker.ts, trainer.worker.ts (imported with Vite `?worker`)
-      math/                  # tiny tensor ops, softmax, sampling, PCA
+      math/                  # tiny tensor ops, softmax, sampling, PCA, hand-written MLP + backprop for Ch 7
     styles/tokens.css        # design tokens and concept colors
-  static/traces/             # pre-computed JSON traces (T0), fetched on demand
+  static/traces/<model-id>/  # pre-computed JSON traces (T0) per model, fetched on demand
+  models/canonical.json      # canonical small model config, read by the site and build-traces.py
   scripts/
-    build-traces.py          # generate T0 traces from real models offline
+    build-traces.py          # generate T0 traces from real models offline (model from models/canonical.json)
   tests/
 ```
 
@@ -301,7 +307,7 @@ llm-kitchen/
    - BPE stepper, live tokenizer (T1), embedding map.
    - First T2 integration (embeddings in a worker).
 4. **Part III (Ch 6–7)**
-   - Neuron playground, gradient descent visual, in-browser tiny trainer.
+   - Neuron playground, gradient descent visual, in-browser tiny trainer (hand-written forward pass, backprop, and optimizer in `math/`, running in `trainer.worker.ts`; no TF.js).
 5. **Part IV (Ch 8–10)**
    - Attention viewer (T0, then T2 with real GPT-2 attention), transformer block assembly.
 6. **Part V (Ch 11–14)**
@@ -326,10 +332,7 @@ llm-kitchen/
 
 ## 9. Open questions
 
-- Which small model should be canonical for T0 and T2 (GPT-2 small vs. SmolLM2-135M)? GPT-2 has the best attention-viz tooling, while SmolLM2 gives better-quality text.
-- Should Ch 7's tiny trainer be hand-written (more transparent) or TF.js (faster to build)?
-- Which tool-calling format should Part VI show (a provider's JSON schema, or a simplified made-up format that is easier to read)?
-- How should `.svx` chapters be formatted? Prettier has no mdsvex parser; options are the Markdown parser via an override (may mangle `<script>` blocks and Svelte syntax) or adding `*.svx` to `.prettierignore`.
+- None right now.
 
 ---
 
