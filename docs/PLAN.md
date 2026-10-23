@@ -1,4 +1,4 @@
-# hellm-world — Plan
+# llm-kitchen — Plan
 
 A static site that teaches how a large language model works. It starts with "guess the next word" and ends with a full transformer generating text. Each chapter adds one idea, uses one main animation to reinforce it, and includes an optional live model demo where that helps.
 
@@ -179,7 +179,7 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 ## 6. Site structure
 
 ```
-hellm-world/
+llm-kitchen/
   svelte.config.js           # adapter-static + mdsvex preprocessor
   vite.config.ts
   src/
