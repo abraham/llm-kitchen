@@ -2,10 +2,12 @@
 	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
+	import type { TraceName } from '#lib/datasets/registry.ts';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { applyTemperature, sampleIndex } from '#lib/math/sampling.ts';
 	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';
-	import { loadTrace } from '#lib/models/load-trace.ts';
+	import { BrowserProvider } from '#lib/models/browser-provider.ts';
+	import { all, useDatasets } from '#lib/datasets/use.ts';
 	import {
 		NotAvailableError,
 		canonical,
@@ -13,7 +15,7 @@
 		type Token
 	} from '#lib/models/provider.ts';
 	import { RecordedProvider } from '#lib/models/recorded.ts';
-	import { tokenize, tokensFor } from '#lib/models/tokenizers.ts';
+	import { tokenize } from '#lib/models/tokenizers.ts';
 	import type { Trace } from '#lib/models/trace.ts';
 	import { untrack } from 'svelte';
 
@@ -23,15 +25,16 @@
 		title = 'Glass-box generator'
 	}: {
 		/** Recorded starting points (trace names). */
-		presets: { trace: string; label: string }[];
+		presets: { trace: TraceName; label: string }[];
 		/** Extra recordings to follow when the visitor picks a different token. */
-		branches?: string[];
+		branches?: TraceName[];
 		title?: string;
 	} = $props();
 
 	const SHOWN = 10;
 	const TOP_K = 50;
 	const model = browserModel(CANONICAL_LIVE);
+	const liveProvider = new BrowserProvider(model, 'gpt2');
 	const id = $props.id();
 
 	let traces = $state<Trace[]>([]);
@@ -56,14 +59,24 @@
 		return live && temperature !== 1 ? applyTemperature(p, temperature) : p;
 	});
 
-	$effect(() => {
-		const names = untrack(() => [...presets.map((p) => p.trace), ...branches]);
-		Promise.all(names.map(loadTrace)).then((loaded) => {
-			traces = loaded;
-			provider = new RecordedProvider(loaded);
-			start(0);
-		});
-	});
+	function setup(loaded: Trace[]) {
+		traces = loaded;
+		provider = new RecordedProvider(loaded);
+		preset = 0;
+		tokens = loaded[0].tokens;
+		history = [];
+		// The first recorded step is what the provider would answer for the prompt.
+		dist = loaded[0].steps[0];
+	}
+
+	const datasets = useDatasets();
+	const initial = all(
+		untrack(() => [...presets.map((p) => p.trace), ...branches]).map((name) =>
+			datasets(`traces/${name}`)
+		)
+	);
+	if (Array.isArray(initial)) setup(initial);
+	else $effect(() => void initial.then(setup));
 
 	// Switching between recorded and live data re-asks for the current text.
 	$effect(() => {
@@ -77,8 +90,8 @@
 		notice = '';
 		try {
 			const d = live
-				? await liveDistribution(tokens)
-				: await provider!.nextTokenDistribution(text(tokens));
+				? await liveProvider.nextTokenDistribution(tokens, { topK: TOP_K })
+				: await provider!.nextTokenDistribution(tokens);
 			if (mine !== request) return;
 			dist = d;
 			runs++;
@@ -92,17 +105,6 @@
 		} finally {
 			if (mine === request) busy = false;
 		}
-	}
-
-	async function liveDistribution(context: Token[]): Promise<NextTokenDistribution> {
-		// The model can only read its context window; anything earlier is cut off.
-		const ids = context.map((t) => t.id).slice(-canonical.contextLength);
-		const { top, rest } = await model.nextToken(ids, TOP_K);
-		const toks = await tokensFor(
-			'gpt2',
-			top.map((t) => t.id)
-		);
-		return { context, candidates: top.map((t, i) => ({ token: toks[i], prob: t.prob })), rest };
 	}
 
 	function start(index: number) {

@@ -12,7 +12,7 @@
 
 ## Data
 
-Questions in `src/lib/data/quiz.ts`, each with the chapters it draws on. A unit test checks that
+Questions in `src/lib/chapters/quiz/data.ts`, each with the chapters it draws on. A unit test checks that
 every numbered Part has at least one question.
 
 ## Decisions

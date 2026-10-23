@@ -1,14 +1,12 @@
-import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { segmentPrompt, type AgentRun } from './agent.ts';
+import { readDataset } from '#lib/datasets/read.ts';
+import { DATASETS, type AgentRunName } from '#lib/datasets/registry.ts';
+import { segmentPrompt } from './agent.ts';
 import { FakeFiles, calculator, countWords, runTool, simpleCall } from './tools.ts';
 
-const runs = readdirSync('static/agent')
-	.filter((f) => f.endsWith('.json') && f !== 'context.json')
-	.map((f) => ({
-		name: f,
-		run: JSON.parse(readFileSync(`static/agent/${f}`, 'utf8')) as AgentRun
-	}));
+const runs = Object.keys(DATASETS)
+	.filter((id) => id.startsWith('agent/') && id !== 'agent/context')
+	.map((id) => ({ name: id, run: readDataset(`agent/${id.slice(6) as AgentRunName}`) }));
 
 describe('toy tools', () => {
 	it('calculator does arithmetic without eval', () => {
@@ -62,8 +60,8 @@ describe('segmentPrompt', () => {
 		}
 	});
 
-	it('labels the parts of the Ch 23 prompt', () => {
-		const chat = runs.find((r) => r.name === 'chat.json')!.run;
+	it('labels the parts of the the-model-is-not-the-product prompt', () => {
+		const chat = runs.find((r) => r.name === 'agent/chat')!.run;
 		const parts = segmentPrompt(chat.steps[0].prompt);
 		const text = (kind: string) =>
 			parts

@@ -15,7 +15,7 @@ step re-sends the whole conversation, so the prompt keeps growing.
 
 ## Data
 
-Recorded by `scripts/build-agent-traces.py` (`static/agent/`): Qwen2.5-1.5B-Instruct, with at most
+Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instruct, with at most
 8 model calls.
 
 ## Decisions

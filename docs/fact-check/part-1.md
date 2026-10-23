@@ -1,19 +1,19 @@
 # Fact-check: Part I (Ch 0–2)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Each claim is cited, checked by a
-test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-facts.test.ts`,
-`src/lib/math/*.test.ts`, `tests/unit/traces.test.ts`, `tests/unit/canonical.test.ts`.
+test, or labeled in the text as a simplification. Tests: each chapter's `facts.test.ts`,
+`src/lib/math/*.test.ts`, `tests/unit/datasets.test.ts`, `tests/unit/canonical.test.ts`.
 
 ## Ch 0. The guessing game
 
-| Claim                                                                                 | Backing                                          |
-| ------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| Shannon (1951) had people guess the next letter and used it to measure predictability | Cite `shannon1951`                               |
-| GPT-2 small was released by OpenAI in 2019                                            | Cite `radford2019`, `gpt2-model-card`            |
-| GPT-2's top guesses after "The cat sat on the" are floor, bed, couch                  | Test (recorded trace)                            |
-| No single option gets even one chance in ten                                          | Test (top probability < 0.1)                     |
-| The model chooses from 50,257 possible pieces of text                                 | `models/canonical.json`, checked by build-traces |
-| Generation repeats: predict, pick, append                                             | Recorded trace replay (greedy)                   |
+| Claim                                                                                 | Backing                                              |
+| ------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Shannon (1951) had people guess the next letter and used it to measure predictability | Cite `shannon1951`                                   |
+| GPT-2 small was released by OpenAI in 2019                                            | Cite `radford2019`, `gpt2-model-card`                |
+| GPT-2's top guesses after "The cat sat on the" are floor, bed, couch                  | Test (recorded trace)                                |
+| No single option gets even one chance in ten                                          | Test (top probability < 0.1)                         |
+| The model chooses from 50,257 possible pieces of text                                 | `models/canonical.json`, checked by record/traces.py |
+| Generation repeats: predict, pick, append                                             | Recorded trace replay (greedy)                       |
 
 ## Ch 1. Predicting by counting
 

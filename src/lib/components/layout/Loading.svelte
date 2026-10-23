@@ -1,8 +1,9 @@
 <script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
+	import type { MaybePromise } from '#lib/datasets/use.ts';
 
-	/** Shows a loading line while recorded data loads, and a readable error if it fails. */
-	let { promise, children }: { promise: Promise<T>; children: Snippet<[T]> } = $props();
+	/** Renders recorded data, with a loading line and a readable error when it has to be fetched. */
+	let { promise, children }: { promise: MaybePromise<T>; children: Snippet<[T]> } = $props();
 </script>
 
 {#await promise}

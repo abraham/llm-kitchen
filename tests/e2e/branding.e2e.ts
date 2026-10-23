@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { CURRICULUM, findChapter } from '../../src/lib/chapters/meta.ts';
+import { CURRICULUM, findChapter } from '../../src/lib/curriculum/index.ts';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_ORIGIN } from '../../src/lib/site.ts';
 
 /** Open Graph, Twitter, and description tags by name, plus the canonical URL. */

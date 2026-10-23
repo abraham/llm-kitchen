@@ -1,13 +1,19 @@
 import { error } from '@sveltejs/kit';
-import { loadChapter, writtenChapters } from '#lib/chapters/index.ts';
+import { chapterDatasets, loadChapter } from '#lib/chapters/index.ts';
+import { CURRICULUM } from '#lib/curriculum/index.ts';
+import { fetchDataset } from '#lib/datasets/load.ts';
 import type { EntryGenerator, PageLoad } from './$types';
 
-export const entries: EntryGenerator = () =>
-	writtenChapters().map((chapter) => ({ chapter: chapter.slug }));
+export const entries: EntryGenerator = () => CURRICULUM.map((c) => ({ chapter: c.slug }));
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, fetch }) => {
 	const chapter = await loadChapter(params.chapter);
 	if (!chapter) error(404, 'Chapter not found');
-	const next = writtenChapters().find((c) => c.number > chapter.meta.number);
-	return { ...chapter, next };
+	// Fetched here so the prerendered page shows the data; the browser replays these responses.
+	const datasets = Object.fromEntries(
+		await Promise.all(
+			chapterDatasets(chapter.meta.slug).map(async (id) => [id, await fetchDataset(id, fetch)])
+		)
+	);
+	return { ...chapter, datasets };
 };

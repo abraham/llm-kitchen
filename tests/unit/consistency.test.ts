@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import canonical from '../../models/canonical.json';
 
 const dir = 'src/lib/chapters';
-const chapters = readdirSync(dir)
+const chapters = readdirSync(dir, { recursive: true, encoding: 'utf8' })
 	.filter((f) => f.endsWith('.svx'))
 	.map((f) => ({ file: f, text: readFileSync(`${dir}/${f}`, 'utf8').replace(/\s+/g, ' ') }));
 
@@ -33,8 +33,8 @@ describe('GPT-2 numbers in the prose match models/canonical.json', () => {
 	}
 
 	it('uses the canonical display name, not a different GPT-2 size', () => {
-		// Ch 14 has GPT-2 small draft for GPT-2 medium on purpose.
-		for (const c of chapters.filter((c) => !c.file.endsWith('-speculative-decoding.svx'))) {
+		// Guessing ahead has GPT-2 small draft for GPT-2 medium on purpose.
+		for (const c of chapters.filter((c) => !c.file.startsWith('speculative-decoding/'))) {
 			expect(c.text, c.file).not.toMatch(/GPT-2 (medium|large|XL)\b/);
 		}
 	});

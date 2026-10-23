@@ -5,7 +5,7 @@ Part holds, their order, numbers, titles, and slugs, and what each chapter build
 inside a chapter (its hook, widgets, and key idea) is in [chapters/](chapters/), one file per slug.
 This is the only spec that uses chapter numbers.
 
-`tests/unit/curriculum.test.ts` checks that `src/lib/chapters/meta.ts` matches the tables below.
+`tests/unit/curriculum.test.ts` checks that `src/lib/curriculum/curriculum.ts` matches the tables below.
 
 ## Principles
 
@@ -160,12 +160,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 1. Decide the change here first: which Part's question the chapter answers, where it sits, what it
    builds on, and how the Next questions around it change.
-2. Update `src/lib/chapters/meta.ts` (`PARTS`, the curriculum rows, and `buildsOn`) and rename the
-   chapter files to their new numbers, through temporary names when the move isn't a simple shift.
-3. Remap every "Ch N" cross-reference with a script from an old-to-new table (put the table in the
-   pull request), then review each change by hand: prose, widgets, data comments, the glossary, the
-   recap diagram, the end-to-end stages, the quiz, tests, and `docs/fact-check/`. Not every number
-   after "Ch" is a cross-reference. The chapter specs need no change, since they link by slug.
-4. Do the renumbering in its own commit, with all tests passing, before changing any chapter's
-   content.
-5. For a new chapter, add `docs/spec/chapters/<slug>.md`.
+2. Move or add the row in `src/lib/curriculum/curriculum.ts` (and in `parts.ts` for a new Part),
+   with `buildsOn` as slugs, and update the tables here to match. Chapter numbers everywhere else
+   are derived, so no files are renamed and no references are remapped.
+3. For a new chapter, add `src/lib/chapters/<slug>/` (with `chapter.svx`, and `chapter.ts` if its
+   widgets show recorded data) and `docs/spec/chapters/<slug>.md`.
+4. Review the prose around the move: the Next questions, and any sentence that says "earlier" or
+   "later". Update the claim lists in `docs/fact-check/`, which are grouped by Part.

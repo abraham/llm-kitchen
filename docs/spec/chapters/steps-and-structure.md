@@ -14,7 +14,7 @@ usable by programs, as long as you check that it was followed.
 
 ## Data
 
-Recorded by `scripts/build-prompts.py` (`static/prompts/steps.json`): Qwen2.5-1.5B-Instruct, greedy.
+Recorded by `scripts/record/prompts.py` (`static/data/prompts/steps.json`): Qwen2.5-1.5B-Instruct, greedy.
 
 ## Decisions
 

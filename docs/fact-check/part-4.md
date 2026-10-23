@@ -2,12 +2,12 @@
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `src/lib/math/attention.test.ts` (toy attention plus facts read from the recorded GPT-2 attention),
-`src/lib/math/transformer.test.ts`, `tests/unit/part-4-facts.test.ts`, `tests/unit/traces.test.ts`
-(attention rows sum to 1 and never look ahead), `tests/e2e/part-4.e2e.ts`.
+`src/lib/math/transformer.test.ts`, each chapter's `facts.test.ts`, `tests/unit/datasets.test.ts`
+(attention rows sum to 1 and never look ahead), each chapter's `chapter.e2e.ts`.
 
-Attention and logit-lens data come from `scripts/build-traces.py` (PyTorch, eager attention, pinned
-GPT-2 revision): `static/traces/gpt2/attn-*.json` and `logitLens` in
-`static/vectors/gpt2/the-cat-sat.json`.
+Attention and logit-lens data come from `scripts/record/traces.py` (PyTorch, eager attention, pinned
+GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
+`static/data/vectors/gpt2/the-cat-sat.json`.
 
 ## Ch 8. The context problem
 
@@ -41,16 +41,16 @@ GPT-2 revision): `static/traces/gpt2/attn-*.json` and `logitLens` in
 
 ## Ch 10. The transformer block
 
-| Claim                                                                                  | Backing                                                                   |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| A transformer stacks blocks of attention and an MLP                                    | Cite `vaswani2017`                                                        |
-| Residual connections add each step's change to the stream; they ease deep training     | Cite `he2016`                                                             |
-| Layer norm rescales the numbers; GPT-2 applies it before each step and once at the end | Cite `ba2016`, `radford2019` §2.3                                         |
-| The block builder's parameter counter totals 124,439,808                               | Test (`parameterBreakdown` equals `canonical.parameters`)                 |
-| About a third of weights are in the token/position tables; almost half in the MLPs     | Test (31.6%; 45.5%)                                                       |
-| The MLP is two thirds of every block; attention is under a quarter of the total        | Test (66.6%; 22.8%)                                                       |
-| The output step reuses the token table (weight tying)                                  | GPT-2 `lm_head` is tied to `wte`; counter matches the official total      |
-| The logit lens reads the stream partway through                                        | Cite `nostalgebraist2020`; `build-traces.py` applies the final layer norm |
-| Blocks 1–7 guess " same"; from block 8 " floor" is top-2, " ground" leads once         | Test                                                                      |
-| Furniture appears (" table", " sofa", " bed"); the end is " floor", " bed", " couch"   | Test; last stage equals the recorded prediction (Ch 0)                    |
-| The last block spreads the bets out                                                    | Test (final top probability lower than after block 11)                    |
+| Claim                                                                                  | Backing                                                                    |
+| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| A transformer stacks blocks of attention and an MLP                                    | Cite `vaswani2017`                                                         |
+| Residual connections add each step's change to the stream; they ease deep training     | Cite `he2016`                                                              |
+| Layer norm rescales the numbers; GPT-2 applies it before each step and once at the end | Cite `ba2016`, `radford2019` §2.3                                          |
+| The block builder's parameter counter totals 124,439,808                               | Test (`parameterBreakdown` equals `canonical.parameters`)                  |
+| About a third of weights are in the token/position tables; almost half in the MLPs     | Test (31.6%; 45.5%)                                                        |
+| The MLP is two thirds of every block; attention is under a quarter of the total        | Test (66.6%; 22.8%)                                                        |
+| The output step reuses the token table (weight tying)                                  | GPT-2 `lm_head` is tied to `wte`; counter matches the official total       |
+| The logit lens reads the stream partway through                                        | Cite `nostalgebraist2020`; `record/traces.py` applies the final layer norm |
+| Blocks 1–7 guess " same"; from block 8 " floor" is top-2, " ground" leads once         | Test                                                                       |
+| Furniture appears (" table", " sofa", " bed"); the end is " floor", " bed", " couch"   | Test; last stage equals the recorded prediction (Ch 0)                     |
+| The last block spreads the bets out                                                    | Test (final top probability lower than after block 11)                     |

@@ -17,7 +17,7 @@ through shows the guess forming.
 
 ## Data
 
-Recorded GPT-2 small per-layer vectors and logit-lens guesses (`static/vectors/gpt2/`).
+Recorded GPT-2 small per-layer vectors and logit-lens guesses (`static/data/vectors/gpt2/`).
 
 ## Decisions
 

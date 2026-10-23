@@ -23,8 +23,8 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
 ## Data
 
 - Work counts from GPT-2 small's config (`models/canonical.json`).
-- Time per token measured offline on one laptop CPU by `scripts/build-caching.py`
-  (`static/caching/kv-cache.json`), which also checks both runs pick the same tokens.
+- Time per token measured offline on one laptop CPU by `scripts/record/caching.py`
+  (`static/data/caching/kv-cache.json`), which also checks both runs pick the same tokens.
 - Token counts from the recorded session in [Managing the context](managing-the-context.md).
 - Provider rules (minimum length, discount, how long a cache lives) cite provider docs with accessed
   dates and are labeled as varying by provider; prices are round, illustrative numbers.

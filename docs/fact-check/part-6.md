@@ -1,10 +1,10 @@
 # Fact-check: Part VI (Ch 18–22)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
-`tests/unit/part-6-facts.test.ts` (the recorded data says what the prose says),
-`tests/e2e/part-6.e2e.ts`.
+each chapter's `facts.test.ts` (the recorded data says what the prose says),
+each chapter's `chapter.e2e.ts`.
 
-Data: `scripts/build-prompts.py` writes `static/prompts/`, using only models other scripts already
+Data: `scripts/record/prompts.py` writes `static/data/prompts/`, using only models other scripts already
 download: GPT-2 small (the canonical model) and Qwen2.5-1.5B-Instruct. Greedy decoding throughout;
 the pinned revision is in each file. Probabilities of an answer cover all of its tokens.
 

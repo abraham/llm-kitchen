@@ -16,7 +16,7 @@ wrong.
 
 ## Data
 
-Recorded by `scripts/build-reasoning.py` (`static/reasoning/thinking.json`): Qwen3-0.6B on six
+Recorded by `scripts/record/reasoning.py` (`static/data/reasoning/thinking.json`): Qwen3-0.6B on six
 puzzles, sampled with Qwen's recommended settings for each mode and a fixed seed.
 
 ## Decisions

@@ -53,7 +53,7 @@ export interface ContextStrategy {
 	answer: string;
 }
 
-/** The Ch 26 session: six agent tasks, then a question about the first one. */
+/** The `managing-the-context` session: six agent tasks, then a question about the first one. */
 export interface ContextSession {
 	model: AgentRun['model'];
 	budget: number;

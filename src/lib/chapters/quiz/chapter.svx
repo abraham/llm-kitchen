@@ -1,0 +1,14 @@
+<script lang="ts">
+	import Quiz from './Quiz.svelte';
+</script>
+
+## Fourteen questions
+
+One or more questions from every Part, in reading order. Pick an answer for each, then check them
+all at once. Each answer links to the chapter that explains it, and any you miss are gathered into a
+short list of chapters worth another look.
+
+<Quiz />
+
+Thanks for reading. If something here was unclear or wrong, the sources for every claim are listed
+at the bottom of each chapter.

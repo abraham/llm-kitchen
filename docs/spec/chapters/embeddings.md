@@ -18,8 +18,8 @@ points, and some directions carry meaning, like _man_ to _woman_.
 
 ## Data
 
-- GPT-2 small's token and position vectors (`static/vectors/gpt2/`).
-- The word map from all-MiniLM-L6-v2 (`scripts/build-embeddings.py`): 2D PCA positions, neighbors
+- GPT-2 small's token and position vectors (`static/data/vectors/gpt2/`).
+- The word map from all-MiniLM-L6-v2 (`scripts/record/embeddings.py`): 2D PCA positions, neighbors
   from the full 384-number vectors, the analogy, and the PCA basis.
 - Live (T2): all-MiniLM-L6-v2 in the browser after consent (~23 MB plus ~27 MB runtime).
 

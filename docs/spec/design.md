@@ -79,7 +79,7 @@ plus `flip` for reordering), for example a token chip becoming a vector strip.
   `article` for chapters), `og:url`, `og:image` (with size and alt text), `og:site_name`,
   `twitter:card` (`summary_large_image`), and `<link rel="canonical">`, rendered by `PageMeta`.
   Absolute URLs use `SITE_ORIGIN` (https://llm.kitchen). Chapter titles and descriptions come from
-  `meta.ts`, so no chapter writes its own tags.
+  `curriculum.ts`, so no chapter writes its own tags.
 - **Social images:** a 1200 × 630 PNG per page (the menu and each chapter) with the mark, "LLM
   Kitchen", the chapter number and title, and its Part, in the site's fonts and colors.
   `scripts/build-og.ts` renders them from one SVG template with resvg as the first step of

@@ -1,4 +1,4 @@
-import { partLabel, type ChapterMeta } from './chapters/meta.ts';
+import { label, partLabel, type Chapter } from './curriculum/index.ts';
 
 /** The site's name wherever a person reads it. The repo, package, and storage keys keep `llm-kitchen`. */
 export const SITE_NAME = 'LLM Kitchen';
@@ -24,10 +24,10 @@ export function ogImagePath(name: string): string {
 	return `/og/${name}.png`;
 }
 
-export function chapterHeading(chapter: ChapterMeta): string {
-	return `Ch ${chapter.number}. ${chapter.title}`;
+export function chapterHeading(chapter: Chapter): string {
+	return `${label(chapter.slug)}. ${chapter.title}`;
 }
 
-export function chapterImageAlt(chapter: ChapterMeta): string {
+export function chapterImageAlt(chapter: Chapter): string {
 	return `${SITE_NAME}, ${partLabel(chapter.part)}. ${chapterHeading(chapter)}`;
 }

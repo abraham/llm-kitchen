@@ -30,9 +30,10 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 
 `tests/unit/curriculum.test.ts` checks that:
 
-- curriculum.md's tables match `src/lib/chapters/meta.ts`;
+- curriculum.md's tables match `src/lib/curriculum/curriculum.ts`;
 - every chapter has `chapters/<slug>.md`, headed with its title, and there are no extra files;
-- no spec file other than curriculum.md mentions a chapter number ("Ch N").
+- no spec file other than curriculum.md mentions a chapter number ("Ch N");
+- nothing in `src/` writes a chapter number either; numbers are derived from `curriculum.ts`.
 
-The claim lists in [docs/fact-check/](../fact-check/README.md) are checked by the `part-N-facts`
-tests; see [sources.md](sources.md).
+The claim lists in [docs/fact-check/](../fact-check/README.md) are checked by each chapter's
+`facts.test.ts`; see [sources.md](sources.md).

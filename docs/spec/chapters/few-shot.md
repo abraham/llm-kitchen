@@ -16,7 +16,7 @@ often just repeat the last answer.
 
 ## Data
 
-Recorded by `scripts/build-prompts.py` (`static/prompts/fewshot.json`): probabilities from
+Recorded by `scripts/record/prompts.py` (`static/data/prompts/fewshot.json`): probabilities from
 Qwen2.5-1.5B-Instruct (reading the prompt as plain text, no chat template) and GPT-2 small, and GPT-2
 small's attention.
 

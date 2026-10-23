@@ -14,7 +14,7 @@ several versions of a prompt on real examples instead of trusting one wording.
 
 ## Data
 
-Recorded by `scripts/build-prompts.py` (`static/prompts/fragile.json`): GPT-2 small for example
+Recorded by `scripts/record/prompts.py` (`static/data/prompts/fragile.json`): GPT-2 small for example
 order and layout, and Qwen2.5-1.5B-Instruct for a fact's position.
 
 ## Decisions

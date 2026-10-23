@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-// Trains the Ch 7 character-level model off the main thread, so the page stays responsive.
+// Trains the `learning-from-mistakes` character-level model off the main thread, so the page stays responsive.
 import { RHYMES } from '#lib/data/rhymes.ts';
 import { CharModel, CharTrainer, charExamples, sampleChars } from '#lib/math/mlp.ts';
 import { seededRandom } from '#lib/math/sampling.ts';

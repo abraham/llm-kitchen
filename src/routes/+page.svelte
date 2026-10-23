@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { CURRICULUM, writtenChapters } from '#lib/chapters/index.ts';
+	import { CURRICULUM, PARTS, label } from '#lib/curriculum/index.ts';
 	import PageMeta from '#lib/components/layout/PageMeta.svelte';
 	import { MENU_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from '#lib/site.ts';
 
-	const written = new Set(writtenChapters().map((c) => c.slug));
-	const parts = [...new Set(CURRICULUM.map((c) => c.part))].map((part) => ({
+	const parts = PARTS.map((part) => ({
 		part,
 		chapters: CURRICULUM.filter((c) => c.part === part)
 	}));
-	const first = writtenChapters()[0];
+	const first = CURRICULUM[0];
 </script>
 
 <PageMeta
@@ -30,9 +29,9 @@
 			up to an agent that uses tools, and finish with other kinds of models made from the same
 			pieces.
 		</p>
-		{#if first}
-			<a class="start" href={resolve('/[chapter]', { chapter: first.slug })}>Start with Ch 0 →</a>
-		{/if}
+		<a class="start" href={resolve('/[chapter]', { chapter: first.slug })}
+			>Start with {label(first.slug)} →</a
+		>
 	</header>
 
 	{#each parts as { part, chapters } (part.title)}
@@ -45,13 +44,9 @@
 			<ol>
 				{#each chapters as chapter (chapter.slug)}
 					<li>
-						{#if written.has(chapter.slug)}
-							<a href={resolve('/[chapter]', { chapter: chapter.slug })}>{chapter.title}</a>
-						{:else}
-							<span class="soon">{chapter.title}</span>
-						{/if}
+						<a href={resolve('/[chapter]', { chapter: chapter.slug })}>{chapter.title}</a>
 						<span class="leader" aria-hidden="true"></span>
-						<span class="num">{written.has(chapter.slug) ? '' : 'soon · '}Ch {chapter.number}</span>
+						<span class="num">{label(chapter.slug)}</span>
 					</li>
 				{/each}
 			</ol>
@@ -117,10 +112,6 @@
 	.num {
 		font-family: var(--font-mono);
 		font-size: 0.85rem;
-		color: var(--ink-muted);
-	}
-
-	.soon {
 		color: var(--ink-muted);
 	}
 </style>

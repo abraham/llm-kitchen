@@ -1,0 +1,52 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import FewShot from './FewShot.svelte';
+	import InductionHead from './InductionHead.svelte';
+</script>
+
+## Show, don't tell
+
+Write "hot -> cold" and "big -> small" on two lines, then "happy ->", and a model will usually answer
+*sad*. Nobody told it the task was opposites. It worked it out from the examples, during a single
+forward pass, without changing a single weight. This is <GlossaryPopover term="in-context-learning">in-context learning</GlossaryPopover>,
+and giving a few examples like this is called *few-shot* prompting.<Cite id="brown2020" />
+
+Here it is for two tasks: opposites, and a rule nobody could guess, where fruits are "blip" and
+animals are "zork". Change how many examples the prompt has:
+
+<FewShot />
+
+With no examples, Qwen2.5-1.5B-Instruct gives *sad* about 1% for "happy ->"; with four, 96%. For the
+made-up rule, the right label goes from almost nothing to between 22% and 78%. Not every word gets
+easier: "light -> dark" became less likely as examples were added.
+
+GPT-2 small mostly fails. For opposites it usually just repeats the word it was given, and for the
+made-up rule it answers "zork" for everything, the label of the last example it saw. In-context
+learning gets much better as models get bigger.<Cite id="brown2020" />
+
+## How the model copies a pattern
+
+What does the model do with the examples? Part of the answer is a kind of attention head that finds
+earlier places where the current token appeared and looks at whatever came right after it. On "a b …
+a", it looks back at "b". These *induction heads* appear during training at the same moment models
+suddenly get better at learning from their context, and they may be how most in-context learning
+works.<Cite id="olsson2022" /> GPT-2 small has one doing exactly this on the prompts above:
+
+<InductionHead />
+
+From the final arrow, it looks almost entirely at the earlier answers, the words that followed the
+earlier arrows. The rest of the network can then use what it found to write an answer of the same
+kind.
+
+<RecapCard>
+
+- A few examples in the prompt can teach a model a new task, with no change to its weights.
+- Attention heads that look at "what came after this token last time" help copy the pattern.
+- Bigger models learn from examples much better; small ones often just repeat the last answer.
+
+</RecapCard>
+
+**Next question:** chat models come with a system prompt. Does telling the model who to be change
+what it can do?

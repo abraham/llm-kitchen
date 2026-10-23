@@ -5,7 +5,7 @@ type Shape = Pick<
 	'embeddingSize' | 'mlpSize' | 'vocabularySize' | 'contextLength' | 'layers'
 >;
 
-/** Where a GPT-2-style model's parameters live (Ch 10). Weights plus biases. */
+/** Where a GPT-2-style model's parameters live (`the-transformer-block`). Weights plus biases. */
 export function parameterBreakdown(m: Shape) {
 	const d = m.embeddingSize;
 	const layerNorm = 2 * d; // a scale and a shift per number

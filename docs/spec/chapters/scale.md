@@ -17,7 +17,7 @@ more training text and fewer weights can beat a giant model.
 
 ## Data
 
-Published figures in `src/lib/data/scale.ts`, each cited; compute for the toy models uses the
+Published figures in `src/lib/chapters/scale/data.ts`, each cited; compute for the toy models uses the
 standard estimate of 6 × weights × tokens.
 
 ## Decisions

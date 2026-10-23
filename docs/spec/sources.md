@@ -13,9 +13,9 @@ Every factual claim and number on the site is backed in one of three ways:
 its chapters and what backs it. A pull request that adds or changes a claim updates the list.
 
 - **Model numbers come from the source.** GPT-2 small's sizes come from `models/canonical.json`,
-  which `build-traces.py` checks against the model's own config. Any other figure cites its paper or
+  which `record/traces.py` checks against the model's own config. Any other figure cites its paper or
   model card.
-- **Demos match the prose.** Each Part's `part-N-facts` test checks the numbers its chapters state
+- **Demos match the prose.** Each chapter's `facts.test.ts` checks the numbers it states
   (bigram counts, BPE merges, the tokenizer's split of "strawberry", recorded results, and so on).
 - **Recordings are reproducible.** Scripts decode greedily or with a fixed seed, and spot checks
   regenerate a few traces and compare them byte for byte.

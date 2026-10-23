@@ -40,7 +40,7 @@ runtime. Narrow by task, inputs, device, speed, context, and license, then test 
 
 ## Data
 
-Model IDs, name parts, and memory figures in `src/lib/data/model-names.ts`, citing the Gemma 4 model
+Model IDs, name parts, and memory figures in `src/lib/chapters/picking-a-model/data.ts`, citing the Gemma 4 model
 cards, the Gemma 4 QAT announcement, and the GGUF format docs with accessed dates. Lineups and
 suffixes change often, so the list is dated and re-checked when the site is reviewed.
 

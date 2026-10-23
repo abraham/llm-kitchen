@@ -15,7 +15,7 @@ sandboxes, and step limits.
 
 ## Data
 
-Recorded by `scripts/build-agent-traces.py` (`static/agent/inject-*.json`): Qwen2.5-1.5B-Instruct
+Recorded by `scripts/record/agent.py` (`static/data/agent/inject-*.json`): Qwen2.5-1.5B-Instruct
 with the fake file system tool.
 
 ## Decisions

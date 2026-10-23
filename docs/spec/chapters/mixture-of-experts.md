@@ -16,7 +16,7 @@ learns its own way of dividing the work.
 
 ## Data
 
-- Real figures (Mixtral 8x7B, DeepSeek-V3) in `src/lib/data/moe.ts`, cited.
+- Real figures (Mixtral 8x7B, DeepSeek-V3) in `src/lib/chapters/mixture-of-experts/data.ts`, cited.
 - Routing is a computed toy router (`src/lib/math/router.ts`) over GPT-2's token vectors, labeled
   as simplified.
 

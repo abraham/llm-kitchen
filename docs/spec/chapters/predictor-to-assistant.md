@@ -19,7 +19,7 @@ preferences between answers.
 
 ## Data
 
-Recorded by `scripts/build-chat.py` (`static/chat/base-vs-instruct.json`): Qwen2.5-0.5B and
+Recorded by `scripts/record/chat.py` (`static/data/chat/base-vs-instruct.json`): Qwen2.5-0.5B and
 Qwen2.5-0.5B-Instruct, greedy.
 
 ## Decisions

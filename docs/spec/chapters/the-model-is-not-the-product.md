@@ -15,7 +15,7 @@ conversation on every call.
 
 ## Data
 
-Recorded by `scripts/build-agent-traces.py` (`static/agent/chat.json`): Qwen2.5-1.5B-Instruct in a
+Recorded by `scripts/record/agent.py` (`static/data/agent/chat.json`): Qwen2.5-1.5B-Instruct in a
 small Python harness.
 
 ## Decisions

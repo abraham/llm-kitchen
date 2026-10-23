@@ -2,10 +2,12 @@ import type { DataSource } from '#lib/components/layout/data-source.ts';
 import { sampleIndex } from '#lib/math/sampling.ts';
 import {
 	NotAvailableError,
+	inputText,
 	type GenerateOptions,
 	type GenerationStep,
 	type ModelProvider,
 	type NextTokenDistribution,
+	type ProviderInput,
 	type Token
 } from './provider.ts';
 import { textAfter, type Trace } from './trace.ts';
@@ -48,10 +50,10 @@ export class RecordedProvider implements ModelProvider {
 	}
 
 	async nextTokenDistribution(
-		text: string,
+		input: ProviderInput,
 		options: { topK?: number } = {}
 	): Promise<NextTokenDistribution> {
-		const { trace, step } = this.locate(text);
+		const { trace, step } = this.locate(inputText(input));
 		const { context, candidates, rest } = trace.steps[step];
 		if (options.topK === undefined || options.topK >= candidates.length) {
 			return { context, candidates, rest };
@@ -65,8 +67,8 @@ export class RecordedProvider implements ModelProvider {
 	 * Replays the recorded choices. With `random` set, it samples among the recorded candidates
 	 * instead, which only works while the sampled path stays on the recording.
 	 */
-	async generate(text: string, options: GenerateOptions): Promise<GenerationStep[]> {
-		const { trace, step } = this.locate(text);
+	async generate(input: ProviderInput, options: GenerateOptions): Promise<GenerationStep[]> {
+		const { trace, step } = this.locate(inputText(input));
 		const steps = trace.steps.slice(step, step + options.maxTokens);
 		if (!options.random) return steps;
 

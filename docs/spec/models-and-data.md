@@ -22,11 +22,11 @@ Larger live tiers (a WebGPU chat model and bring-your-own-key APIs) aren't built
 - **GPT-2 small**, defined once in `models/canonical.json`: Hugging Face and ONNX IDs, tokenizer,
   parameter, layer, head, embedding, MLP, vocabulary, and context sizes, and the ONNX download size.
 - The trace builder, the live worker, and the widgets all read that file. No widget hard-codes a
-  model name, vocabulary size, or layer or head count. `build-traces.py` checks the file against the
+  model name, vocabulary size, or layer or head count. `record/traces.py` checks the file against the
   model's own config before writing anything, and `tests/unit/consistency.test.ts` ties every GPT-2
   number in the prose to it.
-- Recorded traces live per model under `static/traces/<model-id>/` (and vectors under
-  `static/vectors/<model-id>/`), so switching models (for example to SmolLM2-135M) is a config
+- Recorded traces live per model under `static/data/traces/<model-id>/` (and vectors under
+  `static/data/vectors/<model-id>/`), so switching models (for example to SmolLM2-135M) is a config
   change plus re-running the scripts, with old and new traces side by side.
 - Tokens shown for the canonical model use its own tokenizer, so token IDs match the logits and
   attention.
@@ -39,11 +39,13 @@ Larger live tiers (a WebGPU chat model and bring-your-own-key APIs) aren't built
 `nextTokenDistribution`, `generate`, and optional `attention` and `embed`), with a `DataSource` the
 widget shows in its badge. Implementations:
 
-- `RecordedProvider` (T0): answers from a trace, and throws `NotAvailableError` for prompts it has no
-  data for.
-- `BrowserModel` (T2): runs in `workers/inference.worker.ts` through `inference-client.ts`.
+- `RecordedProvider` (T0): answers from recorded traces, and throws `NotAvailableError` for prompts
+  it has no data for.
+- `BrowserProvider` (T2): wraps a `BrowserModel` that runs in `workers/inference.worker.ts` through
+  `inference-client.ts`.
 
-A live widget keeps the same UI as its recorded version; only where the data comes from changes.
+A live widget keeps the same UI as its recorded version; only which provider it asks changes. See
+[architecture.md](architecture.md) for how recorded data is registered, checked, and loaded.
 
 ## Live model rules
 
@@ -58,26 +60,29 @@ A live widget keeps the same UI as its recorded version; only where the data com
 
 ## Recording scripts
 
-Each script runs offline in `scripts/.venv` (`scripts/requirements.txt`), decodes greedily or with a
-fixed seed so reruns match, and writes JSON under `static/`. The README has setup steps.
+Each module in `scripts/record/` runs offline in `scripts/.venv` (`scripts/requirements.txt`) with
+`scripts/.venv/bin/python -m scripts.record <module>`, decodes greedily or with a fixed seed so
+reruns match, and writes its datasets to `static/data/` in the envelope the site checks. The README
+has setup steps.
 
-| Script                  | Models                                           | Output                                        | Used by                                                                                                                                 |
-| ----------------------- | ------------------------------------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `build-traces.py`       | GPT-2 small                                      | `static/traces/gpt2/`, `static/vectors/gpt2/` | Generation, sampling, attention, residual stream, and quirk traces across Parts I–V and [From message to reply](chapters/end-to-end.md) |
-| `build-embeddings.py`   | all-MiniLM-L6-v2                                 | `static/embeddings/`                          | [Meaning as position](chapters/embeddings.md), [Managing the context](chapters/managing-the-context.md)                                 |
-| `build-quantize.py`     | GPT-2 small                                      | `static/quantize/`                            | [Fewer bits per number](chapters/quantization.md)                                                                                       |
-| `build-speculative.py`  | GPT-2 small drafting for GPT-2 medium            | `static/speculative/`                         | [Guessing ahead](chapters/speculative-decoding.md)                                                                                      |
-| `build-chat.py`         | Qwen2.5-0.5B, Qwen2.5-0.5B-Instruct, GPT-2 small | `static/chat/`                                | [From predictor to assistant](chapters/predictor-to-assistant.md)                                                                       |
-| `build-reasoning.py`    | Qwen3-0.6B (thinking off and on)                 | `static/reasoning/`                           | [Thinking before answering](chapters/reasoning-models.md)                                                                               |
-| `build-prompts.py`      | GPT-2 small, Qwen2.5-1.5B-Instruct               | `static/prompts/`                             | Every Prompt engineering chapter                                                                                                        |
-| `build-agent-traces.py` | Qwen2.5-1.5B-Instruct in a Python harness        | `static/agent/`                               | Every Harnesses chapter except [Prompt injection](chapters/prompt-injection.md), and [From message to reply](chapters/end-to-end.md)    |
-| `build-caching.py`      | GPT-2 small, with and without its KV cache       | `static/caching/`                             | [Caching](chapters/caching.md)                                                                                                          |
-| `build-injection.py`    | Qwen2.5-1.5B-Instruct                            | `static/injection/`                           | [Prompt injection](chapters/prompt-injection.md)                                                                                        |
-| `build-encoder.py`      | BERT base (uncased), GPT-2 small                 | `static/encoders/`                            | [Reading both ways](chapters/encoders.md)                                                                                               |
-| `build-clip.py`         | CLIP ViT-B/32                                    | `static/vision/`                              | [Seeing pictures](chapters/seeing-pictures.md)                                                                                          |
+| Script                  | Models                                           | Output                                                  | Used by                                                                                                                                 |
+| ----------------------- | ------------------------------------------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `record/traces.py`      | GPT-2 small                                      | `static/data/traces/gpt2/`, `static/data/vectors/gpt2/` | Generation, sampling, attention, residual stream, and quirk traces across Parts I–V and [From message to reply](chapters/end-to-end.md) |
+| `record/embeddings.py`  | all-MiniLM-L6-v2                                 | `static/data/embeddings/`                               | [Meaning as position](chapters/embeddings.md), [Managing the context](chapters/managing-the-context.md)                                 |
+| `record/quantize.py`    | GPT-2 small                                      | `static/data/quantize/`                                 | [Fewer bits per number](chapters/quantization.md)                                                                                       |
+| `record/speculative.py` | GPT-2 small drafting for GPT-2 medium            | `static/data/speculative/`                              | [Guessing ahead](chapters/speculative-decoding.md)                                                                                      |
+| `record/chat.py`        | Qwen2.5-0.5B, Qwen2.5-0.5B-Instruct, GPT-2 small | `static/data/chat/`                                     | [From predictor to assistant](chapters/predictor-to-assistant.md)                                                                       |
+| `record/reasoning.py`   | Qwen3-0.6B (thinking off and on)                 | `static/data/reasoning/`                                | [Thinking before answering](chapters/reasoning-models.md)                                                                               |
+| `record/prompts.py`     | GPT-2 small, Qwen2.5-1.5B-Instruct               | `static/data/prompts/`                                  | Every Prompt engineering chapter                                                                                                        |
+| `record/agent.py`       | Qwen2.5-1.5B-Instruct in a Python harness        | `static/data/agent/`                                    | Every Harnesses chapter except [Prompt injection](chapters/prompt-injection.md), and [From message to reply](chapters/end-to-end.md)    |
+| `record/caching.py`     | GPT-2 small, with and without its KV cache       | `static/data/caching/`                                  | [Caching](chapters/caching.md)                                                                                                          |
+| `record/injection.py`   | Qwen2.5-1.5B-Instruct                            | `static/data/injection/`                                | [Prompt injection](chapters/prompt-injection.md)                                                                                        |
+| `record/encoder.py`     | BERT base (uncased), GPT-2 small                 | `static/data/encoders/`                                 | [Reading both ways](chapters/encoders.md)                                                                                               |
+| `record/clip.py`        | CLIP ViT-B/32                                    | `static/vision/`                                        | [Seeing pictures](chapters/seeing-pictures.md)                                                                                          |
 
 - The agent harness's tools mirror the browser's (`src/lib/harness/tools.ts`); tests check they give
   identical results.
-- Recorded traces are validated in the browser by `parseTrace` (`src/lib/models/trace.ts`) and in
-  `tests/unit/traces.test.ts`. Spot checks regenerate a few traces and compare them byte for byte.
+- Recorded traces are also validated by `parseTrace` (`src/lib/models/trace.ts`): probabilities,
+  contexts, and causal attention. Spot checks regenerate a few traces and compare them byte for
+  byte.
 - Generated data is excluded from Prettier (`.prettierignore`).

@@ -1,4 +1,4 @@
-/** The chat template used by Qwen2.5 instruct models (ChatML), for Ch 15. */
+/** The chat template used by Qwen2.5 instruct models (ChatML), for `predictor-to-assistant`. */
 export interface ChatMessage {
 	role: 'system' | 'user' | 'assistant';
 	content: string;

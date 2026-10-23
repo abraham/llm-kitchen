@@ -1,14 +1,14 @@
 # Fact-check: Part V (Ch 11–17)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
-`tests/unit/part-5-facts.test.ts`, `src/lib/math/quantize.test.ts`, `src/lib/math/chat-template.test.ts`,
-`src/lib/math/transformer.test.ts`, `tests/unit/traces.test.ts`, `tests/e2e/part-5.e2e.ts`.
+each chapter's `facts.test.ts`, `src/lib/math/quantize.test.ts`, `src/lib/math/chat-template.test.ts`,
+`src/lib/math/transformer.test.ts`, `tests/unit/datasets.test.ts`, each chapter's `chapter.e2e.ts`.
 
-Data: GPT-2 traces from `scripts/build-traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
-instruct outputs from `scripts/build-chat.py` (`static/chat/base-vs-instruct.json`, greedy, pinned
+Data: GPT-2 traces from `scripts/record/traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
+instruct outputs from `scripts/record/chat.py` (`static/data/chat/base-vs-instruct.json`, greedy, pinned
 revisions recorded in the file). Paper figures were checked against the PDFs' text. Ch 17:
-`static/reasoning/thinking.json`, Qwen3-0.6B with thinking off and on, sampled with the model card's
-recommended settings and a fixed seed, by `scripts/build-reasoning.py`; answers are graded on the
+`static/data/reasoning/thinking.json`, Qwen3-0.6B with thinking off and on, sampled with the model card's
+recommended settings and a fixed seed, by `scripts/record/reasoning.py`; answers are graded on the
 last `\boxed{}`, which the prompt asks for.
 
 ## Ch 11. Generating text
@@ -43,7 +43,7 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 13. Fewer bits per number
 
-Data: `static/quantize/gpt2.json` from `scripts/build-quantize.py` (GPT-2 small, pinned revision in
+Data: `static/data/quantize/gpt2.json` from `scripts/record/quantize.py` (GPT-2 small, pinned revision in
 the file): every weight matrix rounded to nearest in blocks of 32 with one 16-bit scale per block,
 then the top guesses for "The cat sat on the", a 12-token greedy continuation, and the loss on a
 short public-domain passage (Lewis Carroll).
@@ -65,7 +65,7 @@ short public-domain passage (Lewis Carroll).
 
 ## Ch 14. Guessing ahead
 
-Data: `static/speculative/gpt2.json` from `scripts/build-speculative.py`: GPT-2 small (124,439,808
+Data: `static/data/speculative/gpt2.json` from `scripts/record/speculative.py`: GPT-2 small (124,439,808
 weights) guesses 4 tokens per round for GPT-2 medium (354,823,168), greedy, 30 new tokens per prompt.
 The script asserts the result equals GPT-2 medium's own greedy output.
 
