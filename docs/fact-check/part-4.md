@@ -19,6 +19,7 @@ GPT-2 revision): `static/traces/gpt2/attn-*.json` and `logitLens` in
 | Most long n-grams never appear in training text                                               | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
 | Neural models share what they learn across similar words                                      | Cite `bengio2003`                                                                                |
 | GPT-2 can look at up to 1,024 tokens                                                          | Cite `radford2019`; `canonical.json`, checked against the model config                           |
+| Llama 3 (2024) can look at up to 128K tokens, more than 100 times GPT-2's                     | Cite `grattafiori2024` (abstract: "context window of up to 128K tokens"); 128,000 / 1,024 = 125  |
 
 ## Ch 9. Attention
 
