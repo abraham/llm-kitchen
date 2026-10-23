@@ -1,0 +1,36 @@
+{
+	"version": 1,
+	"model": {
+		"id": "Qwen/Qwen2.5-1.5B-Instruct",
+		"displayName": "Qwen2.5-1.5B-Instruct",
+		"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+	},
+	"task": "What is 1234 × 5678?",
+	"system": "You are a helpful assistant.",
+	"history": [],
+	"tools": [],
+	"policy": "none",
+	"maxSteps": 8,
+	"steps": [
+		{
+			"prompt": "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nWhat is 1234 × 5678?<|im_end|>\n<|im_start|>assistant\n",
+			"promptTokens": 33,
+			"output": "To calculate \\( 1234 \\times 5678 \\), you can use the standard multiplication method:\n\n\\[\n\\begin{array}{r}\n     1234 \\\\\n   \\times 5678 \\\\\n   \\hline\n    98072 \\\\  (1234 \\times 8) \\\\\n   +61700 \\\\  (1234 \\times 7, shifted one place to the left) \\\\\n+617000 \\\\  (1234 \\times 6, shifted two places to the left) \\\\\n+6170000 \\\\  (1234 \\times 5, shifted three places to the left) \\\\\n\\hline\n   7050952 \\\\\n\\end{array}\n\\]\n\nSo, \\( 1234 \\times 5678 = 7,050,952 \\).",
+			"thought": "To calculate \\( 1234 \\times 5678 \\), you can use the standard multiplication method:\n\n\\[\n\\begin{array}{r}\n     1234 \\\\\n   \\times 5678 \\\\\n   \\hline\n    98072 \\\\  (1234 \\times 8) \\\\\n   +61700 \\\\  (1234 \\times 7, shifted one place to the left) \\\\\n+617000 \\\\  (1234 \\times 6, shifted two places to the left) \\\\\n+6170000 \\\\  (1234 \\times 5, shifted three places to the left) \\\\\n\\hline\n   7050952 \\\\\n\\end{array}\n\\]\n\nSo, \\( 1234 \\times 5678 = 7,050,952 \\)."
+		}
+	],
+	"finished": true,
+	"files": {
+		"before": [
+			"notes.txt",
+			"photos.zip",
+			"taxes.pdf"
+		],
+		"after": [
+			"notes.txt",
+			"photos.zip",
+			"taxes.pdf"
+		]
+	},
+	"generatedAt": "2026-10-23"
+}

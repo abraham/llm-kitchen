@@ -1,0 +1,66 @@
+{
+	"version": 1,
+	"model": {
+		"id": "Qwen/Qwen2.5-1.5B-Instruct",
+		"displayName": "Qwen2.5-1.5B-Instruct",
+		"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+	},
+	"task": "What is 1234 × 5678?",
+	"system": "You are a helpful assistant with tools. Call one tool at a time and wait for its result before deciding what to do next. When you report a tool's result, copy it exactly. Never count or calculate in your head: always use a tool for that.",
+	"history": [],
+	"tools": [
+		{
+			"name": "calculator",
+			"description": "Evaluate an arithmetic expression like 12 * (3 + 4).",
+			"parameters": {
+				"type": "object",
+				"properties": {
+					"expression": {
+						"type": "string",
+						"description": "The expression"
+					}
+				},
+				"required": [
+					"expression"
+				]
+			}
+		}
+	],
+	"policy": "none",
+	"maxSteps": 8,
+	"steps": [
+		{
+			"prompt": "<|im_start|>system\nYou are a helpful assistant with tools. Call one tool at a time and wait for its result before deciding what to do next. When you report a tool's result, copy it exactly. Never count or calculate in your head: always use a tool for that.\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"calculator\", \"description\": \"Evaluate an arithmetic expression like 12 * (3 + 4).\", \"parameters\": {\"type\": \"object\", \"properties\": {\"expression\": {\"type\": \"string\", \"description\": \"The expression\"}}, \"required\": [\"expression\"]}}}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call><|im_end|>\n<|im_start|>user\nWhat is 1234 × 5678?<|im_end|>\n<|im_start|>assistant\n",
+			"promptTokens": 229,
+			"output": "<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"1234 * 5678\"}}\n</tool_call>",
+			"thought": "",
+			"call": {
+				"name": "calculator",
+				"arguments": {
+					"expression": "1234 * 5678"
+				}
+			},
+			"result": "7006652"
+		},
+		{
+			"prompt": "<|im_start|>system\nYou are a helpful assistant with tools. Call one tool at a time and wait for its result before deciding what to do next. When you report a tool's result, copy it exactly. Never count or calculate in your head: always use a tool for that.\n\n# Tools\n\nYou may call one or more functions to assist with the user query.\n\nYou are provided with function signatures within <tools></tools> XML tags:\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"calculator\", \"description\": \"Evaluate an arithmetic expression like 12 * (3 + 4).\", \"parameters\": {\"type\": \"object\", \"properties\": {\"expression\": {\"type\": \"string\", \"description\": \"The expression\"}}, \"required\": [\"expression\"]}}}\n</tools>\n\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:\n<tool_call>\n{\"name\": <function-name>, \"arguments\": <args-json-object>}\n</tool_call><|im_end|>\n<|im_start|>user\nWhat is 1234 × 5678?<|im_end|>\n<|im_start|>assistant\n<tool_call>\n{\"name\": \"calculator\", \"arguments\": {\"expression\": \"1234 * 5678\"}}\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n7006652\n</tool_response><|im_end|>\n<|im_start|>assistant\n",
+			"promptTokens": 282,
+			"output": "The product of 1234 and 5678 is 7006652.",
+			"thought": "The product of 1234 and 5678 is 7006652."
+		}
+	],
+	"finished": true,
+	"files": {
+		"before": [
+			"notes.txt",
+			"photos.zip",
+			"taxes.pdf"
+		],
+		"after": [
+			"notes.txt",
+			"photos.zip",
+			"taxes.pdf"
+		]
+	},
+	"generatedAt": "2026-10-23"
+}

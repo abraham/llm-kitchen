@@ -46,6 +46,9 @@ Other recorded data has its own script in the same environment:
 - `scripts/build-embeddings.py`: the Ch 5 embedding map (`static/embeddings/`).
 - `scripts/build-chat.py`: the Ch 13 base vs. instruct comparison (`static/chat/`; downloads
   Qwen2.5-0.5B and Qwen2.5-0.5B-Instruct, about 1 GB each).
+- `scripts/build-agent-traces.py`: the Part VI agent runs (`static/agent/`; downloads
+  Qwen2.5-1.5B-Instruct, about 3 GB). Its toy tools must stay in sync with
+  `src/lib/harness/tools.ts`; the unit tests compare them.
 
 ### Citations and fact-checks
 

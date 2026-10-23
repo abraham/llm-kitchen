@@ -300,5 +300,37 @@
 		"venue": "ICLR 2024",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2310.11324"
+	},
+	{
+		"id": "schick2023",
+		"authors": ["Timo Schick", "Jane Dwivedi-Yu", "Roberto Dessì", "Roberta Raileanu"],
+		"title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.04761"
+	},
+	{
+		"id": "yao2023",
+		"authors": ["Shunyu Yao", "Jeffrey Zhao", "Dian Yu", "Nan Du"],
+		"title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2210.03629"
+	},
+	{
+		"id": "lewis2020",
+		"authors": ["Patrick Lewis", "Ethan Perez", "Aleksandra Piktus", "Fabio Petroni"],
+		"title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+		"venue": "NeurIPS 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2005.11401"
+	},
+	{
+		"id": "greshake2023",
+		"authors": ["Kai Greshake", "Sahar Abdelnabi", "Shailesh Mishra", "Christoph Endres"],
+		"title": "Not what you've signed up for: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection",
+		"venue": "AISec 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.12173"
 	}
 ]

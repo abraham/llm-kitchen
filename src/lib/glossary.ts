@@ -129,6 +129,18 @@ export const GLOSSARY = {
 			'The ordinary code around a model that builds its prompt, calls it, and acts on its output.',
 		chapter: 15
 	},
+	'system-prompt': {
+		term: 'system prompt',
+		definition:
+			'Instructions the app adds at the start of every conversation, usually hidden from the user.',
+		chapter: 15
+	},
+	retrieval: {
+		term: 'retrieval',
+		definition:
+			'Finding the stored text most relevant to a question (often by comparing embeddings) and putting it into the prompt.',
+		chapter: 18
+	},
 	'tool-call': {
 		term: 'tool call',
 		definition:

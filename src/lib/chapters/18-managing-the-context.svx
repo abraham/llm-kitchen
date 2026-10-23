@@ -1,0 +1,48 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ContextBudget from '#lib/components/widgets/ContextBudget.svelte';
+</script>
+
+## The prompt keeps growing
+
+Every tool result and every reply is added to the prompt, and the model re-reads all of it on every
+call. But a model can only read so much at once: its
+<GlossaryPopover term="context-window">context window</GlossaryPopover> (Ch 8). Long before that
+limit, long prompts also get slower and more expensive. So the harness has to choose what the model
+sees.
+
+Below, the agent from Ch 17 has done the same task for all six rhymes. Then you ask about the first
+one. To make the problem visible we set a small budget of 1,500 tokens; the model itself can read
+far more. Pick what the harness does when the conversation doesn't fit:
+
+<ContextBudget />
+
+## Three ways to make room
+
+- **Drop the oldest.** Simple, and often fine. But here the first task was the one you asked about.
+  With it gone, the model made up an answer: a rhyme called "Old Mother Hubbard" with 18 words.
+- **Summarize.** The harness asks the model to condense the old turns into a short note, then keeps
+  the note instead. The summary kept "30 words", so the answer was right. Summaries lose detail,
+  though, and you can't always tell in advance which details will matter.
+- **Retrieve.** The harness keeps the old turns stored outside the prompt, and when a question
+  comes in, finds the ones most similar in meaning, using embeddings like the map in Ch 5, and puts
+  them back.<Cite id="lewis2020" /> The cat task was the closest match to the question, so it came
+  back and the model answered correctly.
+
+This is <GlossaryPopover term="retrieval">retrieval</GlossaryPopover>, the same idea behind
+assistants that search your documents: they don't read everything, they look up what seems
+relevant and copy it into the prompt. Memory features work the same way: notes saved outside the
+model and put back into the prompt later.
+
+<RecapCard>
+
+- The model only knows what's in its prompt, and the prompt has a limit.
+- When it fills up, the harness drops, summarizes, or retrieves text.
+- Whatever is left out is simply gone for the model, and it may fill the gap by making things up.
+
+</RecapCard>
+
+**Next question:** the harness puts tool results and retrieved text into the same prompt as your
+instructions. What if that text contains instructions of its own?

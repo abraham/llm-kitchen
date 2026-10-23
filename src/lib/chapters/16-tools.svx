@@ -1,0 +1,47 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ToolsDemo from '#lib/components/widgets/ToolsDemo.svelte';
+</script>
+
+## Arithmetic, one token at a time
+
+Ask a model to multiply two four-digit numbers and it writes the answer the only way it can: one
+likely-looking token after another (Ch 14). Sometimes that works. Often it doesn't. Now give it a
+calculator:
+
+<ToolsDemo />
+
+Without tools, the model wrote out a long multiplication and got 7,050,952. The right answer is
+7,006,652. With a calculator, it got it right, because it never did the arithmetic at all.
+
+## A tool call is just text
+
+The model can't press buttons or run programs. A
+<GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
+format. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
+Then:
+
+1. The harness watches the model's output for that format and stops it there.
+2. It reads out the tool's name and arguments, and runs the tool itself.
+3. It adds the result to the conversation and calls the model again.
+
+Every model family has its own format. Qwen writes a small block of JSON between `<tool_call>` tags.
+On this site, calls are shown in a simpler made-up form, like
+`<call calculator>1234 * 5678</call>`, so they're easy to read.
+
+The tools in these chapters are toys that run in your browser: a calculator, a search over the six
+nursery rhymes from Ch 2, a word counter, a fake web page, and a pretend file list. Real assistants
+use the same pattern for web search, code execution, sending email, and more, which is exactly why
+the harness has to be careful about which tools it runs (Ch 19).
+
+<RecapCard>
+
+- Models are unreliable at exact work like arithmetic, because every digit is a predicted token.
+- A tool call is text in an agreed format. The model asks; the harness runs the tool.
+- The harness adds the result to the prompt and calls the model again.
+
+</RecapCard>
+
+**Next question:** one tool call helps. What if a task needs several, one after another?
