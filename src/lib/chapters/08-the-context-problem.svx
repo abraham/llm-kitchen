@@ -9,11 +9,11 @@
 
 Read this sentence:
 
-> The trophy didn't fit in the suitcase because **it** was too big.
+> The trophy didn't fit in the suitcase because **it** was too *big*.
 
 What was too big? The trophy. Now change one word:
 
-> The trophy didn't fit in the suitcase because **it** was too small.
+> The trophy didn't fit in the suitcase because **it** was too *small*.
 
 Now "it" is the suitcase. You didn't have to think about it, but to get there you used "trophy",
 "suitcase", "fit", and the very last word, all at once. Sentences like this were collected into a
