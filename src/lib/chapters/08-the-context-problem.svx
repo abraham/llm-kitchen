@@ -1,0 +1,69 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ContextWindow from '#lib/components/widgets/ContextWindow.svelte';
+</script>
+
+## What does "it" mean?
+
+Read this sentence:
+
+> The trophy didn't fit in the suitcase because **it** was too big.
+
+What was too big? The trophy. Now change one word:
+
+> The trophy didn't fit in the suitcase because **it** was too small.
+
+Now "it" is the suitcase. You didn't have to think about it, but to get there you used "trophy",
+"suitcase", "fit", and the very last word, all at once. Sentences like this were collected into a
+test for computers, the Winograd Schema Challenge, precisely because they need this kind of
+whole-sentence understanding.<Cite id="levesque2012" />
+
+## Our models so far are short-sighted
+
+The counting model from Ch 2 only looked at the one word before the gap. The tiny model from Ch 7
+looked at 3 characters. Slide the window below and see how much of the sentence it takes before a
+model has everything it needs.
+
+<ContextWindow />
+
+The clue word comes last, but the things it is about come much earlier. A model that sees only the
+last few words can tell that something was "too big", but not what.
+
+## Why not just look further back?
+
+The obvious fix is a bigger window. For the counting model, that goes badly fast. GPT-2's vocabulary
+has 50,257 tokens, so there are about 2.5 billion possible pairs of tokens and about 127 trillion
+possible triples. Most of them never appear in any training text, so a table of counts would be
+almost entirely zeros.<Cite id="jurafsky-martin-ngrams" />
+
+A neural network like the one in Ch 7 handles that better, because similar words get similar
+vectors and can share what they learn.<Cite id="bengio2003" /> But a fixed window still has two
+problems:
+
+- **It has a hard edge.** Anything one word outside the window is invisible, however important.
+- **Every slot is fixed.** The network learns "the word 3 back" and "the word 4 back" as separate
+  inputs, while what matters is *which* word is relevant, wherever it is.
+
+What we want is a model that can look at **anything** earlier in the text, and decide for itself
+which parts matter for the word it's working on.
+
+## The context window
+
+Modern models still have a limit, called the
+<GlossaryPopover term="context-window">context window</GlossaryPopover>, but it is much larger.
+GPT-2 can look at up to 1,024 tokens at once.<Cite id="radford2019" />
+Within that window, every token can use any earlier token. The next chapter shows how.
+
+<RecapCard>
+
+- Understanding a word often needs words from much earlier in the text.
+- Counting tables can't grow to cover long contexts: almost every long combination is unseen.
+- A fixed window has a hard edge and treats each position separately.
+- Models need a way to pick out the relevant earlier words, wherever they are, within a context
+  window (1,024 tokens for GPT-2).
+
+</RecapCard>
+
+**Next question:** how can a model look back at everything and decide what's relevant?

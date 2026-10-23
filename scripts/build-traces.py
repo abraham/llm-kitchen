@@ -61,6 +61,33 @@ SPECS = [
         )
         for t, seed in [(0.0, 0), (0.7, 7), (1.5, 15)]
     ],
+    # Ch 9: recorded attention for the attention viewer (one generated token each).
+    Spec("attn-the-cat-sat", "The cat sat on the", max_new_tokens=1, attention=True),
+    Spec(
+        "attn-ioi",
+        "When Mary and John went to the store, John gave a drink to",
+        max_new_tokens=1,
+        attention=True,
+        note="Indirect object identification (Wang et al. 2022).",
+    ),
+    Spec(
+        "attn-trophy-big",
+        "The trophy didn't fit in the suitcase because it was too big",
+        max_new_tokens=1,
+        attention=True,
+    ),
+    Spec(
+        "attn-trophy-small",
+        "The trophy didn't fit in the suitcase because it was too small",
+        max_new_tokens=1,
+        attention=True,
+    ),
+    Spec(
+        "attn-mary-lamb",
+        "Mary had a little lamb, its fleece was white as snow",
+        max_new_tokens=1,
+        attention=True,
+    ),
 ]
 
 
@@ -164,6 +191,21 @@ def export_vectors(prompt: str, name: str, model, tokenizer) -> None:
     wte = model.transformer.wte.weight[ids[0]]
     wpe = model.transformer.wpe.weight[: ids.shape[1]]
     r = lambda t: [[round(float(x), 4) for x in row] for row in t]  # noqa: E731
+
+    # Logit lens: what the last token's vector would predict if we stopped after each block
+    # (apply the final layer norm and the output layer early).
+    lens = []
+    with torch.no_grad():
+        for layer, h in enumerate(out.hidden_states):
+            v = h[0, -1] if layer == len(out.hidden_states) - 1 else model.transformer.ln_f(h[0, -1])
+            probs = torch.softmax(model.lm_head(v), dim=-1)
+            top = torch.topk(probs, 5)
+            lens.append(
+                [
+                    {"token": token(tokenizer, i), "prob": round(float(p), 4)}
+                    for p, i in zip(top.values.tolist(), top.indices.tolist())
+                ]
+            )
     data = {
         "model": CANONICAL["id"],
         "modelDisplayName": CANONICAL["displayName"],
@@ -175,6 +217,7 @@ def export_vectors(prompt: str, name: str, model, tokenizer) -> None:
         # hidden_states[0] is embeddings + positions; [i] is after block i (the last one is
         # after the final layer norm in Hugging Face's GPT-2).
         "lastTokenByLayer": r(torch.stack([h[0, -1] for h in out.hidden_states])),
+        "logitLens": lens,
         "generatedAt": datetime.date.today().isoformat(),
         "source": {"huggingFaceId": CANONICAL["huggingFaceId"], "revision": model_revision()},
     }

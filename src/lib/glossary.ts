@@ -82,6 +82,18 @@ export const GLOSSARY = {
 			'The step where each token gathers information from the earlier tokens it finds relevant.',
 		chapter: 9
 	},
+	'attention-head': {
+		term: 'attention head',
+		definition:
+			'One attention pattern with its own weights. Each layer runs several side by side; GPT-2 small has 12 per layer.',
+		chapter: 9
+	},
+	'residual-stream': {
+		term: 'residual stream',
+		definition:
+			'The running vector for each token that every block reads from and adds its result to.',
+		chapter: 10
+	},
 	transformer: {
 		term: 'transformer',
 		definition:

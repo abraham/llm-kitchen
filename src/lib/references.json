@@ -165,5 +165,76 @@
 		"venue": "ICLR 2015",
 		"year": 2015,
 		"url": "https://arxiv.org/abs/1412.6980"
+	},
+	{
+		"id": "levesque2012",
+		"authors": ["Hector J. Levesque", "Ernest Davis", "Leora Morgenstern"],
+		"title": "The Winograd Schema Challenge",
+		"venue": "KR 2012",
+		"year": 2012,
+		"url": "https://cdn.aaai.org/ocs/4492/4492-21843-1-PB.pdf"
+	},
+	{
+		"id": "vaswani2017",
+		"authors": [
+			"Ashish Vaswani",
+			"Noam Shazeer",
+			"Niki Parmar",
+			"Jakob Uszkoreit",
+			"Llion Jones",
+			"Aidan N. Gomez",
+			"Łukasz Kaiser",
+			"Illia Polosukhin"
+		],
+		"title": "Attention Is All You Need",
+		"venue": "NeurIPS 2017",
+		"year": 2017,
+		"url": "https://arxiv.org/abs/1706.03762"
+	},
+	{
+		"id": "wang2022",
+		"authors": [
+			"Kevin Wang",
+			"Alexandre Variengien",
+			"Arthur Conmy",
+			"Buck Shlegeris",
+			"Jacob Steinhardt"
+		],
+		"title": "Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small",
+		"venue": "ICLR 2023",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2211.00593"
+	},
+	{
+		"id": "xiao2024",
+		"authors": ["Guangxuan Xiao", "Yuandong Tian", "Beidi Chen", "Song Han", "Mike Lewis"],
+		"title": "Efficient Streaming Language Models with Attention Sinks",
+		"venue": "ICLR 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2309.17453"
+	},
+	{
+		"id": "he2016",
+		"authors": ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
+		"title": "Deep Residual Learning for Image Recognition",
+		"venue": "CVPR 2016",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1512.03385"
+	},
+	{
+		"id": "ba2016",
+		"authors": ["Jimmy Lei Ba", "Jamie Ryan Kiros", "Geoffrey E. Hinton"],
+		"title": "Layer Normalization",
+		"venue": "arXiv",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1607.06450"
+	},
+	{
+		"id": "nostalgebraist2020",
+		"authors": ["nostalgebraist"],
+		"title": "interpreting GPT: the logit lens",
+		"venue": "LessWrong",
+		"year": 2020,
+		"url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens"
 	}
 ]

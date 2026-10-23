@@ -2,16 +2,19 @@
 	let {
 		values,
 		cells = 48,
-		label
+		label,
+		scale: fixedScale
 	}: {
 		values: number[];
 		/** How many of the numbers to draw; the rest are summarized. */
 		cells?: number;
 		label: string;
+		/** Size that gets full color (larger ones are capped). Defaults to the largest shown. */
+		scale?: number;
 	} = $props();
 
 	const shown = $derived(values.slice(0, cells));
-	const scale = $derived(Math.max(...shown.map(Math.abs), 1e-9));
+	const scale = $derived(fixedScale ?? Math.max(...shown.map(Math.abs), 1e-9));
 	const fmt = (v: number) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(2);
 </script>
 
@@ -27,7 +30,7 @@
 		<span
 			class="cell"
 			class:negative={v < 0}
-			style:--strength={Math.round((Math.abs(v) / scale) * 100)}
+			style:--strength={Math.round(Math.min(Math.abs(v) / scale, 1) * 100)}
 			title="#{i + 1}: {fmt(v)}"
 		></span>
 	{/each}

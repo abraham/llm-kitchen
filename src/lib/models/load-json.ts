@@ -1,4 +1,5 @@
 import { asset } from '$app/paths';
+import type { Candidate } from './provider.ts';
 
 /** Fetch static JSON once (browser only; stays pending during prerendering). */
 const cache = new Map<string, Promise<unknown>>();
@@ -26,6 +27,8 @@ export interface TokenVectors {
 	tokenEmbeddings: number[][];
 	positionEmbeddings: number[][];
 	lastTokenByLayer: number[][];
+	/** For each entry of lastTokenByLayer: the top next-token guesses if the model stopped there. */
+	logitLens: Candidate[][];
 }
 
 export interface EmbeddingMapData {

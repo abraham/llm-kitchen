@@ -118,12 +118,12 @@ Every chapter has the same structure:
 - _Try it:_ Click a token and see which earlier tokens it "looks at". Line thickness shows the attention weight.
 - _Animation:_ Each token sends out a **query** that is matched against every **key**. The resulting weights blend the **values**. Built up in three steps: first as a spotlight analogy, then as a dot-product grid, then as a softmax-weighted mix.
 - _Key idea:_ Each token collects information from the tokens it finds relevant.
-- _Live option:_ Show real attention patterns from the canonical small model (GPT-2 small via Transformers.js with `output_attentions`), with layer and head selectors.
+- _Live option:_ Real attention patterns from the canonical small model, with layer and head selectors. v1 records them (T0, all 144 heads for 5 sentences) because the standard ONNX export has no attention outputs; see Future improvements.
 
 **Ch 10. The transformer block**
 
 - _Animation:_ The block is assembled piece by piece: embeddings + position, attention, a small MLP, the residual "highway" connections, and normalization. The block is then copied N times to form a stack.
-- _Try it:_ A "residual stream" view where each layer adds a small change to the vector for "the".
+- _Try it:_ A "residual stream" view of the vector for "the" in "The cat sat on the", block by block, with the logit lens showing what the model would guess if it stopped at each block.
 - _Key idea:_ A transformer stacks the same block many times, and each block refines the representation a little.
 
 ### Part V — Putting it together
@@ -378,7 +378,7 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
 7. **Part III (Ch 6–7)**
    - Neuron playground, gradient descent visual, in-browser tiny trainer (hand-written forward pass, backprop, and optimizer in `math/`, running in `trainer.worker.ts`; no TF.js).
 8. **Part IV (Ch 8–10)**
-   - Attention viewer (T0, then T2 with real GPT-2 attention), transformer block assembly.
+   - Attention viewer (T0 recorded GPT-2 attention), transformer block assembly, residual stream with a logit lens.
 9. **Part V (Ch 11–14)**
    - Glass-box generator (the main demo), scale explorer, base vs. instruct (T3), quirks lab.
    - Optional bring-your-own-key provider (T4).
@@ -431,3 +431,4 @@ A chapter isn't done until its fact-check is done in the same PR:
 
 - **Math sidebar:** a short, optional per-chapter panel with the equations behind each concept, for visitors who want them. Out of scope for v1.
 - **Localization:** v1 is English-only (prose, example corpora, and recorded traces). Translating later means deciding whether to also swap the example corpora and re-record traces per language.
+- **Live attention (Ch 9):** the standard GPT-2 ONNX export used by Transformers.js has no attention outputs, so v1 shows attention recorded from PyTorch for 5 sentences. A custom ONNX export with attention outputs would let visitors type their own sentence.
