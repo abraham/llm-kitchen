@@ -1,0 +1,81 @@
+[
+	{
+		"id": "shannon1948",
+		"authors": ["Claude E. Shannon"],
+		"title": "A Mathematical Theory of Communication",
+		"venue": "Bell System Technical Journal 27(3)",
+		"year": 1948,
+		"url": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x"
+	},
+	{
+		"id": "shannon1951",
+		"authors": ["Claude E. Shannon"],
+		"title": "Prediction and Entropy of Printed English",
+		"venue": "Bell System Technical Journal 30(1)",
+		"year": 1951,
+		"url": "https://doi.org/10.1002/j.1538-7305.1951.tb01366.x"
+	},
+	{
+		"id": "radford2019",
+		"authors": [
+			"Alec Radford",
+			"Jeffrey Wu",
+			"Rewon Child",
+			"David Luan",
+			"Dario Amodei",
+			"Ilya Sutskever"
+		],
+		"title": "Language Models are Unsupervised Multitask Learners",
+		"venue": "OpenAI",
+		"year": 2019,
+		"url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+	},
+	{
+		"id": "gpt2-model-card",
+		"authors": ["OpenAI", "Hugging Face"],
+		"title": "GPT-2 model card (openai-community/gpt2)",
+		"venue": "Hugging Face",
+		"year": 2019,
+		"url": "https://huggingface.co/openai-community/gpt2"
+	},
+	{
+		"id": "unicode",
+		"authors": ["The Unicode Consortium"],
+		"title": "The Unicode Standard",
+		"venue": "Unicode Consortium",
+		"year": 2025,
+		"url": "https://www.unicode.org/versions/latest/"
+	},
+	{
+		"id": "rfc3629",
+		"authors": ["François Yergeau"],
+		"title": "UTF-8, a transformation format of ISO 10646 (RFC 3629)",
+		"venue": "IETF",
+		"year": 2003,
+		"url": "https://www.rfc-editor.org/rfc/rfc3629"
+	},
+	{
+		"id": "jurafsky-martin-ngrams",
+		"authors": ["Daniel Jurafsky", "James H. Martin"],
+		"title": "N-gram Language Models, in Speech and Language Processing (3rd ed. draft)",
+		"venue": "Stanford University",
+		"year": 2025,
+		"url": "https://web.stanford.edu/~jurafsky/slp3/"
+	},
+	{
+		"id": "fan2018",
+		"authors": ["Angela Fan", "Mike Lewis", "Yann Dauphin"],
+		"title": "Hierarchical Neural Story Generation",
+		"venue": "ACL 2018",
+		"year": 2018,
+		"url": "https://aclanthology.org/P18-1082/"
+	},
+	{
+		"id": "holtzman2020",
+		"authors": ["Ari Holtzman", "Jan Buys", "Li Du", "Maxwell Forbes", "Yejin Choi"],
+		"title": "The Curious Case of Neural Text Degeneration",
+		"venue": "ICLR 2020",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/1904.09751"
+	}
+]

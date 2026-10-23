@@ -48,7 +48,7 @@ Every chapter has the same structure:
 **Ch 0. The guessing game**
 
 - _Hook:_ "Finish this sentence: The cat sat on the ___"
-- _Try it:_ The visitor types a guess. A word cloud then shows guesses from other people (pre-baked data).
+- _Try it:_ The visitor types a guess and sees where it falls in GPT-2's recorded top 50 (rank and probability). No made-up "other people's guesses": there is no real survey data to show.
 - _Animation:_ Many possible next words fan out from the blank, each with a bar showing how likely it is.
 - _Key idea:_ An LLM is a machine that predicts the next piece of text, over and over.
 - _Live option:_ The model completes the same prompt and shows its top 5 guesses with probabilities.
@@ -395,7 +395,7 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
 
 A chapter isn't done until its fact-check is done in the same PR:
 
-- **Claim checklist:** the PR description lists every factual claim and number in the chapter. Each one is either backed by a `<Cite>` to a primary source or rewritten as a labeled simplification ("Simplified: real models also…").
+- **Claim checklist:** `docs/fact-check/part-N.md` lists every factual claim and number in the Part's chapters (link it from the PR description). Each one is either backed by a `<Cite>` to a primary source, checked by a test, or rewritten as a labeled simplification ("Simplified: real models also…").
 - **Numbers from the source:** model facts (GPT-2 small's layers, heads, vocabulary size, context length) come from `models/canonical.json` and the model's own config, with `build-traces.py` asserting they match. Any other figure cites the paper or model card it came from.
 - **Demos match the prose:** Vitest checks that the widgets produce the numbers the text describes (e.g. the bigram counts, the BPE merges, the tokenizer split of "strawberry"). Recorded traces are spot-checked against a fresh run of the model.
 - **Sources list:** the chapter ends with its `Sources` list, and the citation unit test passes.

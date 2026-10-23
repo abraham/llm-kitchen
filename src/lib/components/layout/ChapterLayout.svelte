@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { chapterByNumber, type ChapterMeta } from '#lib/chapters/index.ts';
+	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
 
@@ -37,7 +38,11 @@
 				empty={meta.number === 0 ? undefined : 'Everything from the earlier chapters.'}
 			/>
 
-			{@render children()}
+			{#key meta.slug}
+				<CitationScope>
+					{@render children()}
+				</CitationScope>
+			{/key}
 
 			<footer class="next">
 				{#if next}

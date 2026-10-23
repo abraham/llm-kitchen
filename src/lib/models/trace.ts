@@ -15,6 +15,8 @@ export interface Trace {
 	attention?: Attention;
 	settings?: { topK: number; temperature: number; seed?: number };
 	generatedAt?: string;
+	/** Where a recorded trace came from (model repo, revision, library version). */
+	source?: { huggingFaceId: string; revision: string | null; torch?: string };
 }
 
 function fail(message: string): never {

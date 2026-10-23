@@ -1,0 +1,50 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import BigramBuilder from '#lib/components/widgets/BigramBuilder.svelte';
+</script>
+
+## What usually comes next?
+
+The simplest way to predict the next word is to look at the word you just read, and remember what
+came after it in the past. If *little* was followed by *lamb* once, by *dog* once, and by *star*
+once, then after *little* each of those has a one in three chance.
+
+That's a <GlossaryPopover term="bigram">bigram model</GlossaryPopover>: *bi* because it only ever
+looks at two words, the current one and the next.<Cite id="jurafsky-martin-ngrams" /> Building one
+takes nothing but counting. Below, the training text is six nursery rhymes. Step through it (or
+press *Play*) to watch the counts fill in, one pair of words at a time.
+
+<BigramBuilder />
+
+## From counts to probabilities
+
+Once everything is counted, each row turns into probabilities: divide each count by the row's total.
+That's all the model knows. Pick a word in the widget to see its row as bars.
+
+To generate text, start with a word, spin for the next one using those probabilities, then repeat
+with the new word. Claude Shannon generated English this way in 1948, choosing each word based only
+on the one before it.<Cite id="shannon1948" />
+
+## Why the output is bad
+
+Press *Generate* a few times. The output borrows phrases from the rhymes, but it wanders between
+them: *the cow jumped over the clock struck one, the lamb was sure to go*. Every pair of words
+appeared in the training text, but the sentence as a whole makes no sense.
+
+The problem is that the model only ever looks one word back. After *the*, it has no idea whether it
+is in the rhyme about the cow, the mouse, or the lamb, so it picks a follower of *the* from all of
+them.
+
+<RecapCard>
+
+- Prediction means answering "what usually comes next?"
+- A bigram model answers it by counting which word follows which, then turning the counts into
+  probabilities.
+- It only looks one word back, so its output is locally plausible but wanders.
+
+</RecapCard>
+
+**Next question:** the model gives probabilities, but something has to decide which word to actually
+use. How does that choice work, and can we control it?

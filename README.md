@@ -28,6 +28,24 @@ npm run test:e2e       # Playwright against a production build
 Chapters live in `src/lib/chapters/NN-slug.svx` and are registered in
 `src/lib/chapters/meta.ts`. `.svx` files are not formatted by Prettier.
 
+### Recorded traces
+
+The site ships pre-computed runs of GPT-2 small in `static/traces/`. To regenerate them (downloads
+the model, about 550 MB, on first run):
+
+```sh
+python3 -m venv scripts/.venv
+scripts/.venv/bin/pip install -r scripts/requirements.txt
+scripts/.venv/bin/python scripts/build-traces.py
+```
+
+The script checks `models/canonical.json` against the model's own config before writing anything.
+
+### Citations and fact-checks
+
+Sources are in `src/lib/references.json` and cited in chapters with `<Cite id="..." />`. Each
+Part's claim checklist is in `docs/fact-check/`.
+
 ## Manual setup (not automated)
 
 - **Branch protection on `main`:** require the `ci-success` status check.
