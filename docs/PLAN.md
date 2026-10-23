@@ -335,6 +335,8 @@ Use a tiered approach. The site always works, and visitors opt in to heavier fea
 
 - **Feel:** warm and editorial, with the interactive figures as the main attraction. References: Bartosz Ciechanowski's explainers and Distill. Use a warm off-white page in light mode and a warm charcoal in dark mode (following `prefers-color-scheme`), generous white space, and almost no decoration. Concept colors appear only where their concept does, so they stay meaningful.
 - **Kitchen theme in words and structure, not illustration:**
+  - The site's name in prose, titles, and metadata is **LLM Kitchen**. `llm-kitchen` stays as the repo, package, and Firebase project name, and in storage keys.
+  - A small mark (a simple pot or bowl shape in the concept colors) serves as the favicon and appears on the social sharing images.
   - Each chapter opens with an "Ingredients" box linking the earlier chapters it builds on.
   - The recap card is styled as a recipe card.
   - The landing page reads like a menu.
@@ -397,6 +399,7 @@ llm-kitchen/
         widgets/             # BigramBuilder, BPEStepper, EmbeddingMap, AttentionViewer, GlassBoxGenerator, TinyTrainer, PromptInspector, AgentStepper, ...
         layout/              # StepController, WidgetFrame, DataSourceBadge, IngredientsBox, RecapCard, ProgressNav, GlossaryPopover, Cite, Sources
       references.json        # bibliography: id, authors, title, year, venue, URL/DOI, accessed date
+      site.ts                # site name ("LLM Kitchen") and origin, used for titles, canonical URLs, and Open Graph tags
       stores/                # progress.svelte.ts, motion-prefs.svelte.ts, model-tier.svelte.ts (rune-based shared state)
       models/                # ModelProvider + recorded/transformers/webllm/remote impls
       harness/               # toy agent loop, tool registry, in-browser toy tools
@@ -407,6 +410,7 @@ llm-kitchen/
   static/traces/<model-id>/  # pre-computed JSON traces (T0) per model, fetched on demand
   static/vectors/<model-id>/ # GPT-2 token/position embeddings and per-layer vectors (Ch 5, Ch 10)
   static/embeddings/         # MiniLM word map: 2D PCA positions, neighbors, PCA basis, full vectors (Ch 5)
+  static/og/                 # 1200×630 social sharing images, one per page, generated at build time
   models/canonical.json      # canonical small model config, read by the site and build-traces.py
   scripts/
     build-traces.py          # generate T0 traces from real models offline (model from models/canonical.json)
@@ -512,6 +516,13 @@ Each chapter milestone (5–10, 14, and 15) includes the [per-chapter fact-check
     - Move the recap to the end again: rename `26-recap.svx` to `31-recap.svx` (the `recap` slug and URL stay the same), add Part VIII to `PARTS` and the curriculum in `src/lib/chapters/meta.ts`, point Ch 25's next question at Ch 26, and add Part VIII to the recap diagram and quiz.
     - _Done when:_ every Part VIII chapter has its widget, recap card, sources, and `docs/fact-check/part-8.md`, and the recap covers all eight Parts.
     - v1: all five chapters and the recap move are done; see [docs/fact-check/part-8.md](fact-check/part-8.md) for changes from this plan (the system-prompt comparison has its own template view rather than the Ch 15 prompt inspector, and the Ch 29 replies are graded by hand).
+16. **Branding**
+    - **Name:** the site is called **LLM Kitchen** everywhere a person reads it: page titles, the menu heading, the chapter header link, meta descriptions, and the README. Code identifiers, the repo, the Firebase project, and the `llm-kitchen:visited` storage key keep `llm-kitchen`, so visitors' saved progress survives.
+    - **Favicon:** replace the default Svelte logo with the LLM Kitchen mark: an SVG favicon that reads at 16 px and adapts to dark mode (`prefers-color-scheme` inside the SVG), a 180 px `apple-touch-icon` PNG, and a `theme-color` per color scheme.
+    - **Open Graph metadata:** every page gets `og:title`, `og:description`, `og:type` (`website` for the menu, `article` for chapters), `og:url`, `og:image` (with width, height, and alt text), `og:site_name` ("LLM Kitchen"), and `twitter:card` (`summary_large_image`), plus a `<link rel="canonical">`. Absolute URLs come from one site origin set in config (`src/lib/site.ts`), defaulting to the Firebase domain until the custom domain is live. Chapter titles and descriptions come from `meta.ts`, so no chapter writes its own tags.
+    - **Social sharing images:** a 1200 × 630 PNG per page (the menu and each chapter), with the mark, "LLM Kitchen", the chapter number and title, and its Part, in the site's fonts and colors. Generated at build time from one SVG template by a script (no screenshots and no network), written under `static/og/`, and covered by the existing caching headers.
+    - **Tests:** a unit test checks that every curriculum entry has a social image and a description of reasonable length; an e2e test checks that the menu and a chapter render the full set of tags with absolute URLs; the favicon and images are spot-checked visually.
+    - _Done when:_ no visible "llm-kitchen" remains, the new favicon shows in light and dark browser tabs, and sharing any page's URL produces a card with the right title, description, and image (checked with a link preview validator on the PR preview).
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, and 15)
 
