@@ -108,5 +108,5 @@ Both outputs are git-ignored.
 
 - `firebase-hosting-pr.yml`: every same-repo PR deploys to a `pr-<number>` preview channel that
   expires after 7 days. Fork PRs only run CI.
-- `firebase-hosting-merge.yml`: after CI passes on `main`, deploys the same commit to the live
-  channel.
+- `firebase-hosting-merge.yml`: every merge to `main` deploys to the live channel. The `CI`
+  ruleset on `main` requires the `ci-success` check to pass before a change can merge.
