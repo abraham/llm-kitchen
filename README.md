@@ -9,7 +9,7 @@ Requires Node 24 (see `.nvmrc`).
 
 ```sh
 npm install
-npm run dev            # dev server
+npm start.             # dev server
 npm run build          # static build in build/
 npm run preview        # serve the build on :4173
 ```
