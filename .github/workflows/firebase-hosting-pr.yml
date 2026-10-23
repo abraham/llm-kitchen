@@ -32,6 +32,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # firebase-tools (superstatic) supports Node 20, 22, and 24, and .npmrc sets engine-strict.
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
       - id: wif
         uses: abraham/firebase-wif@v0.2.1
         with:
