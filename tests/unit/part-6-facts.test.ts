@@ -4,7 +4,7 @@ import { chatTemplate } from '../../src/lib/math/chat-template.ts';
 
 const json = (name: string) => JSON.parse(readFileSync(`static/prompts/${name}.json`, 'utf8'));
 
-describe('Ch 16: a prompt is the start of a document', () => {
+describe('Ch 18: a prompt is the start of a document', () => {
 	const d = json('wording');
 	const variant = (text: string) =>
 		d.groups
@@ -31,7 +31,7 @@ describe('Ch 16: a prompt is the start of a document', () => {
 	});
 });
 
-describe('Ch 17: few-shot', () => {
+describe('Ch 19: few-shot', () => {
 	const d = json('fewshot');
 	const task = (name: string) => d.tasks.find((t: { name: string }) => t.name === name);
 	const p = (name: string, query: string, shots: number, model: 'qwen' | 'gpt2') =>
@@ -74,7 +74,7 @@ describe('Ch 17: few-shot', () => {
 	});
 });
 
-describe('Ch 18: system prompts', () => {
+describe('Ch 20: system prompts', () => {
 	const d = json('system');
 
 	it('the site’s chat template matches the recorded prompts', () => {
@@ -103,7 +103,7 @@ describe('Ch 18: system prompts', () => {
 	});
 });
 
-describe('Ch 19: steps and structure', () => {
+describe('Ch 21: steps and structure', () => {
 	const d = json('steps');
 	type Run = { correct: boolean; formatted: boolean; text: string };
 	const runs = (i: number): Run[] => d.puzzles.map((p: { runs: Run[] }) => p.runs[i]);
@@ -123,7 +123,7 @@ describe('Ch 19: steps and structure', () => {
 	});
 });
 
-describe('Ch 20: where prompts break', () => {
+describe('Ch 22: where prompts break', () => {
 	const d = json('fragile');
 
 	it('the order of four examples moves the score between 4 and 8 of 8', () => {

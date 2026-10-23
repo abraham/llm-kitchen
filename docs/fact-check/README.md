@@ -7,10 +7,10 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 - [Part II: Representation (Ch 3–5)](part-2.md)
 - [Part III: Learning (Ch 6–7)](part-3.md)
 - [Part IV: Context (Ch 8–10)](part-4.md)
-- [Part V: Putting it together (Ch 11–15)](part-5.md)
-- [Part VI: Prompt engineering (Ch 16–20)](part-6.md)
-- [Part VII: Harnesses (Ch 21–27)](part-7.md)
-- [Part VIII: Other kinds of models (Ch 28–32) and the recap (Ch 33)](part-8.md)
+- [Part V: Putting it together (Ch 11–17)](part-5.md)
+- [Part VI: Prompt engineering (Ch 18–22)](part-6.md)
+- [Part VII: Harnesses (Ch 23–29)](part-7.md)
+- [Part VIII: Other kinds of models (Ch 30–34) and the recap (Ch 35)](part-8.md)
 
 ## Final review (milestone 12)
 
@@ -29,7 +29,7 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 Please read each Part on the deployed preview and log findings as issues. Things worth a close look:
 
 - The simplifications: the made-up numbers in Ch 9's query/key/value walkthrough, the training
-  stages in Ch 13, and the toy harness in Part VII. Each is labeled in the text, but check that none
+  stages in Ch 15, and the toy harness in Part VII. Each is labeled in the text, but check that none
   of them teaches something false.
 - Interpretations of real data: the attention heads named in Ch 9 (9.6, 9.9, 9.0), the logit-lens
   reading in Ch 10, and what the small Qwen models' failures in Part VII do and don't show.

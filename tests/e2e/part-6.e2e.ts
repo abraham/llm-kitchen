@@ -20,7 +20,7 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 16: setting the scene changes the next word', async ({ page }) => {
+test('Ch 18: setting the scene changes the next word', async ({ page }) => {
 	await gotoHydrated(page, '/prompts-as-documents');
 	const widget = page.getByRole('region', { name: 'Change the start of the document' });
 	await widget.getByLabel(/It was bedtime/).check();
@@ -29,7 +29,7 @@ test('Ch 16: setting the scene changes the next word', async ({ page }) => {
 	await expect(widget.getByRole('table', { name: /Chance of “Paris” next/ })).toBeVisible();
 });
 
-test('Ch 17: examples teach a made-up rule', async ({ page }) => {
+test('Ch 19: examples teach a made-up rule', async ({ page }) => {
 	await gotoHydrated(page, '/few-shot');
 	const widget = page.getByRole('region', { name: 'Learning from examples' });
 	await expect(widget.getByRole('row', { name: /happy sad .* 96%/ })).toBeVisible();
@@ -41,7 +41,7 @@ test('Ch 17: examples teach a made-up rule', async ({ page }) => {
 	await expect(head.getByText(/attention head 5\.0/)).toBeVisible();
 });
 
-test('Ch 18: a persona does not help with sums', async ({ page }) => {
+test('Ch 20: a persona does not help with sums', async ({ page }) => {
 	await gotoHydrated(page, '/instructions-and-roles');
 	const widget = page.getByRole('region', { name: 'Same question, different system prompts' });
 	await widget.getByLabel('A persona').check();
@@ -49,7 +49,7 @@ test('Ch 18: a persona does not help with sums', async ({ page }) => {
 	await expect(widget.getByRole('row', { name: /Right 5 of 8 3 of 8/ })).toBeVisible();
 });
 
-test('Ch 19: each ending scores 4 of 6; the format is followed once', async ({ page }) => {
+test('Ch 21: each ending scores 4 of 6; the format is followed once', async ({ page }) => {
 	await gotoHydrated(page, '/steps-and-structure');
 	const widget = page.getByRole('region', { name: 'Ask for steps, ask for a format' });
 	await expect(widget.getByText(/^0\.10$/)).toBeVisible();
@@ -58,7 +58,7 @@ test('Ch 19: each ending scores 4 of 6; the format is followed once', async ({ p
 	).toBeVisible();
 });
 
-test('Ch 20: order, layout, and position', async ({ page }) => {
+test('Ch 22: order, layout, and position', async ({ page }) => {
 	await gotoHydrated(page, '/where-prompts-break');
 	const widget = page.getByRole('region', { name: 'Small changes, different answers' });
 	await expect(widget.getByRole('row', { name: /8 of 8/ })).toBeVisible();

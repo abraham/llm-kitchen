@@ -75,7 +75,7 @@
 >
 	<div class="map">
 		<div class="agent-loop">
-			<p class="loop-label">Agent loop (<a href={href(23)}>Ch 23</a>)</p>
+			<p class="loop-label">Agent loop (<a href={href(25)}>Ch 25</a>)</p>
 			{#each GROUPS as g (g.group)}
 				<div class="group {g.group}">
 					<p class="group-label">

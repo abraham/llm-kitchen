@@ -10,7 +10,7 @@
 A model writes one token at a time, and every token it writes becomes context for the next (Ch 11).
 If it has to give the answer as its very first token, all the working has to happen inside one
 forward pass. If it writes the working out first, a <GlossaryPopover term="chain-of-thought">chain of thought</GlossaryPopover>,
-each step can build on the ones before. Reasoning models are trained to do this (Ch 15); with other
+each step can build on the ones before. Reasoning models are trained to do this (Ch 17); with other
 models, you can ask.
 
 Asking works on large models. Showing a few worked examples improved math word problems,<Cite id="wei2022" />
@@ -19,7 +19,7 @@ word problems from 17.7% to 78.7%.<Cite id="kojima2022" />
 
 ## A small model, three ways
 
-Here are the puzzles from Ch 15, put to Qwen2.5-1.5B-Instruct with three different endings:
+Here are the puzzles from Ch 17, put to Qwen2.5-1.5B-Instruct with three different endings:
 
 <StepsTally />
 

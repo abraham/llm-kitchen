@@ -50,7 +50,7 @@ test('Ch 12: switching the scale metric shows unpublished numbers', async ({ pag
 	await expect(chart.locator('.readout')).toContainText('outside the range');
 });
 
-test('Ch 13: the chat template and base vs. instruct', async ({ page }) => {
+test('Ch 15: the chat template and base vs. instruct', async ({ page }) => {
 	await gotoHydrated(page, '/predictor-to-assistant');
 	const template = page.getByRole('region', { name: 'What the model actually reads' });
 	await template.getByLabel('Your next message').fill('Hello there');
@@ -66,7 +66,7 @@ test('Ch 13: the chat template and base vs. instruct', async ({ page }) => {
 	);
 });
 
-test('Ch 14: quirks lab presets and the spelling blind spot', async ({ page }) => {
+test('Ch 16: quirks lab presets and the spelling blind spot', async ({ page }) => {
 	await gotoHydrated(page, '/quirks-and-limits');
 	const lab = page.getByRole('region', { name: 'Quirks lab' });
 	await lab.getByLabel('Start from').selectOption({ label: 'Arithmetic: 2 + 2' });
@@ -78,7 +78,7 @@ test('Ch 14: quirks lab presets and the spelling blind spot', async ({ page }) =
 	await expect(spelling.getByText('the model sees: 3 tokens')).toBeVisible();
 });
 
-test('Ch 15: thinking fixes strawberry, at a cost', async ({ page }) => {
+test('Ch 17: thinking fixes strawberry, at a cost', async ({ page }) => {
 	await gotoHydrated(page, '/reasoning-models');
 	const widget = page.getByRole('region', { name: 'Thinking off, thinking on' });
 	await widget.getByLabel('Puzzle').selectOption({ index: 2 });

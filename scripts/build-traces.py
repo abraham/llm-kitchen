@@ -100,9 +100,9 @@ SPECS = [
         )
         for word in ["bed", "couch", "ground", "edge"]
     ],
-    # Ch 14: quirks and limits, greedy with the top 50 at each step.
+    # Ch 16: quirks and limits, greedy with the top 50 at each step.
     *[
-        Spec(name, prompt, max_new_tokens=n, top_k=50, note=f"Ch 14: {note}")
+        Spec(name, prompt, max_new_tokens=n, top_k=50, note=f"Ch 16: {note}")
         for name, prompt, n, note in [
             ("quirk-moon", "The first person to walk on the moon was", 16, "hallucination"),
             (

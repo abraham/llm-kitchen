@@ -54,11 +54,11 @@ export const CACHE_EDITS = {
 } as const;
 export type CacheEdit = keyof typeof CACHE_EDITS;
 
-/** Small on purpose, so the Ch 24 session goes over it. */
+/** Small on purpose, so the Ch 26 session goes over it. */
 export const CACHE_BUDGET = 1000;
 /** Price of a token read from the cache, relative to a normal input token (illustrative). */
 export const CACHED_PRICE = 0.1;
-/** Size of the summary note in the Ch 24 recording. */
+/** Size of the summary note in the Ch 26 recording. */
 const SUMMARY_TOKENS = 29;
 
 /** Tokens in the blocks two prompts share from the very start. */
@@ -71,7 +71,7 @@ export function sharedPrefix(a: CacheBlock[], b: CacheBlock[]): number {
 }
 
 /**
- * The prompts a harness sends for the Ch 24 session (six agent tasks, then a question), after the
+ * The prompts a harness sends for the Ch 26 session (six agent tasks, then a question), after the
  * given edit. Each call is cached up to the longest start it shares with an earlier call.
  */
 export function cacheCalls(session: ContextSession, edit: CacheEdit): CacheCall[] {

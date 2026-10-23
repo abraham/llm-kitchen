@@ -6,11 +6,11 @@ Usage: scripts/.venv/bin/python scripts/build-prompts.py
 Uses only models other scripts already download: GPT-2 small (the canonical model) and
 Qwen2.5-1.5B-Instruct (Part VII). Greedy decoding throughout, so reruns match. Writes
 static/prompts/:
-  wording.json  Ch 16: GPT-2's next-token guesses for prompt variants, and where its last token looks
-  fewshot.json  Ch 17: GPT-2 on made-up tasks with 0-4 examples, and its strongest induction head
-  system.json   Ch 18: Qwen with different system prompts
-  steps.json    Ch 19: Qwen on the Ch 15 puzzles, plain, step by step, and with a fixed format
-  fragile.json  Ch 20: example order and format (GPT-2), and a fact's position in a long prompt (Qwen)
+  wording.json  Ch 18: GPT-2's next-token guesses for prompt variants, and where its last token looks
+  fewshot.json  Ch 19: GPT-2 on made-up tasks with 0-4 examples, and its strongest induction head
+  system.json   Ch 20: Qwen with different system prompts
+  steps.json    Ch 21: Qwen on the Ch 17 puzzles, plain, step by step, and with a fixed format
+  fragile.json  Ch 22: example order and format (GPT-2), and a fact's position in a long prompt (Qwen)
 """
 
 from __future__ import annotations
@@ -89,7 +89,7 @@ def answer_prob(model, tok, prompt: str, answer: str) -> float:
     return float(sum(logp[start - 1 + j, t] for j, t in enumerate(a_ids[0].tolist())).exp())
 
 
-# --- Ch 16: wording ----------------------------------------------------------------------------
+# --- Ch 18: wording ----------------------------------------------------------------------------
 
 WORDING = [
     {
@@ -143,7 +143,7 @@ def wording() -> None:
     write("wording.json", {"version": 1, "model": GPT2_INFO, "groups": groups})
 
 
-# --- Ch 17: few-shot ------------------------------------------------------------------------------
+# --- Ch 19: few-shot ------------------------------------------------------------------------------
 
 FEWSHOT = [
     {
@@ -248,7 +248,7 @@ def qwen_answer_prob(prompt: str, answer: str) -> float:
     return answer_prob(qwen, qwen_tok, prompt, answer)
 
 
-# --- Ch 18: system prompts ------------------------------------------------------------------------
+# --- Ch 20: system prompts ------------------------------------------------------------------------
 
 QWEN_DEFAULT = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
 SYSTEMS = [
@@ -298,7 +298,7 @@ def system() -> None:
     )
 
 
-# --- Ch 19: steps and format ----------------------------------------------------------------------
+# --- Ch 21: steps and format ----------------------------------------------------------------------
 
 PUZZLES = json.loads((ROOT / "static" / "reasoning" / "thinking.json").read_text())["puzzles"]
 CONDITIONS = [
@@ -348,7 +348,7 @@ def steps() -> None:
     write("steps.json", {"version": 1, "model": QWEN_INFO, "conditions": CONDITIONS, "puzzles": puzzles})
 
 
-# --- Ch 20: where prompts break ------------------------------------------------------------------
+# --- Ch 22: where prompts break ------------------------------------------------------------------
 
 SENTIMENT_EXAMPLES = [
     ("A delight from start to finish.", "positive"),

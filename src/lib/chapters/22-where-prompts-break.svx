@@ -6,7 +6,7 @@
 
 ## Changes that shouldn't matter
 
-Ch 14 showed that small changes in wording can change an answer. Prompts for real tasks have many
+Ch 16 showed that small changes in wording can change an answer. Prompts for real tasks have many
 such choices: which examples, in what order, laid out how, and where the important part goes. None
 of them should matter to the meaning. Here are three, each changed on its own:
 

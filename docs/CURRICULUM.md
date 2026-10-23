@@ -74,15 +74,17 @@ _How does a prediction use everything that came before?_
 
 ### Part V — Putting it together
 
-_How does the whole model write, and how does it become an assistant?_
+_How does the whole model write, run, and become an assistant?_
 
 | Ch  | Title                       | Slug                     | Builds on  |
 | --- | --------------------------- | ------------------------ | ---------- |
 | 11  | Generating text             | `generating-text`        | 2, 10      |
 | 12  | Scale                       | `scale`                  | 7, 11      |
-| 13  | From predictor to assistant | `predictor-to-assistant` | 11         |
-| 14  | Quirks and limits           | `quirks-and-limits`      | 4, 13      |
-| 15  | Thinking before answering   | `reasoning-models`       | 11, 13, 14 |
+| 13  | Fewer bits per number       | `quantization`           | 3, 12      |
+| 14  | Guessing ahead              | `speculative-decoding`   | 2, 11, 12  |
+| 15  | From predictor to assistant | `predictor-to-assistant` | 11         |
+| 16  | Quirks and limits           | `quirks-and-limits`      | 4, 15      |
+| 17  | Thinking before answering   | `reasoning-models`       | 11, 15, 16 |
 
 ### Part VI — Prompt engineering
 
@@ -90,11 +92,11 @@ _How do you get the answer you want?_
 
 | Ch  | Title                                      | Slug                     | Builds on   |
 | --- | ------------------------------------------ | ------------------------ | ----------- |
-| 16  | A prompt is the start of a document        | `prompts-as-documents`   | 2, 8, 9, 13 |
-| 17  | Learning from examples in the prompt       | `few-shot`               | 9, 16       |
-| 18  | Instructions, roles, and the system prompt | `instructions-and-roles` | 13, 16      |
-| 19  | Asking for steps and structure             | `steps-and-structure`    | 11, 15      |
-| 20  | Where prompts break                        | `where-prompts-break`    | 14, 17      |
+| 18  | A prompt is the start of a document        | `prompts-as-documents`   | 2, 8, 9, 15 |
+| 19  | Learning from examples in the prompt       | `few-shot`               | 9, 18       |
+| 20  | Instructions, roles, and the system prompt | `instructions-and-roles` | 15, 18      |
+| 21  | Asking for steps and structure             | `steps-and-structure`    | 11, 17      |
+| 22  | Where prompts break                        | `where-prompts-break`    | 16, 19      |
 
 ### Part VII — Harnesses
 
@@ -102,13 +104,13 @@ _What is built around the model to make a chat app or an agent?_
 
 | Ch  | Title                        | Slug                           | Builds on  |
 | --- | ---------------------------- | ------------------------------ | ---------- |
-| 21  | The model is not the product | `the-model-is-not-the-product` | 13, 18     |
-| 22  | Tools                        | `tools`                        | 19, 21     |
-| 23  | The agent loop               | `the-agent-loop`               | 11, 22     |
-| 24  | Managing the context         | `managing-the-context`         | 5, 8, 23   |
-| 25  | Caching: reusing the work    | `caching`                      | 9, 11, 23  |
-| 26  | Prompt injection             | `prompt-injection`             | 18, 20, 22 |
-| 27  | Trust and guardrails         | `trust-and-guardrails`         | 23, 26     |
+| 23  | The model is not the product | `the-model-is-not-the-product` | 15, 20     |
+| 24  | Tools                        | `tools`                        | 21, 23     |
+| 25  | The agent loop               | `the-agent-loop`               | 11, 24     |
+| 26  | Managing the context         | `managing-the-context`         | 5, 8, 25   |
+| 27  | Caching: reusing the work    | `caching`                      | 9, 11, 25  |
+| 28  | Prompt injection             | `prompt-injection`             | 20, 22, 24 |
+| 29  | Trust and guardrails         | `trust-and-guardrails`         | 25, 28     |
 
 ### Part VIII — Other kinds of models
 
@@ -116,11 +118,11 @@ _What else is built from the same pieces?_
 
 | Ch  | Title                         | Slug                 | Builds on |
 | --- | ----------------------------- | -------------------- | --------- |
-| 28  | Reading both ways             | `encoders`           | 5, 9      |
-| 29  | Many experts                  | `mixture-of-experts` | 6, 10     |
-| 30  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
-| 31  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
-| 32  | Painting from noise           | `diffusion`          | 7, 11     |
+| 30  | Reading both ways             | `encoders`           | 5, 9      |
+| 31  | Many experts                  | `mixture-of-experts` | 6, 10     |
+| 32  | Remembering without attention | `recurrent-models`   | 7, 8, 27  |
+| 33  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
+| 34  | Painting from noise           | `diffusion`          | 7, 11     |
 
 ### Wrap-up
 
@@ -128,40 +130,56 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug         | Builds on |
 | --- | ------------------------ | ------------ | --------- |
-| 33  | Recap: the whole picture | `recap`      | —         |
-| 34  | From message to reply    | `end-to-end` | —         |
-| 35  | Check yourself           | `quiz`       | —         |
+| 35  | Recap: the whole picture | `recap`      | —         |
+| 36  | From message to reply    | `end-to-end` | —         |
+| 37  | Check yourself           | `quiz`       | —         |
 
 ## Why this order
 
-Compared with the order before milestone 19 (see the mapping below), four chapters or Parts move:
+Compared with the order before milestone 19 (see the milestone 18 mapping below), four chapters or Parts move:
 
 - **Text is just numbers joins Representation.** Text → numbers → tokens → vectors is one story.
   Part I can then stay on prediction itself: guess, count, sample. Counting word pairs needs words,
   not numbers.
 - **Reasoning models join Part V.** A reasoning model is the same transformer with more training
-  (Ch 13's tuning, plus rewards for checkable answers), not a new architecture. It follows Quirks and
-  limits as one answer to them, and it sets up Ch 19, which asks for steps in the prompt instead.
+  (Ch 15's tuning, plus rewards for checkable answers), not a new architecture. It follows Quirks and
+  limits as one answer to them, and it sets up Ch 21, which asks for steps in the prompt instead.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
-  template. Learning it first means the system prompt (Ch 18) and structured output (Ch 19) are
-  familiar when the harness puts a system prompt in front of every chat (Ch 21) and parses tool calls
-  (Ch 22). Prompt injection (Ch 26) then reads as prompting by an attacker.
+  template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
+  familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
+  (Ch 24). Prompt injection (Ch 28) then reads as prompting by an attacker.
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
-  they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid.
+  they draw on every earlier Part, including the KV cache (Ch 27) that recurrent models avoid.
 
-Chapter contents change only where the new order requires:
+Chapter contents changed only where that order required:
 
 - Ch 3 (Text is just numbers) opens from Ch 2's question about how a model can compute with words.
-- Ch 15 (Thinking before answering) drops Part VII's "same as Ch N, except…" framing and opens from
-  the quirks in Ch 14.
-- Ch 18 (Instructions, roles, and the system prompt) introduces the system prompt itself, from the
-  chat template's system slot (Ch 13), instead of pointing to the prompt inspector. Ch 21 refers back
+- Ch 17 (Thinking before answering) drops Part VII's "same as Ch N, except…" framing and opens from
+  the quirks in Ch 16.
+- Ch 20 (Instructions, roles, and the system prompt) introduces the system prompt itself, from the
+  chat template's system slot (Ch 15), instead of pointing to the prompt inspector. Ch 23 refers back
   to it.
-- Ch 19 (Steps and structure) says a fixed format makes output usable by programs; Ch 22 (Tools)
+- Ch 21 (Steps and structure) says a fixed format makes output usable by programs; Ch 24 (Tools)
   then calls a tool call structured output in an agreed format.
-- Ch 20 (Where prompts break) ends with instructions in text you didn't write as its Next question,
+- Ch 22 (Where prompts break) ends with instructions in text you didn't write as its Next question,
   answered in Part VII, instead of pointing back to prompt injection.
 - The recap's paragraph and diagram follow the new Part order.
+
+Milestone 21 then added two chapters to Part V after Scale: Fewer bits per number (Ch 13) and
+Guessing ahead (Ch 14). Both are about running a big model on real hardware, they need only Scale
+and Generating text, and model names use both (`qat`, `Q4_0`, `-assistant`).
+
+## Mapping from the milestone 20 order
+
+| Slug                                   | Now   | Target |
+| -------------------------------------- | ----- | ------ |
+| `guessing-game` … `scale`              | 0–12  | 0–12   |
+| `quantization` (new)                   | —     | 13     |
+| `speculative-decoding` (new)           | —     | 14     |
+| `predictor-to-assistant` … `diffusion` | 13–32 | 15–34  |
+| `recap`                                | 33    | 35     |
+| `end-to-end`                           | 34    | 36     |
+| `quiz`                                 | 35    | 37     |
 
 ## Mapping from the milestone 18 order
 
@@ -206,6 +224,8 @@ Chapter contents change only where the new order requires:
 
 ## Status
 
-The site has used this order since milestone 19. Before it, Part VI was Harnesses (Ch 15–21), Part
-VII was Other kinds of models with Thinking before answering (Ch 22–27), Part VIII was Prompt
-engineering (Ch 28–32), and Text is just numbers was Ch 1; the mapping above records the move.
+The site has used this order since milestone 21, which added Ch 13 and Ch 14 to Part V and moved
+every later chapter up by two (see the milestone 20 mapping). Milestone 19 set the Part order.
+Before it, Part VI was Harnesses (Ch 15–21), Part VII was Other kinds of models with Thinking before
+answering (Ch 22–27), Part VIII was Prompt engineering (Ch 28–32), and Text is just numbers was
+Ch 1; the milestone 18 mapping records that move.

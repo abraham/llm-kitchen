@@ -70,7 +70,7 @@ describe('Ch 12: scale', () => {
 	});
 });
 
-describe('Ch 13: base vs. instruct', () => {
+describe('Ch 15: base vs. instruct', () => {
 	const data = JSON.parse(readFileSync('static/chat/base-vs-instruct.json', 'utf8'));
 	const p = (prompt: string) => data.prompts.find((x: { prompt: string }) => x.prompt === prompt);
 
@@ -89,7 +89,7 @@ describe('Ch 13: base vs. instruct', () => {
 	});
 });
 
-describe('Ch 14: quirks and limits', () => {
+describe('Ch 16: quirks and limits', () => {
 	it('"a man named John, who was born in 1829."', () => {
 		expect(full('quirk-moon')).toContain('a man named John, who was born in 1829.');
 	});
@@ -119,7 +119,7 @@ describe('Ch 14: quirks and limits', () => {
 	});
 });
 
-describe('Ch 15: reasoning models', () => {
+describe('Ch 17: reasoning models', () => {
 	const d = json('static/reasoning/thinking.json');
 	type Run = {
 		correct: boolean;

@@ -11,7 +11,7 @@ import { seededRandom } from '../../src/lib/math/sampling.ts';
 
 const json = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 
-describe('Ch 28: encoders', () => {
+describe('Ch 30: encoders', () => {
 	const d = json('static/encoders/fill-mask.json');
 
 	it('BERT uses the words after the blank; GPT-2 cannot', () => {
@@ -29,7 +29,7 @@ describe('Ch 28: encoders', () => {
 	});
 });
 
-describe('Ch 29: mixture of experts', () => {
+describe('Ch 31: mixture of experts', () => {
 	it('Mixtral uses about a quarter of its weights per token, DeepSeek-V3 about 6%', () => {
 		const share = (name: string) => {
 			const m = MOE_MODELS.find((x) => x.name === name)!;
@@ -40,7 +40,7 @@ describe('Ch 29: mixture of experts', () => {
 	});
 });
 
-describe('Ch 30: recurrent models', () => {
+describe('Ch 32: recurrent models', () => {
 	it('keeps 2 × layers × embedding size numbers per token with attention', () => {
 		expect(2 * canonicalJson.layers * canonicalJson.embeddingSize).toBe(18432);
 	});
@@ -67,7 +67,7 @@ describe('Ch 30: recurrent models', () => {
 	}, 60_000);
 });
 
-describe('Ch 31: seeing pictures', () => {
+describe('Ch 33: seeing pictures', () => {
 	const d = json('static/vision/clip.json');
 	const names: string[] = d.images.map((i: { name: string }) => i.name);
 	const best = (c: { similarity: number[] }) =>
@@ -99,7 +99,7 @@ describe('Ch 31: seeing pictures', () => {
 
 const ORDER: StageGroup[] = ['before', 'model', 'after'];
 
-describe('Ch 34: from message to reply', () => {
+describe('Ch 36: from message to reply', () => {
 	const run = json('static/agent/chat.json');
 	const trace = json('static/traces/gpt2/the-cat-sat.json');
 	const vectors = json('static/vectors/gpt2/the-cat-sat.json');
@@ -112,7 +112,7 @@ describe('Ch 34: from message to reply', () => {
 		const fromStages = parts(STAGES.flatMap((s) => s.chapters));
 		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']) expect(fromStages).toContain(p);
 		expect([...parts(VARIANTS.map((v) => v.chapter))]).toEqual(['VIII']);
-		expect(VARIANTS.map((v) => v.chapter)).toEqual([28, 29, 30, 31, 32]);
+		expect(VARIANTS.map((v) => v.chapter)).toEqual([30, 31, 32, 33, 34]);
 	});
 
 	it('lists the stages in run order: harness, then the model, then the harness again', () => {
@@ -145,7 +145,7 @@ describe('Ch 34: from message to reply', () => {
 	});
 });
 
-describe('Ch 35: check yourself', () => {
+describe('Ch 37: check yourself', () => {
 	it('asks at least one question from every Part I–VIII', () => {
 		const parts = new Set(
 			QUESTIONS.flatMap((q) => q.chapters.map((n) => chapterByNumber(n).part.number))

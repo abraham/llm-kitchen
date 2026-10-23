@@ -1,4 +1,4 @@
-# Fact-check: Part VII (Ch 21–27)
+# Fact-check: Part VII (Ch 23–29)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-7-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -8,7 +8,7 @@ Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in ea
 harness in `scripts/build-agent-traces.py`, written to `static/agent/`. The harness stops the model
 after its first tool call, runs the tool, and calls the model again, up to 8 calls.
 
-## Ch 21. The model is not the product
+## Ch 23. The model is not the product
 
 | Claim                                                                                   | Backing                                                       |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
@@ -18,7 +18,7 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | The earlier assistant turn is the model's own reply                                     | `build-agent-traces.py` generates it                          |
 | Qwen2.5 model family                                                                    | Cite `qwen2024`                                               |
 
-## Ch 22. Tools
+## Ch 24. Tools
 
 | Claim                                                                     | Backing                                                     |
 | ------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -29,7 +29,7 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | The site's `<call name>…</call>` form is simplified and made up           | Stated in the chapter; `simpleCall` in `harness/tools.ts`   |
 | The toy tools run in the browser, never `eval`, never the network         | `harness/tools.ts` (hand-written parser; test rejects code) |
 
-## Ch 23. The agent loop
+## Ch 25. The agent loop
 
 | Claim                                                                                         | Backing                 |
 | --------------------------------------------------------------------------------------------- | ----------------------- |
@@ -38,7 +38,7 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | The harness stops after the first tool call; the system prompt says to use tools for counting | `build-agent-traces.py` |
 | Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`          |
 
-## Ch 24. Managing the context
+## Ch 26. Managing the context
 
 | Claim                                                                                    | Backing                                                        |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
@@ -49,12 +49,12 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | Retrieval by embedding similarity (MiniLM) picked the cat task, and the answer was right | Test; cite `lewis2020`                                         |
 | The map uses the Ch 5 projection                                                         | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
 
-## Ch 25. Caching: reusing the work
+## Ch 27. Caching: reusing the work
 
 Data: `scripts/build-caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
 after "The cat sat on the", with and without its KV cache, three times each (median per token),
 written to `static/caching/kv-cache.json`. The prompt-cache view is computed in the browser
-(`src/lib/harness/cache.ts`) from the Ch 24 session's recorded token counts.
+(`src/lib/harness/cache.ts`) from the Ch 26 session's recorded token counts.
 
 | Claim                                                                                  | Backing                                                      |
 | -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
@@ -72,7 +72,7 @@ written to `static/caching/kv-cache.json`. The prompt-cache view is computed in 
 | Caching doesn't change the answer and isn't memory                                     | Cite both provider docs                                      |
 | Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra   | Cite both provider docs; labeled as simplified in the widget |
 
-## Ch 26. Prompt injection
+## Ch 28. Prompt injection
 
 Data: `scripts/build-injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
 (including none) × 6 defenses, written to `static/injection/lab.json`. The injected goal is a false
@@ -92,7 +92,7 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 | No prompt defense is known to stop every attack                                    | `hines2024`, `wallace2024` report reductions, not elimination |
 | Small models are easier to fool; these results show the mechanism, not real rates  | Labeled in the prose                                          |
 
-## Ch 27. Trust and guardrails
+## Ch 29. Trust and guardrails
 
 | Claim                                                                     | Backing                            |
 | ------------------------------------------------------------------------- | ---------------------------------- |
@@ -115,15 +115,15 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 - **Injection text.** The page fakes the end of the tool result and a new user message. A plain
   "ignore your instructions" note didn't make the model delete anything in testing.
 - **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
-- **Ch 25 views.** The prompt-cache view draws each call as a bar of blocks (system prompt, tasks)
+- **Ch 27 views.** The prompt-cache view draws each call as a bar of blocks (system prompt, tasks)
   rather than rows of token chips, since the prompts are hundreds of tokens long, and it shows
   tokens processed instead of a time to first token. The KV-cache timing is measured offline on one
   laptop CPU; live timing in the browser is left for later.
-- **Ch 26 goal.** The injected goal is a false claim in the summary. A first version asked for a
+- **Ch 28 goal.** The injected goal is a false claim in the summary. A first version asked for a
   reply of only a code word: the model almost never did that, but often worked the word into its
   summary ("Pineapple confirms they can volunteer…"). A second asked it to add a link, which
   worked only 3 times in 72. A false claim fits the task the model was given, which is how real
   attacks on summarizers work.
-- **Ch 26 view.** The lab shows the prompt in its own colored view rather than in the Ch 21 inspector,
+- **Ch 28 view.** The lab shows the prompt in its own colored view rather than in the Ch 23 inspector,
   and a toggle removes the colors to show what the model gets.
 - **Part order.** This was Part VI (Ch 15–21) until milestone 19 moved prompting before it.

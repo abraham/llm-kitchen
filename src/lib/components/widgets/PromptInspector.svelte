@@ -12,7 +12,7 @@
 		{ add: ['message'], text: 'Your message, as you typed it.' },
 		{
 			add: ['marker'],
-			text: 'Chat markers around each turn (Ch 13), so the model knows who said what.'
+			text: 'Chat markers around each turn (Ch 15), so the model knows who said what.'
 		},
 		{
 			add: ['history'],
@@ -24,7 +24,7 @@
 		},
 		{
 			add: ['tools'],
-			text: 'Descriptions of the tools the model may ask for, and the format to ask in (Ch 22).'
+			text: 'Descriptions of the tools the model may ask for, and the format to ask in (Ch 24).'
 		},
 		{
 			add: ['call', 'result', 'assistant'],

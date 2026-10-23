@@ -24,7 +24,7 @@ Your 31-character message became a 400-token prompt. Most of it was written by t
   instructions,
 - descriptions of the tools the model may ask for,
 - the earlier turns of the conversation, and
-- the chat markers from Ch 13 around every turn.
+- the chat markers from Ch 15 around every turn.
 
 The model has no memory between calls. It seems to remember the conversation only because the
 harness sends the whole thing again every time. Here it also asked to look up a rhyme first, so the

@@ -22,7 +22,7 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 21: peeling back the prompt', async ({ page }) => {
+test('Ch 23: peeling back the prompt', async ({ page }) => {
 	await gotoHydrated(page, '/the-model-is-not-the-product');
 	const widget = page.getByRole('region', { name: 'What the model actually sees' });
 	const raw = widget.getByLabel('The text sent to the model');
@@ -34,7 +34,7 @@ test('Ch 21: peeling back the prompt', async ({ page }) => {
 	await expect(widget.getByText('The second call: 493 tokens')).toBeVisible();
 });
 
-test('Ch 22: tools off gets it wrong, tools on gets it right', async ({ page }) => {
+test('Ch 24: tools off gets it wrong, tools on gets it right', async ({ page }) => {
 	await gotoHydrated(page, '/tools');
 	const widget = page.getByRole('region', { name: 'Tools off, tools on' });
 	await expect(widget.getByText('7,050,952').last()).toBeVisible();
@@ -44,7 +44,7 @@ test('Ch 22: tools off gets it wrong, tools on gets it right', async ({ page }) 
 	await expect(widget.getByText('The product of 1234 and 5678 is 7006652.')).toBeVisible();
 });
 
-test('Ch 23: the agent loop ends with an answer', async ({ page }) => {
+test('Ch 25: the agent loop ends with an answer', async ({ page }) => {
 	await gotoHydrated(page, '/the-agent-loop');
 	const widget = page.getByRole('region', { name: 'The agent loop' });
 	const next = widget.getByRole('button', { name: 'Next →' });
@@ -53,7 +53,7 @@ test('Ch 23: the agent loop ends with an answer', async ({ page }) => {
 	await expect(widget.getByText(/this is the answer and the loop ends/)).toBeVisible();
 });
 
-test('Ch 24: strategies change what the model can answer', async ({ page }) => {
+test('Ch 26: strategies change what the model can answer', async ({ page }) => {
 	await gotoHydrated(page, '/managing-the-context');
 	const widget = page.getByRole('region', { name: 'The context budget' });
 	await widget.getByLabel('Drop the oldest').check();
@@ -63,7 +63,7 @@ test('Ch 24: strategies change what the model can answer', async ({ page }) => {
 	await expect(widget.locator('.answer')).toContainText('30 words');
 });
 
-test('Ch 25: the KV cache and the prompt cache', async ({ page }) => {
+test('Ch 27: the KV cache and the prompt cache', async ({ page }) => {
 	await gotoHydrated(page, '/caching');
 	const kv = page.getByRole('region', { name: 'Reusing keys and values' });
 	for (let i = 0; i < 4; i++) await kv.getByRole('button', { name: 'Next →' }).click();
@@ -77,7 +77,7 @@ test('Ch 25: the KV cache and the prompt cache', async ({ page }) => {
 	await expect(view.getByText('0 (0%)')).toBeVisible();
 });
 
-test('Ch 26: an injected claim reaches the summary', async ({ page }) => {
+test('Ch 28: an injected claim reaches the summary', async ({ page }) => {
 	await gotoHydrated(page, '/prompt-injection');
 	const lab = page.getByRole('region', { name: 'The prompt injection lab' });
 	await expect(lab.getByText(/has been cancelled due to unforeseen circumstances/)).toBeVisible();
@@ -89,7 +89,7 @@ test('Ch 26: an injected claim reaches the summary', async ({ page }) => {
 	await expect(lab.locator('.note')).toContainText('with 3 role markers');
 });
 
-test('Ch 27: guardrails protect the files', async ({ page }) => {
+test('Ch 29: guardrails protect the files', async ({ page }) => {
 	await gotoHydrated(page, '/trust-and-guardrails');
 	const widget = page.getByRole('region', { name: 'A poisoned web page' });
 	await expect(widget.getByText('taxes.pdf (deleted)')).toBeVisible();

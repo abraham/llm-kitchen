@@ -1,5 +1,5 @@
 /**
- * A tiny character-level recurrent network (Elman, 1990) for Ch 30: it reads one character at a
+ * A tiny character-level recurrent network (Elman, 1990) for Ch 32: it reads one character at a
  * time and carries a fixed-size memory, the hidden state, from each character to the next.
  * Hand-written forward pass and backpropagation through time; tests check the gradients.
  */

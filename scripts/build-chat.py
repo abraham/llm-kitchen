@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record base vs. instruct outputs for Ch 13 (tier T0).
+"""Record base vs. instruct outputs for Ch 15 (tier T0).
 
 Usage:
     scripts/.venv/bin/python scripts/build-chat.py

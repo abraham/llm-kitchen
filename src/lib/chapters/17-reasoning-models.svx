@@ -7,7 +7,7 @@
 
 ## Scratch paper made of tokens
 
-Several of the quirks in Ch 14, like miscounted letters, come from answering straight away: the
+Several of the quirks in Ch 16, like miscounted letters, come from answering straight away: the
 first token of the answer has to be right with no working before it. Ask someone for 17 × 24 and
 they'll reach for paper. A language model's paper is its own output:
 every token it writes goes back in as context for the next one (Ch 11), so writing out the steps

@@ -17,7 +17,7 @@ const run = (name: string): AgentRun =>
 	JSON.parse(readFileSync(`static/agent/${name}.json`, 'utf8'));
 const calls = (r: AgentRun) => r.steps.filter((s) => s.call).map((s) => s.call!.name);
 
-describe('Ch 21: the model is not the product', () => {
+describe('Ch 23: the model is not the product', () => {
 	const chat = run('chat');
 	it('a 31-character message became a 400-token prompt, then 493', () => {
 		expect(chat.task).toHaveLength(31);
@@ -30,7 +30,7 @@ describe('Ch 21: the model is not the product', () => {
 	});
 });
 
-describe('Ch 22: tools', () => {
+describe('Ch 24: tools', () => {
 	it('without tools: 7,050,952; the right answer is 7,006,652', () => {
 		expect(run('math-no-tools').steps[0].output).toContain('7,050,952');
 		expect(calculator('1234 * 5678')).toBe('7006652');
@@ -43,7 +43,7 @@ describe('Ch 22: tools', () => {
 	});
 });
 
-describe('Ch 23: the agent loop', () => {
+describe('Ch 25: the agent loop', () => {
 	const r = run('agent-cat');
 	it('search, count, answer: 30 words', () => {
 		expect(calls(r)).toEqual(['search_rhymes', 'count_words']);
@@ -57,7 +57,7 @@ describe('Ch 23: the agent loop', () => {
 	});
 });
 
-describe('Ch 24: managing the context', () => {
+describe('Ch 26: managing the context', () => {
 	const c: ContextSession = JSON.parse(readFileSync('static/agent/context.json', 'utf8'));
 	const total = (kept: number[], note = 0) =>
 		c.baseTokens + c.questionTokens + note + kept.reduce((a, i) => a + c.turns[i].tokens, 0);
@@ -86,7 +86,7 @@ describe('Ch 24: managing the context', () => {
 	});
 });
 
-describe('Ch 25: caching', () => {
+describe('Ch 27: caching', () => {
 	const kv: KVCacheRun = JSON.parse(readFileSync('static/caching/kv-cache.json', 'utf8'));
 	const session: ContextSession = JSON.parse(readFileSync('static/agent/context.json', 'utf8'));
 
@@ -144,7 +144,7 @@ describe('Ch 25: caching', () => {
 	});
 });
 
-describe('Ch 26: prompt injection', () => {
+describe('Ch 28: prompt injection', () => {
 	const lab: InjectionLab = JSON.parse(readFileSync('static/injection/lab.json', 'utf8'));
 	const attacks = ['plain', 'notice', 'turn', 'hidden'];
 	const defenses = lab.defenses.map((d) => d.id);
@@ -190,7 +190,7 @@ describe('Ch 26: prompt injection', () => {
 	});
 });
 
-describe('Ch 27: trust and guardrails', () => {
+describe('Ch 29: trust and guardrails', () => {
 	it('no guardrails: all three files deleted, then the step limit', () => {
 		const r = run('inject-none');
 		expect(r.files.after).toEqual([]);

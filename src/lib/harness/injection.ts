@@ -1,4 +1,4 @@
-/** The Ch 26 prompt-injection lab (scripts/build-injection.py). */
+/** The Ch 28 prompt-injection lab (scripts/build-injection.py). */
 export interface InjectionRun {
 	doc: string;
 	attack: string;

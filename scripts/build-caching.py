@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure GPT-2 small generating with and without its KV cache, for Ch 25 (tier T0).
+"""Measure GPT-2 small generating with and without its KV cache, for Ch 27 (tier T0).
 
 Usage: scripts/.venv/bin/python scripts/build-caching.py
 

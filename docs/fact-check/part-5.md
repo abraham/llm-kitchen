@@ -1,4 +1,4 @@
-# Fact-check: Part V (Ch 11–15)
+# Fact-check: Part V (Ch 11–17)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-5-facts.test.ts`, `src/lib/math/chat-template.test.ts`,
@@ -6,7 +6,7 @@ Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 
 Data: GPT-2 traces from `scripts/build-traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
 instruct outputs from `scripts/build-chat.py` (`static/chat/base-vs-instruct.json`, greedy, pinned
-revisions recorded in the file). Paper figures were checked against the PDFs' text. Ch 15:
+revisions recorded in the file). Paper figures were checked against the PDFs' text. Ch 17:
 `static/reasoning/thinking.json`, Qwen3-0.6B with thinking off and on, sampled with the model card's
 recommended settings and a fixed seed, by `scripts/build-reasoning.py`; answers are graded on the
 last `\boxed{}`, which the prompt asks for.
@@ -41,7 +41,7 @@ last `\boxed{}`, which the prompt asks for.
 | e^(−loss) is the average (geometric mean) probability of the right token              | Definition of cross-entropy                                |
 | Bigger models were much better at learning a task from a few examples in the prompt   | Cite `brown2020`                                           |
 
-## Ch 13. From predictor to assistant
+## Ch 15. From predictor to assistant
 
 | Claim                                                                                 | Backing                                                                                        |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -55,7 +55,7 @@ last `\boxed{}`, which the prompt asks for.
 | Qwen2.5's tuning used over a million examples, then multistage reinforcement learning | Cite `qwen2024` (abstract)                                                                     |
 | Stage 1 example output                                                                | Real Qwen2.5-0.5B output (recorded); stage 2–3 examples are illustrations (widget is "sample") |
 
-## Ch 14. Quirks and limits
+## Ch 16. Quirks and limits
 
 | Claim                                                                                | Backing                                  |
 | ------------------------------------------------------------------------------------ | ---------------------------------------- |
@@ -70,7 +70,7 @@ last `\boxed{}`, which the prompt asks for.
 | Formatting alone changed accuracy by up to 76 points                                 | Cite `sclar2024` (abstract, LLaMA-2-13B) |
 | GPT-2's context window is 1,024 tokens; the live generator keeps only the last 1,024 | `canonical.json`; implementation         |
 
-## Ch 15. Thinking before answering
+## Ch 17. Thinking before answering
 
 | Claim                                                                                        | Backing                    |
 | -------------------------------------------------------------------------------------------- | -------------------------- |
@@ -84,13 +84,13 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Changes from the plan
 
-- **T3 (WebLLM) and T4 (bring your own key) are not built yet.** Ch 13's base vs. instruct comparison
+- **T3 (WebLLM) and T4 (bring your own key) are not built yet.** Ch 15's base vs. instruct comparison
   uses recorded outputs from Qwen2.5-0.5B and its instruct version instead of a live T3 model, and
-  Ch 14's live experiments use the live GPT-2 (T2). See PLAN.md.
+  Ch 16's live experiments use the live GPT-2 (T2). See PLAN.md.
 - **Ch 11 pipeline animation** is a compact strip of stages that lights up on each step, rather than
   a full left-to-right reuse of every earlier visual.
 - **Ch 12 scaling chart** draws Kaplan et al.'s fitted formula (with the GPT-2 sizes placed on it),
   not measured losses, and says so.
-- **Ch 14 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
-- **Ch 15 results.** The small model's thinking gave a mixed result, and the chapter says so. The
+- **Ch 16 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
+- **Ch 17 results.** The small model's thinking gave a mixed result, and the chapter says so. The
   chapter was Ch 27, in Part VII, until milestone 19 moved it here.

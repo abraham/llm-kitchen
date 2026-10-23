@@ -31,7 +31,7 @@ Asking GPT-2 "What is the capital of France?" gives *Paris* only half a percent;
 *Paris* about six times as likely. The "Q: … A:" layout works the same way: after "A:", an answer is
 what comes next.
 
-Chat models were tuned so that a plain question is already followed by an answer (Ch 13), so they
+Chat models were tuned so that a plain question is already followed by an answer (Ch 15), so they
 need less of this coaxing. The mechanism is the same: your words set up the document, and the model
 continues it. GPT-3 showed how far a large enough model can go on this alone, doing new tasks from a
 description and a few examples in the prompt, with no change to its weights.<Cite id="brown2020" />

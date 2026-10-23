@@ -6,7 +6,7 @@ Usage:
 
 Runs Qwen2.5-1.5B-Instruct (greedy, so reruns match) inside a small harness with toy tools that
 mirror src/lib/harness/tools.ts, and writes static/agent/<name>.json plus static/agent/context.json
-(the Ch 24 context-budget session). The harness stops the model after its first tool call, runs
+(the Ch 26 context-budget session). The harness stops the model after its first tool call, runs
 the tool, appends the result, and calls the model again until it answers without a tool call.
 """
 
@@ -251,7 +251,7 @@ def record_run(h: Harness, name: str, task: str, tools: list[str], *, policy: st
         print("   ", s.get("call") or "", "->", (s.get("result") or s["thought"])[:100].replace("\n", " "))
 
 
-# --- Ch 24: context budget --------------------------------------------------------------------------
+# --- Ch 26: context budget --------------------------------------------------------------------------
 
 CONTEXT_WORDS = ["cat", "lamb", "hill", "wall", "star", "clock"]
 CONTEXT_QUESTION = "How many words were in the rhyme about the cat?"
@@ -377,7 +377,7 @@ def main() -> None:
     h = Harness()
     rhyme_tools = ["search_rhymes", "count_words"]
     chat_tools = ["calculator", *rhyme_tools]
-    # An earlier exchange for the Ch 21 prompt inspector; the reply is the model's own.
+    # An earlier exchange for the Ch 23 prompt inspector; the reply is the model's own.
     hello = [{"role": "user", "content": "Hi! Can you help me with a few things?"}]
     reply = h.complete(h.prompt([{"role": "system", "content": SYSTEM}, *hello], chat_tools)).strip()
     record_run(h, "chat", "Finish this: The cat sat on the", chat_tools,

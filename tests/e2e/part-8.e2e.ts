@@ -23,7 +23,7 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 28: BERT reads both sides of the blank; GPT-2 only the left', async ({ page }) => {
+test('Ch 30: BERT reads both sides of the blank; GPT-2 only the left', async ({ page }) => {
 	await gotoHydrated(page, '/encoders');
 	const fill = page.getByRole('region', { name: 'Fill in the blank' });
 	await expect(fill.getByRole('rowheader', { name: 'top' })).toBeVisible();
@@ -36,7 +36,7 @@ test('Ch 28: BERT reads both sides of the blank; GPT-2 only the left', async ({ 
 	await expect(mask.getByText(/can look at 10 of 10 tokens/)).toBeVisible();
 });
 
-test('Ch 29: each token goes to k of 8 experts', async ({ page }) => {
+test('Ch 31: each token goes to k of 8 experts', async ({ page }) => {
 	await gotoHydrated(page, '/mixture-of-experts');
 	const widget = page.getByRole('region', { name: 'Send each token to a few experts' });
 	await expect(widget.getByText('(chosen)')).toHaveCount(10);
@@ -46,7 +46,7 @@ test('Ch 29: each token goes to k of 8 experts', async ({ page }) => {
 	await expect(widget.getByText(/uses 12.5% of the experts' weights/)).toBeVisible();
 });
 
-test('Ch 30: the recurrent model trains; attention memory grows', async ({ page }) => {
+test('Ch 32: the recurrent model trains; attention memory grows', async ({ page }) => {
 	await gotoHydrated(page, '/recurrent-models');
 	const rnn = page.getByRole('region', { name: 'A model with a memory' });
 	await rnn.getByRole('button', { name: 'Train' }).click();
@@ -62,7 +62,7 @@ test('Ch 30: the recurrent model trains; attention memory grows', async ({ page 
 	await expect(growth.getByText('32 numbers', { exact: true })).toBeVisible();
 });
 
-test('Ch 31: patches and matching captions', async ({ page }) => {
+test('Ch 33: patches and matching captions', async ({ page }) => {
 	await gotoHydrated(page, '/seeing-pictures');
 	const patches = page.getByRole('region', { name: 'Cut a picture into tokens' });
 	await patches.getByRole('slider', { name: /Patch/ }).fill('0');
@@ -73,7 +73,7 @@ test('Ch 31: patches and matching captions', async ({ page }) => {
 	await expect(match.locator('li.best img')).toHaveAttribute('alt', 'A blue star');
 });
 
-test('Ch 32: the diffusion toy trains and paints', async ({ page }) => {
+test('Ch 34: the diffusion toy trains and paints', async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await gotoHydrated(page, '/diffusion');
 	const widget = page.getByRole('region', { name: 'Painting from noise' });
@@ -82,7 +82,7 @@ test('Ch 32: the diffusion toy trains and paints', async ({ page }) => {
 	await expect(widget.getByText(/Done: the noise has become a new ring/)).toBeVisible();
 });
 
-test('Ch 33: zoom into the model', async ({ page }) => {
+test('Ch 35: zoom into the model', async ({ page }) => {
 	await gotoHydrated(page, '/recap');
 	const picture = page.getByRole('region', { name: 'The whole picture' });
 	await picture.getByRole('button', { name: 'Zoom in on the model' }).click();
@@ -90,13 +90,13 @@ test('Ch 33: zoom into the model', async ({ page }) => {
 	await expect(picture.getByRole('link', { name: /Ch 9: Attention/ })).toBeVisible();
 	await picture.getByRole('button', { name: 'The model' }).click();
 	await picture.getByRole('button', { name: 'Zoom in on other kinds of models' }).click();
-	await expect(picture.getByRole('link', { name: /Ch 32: Painting from noise/ })).toBeVisible();
+	await expect(picture.getByRole('link', { name: /Ch 34: Painting from noise/ })).toBeVisible();
 	await picture.getByRole('button', { name: 'A chat app or agent' }).click();
 	await picture.getByRole('button', { name: 'Zoom in on you' }).click();
-	await expect(picture.getByRole('link', { name: /Ch 17: Learning from examples/ })).toBeVisible();
+	await expect(picture.getByRole('link', { name: /Ch 19: Learning from examples/ })).toBeVisible();
 });
 
-test('Ch 34: step through one message and follow a link', async ({ page }) => {
+test('Ch 36: step through one message and follow a link', async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: 'reduce' });
 	await gotoHydrated(page, '/end-to-end');
 	const widget = page.getByRole('region', { name: 'One message, start to finish' });
@@ -122,11 +122,11 @@ test('Ch 34: step through one message and follow a link', async ({ page }) => {
 	await widget.getByRole('button', { name: /You see the reply/ }).click();
 	await expect(detail).toContainText('Hey Diddle Diddle');
 
-	await detail.getByRole('link', { name: /Ch 21:/ }).click();
+	await detail.getByRole('link', { name: /Ch 23:/ }).click();
 	await expect(page).toHaveURL(/\/the-model-is-not-the-product\/?$/);
 });
 
-test('Ch 35: take the quiz and see what to revisit', async ({ page }) => {
+test('Ch 37: take the quiz and see what to revisit', async ({ page }) => {
 	await gotoHydrated(page, '/quiz');
 	const quiz = page.getByRole('region', { name: 'Quick check' });
 	for (const answer of [

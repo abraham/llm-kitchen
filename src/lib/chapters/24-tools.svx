@@ -8,7 +8,7 @@
 ## Arithmetic, one token at a time
 
 Ask a model to multiply two four-digit numbers and it writes the answer the only way it can: one
-likely-looking token after another (Ch 14). Sometimes that works. Often it doesn't. Now give it a
+likely-looking token after another (Ch 16). Sometimes that works. Often it doesn't. Now give it a
 calculator:
 
 <ToolsDemo />
@@ -19,7 +19,7 @@ Without tools, the model wrote out a long multiplication and got 7,050,952. The 
 ## A tool call is just text
 
 The model can't press buttons or run programs. A <GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
-format, like the answer line in Ch 19, but for the harness to act on. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
+format, like the answer line in Ch 21, but for the harness to act on. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
 Then:
 
 1. The harness watches the model's output for that format and stops it there.

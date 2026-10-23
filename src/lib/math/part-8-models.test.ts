@@ -32,7 +32,7 @@ function gradCheck(
 	}
 }
 
-describe('Router (Ch 29)', () => {
+describe('Router (Ch 31)', () => {
 	it('sends each token to its k best experts, with weights that add up to 1', () => {
 		const router = new Router(8, 16, 3);
 		const random = seededRandom(4);
@@ -45,7 +45,7 @@ describe('Router (Ch 29)', () => {
 	});
 });
 
-describe('CharRNN (Ch 30)', () => {
+describe('CharRNN (Ch 32)', () => {
 	const text = RHYMES[0].text.toLowerCase();
 	const vocab = [...new Set(text)].sort();
 	const seq = [...text.slice(0, 20)].map((c) => vocab.indexOf(c));
@@ -87,7 +87,7 @@ describe('CharRNN (Ch 30)', () => {
 	});
 });
 
-describe('Diffusion (Ch 32)', () => {
+describe('Diffusion (Ch 34)', () => {
 	it('noises points until almost nothing of the original is left', () => {
 		expect(ALPHA_BARS[0]).toBeGreaterThan(0.99);
 		expect(ALPHA_BARS[STEPS - 1]).toBeLessThan(0.01);

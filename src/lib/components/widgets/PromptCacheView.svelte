@@ -29,7 +29,7 @@
 			{@const totals = cacheTotals(calls)}
 			{@const widest = Math.max(...cacheCalls(s, 'append').map((c) => c.tokens))}
 			<p class="intro">
-				The Ch 24 session: the agent does six tasks, then you ask a question. Each row is the prompt
+				The Ch 26 session: the agent does six tasks, then you ask a question. Each row is the prompt
 				the harness sends, drawn to scale. The shaded start of each row matches an earlier prompt
 				exactly, so it can be read from the cache.
 			</p>

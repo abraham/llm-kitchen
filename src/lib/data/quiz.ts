@@ -31,7 +31,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 0,
 		why: 'The word reaches it as one or a few token numbers.',
-		chapters: [4, 14]
+		chapters: [4, 16]
 	},
 	{
 		q: 'Where do a model’s weights come from?',
@@ -79,7 +79,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 2,
 		why: 'It is still predicting tokens; it was trained to write its working first.',
-		chapters: [15]
+		chapters: [17]
 	},
 	{
 		q: 'You add four worked examples to a prompt. What changes inside the model?',
@@ -91,14 +91,14 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'In-context learning uses the examples as context; no weights change.',
-		chapters: [17]
+		chapters: [19]
 	},
 	{
 		q: 'When an assistant uses a calculator, who actually runs it?',
 		options: ['The model', 'The harness', 'The tokenizer', 'The user'],
 		answer: 1,
 		why: 'The model only writes a tool call as text; the harness runs it.',
-		chapters: [22]
+		chapters: [24]
 	},
 	{
 		q: 'An agent re-sends its whole, growing conversation on every call. Why is that often cheaper than it sounds?',
@@ -110,7 +110,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'Prompt caching keeps the keys and values for a prompt’s exact start; the model itself remembers nothing.',
-		chapters: [25]
+		chapters: [27]
 	},
 	{
 		q: 'Why can a hidden line in a web page change what a summarizer writes?',
@@ -122,7 +122,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'Nothing marks which words came from you and which from the page.',
-		chapters: [26]
+		chapters: [28]
 	},
 	{
 		q: 'A web page tells the agent to delete your files. What stops it?',
@@ -134,7 +134,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'To the model, the page is just more text; the harness has to supply the safety.',
-		chapters: [27]
+		chapters: [29]
 	},
 	{
 		q: 'Why can BERT fill in a blank in the middle of a sentence better than GPT-2?',
@@ -146,6 +146,6 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'An encoder lets every token see every other token, both before and after.',
-		chapters: [28]
+		chapters: [30]
 	}
 ];

@@ -7,7 +7,7 @@
 
 ## The slot at the top
 
-The chat template (Ch 13) has a slot ahead of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
+The chat template (Ch 15) has a slot ahead of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
 instructions that apply to the whole chat. In a chat app, its makers write it and you never see
 it; when you use a model directly, you write it yourself. Chat models were tuned on examples of an
 assistant following instructions, and on

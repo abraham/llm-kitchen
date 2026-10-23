@@ -110,118 +110,118 @@ export const GLOSSARY = {
 		term: 'base model',
 		definition:
 			'A model trained only to predict the next token of ordinary text, before any tuning to act as an assistant.',
-		chapter: 13
+		chapter: 15
 	},
 	'chat-template': {
 		term: 'chat template',
 		definition:
 			'The fixed text format, with special marker tokens, that turns a conversation into one piece of text for the model.',
-		chapter: 13
+		chapter: 15
 	},
 	hallucination: {
 		term: 'hallucination',
 		definition: 'Fluent, confident text that is false or made up.',
-		chapter: 14
+		chapter: 16
 	},
 	harness: {
 		term: 'harness',
 		definition:
 			'The ordinary code around a model that builds its prompt, calls it, and acts on its output.',
-		chapter: 21
+		chapter: 23
 	},
 	'system-prompt': {
 		term: 'system prompt',
 		definition:
 			'Instructions in a slot at the start of the chat template that apply to the whole conversation; in apps, usually hidden from the user.',
-		chapter: 18
+		chapter: 20
 	},
 	retrieval: {
 		term: 'retrieval',
 		definition:
 			'Finding the stored text most relevant to a question (often by comparing embeddings) and putting it into the prompt.',
-		chapter: 24
+		chapter: 26
 	},
 	'tool-call': {
 		term: 'tool call',
 		definition:
 			'Text the model writes in an agreed format asking the harness to run a tool, such as a calculator.',
-		chapter: 22
+		chapter: 24
 	},
 	agent: {
 		term: 'agent',
 		definition:
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
-		chapter: 23
+		chapter: 25
 	},
 	'kv-cache': {
 		term: 'KV cache',
 		definition:
 			'The keys and values a model has already worked out for earlier tokens, stored so each new token only has to compute its own.',
-		chapter: 25
+		chapter: 27
 	},
 	'prompt-caching': {
 		term: 'prompt caching',
 		definition:
 			'A provider keeping the KV cache for the start of a prompt, so a later prompt that starts the same way is cheaper and faster.',
-		chapter: 25
+		chapter: 27
 	},
 	'prompt-injection': {
 		term: 'prompt injection',
 		definition:
 			'Instructions hidden in text the model reads (like a web page) that try to override the real instructions.',
-		chapter: 26
+		chapter: 28
 	},
 	encoder: {
 		term: 'encoder',
 		definition:
 			'A transformer that reads the whole text at once, words before and after, to understand it rather than continue it.',
-		chapter: 28
+		chapter: 30
 	},
 	'mixture-of-experts': {
 		term: 'mixture of experts (MoE)',
 		definition:
 			'A model whose MLPs are split into many experts, with a router sending each token to only a few of them.',
-		chapter: 29
+		chapter: 31
 	},
 	'recurrent-model': {
 		term: 'recurrent model',
 		definition:
 			'A model that reads one token at a time and carries a fixed-size memory from each token to the next.',
-		chapter: 30
+		chapter: 32
 	},
 	multimodal: {
 		term: 'multimodal model',
 		definition: 'A model that takes in more than one kind of input, such as text and pictures.',
-		chapter: 31
+		chapter: 33
 	},
 	diffusion: {
 		term: 'diffusion model',
 		definition:
 			'A model that makes pictures (or other data) by starting from random noise and removing a little of it at each step.',
-		chapter: 32
+		chapter: 34
 	},
 	'reasoning-model': {
 		term: 'reasoning model',
 		definition:
 			'A language model trained to write out its working before it answers, spending more tokens to get more right.',
-		chapter: 15
+		chapter: 17
 	},
 	'prompt-engineering': {
 		term: 'prompt engineering',
 		definition:
 			'Choosing the text a model continues so that the answer you want becomes the likely continuation.',
-		chapter: 16
+		chapter: 18
 	},
 	'in-context-learning': {
 		term: 'in-context learning',
 		definition:
 			'A model picking up a task from examples in its prompt, without any change to its weights.',
-		chapter: 17
+		chapter: 19
 	},
 	'chain-of-thought': {
 		term: 'chain of thought',
 		definition: 'Working written out step by step before the answer, by the model itself.',
-		chapter: 19
+		chapter: 21
 	}
 } as const satisfies Record<string, GlossaryEntry>;
 
