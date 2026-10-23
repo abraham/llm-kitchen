@@ -42,7 +42,9 @@
 
 	<div class="slider">
 		<label for="{id}-size" class="label"
-			>Window: the last <span class="mono">{size}</span> words</label
+			>Window: the last <span class="mono value" style:min-width="{String(words.length).length}ch"
+				>{size}</span
+			> words</label
 		>
 		<input id="{id}-size" type="range" min="1" max={words.length} bind:value={size} />
 		<span class="presets">
@@ -127,6 +129,13 @@
 	input[type='range'] {
 		accent-color: var(--c-token);
 		min-width: 12rem;
+	}
+
+	/* Room for the widest number, so the slider after the label stays put. */
+	.value {
+		display: inline-block;
+		text-align: end;
+		letter-spacing: normal;
 	}
 
 	.presets {

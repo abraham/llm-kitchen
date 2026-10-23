@@ -32,6 +32,13 @@
 	const loss = $derived(kaplanLoss(n));
 	const ticks = Array.from({ length: X1 - X0 + 1 }, (_, i) => X0 + i);
 	const lossTicks = [2, 3, 4, 5, 6, 7];
+	// The label reserves room for its longest value, so the slider after it stays put.
+	const widest = Math.max(
+		...Array.from(
+			{ length: (X1 - X0) / 0.05 + 1 },
+			(_, i) => formatCount(10 ** (X0 + i * 0.05)).length
+		)
+	);
 </script>
 
 <WidgetFrame
@@ -83,7 +90,9 @@
 	</svg>
 
 	<div class="slider">
-		<label for="{id}-n" class="label">Weights: <span class="mono">{formatCount(n)}</span></label>
+		<label for="{id}-n" class="label"
+			>Weights: <span class="mono value" style:min-width="{widest}ch">{formatCount(n)}</span></label
+		>
 		<input id="{id}-n" type="range" min={X0} max={X1} step="0.05" bind:value={exponent} />
 	</div>
 	<p class="readout" aria-live="polite">
@@ -163,6 +172,12 @@
 	input[type='range'] {
 		accent-color: var(--c-loss);
 		min-width: 14rem;
+	}
+
+	.value {
+		display: inline-block;
+		/* The label's tracking would make each character wider than 1ch. */
+		letter-spacing: normal;
 	}
 
 	.readout {
