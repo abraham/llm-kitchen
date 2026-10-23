@@ -18,7 +18,7 @@ probabilities exactly.
 
 ## Data
 
-Recorded by `scripts/record/speculative.py` (`static/data/speculative/gpt2.json`): greedy, on four prompts
+Recorded by `scripts/record/speculative.py` (`static/data/speculative/gpt2/drafts.json`): greedy, on four prompts
 with easy and hard stretches. The script checks that the result equals GPT-2 medium's own greedy
 output.
 

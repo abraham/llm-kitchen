@@ -1,5 +1,5 @@
 {
-	"dataset": "quantize/gpt2",
+	"dataset": "quantize/precisions",
 	"version": 1,
 	"script": "record/quantize.py",
 	"models": [

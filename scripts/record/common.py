@@ -9,6 +9,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "static" / "data"
 CANONICAL = json.loads((ROOT / "models" / "canonical.json").read_text())
+EMBEDDER = json.loads((ROOT / "models" / "embedder.json").read_text())
+# Datasets recorded from the canonical model live in a folder per model, so a switch keeps both.
+PER_MODEL = ("traces", "vectors", "quantize", "speculative")
+# Where write_dataset writes; `check` points it at a temporary folder.
+OUTPUT = DATA
 
 # Bump when a dataset's shape changes, together with its version in src/lib/datasets/registry.ts.
 VERSION = 1
@@ -22,12 +27,12 @@ def revision(model_id: str) -> str | None:
     return path.parent.name if path.parent.parent.name == "snapshots" else None
 
 
-def dataset_file(dataset_id: str) -> Path:
-    """Where a dataset lives under static/data/ (traces and vectors are per canonical model)."""
+def dataset_file(dataset_id: str, root: Path = DATA) -> Path:
+    """Where a dataset lives under static/data/ (some kinds in a folder per canonical model)."""
     kind, _, name = dataset_id.partition("/")
-    if kind in ("traces", "vectors"):
-        return DATA / kind / CANONICAL["id"] / f"{name}.json"
-    return DATA / f"{dataset_id}.json"
+    if kind in PER_MODEL:
+        return root / kind / CANONICAL["id"] / f"{name}.json"
+    return root / f"{dataset_id}.json"
 
 
 def _models(data: dict) -> list[dict]:
@@ -68,11 +73,11 @@ def write_dataset(dataset_id: str, data: dict, script: str, *, compact: bool = F
         "generatedAt": data.get("generatedAt") or datetime.date.today().isoformat(),
         "data": data,
     }
-    path = dataset_file(dataset_id)
+    path = dataset_file(dataset_id, OUTPUT)
     path.parent.mkdir(parents=True, exist_ok=True)
     layout = {"separators": (",", ":")} if compact else {"indent": "\t"}
     path.write_text(json.dumps(envelope, ensure_ascii=False, **layout) + "\n")
-    print(path.relative_to(ROOT))
+    print(path.relative_to(ROOT) if path.is_relative_to(ROOT) else path)
     return path
 
 

@@ -1,6 +1,6 @@
 import type { Token } from '#lib/models/provider.ts';
 
-/** static/speculative/gpt2.json, written by scripts/build-speculative.py. */
+/** The `speculative/drafts` dataset, written by scripts/record/speculative.py. */
 export interface SpeculativeRecording {
 	version: 1;
 	drafter: SpeculativeModel;

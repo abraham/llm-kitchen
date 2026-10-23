@@ -18,5 +18,5 @@ test('tokens become vectors, and the map shows neighbors and the analogy', async
 
 	// The live option asks before downloading anything.
 	await map.getByRole('button', { name: 'Add your own words…' }).click();
-	await expect(map.getByRole('button', { name: /Download about 50 MB and run it/ })).toBeVisible();
+	await expect(map.getByRole('button', { name: /Download about 51 MB and run it/ })).toBeVisible();
 });

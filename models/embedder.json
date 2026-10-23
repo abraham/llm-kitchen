@@ -1,0 +1,8 @@
+{
+	"id": "minilm",
+	"displayName": "all-MiniLM-L6-v2",
+	"huggingFaceId": "sentence-transformers/all-MiniLM-L6-v2",
+	"onnxId": "Xenova/all-MiniLM-L6-v2",
+	"onnxRevision": "751bff37182d3f1213fa05d7196b954e230abad9",
+	"onnxMB": 24
+}

@@ -1,39 +1,35 @@
+import embedder from '../../../models/embedder.json';
 import { send, webgpuAvailable } from './inference-client.ts';
 import { canonical } from './provider.ts';
 
 /** A model that runs in the visitor's browser (tier T2). Shown only after they agree to the download. */
 export interface BrowserModelSpec {
 	id: string;
+	revision: string;
 	label: string;
 	task: 'embed' | 'next-token';
 	/** ONNX file to load instead of the default. */
 	file?: string;
-	/** Approximate one-time download, in MB, including the runtime. */
-	downloadMB: number;
+	/** Approximate one-time download of the model files, in MB; the runtime comes on top. */
 	modelMB: number;
-	runtimeMB: number;
 }
 
-const RUNTIME_MB = 27;
-
 export const MINILM: BrowserModelSpec = {
-	id: 'Xenova/all-MiniLM-L6-v2',
-	label: 'all-MiniLM-L6-v2',
+	id: embedder.onnxId,
+	revision: embedder.onnxRevision,
+	label: embedder.displayName,
 	task: 'embed',
-	modelMB: 23,
-	runtimeMB: RUNTIME_MB,
-	downloadMB: 23 + RUNTIME_MB
+	modelMB: embedder.onnxMB
 };
 
 /** The canonical small model, compressed to 8 bits. */
 export const CANONICAL_LIVE: BrowserModelSpec = {
 	id: canonical.onnxId,
+	revision: canonical.onnxRevision,
 	label: `${canonical.displayName} (8-bit)`,
 	task: 'next-token',
 	file: canonical.onnxFile,
-	modelMB: canonical.onnxMB,
-	runtimeMB: RUNTIME_MB,
-	downloadMB: canonical.onnxMB + RUNTIME_MB
+	modelMB: canonical.onnxMB
 };
 
 export type ModelStatus =
@@ -58,7 +54,14 @@ export class BrowserModel {
 		try {
 			const device = (await webgpuAvailable()) ? 'webgpu' : 'wasm';
 			await send(
-				{ type: 'load', task: this.spec.task, model: this.spec.id, device, file: this.spec.file },
+				{
+					type: 'load',
+					task: this.spec.task,
+					model: this.spec.id,
+					revision: this.spec.revision,
+					device,
+					file: this.spec.file
+				},
 				(p) => {
 					files[p.file] = { loaded: p.loaded, total: p.total };
 					const all = Object.values(files);

@@ -8,7 +8,7 @@
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { writtenAfter, type SpeculativeRecording } from '#lib/math/speculative.ts';
 
-	const data = useDataset('speculative/gpt2');
+	const data = useDataset('speculative/drafts');
 	const id = $props.id();
 	let choice = $state(0);
 	let stepper = $state(new Stepper(1));

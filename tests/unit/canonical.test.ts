@@ -12,6 +12,7 @@ describe('models/canonical.json', () => {
 			'displayName',
 			'huggingFaceId',
 			'onnxId',
+			'onnxRevision',
 			'onnxFile',
 			'onnxMB',
 			'tokenizer',
@@ -21,7 +22,8 @@ describe('models/canonical.json', () => {
 			'embeddingSize',
 			'mlpSize',
 			'vocabularySize',
-			'contextLength'
+			'contextLength',
+			'draftTarget'
 		]) {
 			expect(canonical).toHaveProperty(key);
 		}

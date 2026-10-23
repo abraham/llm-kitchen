@@ -56,6 +56,8 @@ scripts/.venv/bin/pip install -r scripts/requirements.txt
 scripts/.venv/bin/python -m scripts.record traces          # GPT-2 small traces, about 550 MB
 scripts/.venv/bin/python -m scripts.record traces the-cat-sat   # just one trace
 scripts/.venv/bin/python -m scripts.record all             # everything
+scripts/.venv/bin/python -m scripts.record check encoder   # re-record into a temp folder and compare
+scripts/.venv/bin/python -m scripts.record check live      # the live models' pinned downloads
 ```
 
 `traces` checks `models/canonical.json` against the model's own config before writing anything.
