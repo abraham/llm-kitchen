@@ -480,7 +480,7 @@ llm-kitchen/
 
 ## 7. Milestones
 
-Each chapter milestone (5–10, 14, 15, and 18) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510-14-15-and-18) for its chapters. Milestone 12 is a final review of those facts across the whole site.
+Each chapter milestone (5–10, 14, 15, 18, and 20) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510-14-15-18-and-20) for its chapters. Milestone 12 is a final review of those facts across the whole site.
 
 1. **Foundation: scaffold and CI**
    - SvelteKit + adapter-static + mdsvex scaffold with the `[chapter]` route and one placeholder `.svx` chapter.
@@ -567,8 +567,21 @@ Each chapter milestone (5–10, 14, 15, and 18) includes the [per-chapter fact-c
     - **Keep the spec and the code in step:** a unit test checks that the Parts, numbers, titles, slugs, and builds-on lists in `meta.ts` match CURRICULUM.md's tables. Reorder §3 of this plan to match, and update CURRICULUM.md's Status.
     - _Done when:_ the site reads in the new order, every chapter's Next question is answered by the chapter after it, every chapter number in prose, tests, and docs matches the new curriculum, the old URLs still load the same chapters, and the spec test passes.
     - v1: done. The renumbering is its own commit; §3 of this plan now follows the new order. Besides the listed content changes, forward references that the move created (in Ch 11, 14, 22, and 25) were reworded, the system prompt's glossary entry now points at Ch 18, reasoning models sit with the model in the recap diagram, and the quiz follows the new order. The fact-check, unit, and e2e files named by Part moved with their chapters.
+20. **End to end, and the quiz in its own chapter**
+    - **Organization first:** add two chapters to the Wrap-up in [docs/CURRICULUM.md](CURRICULUM.md), after the recap: Ch 34 _From message to reply_ (`end-to-end`) and Ch 35 _Check yourself_ (`quiz`). Both are new, so no existing chapter is renumbered. Update `meta.ts` (rows and descriptions) to match; the spec test keeps them in step.
+    - **Ch 34, From message to reply:** one box diagram of the whole process, in the order it runs, for a single message. The recap's diagram (Ch 33) shows what the pieces _are_; this one shows the order they run in.
+      - **Stages, each a box linked to its chapter:** you type a message (Ch 21); the harness builds the prompt from the system prompt, tool definitions, earlier turns, and the chat template (Ch 13, 18, 21); the provider reuses the cached start of the prompt (Ch 25); the tokenizer turns text into token IDs (Ch 3, 4); each token becomes a vector plus its position (Ch 5); the stack of transformer blocks refines the vectors with attention and MLPs (Ch 6, 8–10); the last vector becomes a probability for every token (Ch 1, 2); one token is picked (Ch 2); it is appended and the model runs again, reusing the KV cache, until an end-of-turn token (Ch 11, 25), with a reasoning model's scratch work as part of this loop (Ch 15); the harness reads the reply and, if it is a tool call, checks it against its guardrails (Ch 27), runs it, adds the result, and calls the model again (Ch 22, 23); when the conversation grows too long, the harness trims, summarizes, or retrieves (Ch 24); the reply is shown to you.
+      - **Loops drawn as loops:** the token loop sits inside the model call, and the agent loop sits around it, as in Ch 23. Text from tool results is colored as untrusted where it enters the prompt (Ch 26).
+      - **A running example:** the recorded Ch 21 conversation ("Finish this: The cat sat on the", one `search_rhymes` call, then the answer), so every box shows the real input and output at that stage. Stages inside the model, where Qwen's internals weren't recorded, show GPT-2 small's recorded run on the same words, labeled as such.
+      - **Interaction:** step through the stages (StepController, keyboard, reduced motion) or jump to any box; each box's caption says what happens and links back. On phones the diagram stacks vertically, with the loops as labeled return arrows.
+      - **Other kinds of models** get one closing box: each swaps one stage (the attention mask, the MLP, what counts as a token, or the generation loop) and links to Ch 28–32.
+    - **Ch 35, Check yourself:** the quiz moves out of the recap into its own chapter, extended so every Part I–VIII has at least one question. Each explanation links to its chapter, and the score lists the chapters to revisit for the questions missed.
+    - **Recap (Ch 33):** drops the quiz and keeps the paragraph and the zoomable diagram. Its Next question leads into Ch 34, and Ch 34's leads into Ch 35.
+    - **Tests:** a unit test that every Part I–VII is linked from at least one stage of Ch 34 and every Part I–VIII from at least one quiz question; e2e tests that step through Ch 34, follow a box's link, and complete the quiz on its new page; axe and phone-width checks for both pages.
+    - **Fact-check:** Ch 34 states nothing new, so its claims are checked against the chapters it links (the same numbers and the same order of operations); add both chapters to `docs/fact-check/part-8.md` with the recap.
+    - _Done when:_ Ch 34 walks one message through every stage with real data and links, Ch 35 holds the quiz with every Part covered, the recap no longer has a quiz, and CURRICULUM.md, `meta.ts`, and the spec test agree.
 
-### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, and 18)
+### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, 18, and 20)
 
 A chapter isn't done until its fact-check is done in the same PR:
 
