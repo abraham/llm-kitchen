@@ -318,29 +318,44 @@ llm-kitchen/
 
 ## 7. Milestones
 
-1. **Foundation**
-   - SvelteKit + adapter-static + mdsvex scaffold, chapter layout, step controller, design tokens, reduced-motion support (`prefersReducedMotion` from `svelte/motion`).
-   - Prettier, ESLint, `svelte-check`, Vitest, and Playwright set up with `npm run` scripts, plus the `ci.yml` workflow and Dependabot.
-   - Firebase Hosting project, `firebase.json`, Workload Identity Federation via `npx @abraham/firebase-wif setup`, and GitHub Actions for live deploys and PR preview channels.
-   - Primitives: `TokenChip`, `ProbBars`, `SamplerWheel`, plus `WidgetFrame`, `DataSourceBadge`, light/dark themes, and self-hosted fonts.
-2. **Part I (Ch 0–3)**
+1. **Foundation: scaffold and CI**
+   - SvelteKit + adapter-static + mdsvex scaffold with the `[chapter]` route and one placeholder `.svx` chapter.
+   - Prettier, ESLint, `svelte-check`, Vitest, and Playwright set up with `npm run` scripts.
+   - `ci.yml` with `ci-success`, Dependabot, `.nvmrc`, and branch protection on `main`.
+   - *Done when:* the placeholder chapter prerenders and a PR shows a green `ci-success`.
+2. **Foundation: deploys**
+   - Firebase Hosting project, `.firebaserc`, and `firebase.json` (CSP, caching headers, `cleanUrls`).
+   - Workload Identity Federation via `npx @abraham/firebase-wif setup` (`production` and `preview` environments).
+   - `firebase-hosting-pr.yml` and `firebase-hosting-merge.yml`.
+   - *Done when:* a PR gets a working preview URL comment, and merging to `main` updates the live site.
+3. **Foundation: design system**
+   - `tokens.css` with light/dark themes and concept colors (contrast-checked), self-hosted subset fonts.
+   - Chapter shell: `ChapterLayout`, `ProgressNav`, `IngredientsBox`, `RecapCard`, `GlossaryPopover`.
+   - `WidgetFrame` and `DataSourceBadge`.
+   - *Done when:* the placeholder chapter uses the full chapter shell in both themes and passes an axe check.
+4. **Foundation: interaction and data core**
+   - `StepController` (scroll, Prev/Next buttons, ← and → keys) and reduced-motion support (`prefersReducedMotion` from `svelte/motion`).
+   - Primitives: `TokenChip`, `ProbBars`, `SamplerWheel`.
+   - `ModelProvider` interface, the recorded-trace (T0) provider, and `models/canonical.json`.
+   - *Done when:* a demo widget steps through a hand-written sample trace using all three primitives, with and without reduced motion.
+5. **Part I (Ch 0–3)**
    - Bigram builder, temperature/top-k widget.
    - T0 traces pipeline (`build-traces.py`).
-3. **Part II (Ch 4–5)**
+6. **Part II (Ch 4–5)**
    - BPE stepper, live tokenizer (T1), embedding map.
    - First T2 integration (embeddings in a worker).
-4. **Part III (Ch 6–7)**
+7. **Part III (Ch 6–7)**
    - Neuron playground, gradient descent visual, in-browser tiny trainer (hand-written forward pass, backprop, and optimizer in `math/`, running in `trainer.worker.ts`; no TF.js).
-5. **Part IV (Ch 8–10)**
+8. **Part IV (Ch 8–10)**
    - Attention viewer (T0, then T2 with real GPT-2 attention), transformer block assembly.
-6. **Part V (Ch 11–14)**
+9. **Part V (Ch 11–14)**
    - Glass-box generator (the main demo), scale explorer, base vs. instruct (T3), quirks lab.
    - Optional bring-your-own-key provider (T4).
-7. **Part VI (Ch 15–20)**
-   - Prompt inspector, toy tools and tool registry, agent stepper (T0 traces of agent runs), context budget with retrieval, prompt injection demo, recap.
-   - Live tool calling via T3/T4, limited to the toy tools.
-8. **Polish**
-   - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, custom domain on Firebase Hosting.
+10. **Part VI (Ch 15–20)**
+    - Prompt inspector, toy tools and tool registry, agent stepper (T0 traces of agent runs), context budget with retrieval, prompt injection demo, recap.
+    - Live tool calling via T3/T4, limited to the toy tools.
+11. **Polish**
+    - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, custom domain on Firebase Hosting.
 
 ---
 
