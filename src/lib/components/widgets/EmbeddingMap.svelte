@@ -34,6 +34,40 @@
 		};
 	}
 
+	/**
+	 * Which words get a text label: the important ones always, the rest only where they don't
+	 * overlap a label already placed. Hidden ones still show their name on hover.
+	 */
+	function visibleLabels(
+		points: { word: string; x: number; y: number }[],
+		important: Set<string>,
+		sx: (x: number) => number,
+		sy: (y: number) => number
+	): Set<string> {
+		const order = [...points].sort(
+			(a, b) => Number(important.has(b.word)) - Number(important.has(a.word))
+		);
+		const boxes: { x: number; y: number; w: number; h: number }[] = [];
+		const shown: string[] = [];
+		for (const p of order) {
+			const big = important.has(p.word);
+			const box = {
+				x: sx(p.x) + 6,
+				y: sy(p.y) - (big ? 9 : 7),
+				w: p.word.length * (big ? 7.5 : 5.2),
+				h: big ? 13 : 10
+			};
+			const hit = boxes.some(
+				(b) => box.x < b.x + b.w && b.x < box.x + box.w && box.y < b.y + b.h && b.y < box.y + box.h
+			);
+			if (big || !hit) {
+				boxes.push(box);
+				shown.push(p.word);
+			}
+		}
+		return new Set(shown);
+	}
+
 	async function addWord(d: EmbeddingMapData) {
 		const word = newWord.trim().toLowerCase();
 		if (!word || added.some((a) => a.word === word)) return;
@@ -76,6 +110,17 @@
 			{@const wo = pos('woman')}
 			{@const ax = k.x - m.x + wo.x}
 			{@const ay = k.y - m.y + wo.y}
+			{@const labels = visibleLabels(
+				all,
+				new Set([
+					current.word,
+					...current.neighbors.map((n) => n.word),
+					...(showAnalogy ? ['king', 'man', 'woman', 'queen'] : []),
+					...added.map((a) => a.word)
+				]),
+				sx,
+				sy
+			)}
 
 			<div class="controls">
 				<label class="label" for="{id}-word">Word</label>
@@ -150,7 +195,7 @@
 					>
 						<title>{w.word}</title>
 						<circle cx={sx(w.x)} cy={sy(w.y)} r={w.word === current.word ? 6 : 4} />
-						<text x={sx(w.x) + 7} y={sy(w.y) + 4}>{w.word}</text>
+						{#if labels.has(w.word)}<text x={sx(w.x) + 7} y={sy(w.y) + 4}>{w.word}</text>{/if}
 					</g>
 				{/each}
 			</svg>

@@ -25,6 +25,17 @@ npx playwright install chromium   # once
 npm run test:e2e       # Playwright against a production build
 ```
 
+The e2e suite also checks every page for axe violations (light and dark), sideways scrolling on a
+phone-sized screen, and a JavaScript budget (150 KB gzipped; 350 KB on the two pages that run the
+GPT-2 tokenizer).
+
+Screenshot tests run locally only, because baselines differ between operating systems:
+
+```sh
+npm run test:visual                         # compare with tests/visual/*-snapshots
+npm run test:visual -- --update-snapshots=all   # accept intended changes
+```
+
 Chapters live in `src/lib/chapters/NN-slug.svx` and are registered in
 `src/lib/chapters/meta.ts`. `.svx` files are not formatted by Prettier.
 
@@ -65,6 +76,8 @@ Part's claim checklist is in `docs/fact-check/`.
   `npx @abraham/firebase-wif setup --environment preview --any-branch` for PR previews. Check with
   `npx @abraham/firebase-wif status`. This creates the `FIREBASE_WIF_PROVIDER` and
   `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables the deploy workflows read.
+- **Custom domain (optional):** add it in the Firebase console under Hosting, then create the DNS
+  records it shows.
 
 ## Deploys
 

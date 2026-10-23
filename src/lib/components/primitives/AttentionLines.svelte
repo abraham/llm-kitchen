@@ -15,9 +15,12 @@
 	} = $props();
 
 	const ROW = 26;
-	const W = 420;
-	const LEFT = 150;
-	const RIGHT = W - 150;
+	/** Room for the clickable words on the right. */
+	const BUTTONS = 130;
+	let width = $state(560);
+	const W = $derived(Math.max(200, Math.min(width, 560) - BUTTONS));
+	const LEFT = $derived(Math.min(150, W * 0.42));
+	const RIGHT = $derived(W - 6);
 	const H = $derived(tokens.length * ROW + 8);
 	const y = (i: number) => 4 + i * ROW + ROW / 2;
 	const row = $derived(weights[query] ?? []);
@@ -30,7 +33,7 @@
 	);
 </script>
 
-<div class="attention">
+<div class="attention" bind:clientWidth={width}>
 	<svg
 		width={W}
 		height={H}
@@ -63,7 +66,12 @@
 			>
 		{/each}
 	</svg>
-	<ol class="queries" style:height="{H}px" aria-label="Pick the word that is looking">
+	<ol
+		class="queries"
+		style:height="{H}px"
+		style:left="{RIGHT + 6}px"
+		aria-label="Pick the word that is looking"
+	>
 		{#each tokens as t, i (i)}
 			<li style:top="{4 + i * ROW}px">
 				<button type="button" aria-pressed={i === query} onclick={() => onselect(i)}
@@ -77,7 +85,7 @@
 <style>
 	.attention {
 		position: relative;
-		width: 560px;
+		max-width: 560px;
 	}
 
 	svg {
@@ -111,7 +119,6 @@
 		padding: 0;
 		position: absolute;
 		top: 0;
-		left: 276px;
 		right: 0;
 	}
 

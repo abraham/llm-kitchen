@@ -15,6 +15,12 @@
 
 <svelte:head>
 	<title>Ch {data.meta.number}. {data.meta.title} · llm-kitchen</title>
+	<meta
+		name="description"
+		content="Chapter {data.meta
+			.number} of llm-kitchen, an interactive guide to how large language models work: {data.meta
+			.title}."
+	/>
 </svelte:head>
 
 <ChapterLayout meta={data.meta} next={data.next}>

@@ -389,6 +389,7 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
     - Live tool calling via T3/T4 is deferred with those tiers (see Future improvements).
 11. **Polish**
     - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, custom domain on Firebase Hosting.
+    - v1: axe on every page in light and dark, a phone-width overflow check, and the JS budget (gzipped) run in CI (`tests/e2e/quality.e2e.ts`). Screenshot tests run locally only (`npm run test:visual`), since baselines differ by OS. Lighthouse (local, simulated mobile): performance 95–96, accessibility/best practices/SEO 100 on sampled chapters. The custom domain is a manual Firebase console step.
 12. **Final fact review**
     - Re-check every chapter's claim checklist (from the per-chapter fact-check below) against the finished site. Confirm that the claims are consistent across chapters, e.g. the same GPT-2 numbers everywhere and no chapter contradicting an earlier simplification.
     - Re-verify time-sensitive facts, such as Ch 12's frontier-model figures and the providers' tool-calling behavior. Update the sources and "accessed" dates.

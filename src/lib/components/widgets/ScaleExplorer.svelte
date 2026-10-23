@@ -161,4 +161,25 @@
 	.readout {
 		margin: var(--space-3) 0 0;
 	}
+
+	/* On phones, let names wrap and put each value under its bar. */
+	@media (max-width: 40rem) {
+		tbody th {
+			width: 40%;
+			white-space: normal;
+		}
+
+		.row {
+			flex-wrap: wrap;
+			gap: 2px;
+		}
+
+		.track {
+			flex-basis: 100%;
+		}
+
+		.value {
+			width: auto;
+		}
+	}
 </style>

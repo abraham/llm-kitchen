@@ -14,6 +14,9 @@ export default defineConfig({
 			adapter: adapter({ strict: true, fallback: '404.html' }),
 			preprocess: [mdsvex({ extensions: ['.svx'] })],
 			extensions: ['.svelte', '.svx'],
+			// The chapter route can load any chapter, so every page links every chapter's small CSS
+			// file. Inlining files under 6 KB removes those render-blocking requests (Lighthouse).
+			inlineStyleThreshold: 6144,
 			// Emitted as a <meta> tag with hashes for SvelteKit's inline scripts; firebase.json adds
 			// the header-only directives (frame-ancestors).
 			csp: {

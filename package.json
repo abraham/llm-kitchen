@@ -18,7 +18,8 @@
 		"lint": "eslint .",
 		"test": "vitest run",
 		"test:watch": "vitest",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"test:visual": "playwright test --config playwright.visual.config.ts"
 	},
 	"imports": {
 		"#lib": "./src/lib/index.ts",

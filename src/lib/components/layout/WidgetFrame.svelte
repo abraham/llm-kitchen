@@ -72,8 +72,10 @@
 
 	.meta {
 		display: inline-flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: var(--space-2);
+		max-width: 100%;
 	}
 
 	.body {
