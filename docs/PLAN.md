@@ -40,6 +40,10 @@ A static site that teaches how a large language model works. It starts with "gue
 
 ## 3. Curriculum
 
+The organization into Parts and chapters (order, numbers, titles, slugs, and what each chapter builds
+on) is owned by [docs/CURRICULUM.md](CURRICULUM.md). This section describes what each chapter
+contains, in the site's current order.
+
 Every chapter has the same structure:
 **Hook question → Try-it widget → Explanation and main animation → Live LLM option (if useful) → Recap card → Sources → The question that leads to the next chapter.**
 
@@ -556,6 +560,12 @@ Each chapter milestone (5–10, 14, 15, and 18) includes the [per-chapter fact-c
     - **Fact-check:** add both chapters' claims to `docs/fact-check/part-6.md`, with the Part VI sources above. Provider caching rules change often, so they are cited with accessed dates and re-checked in the final fact review.
     - _Done when:_ both chapters have their widgets, recap cards, sources, and fact-check entries; every chapter number in the prose, tests, and docs matches the new curriculum; and the old chapter URLs still load the same chapters.
     - v1: done. The renumbering is its own commit, with a new test that each glossary term's chapter mentions it. Ch 19's KV-cache timing is measured offline on a laptop CPU by `scripts/build-caching.py` (no live timing yet), and its prompt-cache view is computed from the Ch 18 session. Ch 20's attacks try to slip a false claim into the summary (45 of 72 attacked runs succeeded; the best defense still let 6 of 12 through), recorded by `scripts/build-injection.py`. See [docs/fact-check/part-6.md](fact-check/part-6.md) for changes from this plan.
+19. **Curriculum order**
+    - Move the site to the order in [docs/CURRICULUM.md](CURRICULUM.md): Text is just numbers joins Representation (Ch 3), Thinking before answering joins Part V (Ch 15), Prompt engineering becomes Part VI (Ch 16–20), Harnesses Part VII (Ch 21–27), and Other kinds of models Part VIII (Ch 28–32). Slugs and URLs don't change.
+    - **Renumber first, in its own commit,** following CURRICULUM.md's "Changing the organization": reorder `PARTS` and the rows in `meta.ts` with the new `buildsOn` lists, rename the chapter files (through temporary names, since the mapping isn't a simple shift), and remap every "Ch N" reference from the mapping table with a script and a review of each change. Tests and fact-check files named by Part follow their chapters: the reasoning claims move to `part-5`, Text is just numbers to `part-2`, and the Part VI, VII, and VIII files swap to match the new Parts.
+    - **Then the content changes** CURRICULUM.md lists: the new openings for Ch 3 and Ch 15, the system prompt introduced in Ch 18, structured output in Ch 19 leading into tools in Ch 22, Ch 20's forward-looking Next question, the Next questions at every new Part boundary, and the recap's paragraph, diagram, and quiz in the new order.
+    - **Keep the spec and the code in step:** a unit test checks that the Parts, numbers, titles, slugs, and builds-on lists in `meta.ts` match CURRICULUM.md's tables. Reorder §3 of this plan to match, and update CURRICULUM.md's Status.
+    - _Done when:_ the site reads in the new order, every chapter's Next question is answered by the chapter after it, every chapter number in prose, tests, and docs matches the new curriculum, the old URLs still load the same chapters, and the spec test passes.
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, and 18)
 
