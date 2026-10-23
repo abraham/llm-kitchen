@@ -39,16 +39,19 @@ Set in `firebase.json` (`tests/unit/hosting.test.ts` checks clean URLs, caching,
 
 - **Content Security Policy:** SvelteKit emits the page CSP (`csp` in `vite.config.ts`, hash mode, so
   its inline scripts need no `'unsafe-inline'`): `default-src 'self'`, scripts `'self'` plus
-  `'wasm-unsafe-eval'` for ONNX Runtime, workers `'self'` and `blob:`, and `connect-src 'self'`.
+  `'wasm-unsafe-eval'` for ONNX Runtime, styles `'self'` plus `'unsafe-inline'` for Svelte's style
+  attributes, workers `'self'` and `blob:`, and `connect-src 'self'`.
   `firebase.json` adds the header-only `frame-ancestors 'none'` and a `connect-src` that also allows
-  Hugging Face for model downloads.
+  Hugging Face. Browsers enforce both policies on a page, so the page itself can only fetch from
+  `'self'`; model downloads work because they run in the inference worker, whose script is loaded
+  from a URL and gets only the header's policy.
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a
   `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB, and
   `Cross-Origin-Opener-Policy: same-origin`.
 
 ## Caching
 
-- Hashed assets under `/_app/immutable/`: `public, max-age=31536000, immutable`.
-- Fonts under `/fonts/`: 30 days.
+- Hashed assets under `/_app/immutable/`, including the self-hosted fonts:
+  `public, max-age=31536000, immutable`.
 - Everything else, including HTML and recorded JSON: `public, max-age=300, must-revalidate`, so
   updates show up within minutes.
