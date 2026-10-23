@@ -1,9 +1,9 @@
-// docs/CURRICULUM.md owns the organization; meta.ts must match its tables exactly.
-import { readFileSync } from 'node:fs';
+// docs/spec/curriculum.md owns the organization; meta.ts must match its tables exactly.
+import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CURRICULUM } from '../../src/lib/chapters/meta.ts';
 
-const spec = readFileSync('docs/CURRICULUM.md', 'utf8');
+const spec = readFileSync('docs/spec/curriculum.md', 'utf8');
 const organization = spec.slice(
 	spec.indexOf('## The organization'),
 	spec.indexOf('## Why this order')
@@ -24,7 +24,7 @@ function specRows() {
 	return rows;
 }
 
-describe('docs/CURRICULUM.md', () => {
+describe('docs/spec/curriculum.md', () => {
 	it('lists the same chapters, in the same Parts and order, as meta.ts', () => {
 		const fromMeta = CURRICULUM.map((c) => ({
 			number: c.number,
@@ -34,5 +34,25 @@ describe('docs/CURRICULUM.md', () => {
 			buildsOn: c.buildsOn
 		}));
 		expect(specRows()).toEqual(fromMeta);
+	});
+});
+
+describe('docs/spec/chapters', () => {
+	it('has one file per chapter, named by slug and headed with its title', () => {
+		const files = readdirSync('docs/spec/chapters').sort();
+		expect(files).toEqual(CURRICULUM.map((c) => `${c.slug}.md`).sort());
+		for (const c of CURRICULUM) {
+			const text = readFileSync(`docs/spec/chapters/${c.slug}.md`, 'utf8');
+			expect(text.split('\n')[0], c.slug).toBe(`# ${c.title}`);
+		}
+	});
+
+	it('leaves chapter numbers to curriculum.md, so moving a chapter changes no other spec', () => {
+		const files = readdirSync('docs/spec', { recursive: true, encoding: 'utf8' }).filter(
+			(f) => f.endsWith('.md') && f !== 'curriculum.md'
+		);
+		for (const f of files) {
+			expect(readFileSync(`docs/spec/${f}`, 'utf8'), f).not.toMatch(/\bCh \d/);
+		}
 	});
 });

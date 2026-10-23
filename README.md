@@ -1,7 +1,8 @@
 # LLM Kitchen
 
 A static site that teaches how a large language model works, from "guess the next word" to the
-harness that turns a model into an agent. See [docs/PLAN.md](docs/PLAN.md) for the full plan.
+harness that turns a model into an agent. See [docs/spec/](docs/spec/README.md) for how the site
+works and why.
 
 ## Development
 

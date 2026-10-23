@@ -1,6 +1,6 @@
 # Fact-check: Part VI (Ch 18–22)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `tests/unit/part-6-facts.test.ts` (the recorded data says what the prose says),
 `tests/e2e/part-6.e2e.ts`.
 
@@ -65,17 +65,3 @@ changes a reply.
 | Formatting alone moved accuracy by up to 76 points, not fixed by size, examples, or instruction tuning | Cite `sclar2024` (abstract) |
 | 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                | Test                        |
 | Models use information at the start and end of long prompts better than in the middle                  | Cite `liu2024` (abstract)   |
-
-## Changes from the plan
-
-- **Ch 19 models.** Probabilities come from Qwen2.5-1.5B-Instruct (reading the prompt as plain text)
-  and GPT-2 small; the attention view is GPT-2's, since that's the model the site shows attention
-  for.
-- **Ch 20** shows the chat template with the system prompt highlighted, in its own widget, rather
-  than reusing the Ch 23 prompt inspector.
-- **Ch 21 grading.** Hand-graded replies (see above) instead of an automatic check, which misread
-  several replies in testing.
-- **Ch 22 position.** A short list of 30 lines rather than a long multi-document prompt, so the
-  effect shows as a handful of misses in the middle rather than a smooth U-shaped curve.
-- **Part order.** This was Part VIII (Ch 28–32) until milestone 19 moved prompting before the
-  harness chapters.

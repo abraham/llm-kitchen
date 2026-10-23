@@ -1,6 +1,6 @@
 # Fact-check: Part IV (Ch 8–10)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `src/lib/math/attention.test.ts` (toy attention plus facts read from the recorded GPT-2 attention),
 `src/lib/math/transformer.test.ts`, `tests/unit/part-4-facts.test.ts`, `tests/unit/traces.test.ts`
 (attention rows sum to 1 and never look ahead), `tests/e2e/part-4.e2e.ts`.
@@ -54,17 +54,3 @@ GPT-2 revision): `static/traces/gpt2/attn-*.json` and `logitLens` in
 | Blocks 1–7 guess " same"; from block 8 " floor" is top-2, " ground" leads once         | Test                                                                      |
 | Furniture appears (" table", " sofa", " bed"); the end is " floor", " bed", " couch"   | Test; last stage equals the recorded prediction (Ch 0)                    |
 | The last block spreads the bets out                                                    | Test (final top probability lower than after block 11)                    |
-
-## Changes from the plan
-
-- **Recorded attention instead of live.** The standard GPT-2 ONNX export used by Transformers.js
-  doesn't output attention weights, so Ch 9 shows attention recorded from PyTorch for 5 sentences
-  (all 12 layers × 12 heads). A custom ONNX export with attention outputs is listed under future
-  improvements.
-- **Trophy sentence.** GPT-2 small's attention from "it" is the same for "big" and "small" (the
-  clue comes later), and the model doesn't clearly resolve the pronoun. The chapter says so, rather
-  than presenting a cherry-picked head as an answer.
-- **Residual stream view.** Uses the logit lens (top guesses per block) instead of the size of each
-  block's change. The change sizes are dominated by a few very large numbers in GPT-2's stream, and
-  the final row includes the final layer norm, so they would mislead. The vector strips use a
-  95th-percentile color scale for the same reason.

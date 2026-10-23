@@ -1,6 +1,6 @@
 # Fact-check: Part V (Ch 11–17)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `tests/unit/part-5-facts.test.ts`, `src/lib/math/quantize.test.ts`, `src/lib/math/chat-template.test.ts`,
 `src/lib/math/transformer.test.ts`, `tests/unit/traces.test.ts`, `tests/e2e/part-5.e2e.ts`.
 
@@ -119,21 +119,3 @@ The script asserts the result equals GPT-2 medium's own greedy output.
 | Twice the thinking hit the 6,000-token limit without answering                               | Test                       |
 | DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
 | Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
-
-## Changes from the plan
-
-- **T3 (WebLLM) and T4 (bring your own key) are not built yet.** Ch 15's base vs. instruct comparison
-  uses recorded outputs from Qwen2.5-0.5B and its instruct version instead of a live T3 model, and
-  Ch 16's live experiments use the live GPT-2 (T2). See PLAN.md.
-- **Ch 11 pipeline animation** is a compact strip of stages that lights up on each step, rather than
-  a full left-to-right reuse of every earlier visual.
-- **Ch 12 scaling chart** draws Kaplan et al.'s fitted formula (with the GPT-2 sizes placed on it),
-  not measured losses, and says so.
-- **Ch 16 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
-- **Ch 13 rounding** uses blocks of 32 with one scale, like GGUF's Q4_0, instead of the plan's one
-  scale per row, and adds 6 and 5 bits to show the drift between "holds" and "breaks". The live
-  8-bit model is mentioned, not compared side by side.
-- **Ch 14 drafter** is GPT-2 small (already used on the site) instead of DistilGPT-2, drafting for
-  GPT-2 medium, on four prompts.
-- **Ch 17 results.** The small model's thinking gave a mixed result, and the chapter says so. The
-  chapter was Ch 27, in Part VII, until milestone 19 moved it here.

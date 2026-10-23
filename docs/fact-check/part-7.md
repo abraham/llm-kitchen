@@ -1,6 +1,6 @@
 # Fact-check: Part VII (Ch 23–29)
 
-Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
+Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `tests/unit/part-7-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
 exactly the recorded results; the prompt segmenter loses nothing), `tests/e2e/part-7.e2e.ts`.
 
@@ -102,28 +102,3 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 | Only safe tools: it still tried `delete_file`, nothing lost               | Test                               |
 | A 3-step limit still loses one file                                       | Test (replay of the first 3 steps) |
 | Sandboxes isolate code execution                                          | General practice (no demo)         |
-
-## Changes from the plan
-
-- **Model for Part VII recordings.** Qwen2.5-1.5B-Instruct (about 3 GB, recorded offline), not a
-  frontier model. The 0.5B model couldn't complete the agent task. Its failures, like the made-up
-  "Old Mother Hubbard", are kept as real examples.
-- **Harness choices made visible.** The harness stops after the first tool call and the system
-  prompt asks for tools instead of mental counting. Without these, both small models wrote several
-  calls at once with made-up arguments and guessed the word count; the chapter says the harness
-  makes the rules.
-- **Injection text.** The page fakes the end of the tool result and a new user message. A plain
-  "ignore your instructions" note didn't make the model delete anything in testing.
-- **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
-- **Ch 27 views.** The prompt-cache view draws each call as a bar of blocks (system prompt, tasks)
-  rather than rows of token chips, since the prompts are hundreds of tokens long, and it shows
-  tokens processed instead of a time to first token. The KV-cache timing is measured offline on one
-  laptop CPU; live timing in the browser is left for later.
-- **Ch 28 goal.** The injected goal is a false claim in the summary. A first version asked for a
-  reply of only a code word: the model almost never did that, but often worked the word into its
-  summary ("Pineapple confirms they can volunteer…"). A second asked it to add a link, which
-  worked only 3 times in 72. A false claim fits the task the model was given, which is how real
-  attacks on summarizers work.
-- **Ch 28 view.** The lab shows the prompt in its own colored view rather than in the Ch 23 inspector,
-  and a toggle removes the colors to show what the model gets.
-- **Part order.** This was Part VI (Ch 15–21) until milestone 19 moved prompting before it.
