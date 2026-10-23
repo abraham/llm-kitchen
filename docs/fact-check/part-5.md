@@ -1,4 +1,4 @@
-# Fact-check: Part V (Ch 11–14)
+# Fact-check: Part V (Ch 11–15)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-5-facts.test.ts`, `src/lib/math/chat-template.test.ts`,
@@ -6,7 +6,10 @@ Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 
 Data: GPT-2 traces from `scripts/build-traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
 instruct outputs from `scripts/build-chat.py` (`static/chat/base-vs-instruct.json`, greedy, pinned
-revisions recorded in the file). Paper figures were checked against the PDFs' text.
+revisions recorded in the file). Paper figures were checked against the PDFs' text. Ch 15:
+`static/reasoning/thinking.json`, Qwen3-0.6B with thinking off and on, sampled with the model card's
+recommended settings and a fixed seed, by `scripts/build-reasoning.py`; answers are graded on the
+last `\boxed{}`, which the prompt asks for.
 
 ## Ch 11. Generating text
 
@@ -67,6 +70,18 @@ revisions recorded in the file). Paper figures were checked against the PDFs' te
 | Formatting alone changed accuracy by up to 76 points                                 | Cite `sclar2024` (abstract, LLaMA-2-13B) |
 | GPT-2's context window is 1,024 tokens; the live generator keeps only the last 1,024 | `canonical.json`; implementation         |
 
+## Ch 15. Thinking before answering
+
+| Claim                                                                                        | Backing                    |
+| -------------------------------------------------------------------------------------------- | -------------------------- |
+| Asking large models for step-by-step working improved math word problems                     | Cite `wei2022`             |
+| Qwen3's thinking can be switched off                                                         | Cite `qwen3`; model card   |
+| Strawberry: 2 with thinking off, 3 with thinking on, after spelling it out                   | Test (recorded data)       |
+| About 24 times as many tokens with thinking on; 4 of 6 right both ways                       | Test                       |
+| Twice the thinking hit the 6,000-token limit without answering                               | Test                       |
+| DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
+| Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
+
 ## Changes from the plan
 
 - **T3 (WebLLM) and T4 (bring your own key) are not built yet.** Ch 13's base vs. instruct comparison
@@ -77,3 +92,5 @@ revisions recorded in the file). Paper figures were checked against the PDFs' te
 - **Ch 12 scaling chart** draws Kaplan et al.'s fitted formula (with the GPT-2 sizes placed on it),
   not measured losses, and says so.
 - **Ch 14 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
+- **Ch 15 results.** The small model's thinking gave a mixed result, and the chapter says so. The
+  chapter was Ch 27, in Part VII, until milestone 19 moved it here.

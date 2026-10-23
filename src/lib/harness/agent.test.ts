@@ -62,7 +62,7 @@ describe('segmentPrompt', () => {
 		}
 	});
 
-	it('labels the parts of the Ch 15 prompt', () => {
+	it('labels the parts of the Ch 21 prompt', () => {
 		const chat = runs.find((r) => r.name === 'chat.json')!.run;
 		const parts = segmentPrompt(chat.steps[0].prompt);
 		const text = (kind: string) =>

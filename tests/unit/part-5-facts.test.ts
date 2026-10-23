@@ -12,6 +12,7 @@ const full = (name: string) => {
 	const t = trace(name);
 	return textAfter(t, t.steps.length - 1) + t.steps.at(-1)!.chosen.text;
 };
+const json = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 const top = (name: string) => trace(name).steps[0].candidates;
 
 describe('Ch 11: generating text', () => {
@@ -115,5 +116,37 @@ describe('Ch 14: quirks and limits', () => {
 	it('" strawberry" is one token, "strawberry" three', () => {
 		expect(encode(' strawberry')).toHaveLength(1);
 		expect(encode('strawberry')).toHaveLength(3);
+	});
+});
+
+describe('Ch 15: reasoning models', () => {
+	const d = json('static/reasoning/thinking.json');
+	type Run = {
+		correct: boolean;
+		final: string | null;
+		thinkingTokens: number;
+		answerTokens: number;
+	};
+	const runs = (key: 'off' | 'on'): Run[] => d.puzzles.map((p: Record<string, Run>) => p[key]);
+	const tokens = (rs: Run[]) => rs.reduce((a, r) => a + r.thinkingTokens + r.answerTokens, 0);
+
+	it('gets 4 of 6 right both ways', () => {
+		expect(runs('off').filter((r) => r.correct)).toHaveLength(4);
+		expect(runs('on').filter((r) => r.correct)).toHaveLength(4);
+	});
+
+	it('counts the r’s in strawberry right only when thinking', () => {
+		const p = d.puzzles.find((q: { question: string }) => q.question.includes('strawberry'));
+		expect(p.off.final).toBe('2');
+		expect(p.on.final).toBe('3');
+		expect(p.on.thinking).toContain('S-T-R-A-W-B-E-R-R-Y');
+	});
+
+	it('writes about 24 times as many tokens when thinking; twice it never answers', () => {
+		expect(Math.round(tokens(runs('on')) / tokens(runs('off')))).toBe(24);
+		const unfinished = runs('on').filter((r) => r.final === null);
+		expect(unfinished).toHaveLength(2);
+		for (const r of unfinished) expect(r.thinkingTokens).toBe(d.settings.on.max_new_tokens);
+		expect(d.settings.on.max_new_tokens).toBe(6000);
 	});
 });

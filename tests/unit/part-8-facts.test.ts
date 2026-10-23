@@ -1,153 +1,95 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { chatTemplate } from '../../src/lib/math/chat-template.ts';
+import canonicalJson from '../../models/canonical.json';
+import { RHYMES } from '../../src/lib/data/rhymes.ts';
+import { MOE_MODELS } from '../../src/lib/data/moe.ts';
+import { CharRNN, RNNTrainer } from '../../src/lib/math/rnn.ts';
+import { seededRandom } from '../../src/lib/math/sampling.ts';
 
-const json = (name: string) => JSON.parse(readFileSync(`static/prompts/${name}.json`, 'utf8'));
+const json = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
 
-describe('Ch 28: a prompt is the start of a document', () => {
-	const d = json('wording');
-	const variant = (text: string) =>
-		d.groups
-			.flatMap((g: { variants: unknown[] }) => g.variants)
-			.find((v: { text: string }) => v.text === text);
+describe('Ch 28: encoders', () => {
+	const d = json('static/encoders/fill-mask.json');
 
-	it('setting the scene moves the cat', () => {
-		expect(variant('The cat sat on the').top[0].text).toBe(' floor');
-		expect(variant('The cat sat on the').watch[' floor']).toBeCloseTo(0.076, 3);
-		expect(variant('The cat sat on the').watch[' bed']).toBeCloseTo(0.065, 3);
-		expect(variant('It was bedtime, and the cat sat on the').watch[' bed']).toBeCloseTo(0.218, 3);
-		const beach = variant('At the beach, the cat sat on the');
-		expect(variant('The cat sat on the').watch[' sand']).toBeLessThan(0.002);
-		expect(beach.top.slice(0, 2).map((c: { text: string }) => c.text)).toContain(' sand');
+	it('BERT uses the words after the blank; GPT-2 cannot', () => {
+		const [fridge, bread] = d.sentences;
+		expect(fridge.gpt2[0].text).toBe(' floor');
+		expect(fridge.bert[0].text).toBe('top');
+		expect(bread.gpt2[0].text).toBe(' hospital');
+		expect(bread.bert[0].text).toBe('market');
 	});
 
-	it('starting the answer makes Paris about six times as likely as asking', () => {
-		const ask = variant('What is the capital of France?');
-		const start = variant('The capital of France is');
-		expect(ask.top[0]).toMatchObject({ text: '\n' });
-		expect(ask.top[0].p).toBeCloseTo(0.34, 2);
-		expect(ask.watch[' Paris']).toBeLessThan(0.006);
-		expect(Math.round(start.watch[' Paris'] / ask.watch[' Paris'])).toBe(6);
+	it('the mask grid sentence has the blank at token 6 of 10', () => {
+		const tokens: string[] = d.sentences[0].tokens;
+		expect(tokens).toHaveLength(10);
+		expect(tokens.indexOf('[MASK]')).toBe(5);
 	});
 });
 
-describe('Ch 29: few-shot', () => {
-	const d = json('fewshot');
-	const task = (name: string) => d.tasks.find((t: { name: string }) => t.name === name);
-	const p = (name: string, query: string, shots: number, model: 'qwen' | 'gpt2') =>
-		task(name)
-			.tests.find((t: { query: string }) => t.query === query)
-			.runs.find((r: { shots: number }) => r.shots === shots)[model];
+describe('Ch 29: mixture of experts', () => {
+	it('Mixtral uses about a quarter of its weights per token, DeepSeek-V3 about 6%', () => {
+		const share = (name: string) => {
+			const m = MOE_MODELS.find((x) => x.name === name)!;
+			return m.activeParameters / m.totalParameters;
+		};
+		expect(share('Mixtral 8x7B')).toBeCloseTo(0.28, 2);
+		expect(Math.round(share('DeepSeek-V3') * 100)).toBe(6);
+	});
+});
 
-	it('Qwen goes from about 1% to 96% on "happy" with four examples', () => {
-		expect(p('Opposites', 'happy', 0, 'qwen')).toBeLessThan(0.01);
-		expect(p('Opposites', 'happy', 4, 'qwen')).toBeCloseTo(0.96, 2);
-		expect(p('Opposites', 'light', 4, 'qwen')).toBeLessThan(p('Opposites', 'light', 1, 'qwen'));
+describe('Ch 30: recurrent models', () => {
+	it('keeps 2 × layers × embedding size numbers per token with attention', () => {
+		expect(2 * canonicalJson.layers * canonicalJson.embeddingSize).toBe(18432);
 	});
 
-	it('the made-up labels go from almost nothing to 22–78%', () => {
-		const t = task('Made-up labels');
-		const four = t.tests.map(
-			(x: { runs: { shots: number; qwen: number }[] }) => x.runs.find((r) => r.shots === 4)!.qwen
-		);
-		const zero = t.tests.map(
-			(x: { runs: { shots: number; qwen: number }[] }) => x.runs.find((r) => r.shots === 0)!.qwen
-		);
-		expect(Math.max(...zero)).toBeLessThan(0.001);
-		expect(Math.round(Math.min(...four) * 100)).toBe(22);
-		expect(Math.round(Math.max(...four) * 100)).toBe(78);
-	});
-
-	it('GPT-2 repeats the word, or says "zork" after four examples', () => {
-		for (const test of task('Opposites').tests.slice(0, 3)) {
-			expect(test.runs.find((r: { shots: number }) => r.shots === 4).gpt2Top[0].text).toBe(
-				` ${test.query}`
+	it('after the widget’s 1,500 training steps, it expects “u” after “humpty d”', () => {
+		const texts = RHYMES.map((r) => r.text.toLowerCase());
+		const vocab = [...new Set(texts.join(''))].sort();
+		const encode = (s: string) => [...s].map((c) => vocab.indexOf(c));
+		const random = seededRandom(1);
+		const trainer = new RNNTrainer(new CharRNN(vocab.length, 32, 1));
+		for (let i = 0; i < 1500; i++) {
+			trainer.step(
+				Array.from({ length: 16 }, () => {
+					const t = texts[Math.floor(random() * texts.length)];
+					const start = Math.floor(random() * (t.length - 24));
+					return encode(t.slice(start, start + 24));
+				})
 			);
 		}
-		for (const test of task('Made-up labels').tests) {
-			expect(test.runs.find((r: { shots: number }) => r.shots === 4).gpt2Top[0].text).toBe(' z');
-		}
-	});
-
-	it('one GPT-2 head looks almost only at the earlier answers', () => {
-		for (const t of d.tasks) expect(t.head.score).toBeGreaterThan(0.9);
-	});
+		let h: Float64Array = new Float64Array(32);
+		let probs: Float64Array = new Float64Array(vocab.length);
+		for (const c of encode('humpty d')) ({ h, probs } = trainer.model.step(h, c));
+		expect(vocab[probs.indexOf(Math.max(...probs))]).toBe('u');
+	}, 60_000);
 });
 
-describe('Ch 30: system prompts', () => {
-	const d = json('system');
+describe('Ch 31: seeing pictures', () => {
+	const d = json('static/vision/clip.json');
+	const names: string[] = d.images.map((i: { name: string }) => i.name);
+	const best = (c: { similarity: number[] }) =>
+		names[c.similarity.indexOf(Math.max(...c.similarity))];
 
-	it('the site’s chat template matches the recorded prompts', () => {
-		for (const r of d.replies) {
-			const text = chatTemplate([
-				{ role: 'system', content: r.system },
-				{ role: 'user', content: d.question }
-			])
-				.map((p) => p.text)
-				.join('');
-			expect(text).toBe(r.prompt);
-		}
+	it('cuts 224-pixel pictures into a 7 × 7 grid of 32-pixel patches of 768 numbers', () => {
+		expect([d.imageSize, d.grid, d.patchSize, d.patchDimensions]).toEqual([224, 7, 32, 768]);
 	});
 
-	it('the persona makes the answer over twice as long; instructions make it shorter', () => {
-		const [plain, persona, specific] = d.replies;
-		expect(persona.tokens).toBeGreaterThan(2 * plain.tokens);
-		expect(specific.tokens).toBeLessThan(plain.tokens);
-		expect(persona.text).toContain('scattered away from us towards the edges of the sky');
+	it('gives identical background patches identical vectors', () => {
+		const patches: number[][] = d.images[0].patches;
+		expect(patches[0]).toEqual(patches[48]);
 	});
 
-	it('the "never makes mistakes" persona got 3 of 8 sums right, the default 5', () => {
-		type Row = { default: { correct: boolean }; persona: { correct: boolean } };
-		expect(d.math.filter((m: Row) => m.default.correct)).toHaveLength(5);
-		expect(d.math.filter((m: Row) => m.persona.correct)).toHaveLength(3);
-	});
-});
-
-describe('Ch 31: steps and structure', () => {
-	const d = json('steps');
-	type Run = { correct: boolean; formatted: boolean; text: string };
-	const runs = (i: number): Run[] => d.puzzles.map((p: { runs: Run[] }) => p.runs[i]);
-
-	it('each way gets 4 of 6 right; the format was followed once', () => {
-		for (let i = 0; i < 3; i++) expect(runs(i).filter((r) => r.correct)).toHaveLength(4);
-		expect(runs(0).filter((r) => r.formatted)).toHaveLength(6);
-		expect(runs(2).filter((r) => r.formatted)).toHaveLength(1);
+	it('picks the right picture first for all 12 exact descriptions', () => {
+		const exact = d.captions.slice(0, 12);
+		for (const c of exact) expect(best(c)).toBe(c.text.slice(2).replace(' ', '-'));
 	});
 
-	it('the specific mistakes the chapter names', () => {
-		const [bat, widgets, , , , apples] = d.puzzles;
-		expect(bat.runs[0].text).toBe('0.10');
-		expect(widgets.runs[1].text).toContain('0.2 minutes');
-		expect(apples.runs[0].correct).toBe(false);
-		expect(apples.runs[1].correct).toBe(true);
-	});
-});
-
-describe('Ch 32: where prompts break', () => {
-	const d = json('fragile');
-
-	it('the order of four examples moves the score between 4 and 8 of 8', () => {
-		const scores = d.sentiment.orders.map((o: { correct: number }) => o.correct);
-		expect(scores).toHaveLength(24);
-		expect([Math.min(...scores), Math.max(...scores)]).toEqual([4, 8]);
-	});
-
-	it('the layout moves it between 4 and 7', () => {
-		const scores = d.sentiment.formats.map((f: { correct: number }) => f.correct);
-		expect(scores[0]).toBe(7);
-		expect(Math.min(...scores)).toBe(4);
-	});
-
-	it('every miss came with the line in the middle', () => {
-		const { positions, runs, facts } = d.position;
-		const misses = runs.flatMap((r: { points: { position: number; p: number }[] }) =>
-			r.points.filter((pt) => pt.p < 0.5)
+	it('barely prefers a circle for “something round”; the cat matches nothing well', () => {
+		const caption = (t: string) => d.captions.find((c: { text: string }) => c.text === t);
+		expect(best(caption('something round'))).toMatch(/circle/);
+		const exactBest = Math.min(
+			...d.captions.slice(0, 12).map((c: { similarity: number[] }) => Math.max(...c.similarity))
 		);
-		expect(facts).toBe(30);
-		expect(misses).toHaveLength(8);
-		for (const m of misses) {
-			expect(m.position).toBeGreaterThan(positions[0]);
-			expect(m.position).toBeLessThan(positions.at(-1));
-		}
+		expect(Math.max(...caption('a photo of a cat').similarity)).toBeLessThan(exactBest);
 	});
 });

@@ -57,22 +57,22 @@ Other recorded data has its own script in the same environment:
 - `scripts/build-embeddings.py`: the Ch 5 embedding map (`static/embeddings/`).
 - `scripts/build-chat.py`: the Ch 13 base vs. instruct comparison (`static/chat/`; downloads
   Qwen2.5-0.5B and Qwen2.5-0.5B-Instruct, about 1 GB each).
-- `scripts/build-agent-traces.py`: the Part VI agent runs (`static/agent/`; downloads
+- `scripts/build-agent-traces.py`: the Part VII agent runs (`static/agent/`; downloads
   Qwen2.5-1.5B-Instruct, about 3 GB). Its toy tools must stay in sync with
   `src/lib/harness/tools.ts`; the unit tests compare them.
-- `scripts/build-caching.py`: the Ch 19 KV-cache timings (`static/caching/`; reuses GPT-2 small).
+- `scripts/build-caching.py`: the Ch 25 KV-cache timings (`static/caching/`; reuses GPT-2 small).
   The times are measured on the machine that runs it, so rerunning changes the numbers in the prose
   and their tests.
-- `scripts/build-injection.py`: the Ch 20 prompt-injection lab (`static/injection/`; reuses
+- `scripts/build-injection.py`: the Ch 26 prompt-injection lab (`static/injection/`; reuses
   Qwen2.5-1.5B-Instruct).
-- `scripts/build-encoder.py`: the Ch 22 fill-in-the-blank guesses (`static/encoders/`; downloads
+- `scripts/build-encoder.py`: the Ch 28 fill-in-the-blank guesses (`static/encoders/`; downloads
   BERT base, about 440 MB).
-- `scripts/build-clip.py`: the Ch 25 pictures and CLIP data (`static/vision/`; downloads CLIP
+- `scripts/build-clip.py`: the Ch 31 pictures and CLIP data (`static/vision/`; downloads CLIP
   ViT-B/32, about 600 MB).
-- `scripts/build-reasoning.py`: the Ch 27 thinking off/on runs (`static/reasoning/`; downloads
+- `scripts/build-reasoning.py`: the Ch 15 thinking off/on runs (`static/reasoning/`; downloads
   Qwen3-0.6B, about 1.5 GB).
-- `scripts/build-prompts.py`: the Part VIII prompt experiments (`static/prompts/`; reuses GPT-2
-  small and Qwen2.5-1.5B-Instruct, and reads the Ch 27 puzzles from `static/reasoning/`). Pass job
+- `scripts/build-prompts.py`: the Part VI prompt experiments (`static/prompts/`; reuses GPT-2
+  small and Qwen2.5-1.5B-Instruct, and reads the Ch 15 puzzles from `static/reasoning/`). Pass job
   names (`wording`, `fewshot`, `system`, `steps`, `fragile`) to rerun only some.
 
 ### Citations and fact-checks

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw simple pictures and record CLIP's view of them for Ch 25 (tier T0).
+"""Draw simple pictures and record CLIP's view of them for Ch 31 (tier T0).
 
 Usage: scripts/.venv/bin/python scripts/build-clip.py
 

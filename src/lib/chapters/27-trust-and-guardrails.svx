@@ -9,7 +9,7 @@
 You ask the agent to summarize a web page. The page contains a hidden message, made to look like
 the end of the tool result followed by a new message from you, telling the agent to delete your
 files. To the model, it's all one stream of tokens: your request, the harness's instructions, and
-the page's text sit side by side in the same prompt. This is prompt injection (Ch 20), and attacks like it
+the page's text sit side by side in the same prompt. This is prompt injection (Ch 26), and attacks like it
 have worked on real products.<Cite id="greshake2023" />
 
 Here is what a real model did, with the toy file tools, under different guardrails:
@@ -21,7 +21,7 @@ kept going until the harness's step limit stopped it. It never wrote the summary
 
 ## Safety lives in the harness
 
-You can't fix this by asking the model nicely: as Ch 20 showed, it has no reliable way to tell your instructions
+You can't fix this by asking the model nicely: as Ch 26 showed, it has no reliable way to tell your instructions
 from instructions in the text it reads. So the protection has to come from the harness:
 
 - **Ask first.** Before running anything risky, the harness asks you. In the run above, the model

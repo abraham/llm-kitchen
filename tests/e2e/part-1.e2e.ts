@@ -2,12 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { gotoHydrated } from './helpers.ts';
 
-const chapters = [
-	'/guessing-game',
-	'/text-is-numbers',
-	'/predicting-by-counting',
-	'/probability-and-sampling'
-];
+const chapters = ['/guessing-game', '/predicting-by-counting', '/probability-and-sampling'];
 
 for (const path of chapters) {
 	test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
@@ -38,16 +33,7 @@ test('Ch 0: citations are numbered and link to the sources list', async ({ page 
 	await expect(page.locator('#source-shannon1951')).toBeInViewport();
 });
 
-test('Ch 1: é takes two bytes and 🐱 takes four', async ({ page }) => {
-	await gotoHydrated(page, '/text-is-numbers');
-	await page.getByLabel('Type anything').fill('é🐱');
-	await page.getByLabel('UTF-8 bytes').check();
-	await expect(page.getByText('2 characters, 6 bytes.')).toBeVisible();
-	await expect(page.getByText('C3 A9')).toBeVisible();
-	await expect(page.getByText('F0 9F 90 B1')).toBeVisible();
-});
-
-test('Ch 2: counting builds the table, then the model generates', async ({ page }) => {
+test('Ch 1: counting builds the table, then the model generates', async ({ page }) => {
 	await gotoHydrated(page, '/predicting-by-counting');
 	const widget = page.getByRole('region', { name: 'Build a bigram model' });
 	await widget.getByRole('button', { name: 'Next →' }).click();
@@ -59,7 +45,7 @@ test('Ch 2: counting builds the table, then the model generates', async ({ page 
 	await expect(widget.locator('.generated')).not.toBeEmpty();
 });
 
-test('Ch 3: temperature 0 puts everything on the top word', async ({ page }) => {
+test('Ch 2: temperature 0 puts everything on the top word', async ({ page }) => {
 	await gotoHydrated(page, '/probability-and-sampling');
 	const widget = page.getByRole('region', { name: 'Temperature and top-k' });
 	await widget.getByRole('slider', { name: /Temperature/ }).press('Home');
@@ -72,7 +58,7 @@ test('Ch 3: temperature 0 puts everything on the top word', async ({ page }) => 
 	await expect(page.getByText(/Temperature 1\.5/)).toBeVisible();
 });
 
-test('Ch 3: dividing scores by a small temperature widens the gap', async ({ page }) => {
+test('Ch 2: dividing scores by a small temperature widens the gap', async ({ page }) => {
 	await gotoHydrated(page, '/probability-and-sampling');
 	const widget = page.getByRole('region', { name: 'Divide by the temperature' });
 	const readout = widget.locator('.readout');

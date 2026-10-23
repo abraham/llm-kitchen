@@ -7,7 +7,7 @@ export interface ScaleEntry {
 	name: string;
 	/** Publication year, for real models. */
 	year?: number;
-	/** Numbers learned from data (weights, or counts for the Ch 2 table). */
+	/** Numbers learned from data (weights, or counts for the Ch 1 table). */
 	parameters: number;
 	/** Tokens (or characters, or word pairs) processed during training. */
 	trainingTokens?: number;
@@ -33,7 +33,7 @@ export const TINY_DATASET = charExamples(lower, vocab, 3).length;
 
 export const SCALE: ScaleEntry[] = [
 	{
-		name: 'Ch 2 counting model',
+		name: 'Ch 1 counting model',
 		parameters: pairs,
 		trainingTokens: bigramPairs(texts).length,
 		note: 'Counts of word pairs in six nursery rhymes; no training compute, just counting.'

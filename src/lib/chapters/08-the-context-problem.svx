@@ -22,7 +22,7 @@ whole-sentence understanding.<Cite id="levesque2012" />
 
 ## Our models so far are short-sighted
 
-The counting model from Ch 2 only looked at the one word before the gap. The tiny model from Ch 7
+The counting model from Ch 1 only looked at the one word before the gap. The tiny model from Ch 7
 looked at 3 characters. Slide the window below and see how much of the sentence it takes before a
 model has everything it needs.
 

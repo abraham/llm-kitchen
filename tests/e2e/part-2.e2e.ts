@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { gotoHydrated } from './helpers.ts';
 
-for (const path of ['/tokens', '/embeddings']) {
+for (const path of ['/text-is-numbers', '/tokens', '/embeddings']) {
 	test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
 		await gotoHydrated(page, path);
 		await expect(page.getByText(/Loading/)).toHaveCount(0);
@@ -63,4 +63,13 @@ test('Ch 5: tokens become vectors, and the map shows neighbors and the analogy',
 	// The live option asks before downloading anything.
 	await map.getByRole('button', { name: 'Add your own words…' }).click();
 	await expect(map.getByRole('button', { name: /Download about 50 MB and run it/ })).toBeVisible();
+});
+
+test('Ch 3: é takes two bytes and 🐱 takes four', async ({ page }) => {
+	await gotoHydrated(page, '/text-is-numbers');
+	await page.getByLabel('Type anything').fill('é🐱');
+	await page.getByLabel('UTF-8 bytes').check();
+	await expect(page.getByText('2 characters, 6 bytes.')).toBeVisible();
+	await expect(page.getByText('C3 A9')).toBeVisible();
+	await expect(page.getByText('F0 9F 90 B1')).toBeVisible();
 });

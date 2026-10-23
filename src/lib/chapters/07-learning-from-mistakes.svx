@@ -46,7 +46,7 @@ Adam.<Cite id="kingma2015" />
 ## Now, a tiny language model
 
 The same recipe trains a language model. The one below reads the 3 characters before a gap and
-predicts the next character, using the six nursery rhymes from Ch 2. It turns each character into a
+predicts the next character, using the six nursery rhymes from Ch 1. It turns each character into a
 small vector, feeds them through one layer of neurons, and outputs a probability for every
 character, a scaled-down version of a design from 2003.<Cite id="bengio2003" /> It trains entirely in
 your browser.
@@ -71,5 +71,5 @@ likely.<Cite id="radford2019" />
 
 </RecapCard>
 
-**Next question:** our tiny model only sees 3 characters back, and Ch 2's model only saw one word.
+**Next question:** our tiny model only sees 3 characters back, and Ch 1's model only saw one word.
 How much text does a model need to look at to predict well?

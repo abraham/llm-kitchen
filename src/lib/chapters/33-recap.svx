@@ -12,18 +12,18 @@ part links back to the chapter that explains it.
 
 <WholePicture />
 
-In one paragraph: text becomes **tokens** (Ch 1, 4), each token becomes a **vector** (Ch 5), and a
+In one paragraph: text becomes **tokens** (Ch 3, 4), each token becomes a **vector** (Ch 5), and a
 stack of **transformer blocks** refines those vectors, with **attention** letting each token use
-earlier ones (Ch 8–10). The result is a **probability** for every possible next token (Ch 2–3),
+earlier ones (Ch 8–10). The result is a **probability** for every possible next token (Ch 1–2),
 learned by **training** that nudges millions or billions of weights to make the right tokens more
 likely (Ch 6–7, 12). Generating text is a **loop** of predicting and picking (Ch 11), tuning turns
 that into an **assistant** (Ch 13), and a **harness** wraps it with prompts, tools, an agent loop,
-context management, caching, and guardrails against prompt injection (Ch 15–21). Other kinds of models change one piece and keep the
+context management, caching, and guardrails against prompt injection (Ch 21–27). Other kinds of models change one piece and keep the
 rest: encoders read both ways, mixtures of experts use part of themselves per token, recurrent
 models keep a fixed memory, vision models read patches, diffusion models paint from noise, and
-reasoning models write their working first (Ch 22–27). And prompting is choosing the document the
+reasoning models write their working first (Ch 28–32, 15). And prompting is choosing the document the
 model continues: the wording, examples, instructions, and layout all shift what comes next, often in
-ways you have to test to find out (Ch 28–32).
+ways you have to test to find out (Ch 16–20).
 
 ## Check yourself
 

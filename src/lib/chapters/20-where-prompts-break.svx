@@ -39,7 +39,7 @@ Because the model only continues text, every one of these choices is part of the
 them is neutral. Good prompting is less about magic words and more about testing: try a few
 wordings, orders, and layouts on real examples, keep what works, and put what matters most near the
 start or the end. And remember that the model can't tell your instructions from text it was given to
-read (Ch 20): a prompt is only as trustworthy as everything in it.
+read (Ch 26): a prompt is only as trustworthy as everything in it.
 
 <RecapCard>
 

@@ -27,7 +27,7 @@ Click any word in the list to pick it instead of the model's favorite.
 Keep pressing *Add the most likely* and GPT-2 writes "The cat sat on the floor, and the cat was
 still asleep." Go back and pick " bed" instead, and it gets stuck: ", and the cat sat on the bed, and
 the cat sat on the bed…". Always taking the single most likely token often falls into loops like
-this. Picking at random, weighted by the probabilities (the <GlossaryPopover term="temperature">temperature</GlossaryPopover> spinner from Ch 3), mostly
+this. Picking at random, weighted by the probabilities (the <GlossaryPopover term="temperature">temperature</GlossaryPopover> spinner from Ch 2), mostly
 avoids them, which is one reason most text generators sample instead.<Cite id="holtzman2020" />
 
 ## No going back

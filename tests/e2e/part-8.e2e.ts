@@ -3,11 +3,11 @@ import { expect, test } from '@playwright/test';
 import { gotoHydrated } from './helpers.ts';
 
 const PAGES = [
-	'/prompts-as-documents',
-	'/few-shot',
-	'/instructions-and-roles',
-	'/steps-and-structure',
-	'/where-prompts-break',
+	'/encoders',
+	'/mixture-of-experts',
+	'/recurrent-models',
+	'/seeing-pictures',
+	'/diffusion',
 	'/recap'
 ];
 
@@ -21,52 +21,63 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 28: setting the scene changes the next word', async ({ page }) => {
-	await gotoHydrated(page, '/prompts-as-documents');
-	const widget = page.getByRole('region', { name: 'Change the start of the document' });
-	await widget.getByLabel(/It was bedtime/).check();
-	await expect(widget.getByRole('row', { name: /bed.*22%/ }).first()).toBeVisible();
-	await widget.getByLabel('Frame a question').check();
-	await expect(widget.getByRole('table', { name: /Chance of “Paris” next/ })).toBeVisible();
+test('Ch 28: BERT reads both sides of the blank; GPT-2 only the left', async ({ page }) => {
+	await gotoHydrated(page, '/encoders');
+	const fill = page.getByRole('region', { name: 'Fill in the blank' });
+	await expect(fill.getByRole('rowheader', { name: 'top' })).toBeVisible();
+	await fill.getByLabel('Sentence').selectOption({ index: 1 });
+	await expect(fill.getByRole('rowheader', { name: 'market' })).toBeVisible();
+
+	const mask = page.getByRole('region', { name: 'Who can look at whom' });
+	await expect(mask.getByText(/can look at 6 of 10 tokens/)).toBeVisible();
+	await mask.getByLabel(/BERT \(encoder\)/).check();
+	await expect(mask.getByText(/can look at 10 of 10 tokens/)).toBeVisible();
 });
 
-test('Ch 29: examples teach a made-up rule', async ({ page }) => {
-	await gotoHydrated(page, '/few-shot');
-	const widget = page.getByRole('region', { name: 'Learning from examples' });
-	await expect(widget.getByRole('row', { name: /happy sad .* 96%/ })).toBeVisible();
-	await widget.getByLabel('Made-up labels').check();
-	await widget.getByLabel('0', { exact: true }).check();
-	await expect(widget.locator('pre')).toHaveText(/^pear -> ___$/);
-
-	const head = page.getByRole('region', { name: 'Where the arrow looks' });
-	await expect(head.getByText(/attention head 5\.0/)).toBeVisible();
+test('Ch 29: each token goes to k of 8 experts', async ({ page }) => {
+	await gotoHydrated(page, '/mixture-of-experts');
+	const widget = page.getByRole('region', { name: 'Send each token to a few experts' });
+	await expect(widget.getByText('(chosen)')).toHaveCount(10);
+	await expect(widget.getByText(/uses 25% of the experts' weights/)).toBeVisible();
+	await widget.getByLabel('1', { exact: true }).check();
+	await expect(widget.getByText('(chosen)')).toHaveCount(5);
+	await expect(widget.getByText(/uses 12.5% of the experts' weights/)).toBeVisible();
 });
 
-test('Ch 30: a persona does not help with sums', async ({ page }) => {
-	await gotoHydrated(page, '/instructions-and-roles');
-	const widget = page.getByRole('region', { name: 'Same question, different system prompts' });
-	await widget.getByLabel('A persona').check();
-	await expect(widget.locator('.template .system')).toHaveText('You are a world-famous physicist.');
-	await expect(widget.getByRole('row', { name: /Right 5 of 8 3 of 8/ })).toBeVisible();
-});
-
-test('Ch 31: each ending scores 4 of 6; the format is followed once', async ({ page }) => {
-	await gotoHydrated(page, '/steps-and-structure');
-	const widget = page.getByRole('region', { name: 'Ask for steps, ask for a format' });
-	await expect(widget.getByText(/^0\.10$/)).toBeVisible();
+test('Ch 30: the recurrent model trains; attention memory grows', async ({ page }) => {
+	await gotoHydrated(page, '/recurrent-models');
+	const rnn = page.getByRole('region', { name: 'A model with a memory' });
+	await rnn.getByRole('button', { name: 'Train' }).click();
+	await expect(rnn.getByText(/step [1-9]\d*/)).toBeVisible();
+	await rnn.getByRole('button', { name: 'Pause' }).click();
 	await expect(
-		widget.getByRole('row', { name: /Steps, then a fixed format 4 of 6 1 of 6/ })
+		rnn.getByRole('img', { name: /The model's memory: a list of 32 numbers/ })
 	).toBeVisible();
+
+	const growth = page.getByRole('region', { name: 'Memory as the text grows' });
+	await growth.getByLabel(/Tokens read so far/).fill('1024');
+	await expect(growth.getByText('18,874,368 numbers')).toBeVisible();
+	await expect(growth.getByText('32 numbers', { exact: true })).toBeVisible();
 });
 
-test('Ch 32: order, layout, and position', async ({ page }) => {
-	await gotoHydrated(page, '/where-prompts-break');
-	const widget = page.getByRole('region', { name: 'Small changes, different answers' });
-	await expect(widget.getByRole('row', { name: /8 of 8/ })).toBeVisible();
-	await widget.getByLabel('Formatting').check();
-	await expect(widget.getByRole('row', { name: /Sentiment.*7 of 8/ })).toBeVisible();
-	await widget.getByLabel('Position in a long prompt').check();
-	await expect(widget.getByText(/8 of 88 answers went wrong/)).toBeVisible();
+test('Ch 31: patches and matching captions', async ({ page }) => {
+	await gotoHydrated(page, '/seeing-pictures');
+	const patches = page.getByRole('region', { name: 'Cut a picture into tokens' });
+	await patches.getByRole('slider', { name: /Patch/ }).fill('0');
+	await expect(patches.getByText(/looks exactly like \d+ others/)).toBeVisible();
+
+	const match = page.getByRole('region', { name: 'Match words to pictures' });
+	await match.getByLabel('Words').selectOption('a blue star');
+	await expect(match.locator('li.best img')).toHaveAttribute('alt', 'A blue star');
+});
+
+test('Ch 32: the diffusion toy trains and paints', async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await gotoHydrated(page, '/diffusion');
+	const widget = page.getByRole('region', { name: 'Painting from noise' });
+	await widget.getByRole('button', { name: 'Train' }).click();
+	await expect(widget.getByRole('button', { name: 'Trained' })).toBeVisible({ timeout: 30000 });
+	await expect(widget.getByText(/Done: the noise has become a new ring/)).toBeVisible();
 });
 
 test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
@@ -77,10 +88,10 @@ test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
 	await expect(picture.getByRole('link', { name: /Ch 9: Attention/ })).toBeVisible();
 	await picture.getByRole('button', { name: 'The model' }).click();
 	await picture.getByRole('button', { name: 'Zoom in on other kinds of models' }).click();
-	await expect(picture.getByRole('link', { name: /Ch 26: Painting from noise/ })).toBeVisible();
+	await expect(picture.getByRole('link', { name: /Ch 32: Painting from noise/ })).toBeVisible();
 	await picture.getByRole('button', { name: 'A chat app or agent' }).click();
 	await picture.getByRole('button', { name: 'Zoom in on you' }).click();
-	await expect(picture.getByRole('link', { name: /Ch 29: Learning from examples/ })).toBeVisible();
+	await expect(picture.getByRole('link', { name: /Ch 17: Learning from examples/ })).toBeVisible();
 
 	const quiz = page.getByRole('region', { name: 'Quick check' });
 	for (const answer of [

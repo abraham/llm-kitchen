@@ -16,7 +16,7 @@
 		`MLP: each token’s vector goes through a layer of ${n(canonical.mlpSize)} neurons (Ch 6), and the result is added to the stream too.`,
 		'Layer norm: before attention and before the MLP, the numbers are rescaled to a steady size so training stays stable.',
 		`Stack: that block is repeated ${canonical.layers} times. Same design, different weights in each.`,
-		'Out: a final layer norm, then a score for every token in the vocabulary, then softmax (Ch 3) gives next-token probabilities.'
+		'Out: a final layer norm, then a score for every token in the vocabulary, then softmax (Ch 2) gives next-token probabilities.'
 	];
 
 	const total = $derived(

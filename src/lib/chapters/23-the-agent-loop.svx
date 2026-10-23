@@ -29,7 +29,7 @@ This run worked partly because of choices in the harness, not the model:
 
 - **One tool at a time.** The harness stops the model right after its first tool call, so it can't
   write a second call before seeing the first result.
-- **Instructions.** The system prompt (Ch 15) told it to use a tool for counting instead of
+- **Instructions.** The system prompt (Ch 21) told it to use a tool for counting instead of
   guessing.
 - **A step limit.** The harness allows at most 8 model calls, so a confused agent can't loop
   forever. Each call also re-reads the whole growing conversation: here 301, then 394, then 483

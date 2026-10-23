@@ -1,129 +1,81 @@
-# Fact-check: Part VI (Ch 15–21)
+# Fact-check: Part VI (Ch 16–20)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
-`tests/unit/part-6-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
-exactly the recorded results; the prompt segmenter loses nothing), `tests/e2e/part-6.e2e.ts`.
+`tests/unit/part-6-facts.test.ts` (the recorded data says what the prose says),
+`tests/e2e/part-6.e2e.ts`.
 
-Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in each file) inside the
-harness in `scripts/build-agent-traces.py`, written to `static/agent/`. The harness stops the model
-after its first tool call, runs the tool, and calls the model again, up to 8 calls.
+Data: `scripts/build-prompts.py` writes `static/prompts/`, using only models other scripts already
+download: GPT-2 small (the canonical model) and Qwen2.5-1.5B-Instruct. Greedy decoding throughout;
+the pinned revision is in each file. Probabilities of an answer cover all of its tokens.
 
-## Ch 15. The model is not the product
+## Ch 16. A prompt is the start of a document
 
-| Claim                                                                                   | Backing                                                       |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| The prompt contains a system prompt, tool descriptions, earlier turns, and chat markers | Recorded prompt; segmenter test labels each part              |
-| A 31-character message became a 400-token prompt, then 493 on the second call           | Test (recorded token counts, Qwen tokenizer)                  |
-| The model has no memory; the harness re-sends the conversation                          | Each recorded prompt contains the full history (harness code) |
-| The earlier assistant turn is the model's own reply                                     | `build-agent-traces.py` generates it                          |
-| Qwen2.5 model family                                                                    | Cite `qwen2024`                                               |
+| Claim                                                                                              | Backing                              |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| "The cat sat on the": _floor_ about 8%, _bed_ about 7%; with "It was bedtime," _bed_ 22%           | Test (recorded data)                 |
+| At the beach, _sand_ goes from under 0.2% to one of the top two guesses                            | Test                                 |
+| "What is the capital of France?": _Paris_ about 0.5%, top guess a new line at 34%                  | Test                                 |
+| "The capital of France is" makes _Paris_ about six times as likely                                 | Test                                 |
+| Shading: last token's attention averaged over all heads, first token left out and shown separately | Labeled in the widget; recorded data |
+| Chat models were tuned so a question is followed by an answer                                      | Ch 13; cite `ouyang2022` there       |
+| GPT-3 did new tasks from a description and examples with no weight updates                         | Cite `brown2020` (abstract)          |
 
-## Ch 16. Tools
+## Ch 17. Learning from examples in the prompt
 
-| Claim                                                                     | Backing                                                     |
-| ------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Without tools the model answered 7,050,952; the right answer is 7,006,652 | Test (recorded output; calculator)                          |
-| With a calculator it answered 7006652                                     | Test                                                        |
-| Models can be trained to write tool calls at the right moments            | Cite `schick2023`                                           |
-| Qwen writes JSON between `<tool_call>` tags                               | Recorded outputs and chat template                          |
-| The site's `<call name>…</call>` form is simplified and made up           | Stated in the chapter; `simpleCall` in `harness/tools.ts`   |
-| The toy tools run in the browser, never `eval`, never the network         | `harness/tools.ts` (hand-written parser; test rejects code) |
+| Claim                                                                                                                                        | Backing                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| Qwen: _sad_ for "happy ->" about 1% with no examples, 96% with four                                                                          | Test                         |
+| Made-up labels: almost nothing with no examples, 22–78% with four                                                                            | Test                         |
+| "light -> dark" got less likely as examples were added                                                                                       | Test                         |
+| GPT-2 repeats the word for opposites and says "zork" for every made-up-label test                                                            | Test (its top guess)         |
+| In-context learning improves with model size                                                                                                 | Cite `brown2020`             |
+| Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it | Cite `olsson2022` (abstract) |
+| GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                          | Test (recorded attention)    |
 
-## Ch 17. The agent loop
+## Ch 18. Instructions, roles, and the system prompt
 
-| Claim                                                                                         | Backing                 |
-| --------------------------------------------------------------------------------------------- | ----------------------- |
-| The run: search_rhymes, then count_words (30), then the answer                                | Test                    |
-| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test                    |
-| The harness stops after the first tool call; the system prompt says to use tools for counting | `build-agent-traces.py` |
-| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`          |
+| Claim                                                                                                   | Backing                                   |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| Chat models were tuned on instruction-following examples and human ratings                              | Cite `ouyang2022`                         |
+| The widget's template matches the text the model read                                                   | Test (`chatTemplate` vs. recorded prompt) |
+| Specific instructions gave a shorter answer; the persona more than doubled it and added a muddled claim | Test (token counts, quoted phrase)        |
+| "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                       | Test                                      |
+| Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random       | Cite `zheng2024` (abstract)               |
 
-## Ch 18. Managing the context
+## Ch 19. Asking for steps and structure
 
-| Claim                                                                                    | Backing                                                        |
-| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Six tasks overflow a 1,500-token budget; each strategy fits                              | Test                                                           |
-| The budget is deliberately small; the model can read far more                            | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
-| Dropping the oldest: the model made up "Old Mother Hubbard", 18 words                    | Test (recorded answer)                                         |
-| Summary kept "30 words" and the answer was right                                         | Test                                                           |
-| Retrieval by embedding similarity (MiniLM) picked the cat task, and the answer was right | Test; cite `lewis2020`                                         |
-| The map uses the Ch 5 projection                                                         | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
+| Claim                                                                                  | Backing                       |
+| -------------------------------------------------------------------------------------- | ----------------------------- |
+| Worked examples of reasoning improved math word problems in large models               | Cite `wei2022`                |
+| "Let's think step by step": 17.7% → 78.7% on MultiArith (InstructGPT text-davinci-002) | Cite `kojima2022` (abstract)  |
+| Each of the three endings got 4 of 6 right; the format was followed once               | Test (hand grades, see below) |
+| Just the answer: "0.10" for the ball; step by step: "0.2 minutes" for the widgets      | Test                          |
 
-## Ch 19. Caching: reusing the work
+The replies don't share a format, so they were graded by reading them. `GRADES` in the script
+records each grade with a phrase from the reply it was given for, and the script stops if a rerun
+changes a reply.
 
-Data: `scripts/build-caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
-after "The cat sat on the", with and without its KV cache, three times each (median per token),
-written to `static/caching/kv-cache.json`. The prompt-cache view is computed in the browser
-(`src/lib/harness/cache.ts`) from the Ch 18 session's recorded token counts.
+## Ch 20. Where prompts break
 
-| Claim                                                                                  | Backing                                                      |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| A token's key and value depend only on earlier text (causal mask), so they can be kept | Ch 9 mask; the cached and uncached runs pick the same tokens |
-| Without the cache, 24 to 139 ms per token; with it about 20; 43.2 s against 10.0 s     | Test (measured, this machine; labeled in the widget)         |
-| Both runs picked the same 500 tokens; scores differed by at most 0.01                  | Script asserts equal tokens; test checks the difference      |
-| 2 × 12 × 768 = 18,432 cached numbers per token for GPT-2 small                         | Test against `models/canonical.json`                         |
-| Large models' caches run to gigabytes; keeping them small matters for serving          | Cite `pope2022`                                              |
-| Providers keep the KV cache for a prompt's exact start, for minutes to hours           | Cite `openai-prompt-caching`, `anthropic-prompt-caching`     |
-| Cached tokens cost a tenth of the normal price or less; replies start sooner           | Cite both provider docs (0.1× reads, lower on some models)   |
-| The match must be exact from the first token; any early change breaks the rest         | Cite both provider docs                                      |
-| Put stable content first, append only; trimming or summarizing changes the prefix      | Cite `openai-prompt-caching` (optimization guidance)         |
-| Appending reuses 6,100 of 7,656 tokens (80%); the time at the top reuses none          | Test (`cacheCalls`)                                          |
-| Dropping sends 5,776 tokens but costs more than appending; summarizing costs least     | Test                                                         |
-| Caching doesn't change the answer and isn't memory                                     | Cite both provider docs                                      |
-| Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra   | Cite both provider docs; labeled as simplified in the widget |
-
-## Ch 20. Prompt injection
-
-Data: `scripts/build-injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
-(including none) × 6 defenses, written to `static/injection/lab.json`. The injected goal is a false
-claim in the summary; each reply is graded by a per-document pattern, and every reply was read by
-hand to check the grading ("four out of five stars", the real rating, doesn't count).
-
-| Claim                                                                              | Backing                                                       |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Instructions in text the model reads can hijack it                                 | Cite `perez2022`                                              |
-| Indirect injection hides in fetched content the user may never see                 | Cite `greshake2023`                                           |
-| No defense: 7 of 12; plain instruction 16 of 18; HTML comment 11 of 18             | Test                                                          |
-| The made-up cancellation reply                                                     | Test (exact recorded reply)                                   |
-| Every defense let some through; marking 6 of 12; warning and tags 9 of 12 each     | Test                                                          |
-| The fake message adds a 4th role marker; removing markers leaves 3, works as often | Test (token counts, tally)                                    |
-| Spotlighting cut attacks from over 50% to under 2% for GPT models                  | Cite `hines2024` (abstract)                                   |
-| Training a model to rank system instructions above tool text makes it more robust  | Cite `wallace2024`                                            |
-| No prompt defense is known to stop every attack                                    | `hines2024`, `wallace2024` report reductions, not elimination |
-| Small models are easier to fool; these results show the mechanism, not real rates  | Labeled in the prose                                          |
-
-## Ch 21. Trust and guardrails
-
-| Claim                                                                     | Backing                            |
-| ------------------------------------------------------------------------- | ---------------------------------- |
-| Indirect prompt injection has worked on real products                     | Cite `greshake2023`                |
-| No guardrails: all three files deleted, then the 8-call limit, no summary | Test                               |
-| Ask first: six deletion attempts refused, nothing lost                    | Test                               |
-| Only safe tools: it still tried `delete_file`, nothing lost               | Test                               |
-| A 3-step limit still loses one file                                       | Test (replay of the first 3 steps) |
-| Sandboxes isolate code execution                                          | General practice (no demo)         |
+| Claim                                                                                                  | Backing                     |
+| ------------------------------------------------------------------------------------------------------ | --------------------------- |
+| The 24 orders of four examples gave 4 to 8 of 8 reviews right                                          | Test                        |
+| Some orders near state of the art, others random; good orders don't transfer between models            | Cite `lu2022` (abstract)    |
+| Layouts gave 7, 6, 4, and 4 of 8                                                                       | Test                        |
+| Formatting alone moved accuracy by up to 76 points, not fixed by size, examples, or instruction tuning | Cite `sclar2024` (abstract) |
+| 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                | Test                        |
+| Models use information at the start and end of long prompts better than in the middle                  | Cite `liu2024` (abstract)   |
 
 ## Changes from the plan
 
-- **Model for Part VI recordings.** Qwen2.5-1.5B-Instruct (about 3 GB, recorded offline), not a
-  frontier model. The 0.5B model couldn't complete the agent task. Its failures, like the made-up
-  "Old Mother Hubbard", are kept as real examples.
-- **Harness choices made visible.** The harness stops after the first tool call and the system
-  prompt asks for tools instead of mental counting. Without these, both small models wrote several
-  calls at once with made-up arguments and guessed the word count; the chapter says the harness
-  makes the rules.
-- **Injection text.** The page fakes the end of the tool result and a new user message. A plain
-  "ignore your instructions" note didn't make the model delete anything in testing.
-- **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
-- **Ch 19 views.** The prompt-cache view draws each call as a bar of blocks (system prompt, tasks)
-  rather than rows of token chips, since the prompts are hundreds of tokens long, and it shows
-  tokens processed instead of a time to first token. The KV-cache timing is measured offline on one
-  laptop CPU; live timing in the browser is left for later.
-- **Ch 20 goal.** The injected goal is a false claim in the summary. A first version asked for a
-  reply of only a code word: the model almost never did that, but often worked the word into its
-  summary ("Pineapple confirms they can volunteer…"). A second asked it to add a link, which
-  worked only 3 times in 72. A false claim fits the task the model was given, which is how real
-  attacks on summarizers work.
-- **Ch 20 view.** The lab shows the prompt in its own colored view rather than in the Ch 15 inspector,
-  and a toggle removes the colors to show what the model gets.
-- **The recap** moved to [part-7.md](part-7.md) when Part VII was added.
+- **Ch 17 models.** Probabilities come from Qwen2.5-1.5B-Instruct (reading the prompt as plain text)
+  and GPT-2 small; the attention view is GPT-2's, since that's the model the site shows attention
+  for.
+- **Ch 18** shows the chat template with the system prompt highlighted, in its own widget, rather
+  than reusing the Ch 21 prompt inspector.
+- **Ch 19 grading.** Hand-graded replies (see above) instead of an automatic check, which misread
+  several replies in testing.
+- **Ch 20 position.** A short list of 30 lines rather than a long multi-document prompt, so the
+  effect shows as a handful of misses in the middle rather than a smooth U-shaped curve.
+- **Part order.** This was Part VIII (Ch 28–32) until milestone 19 moved prompting before the
+  harness chapters.

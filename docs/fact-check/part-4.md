@@ -14,7 +14,7 @@ GPT-2 revision): `static/traces/gpt2/attn-*.json` and `logitLens` in
 | Claim                                                                                         | Backing                                                                                          |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | The trophy/suitcase sentence is a Winograd schema; the challenge tests this kind of reasoning | Cite `levesque2012` (the paper's first example: "The trophy doesn't fit in the brown suitcase…") |
-| The Ch 2 model sees one word; the Ch 7 model sees 3 characters                                | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
+| The Ch 1 model sees one word; the Ch 7 model sees 3 characters                                | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
 | About 2.5 billion possible token pairs and 127 trillion triples for GPT-2's vocabulary        | Test (50,257² and 50,257³)                                                                       |
 | Most long n-grams never appear in training text                                               | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
 | Neural models share what they learn across similar words                                      | Cite `bengio2003`                                                                                |

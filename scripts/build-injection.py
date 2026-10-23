@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record a small chat model summarizing documents with injected instructions, for Ch 20 (tier T0).
+"""Record a small chat model summarizing documents with injected instructions, for Ch 26 (tier T0).
 
 Usage: scripts/.venv/bin/python scripts/build-injection.py
 

@@ -8,12 +8,12 @@
 ## Instructions in the data
 
 A harness that summarizes your email has to put the email into the prompt. The model then reads
-your request and the email as one stream of tokens. The prompt inspector in Ch 15 colored each part
+your request and the email as one stream of tokens. The prompt inspector in Ch 21 colored each part
 by where it came from, but the model sees no colors, and it was tuned to follow instructions (Ch
 13) wherever they appear. So an instruction written into the email can steer it. This is <GlossaryPopover term="prompt-injection">prompt injection</GlossaryPopover>.<Cite id="perez2022" />
 
 When the instruction comes from the person typing, it's *direct* injection. When it hides in
-content the harness fetched, like an email, a web page, or a tool result (Ch 16), it's *indirect*,
+content the harness fetched, like an email, a web page, or a tool result (Ch 22), it's *indirect*,
 and the person using the app may never see it.<Cite id="greshake2023" />
 
 Below, a harness asks Qwen2.5-1.5B-Instruct for a one-sentence summary of three short documents.
@@ -48,7 +48,7 @@ and attackers keep finding new wording. A 1.5-billion-weight model is easier to 
 in chat apps, so these results show how injection works, not how often real products fall for it.
 
 What matters most is what a fooled model can do. A wrong summary is bad. An agent that can run tools
-(Ch 16), send email, or show you a link that carries your data to someone else's server is worse.
+(Ch 22), send email, or show you a link that carries your data to someone else's server is worse.
 
 <RecapCard>
 

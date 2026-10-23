@@ -18,7 +18,7 @@
 			id: 'app',
 			name: 'A chat app or agent',
 			what: 'Everything you interact with.',
-			chapters: [15],
+			chapters: [21],
 			color: 'harness',
 			children: ['you', 'harness', 'model']
 		},
@@ -26,7 +26,7 @@
 			id: 'you',
 			name: 'You',
 			what: 'You type a message and read the reply. Your words are the start of the document the model continues.',
-			chapters: [15, 28],
+			chapters: [16, 21],
 			color: 'prob',
 			children: ['wording', 'examples', 'instructions', 'steps', 'fragile']
 		},
@@ -34,42 +34,42 @@
 			id: 'wording',
 			name: 'Wording',
 			what: 'Every word shifts the next-token probabilities.',
-			chapters: [28],
+			chapters: [16],
 			color: 'token'
 		},
 		examples: {
 			id: 'examples',
 			name: 'Examples',
 			what: 'A few examples in the prompt can teach a task, with no change to the weights.',
-			chapters: [29],
+			chapters: [17],
 			color: 'attention'
 		},
 		instructions: {
 			id: 'instructions',
 			name: 'Instructions and roles',
 			what: 'Specific instructions help; a persona changes style, not ability.',
-			chapters: [30],
+			chapters: [18],
 			color: 'harness'
 		},
 		steps: {
 			id: 'steps',
 			name: 'Steps and formats',
 			what: 'Working written out first; a fixed format for programs to read.',
-			chapters: [31],
+			chapters: [19],
 			color: 'prob'
 		},
 		fragile: {
 			id: 'fragile',
 			name: 'Fragile prompts',
 			what: 'Order, layout, and position can change the answer: test variants.',
-			chapters: [32],
+			chapters: [20],
 			color: 'loss'
 		},
 		harness: {
 			id: 'harness',
 			name: 'The harness',
 			what: 'Ordinary code that builds the prompt, calls the model in a loop, runs tools, and decides what the model gets to see.',
-			chapters: [15, 17],
+			chapters: [21, 23],
 			color: 'harness',
 			children: ['template', 'tools', 'loop', 'context', 'cache', 'guards']
 		},
@@ -77,42 +77,42 @@
 			id: 'template',
 			name: 'Prompt and chat template',
 			what: 'Turns the conversation, system prompt, and tool list into one text.',
-			chapters: [13, 15],
+			chapters: [13, 21],
 			color: 'token'
 		},
 		tools: {
 			id: 'tools',
 			name: 'Tools',
 			what: 'Code the harness runs when the model writes a tool call.',
-			chapters: [16],
+			chapters: [22],
 			color: 'harness'
 		},
 		loop: {
 			id: 'loop',
 			name: 'Agent loop',
 			what: 'Call the model, run its tool calls, add the results, call again, until an answer or a limit.',
-			chapters: [17],
+			chapters: [23],
 			color: 'harness'
 		},
 		context: {
 			id: 'context',
 			name: 'Context management',
 			what: 'Drops, summarizes, or retrieves text so it fits the window.',
-			chapters: [8, 18],
+			chapters: [8, 24],
 			color: 'weight'
 		},
 		cache: {
 			id: 'cache',
 			name: 'Prompt cache',
 			what: 'Reuses the work on a prompt’s unchanged start, so long conversations stay cheap and fast.',
-			chapters: [19],
+			chapters: [25],
 			color: 'vector'
 		},
 		guards: {
 			id: 'guards',
 			name: 'Guardrails',
 			what: 'Text the model reads can carry instructions, so permission prompts, tool allowlists, sandboxes, and step limits cap the damage.',
-			chapters: [20, 21],
+			chapters: [26, 27],
 			color: 'loss'
 		},
 		model: {
@@ -127,7 +127,7 @@
 			id: 'tokens',
 			name: 'Tokens',
 			what: 'Text becomes numbers, in pieces from a fixed vocabulary.',
-			chapters: [1, 4],
+			chapters: [3, 4],
 			color: 'token'
 		},
 		vectors: {
@@ -170,21 +170,21 @@
 			id: 'probs',
 			name: 'Probabilities',
 			what: 'A score for every token, turned into chances with softmax.',
-			chapters: [2, 3],
+			chapters: [1, 2],
 			color: 'prob'
 		},
 		pick: {
 			id: 'pick',
 			name: 'Pick and append',
 			what: 'Sample a token, add it, and repeat.',
-			chapters: [3, 11],
+			chapters: [2, 11],
 			color: 'prob'
 		},
 		variants: {
 			id: 'variants',
 			name: 'Other kinds of models',
 			what: 'The same pieces, with one of them changed.',
-			chapters: [22],
+			chapters: [28],
 			color: 'weight',
 			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion', 'reasoning']
 		},
@@ -192,42 +192,42 @@
 			id: 'encoders',
 			name: 'Encoders',
 			what: 'Attention that looks both ways, for understanding rather than writing.',
-			chapters: [22],
+			chapters: [28],
 			color: 'attention'
 		},
 		experts: {
 			id: 'experts',
 			name: 'Mixture of experts',
 			what: 'Many MLPs per block; a router sends each token to a few.',
-			chapters: [23],
+			chapters: [29],
 			color: 'weight'
 		},
 		recurrent: {
 			id: 'recurrent',
 			name: 'Recurrent models',
 			what: 'A fixed-size memory instead of looking back at every token.',
-			chapters: [24],
+			chapters: [30],
 			color: 'vector'
 		},
 		vision: {
 			id: 'vision',
 			name: 'Vision models',
 			what: 'Patches of a picture become the tokens.',
-			chapters: [25],
+			chapters: [31],
 			color: 'token'
 		},
 		diffusion: {
 			id: 'diffusion',
 			name: 'Diffusion models',
 			what: 'Make a picture by removing noise, a little at every step.',
-			chapters: [26],
+			chapters: [32],
 			color: 'weight'
 		},
 		reasoning: {
 			id: 'reasoning',
 			name: 'Reasoning models',
 			what: 'Write scratch work before the answer.',
-			chapters: [27],
+			chapters: [15],
 			color: 'prob'
 		}
 	};

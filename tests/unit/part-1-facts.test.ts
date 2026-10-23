@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest';
 import canonical from '../../models/canonical.json';
 import { RHYMES } from '../../src/lib/data/rhymes.ts';
 import { bigramCounts, words } from '../../src/lib/math/bigram.ts';
-import { encodeText } from '../../src/lib/math/encoding.ts';
 import { applyTemperature, softmax } from '../../src/lib/math/sampling.ts';
 import { parseTrace } from '../../src/lib/models/trace.ts';
 
@@ -31,19 +30,7 @@ describe('Ch 0: the guessing game', () => {
 	});
 });
 
-describe('Ch 1: text is just numbers', () => {
-	const cp = (s: string) => encodeText(s)[0].codePoint;
-
-	it('"T is 84, h is 104, a space is 32, é is 233, 🐱 is 128,049"', () => {
-		expect([cp('T'), cp('h'), cp(' '), cp('é'), cp('🐱')]).toEqual([84, 104, 32, 233, 128049]);
-	});
-
-	it('"room for more than a million characters" (U+0000 to U+10FFFF)', () => {
-		expect(0x10ffff + 1).toBeGreaterThan(1_000_000);
-	});
-});
-
-describe('Ch 2: predicting by counting', () => {
+describe('Ch 1: predicting by counting', () => {
 	const counts = bigramCounts(RHYMES.map((r) => r.text));
 
 	it('"little was followed by lamb, dog, and star once each"', () => {
@@ -69,7 +56,7 @@ describe('Ch 2: predicting by counting', () => {
 	});
 });
 
-describe('Ch 3: probability and sampling', () => {
+describe('Ch 2: probability and sampling', () => {
 	it('"the real model chooses from all 50,257 options"', () => {
 		expect(canonical.vocabularySize).toBe(50257);
 	});

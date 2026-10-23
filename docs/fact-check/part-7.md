@@ -1,99 +1,129 @@
-# Fact-check: Part VII (Ch 22–27)
+# Fact-check: Part VII (Ch 21–27)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
-`tests/unit/part-7-facts.test.ts` (the recorded data says what the prose says),
-`src/lib/math/part-7-models.test.ts` (gradient checks and training for the in-browser models),
-`tests/e2e/part-7.e2e.ts`.
+`tests/unit/part-7-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
+exactly the recorded results; the prompt segmenter loses nothing), `tests/e2e/part-7.e2e.ts`.
 
-Data: real runs recorded offline, with each model's pinned revision in its file:
+Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in each file) inside the
+harness in `scripts/build-agent-traces.py`, written to `static/agent/`. The harness stops the model
+after its first tool call, runs the tool, and calls the model again, up to 8 calls.
 
-- `static/encoders/fill-mask.json`: BERT base (`google-bert/bert-base-uncased`) and GPT-2 small, by
-  `scripts/build-encoder.py`.
-- `static/vision/`: pictures drawn by `scripts/build-clip.py` (no licensing questions) and CLIP
-  ViT-B/32's patch vectors and caption similarities.
-- `static/reasoning/thinking.json`: Qwen3-0.6B with thinking off and on, sampled with the model
-  card's recommended settings and a fixed seed, by `scripts/build-reasoning.py`. Answers are graded
-  on the last `\boxed{}`, which the prompt asks for.
+## Ch 21. The model is not the product
 
-## Ch 22. Reading both ways
+| Claim                                                                                   | Backing                                                       |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| The prompt contains a system prompt, tool descriptions, earlier turns, and chat markers | Recorded prompt; segmenter test labels each part              |
+| A 31-character message became a 400-token prompt, then 493 on the second call           | Test (recorded token counts, Qwen tokenizer)                  |
+| The model has no memory; the harness re-sends the conversation                          | Each recorded prompt contains the full history (harness code) |
+| The earlier assistant turn is the model's own reply                                     | `build-agent-traces.py` generates it                          |
+| Qwen2.5 model family                                                                    | Cite `qwen2024`                                               |
 
-| Claim                                                                                    | Backing                                                             |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| BERT is trained by hiding 15% of tokens and guessing them from both sides                | Cite `devlin2019`                                                   |
-| Fridge: GPT-2's top guess is _floor_, BERT's is _top_; bread: _hospital_ vs. _market_    | Test (recorded data)                                                |
-| GPT-2's mask lets each token see only itself and earlier tokens; BERT's sees every token | Widget computes it; matches Ch 9 and `devlin2019`                   |
-| The blank sees 6 of 10 tokens with GPT-2's mask, 10 of 10 with BERT's                    | Test (BERT's own tokens), e2e                                       |
-| BERT base has 12 blocks working on 768 numbers, like GPT-2 small                         | Cite `devlin2019`; BERT config (`num_hidden_layers`, `hidden_size`) |
-| The Ch 5 embedding model is an encoder of the same design as BERT                        | all-MiniLM-L6-v2 config: `model_type: bert`                         |
-| The original transformer had an encoder and a decoder                                    | Cite `vaswani2017`                                                  |
+## Ch 22. Tools
 
-## Ch 23. Many experts
+| Claim                                                                     | Backing                                                     |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Without tools the model answered 7,050,952; the right answer is 7,006,652 | Test (recorded output; calculator)                          |
+| With a calculator it answered 7006652                                     | Test                                                        |
+| Models can be trained to write tool calls at the right moments            | Cite `schick2023`                                           |
+| Qwen writes JSON between `<tool_call>` tags                               | Recorded outputs and chat template                          |
+| The site's `<call name>…</call>` form is simplified and made up           | Stated in the chapter; `simpleCall` in `harness/tools.ts`   |
+| The toy tools run in the browser, never `eval`, never the network         | `harness/tools.ts` (hand-written parser; test rejects code) |
 
-| Claim                                                                                          | Backing                                                               |
-| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| A router scores every expert and sends each token to the best few                              | Cite `shazeer2017`; `Router` test                                     |
-| Mixtral 8x7B: 8 experts per block, 2 per token, 47B total, 13B per token (about a quarter)     | Cite `jiang2024` (abstract); test                                     |
-| DeepSeek-V3: 671B total, 37B per token (about 6%)                                              | Cite `deepseek2024` (abstract); test                                  |
-| Mixtral's experts show no obvious topic pattern; `self` and indentation go to the same experts | Cite `jiang2024` (§5 Routing analysis)                                |
-| The widget's router                                                                            | Labeled simplification: random weights, reads Ch 5's token embeddings |
+## Ch 23. The agent loop
 
-## Ch 24. Remembering without attention
+| Claim                                                                                         | Backing                 |
+| --------------------------------------------------------------------------------------------- | ----------------------- |
+| The run: search_rhymes, then count_words (30), then the answer                                | Test                    |
+| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test                    |
+| The harness stops after the first tool call; the system prompt says to use tools for counting | `build-agent-traces.py` |
+| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`          |
 
-| Claim                                                                      | Backing                                         |
-| -------------------------------------------------------------------------- | ----------------------------------------------- |
-| Recurrent networks predate transformers                                    | Cite `elman1990`                                |
-| The tiny model's memory is 32 numbers however much it has read             | `CharRNN` test                                  |
-| After the widget's 1,500 training steps, it expects _u_ after "humpty d"   | Test (same seed and batches as the widget)      |
-| GPT-2 keeps 2 × 12 × 768 = 18,432 numbers per token, up to 1,024 tokens    | `canonical.json`; test; widget computes from it |
-| The LSTM added gates that learn what to keep and forget                    | Cite `hochreiter1997`                           |
-| Transformers replaced recurrence                                           | Cite `vaswani2017`                              |
-| Mamba's state update depends on the input; cost grows linearly with length | Cite `gu2023` (abstract)                        |
-| Fixed-state models struggle to copy long passages that transformers copy   | Cite `jelassi2024` (abstract)                   |
+## Ch 24. Managing the context
 
-## Ch 25. Seeing pictures
+| Claim                                                                                    | Backing                                                        |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Six tasks overflow a 1,500-token budget; each strategy fits                              | Test                                                           |
+| The budget is deliberately small; the model can read far more                            | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
+| Dropping the oldest: the model made up "Old Mother Hubbard", 18 words                    | Test (recorded answer)                                         |
+| Summary kept "30 words" and the answer was right                                         | Test                                                           |
+| Retrieval by embedding similarity (MiniLM) picked the cat task, and the answer was right | Test; cite `lewis2020`                                         |
+| The map uses the Ch 5 projection                                                         | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
 
-| Claim                                                                                                                                                   | Backing                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                |
-| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data) |
-| Identical background patches get identical vectors                                                                                                      | Test                                  |
-| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)         |
-| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                  |
-| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                        |
+## Ch 25. Caching: reusing the work
 
-## Ch 26. Painting from noise
+Data: `scripts/build-caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
+after "The cat sat on the", with and without its KV cache, three times each (median per token),
+written to `static/caching/kv-cache.json`. The prompt-cache view is computed in the browser
+(`src/lib/harness/cache.ts`) from the Ch 24 session's recorded token counts.
 
-| Claim                                                                     | Backing                                   |
-| ------------------------------------------------------------------------- | ----------------------------------------- |
-| Train by adding noise in steps and predicting it; generate by removing it | Cite `sohl-dickstein2015`, `ho2020`       |
-| The toy learns to turn noise into the shape                               | Test (ring), gradient checks; e2e         |
-| Latent diffusion works on a compressed image and can be steered by text   | Cite `rombach2022`                        |
-| The original recipe used 1,000 steps; the toy uses 50                     | Cite `ho2020` (T = 1000); `STEPS` in code |
+| Claim                                                                                  | Backing                                                      |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| A token's key and value depend only on earlier text (causal mask), so they can be kept | Ch 9 mask; the cached and uncached runs pick the same tokens |
+| Without the cache, 24 to 139 ms per token; with it about 20; 43.2 s against 10.0 s     | Test (measured, this machine; labeled in the widget)         |
+| Both runs picked the same 500 tokens; scores differed by at most 0.01                  | Script asserts equal tokens; test checks the difference      |
+| 2 × 12 × 768 = 18,432 cached numbers per token for GPT-2 small                         | Test against `models/canonical.json`                         |
+| Large models' caches run to gigabytes; keeping them small matters for serving          | Cite `pope2022`                                              |
+| Providers keep the KV cache for a prompt's exact start, for minutes to hours           | Cite `openai-prompt-caching`, `anthropic-prompt-caching`     |
+| Cached tokens cost a tenth of the normal price or less; replies start sooner           | Cite both provider docs (0.1× reads, lower on some models)   |
+| The match must be exact from the first token; any early change breaks the rest         | Cite both provider docs                                      |
+| Put stable content first, append only; trimming or summarizing changes the prefix      | Cite `openai-prompt-caching` (optimization guidance)         |
+| Appending reuses 6,100 of 7,656 tokens (80%); the time at the top reuses none          | Test (`cacheCalls`)                                          |
+| Dropping sends 5,776 tokens but costs more than appending; summarizing costs least     | Test                                                         |
+| Caching doesn't change the answer and isn't memory                                     | Cite both provider docs                                      |
+| Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra   | Cite both provider docs; labeled as simplified in the widget |
 
-## Ch 27. Thinking before answering
+## Ch 26. Prompt injection
 
-| Claim                                                                                        | Backing                    |
-| -------------------------------------------------------------------------------------------- | -------------------------- |
-| Asking large models for step-by-step working improved math word problems                     | Cite `wei2022`             |
-| Qwen3's thinking can be switched off                                                         | Cite `qwen3`; model card   |
-| Strawberry: 2 with thinking off, 3 with thinking on, after spelling it out                   | Test (recorded data)       |
-| About 24 times as many tokens with thinking on; 4 of 6 right both ways                       | Test                       |
-| Twice the thinking hit the 6,000-token limit without answering                               | Test                       |
-| DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
-| Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
+Data: `scripts/build-injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
+(including none) × 6 defenses, written to `static/injection/lab.json`. The injected goal is a false
+claim in the summary; each reply is graded by a per-document pattern, and every reply was read by
+hand to check the grading ("four out of five stars", the real rating, doesn't count).
+
+| Claim                                                                              | Backing                                                       |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Instructions in text the model reads can hijack it                                 | Cite `perez2022`                                              |
+| Indirect injection hides in fetched content the user may never see                 | Cite `greshake2023`                                           |
+| No defense: 7 of 12; plain instruction 16 of 18; HTML comment 11 of 18             | Test                                                          |
+| The made-up cancellation reply                                                     | Test (exact recorded reply)                                   |
+| Every defense let some through; marking 6 of 12; warning and tags 9 of 12 each     | Test                                                          |
+| The fake message adds a 4th role marker; removing markers leaves 3, works as often | Test (token counts, tally)                                    |
+| Spotlighting cut attacks from over 50% to under 2% for GPT models                  | Cite `hines2024` (abstract)                                   |
+| Training a model to rank system instructions above tool text makes it more robust  | Cite `wallace2024`                                            |
+| No prompt defense is known to stop every attack                                    | `hines2024`, `wallace2024` report reductions, not elimination |
+| Small models are easier to fool; these results show the mechanism, not real rates  | Labeled in the prose                                          |
+
+## Ch 27. Trust and guardrails
+
+| Claim                                                                     | Backing                            |
+| ------------------------------------------------------------------------- | ---------------------------------- |
+| Indirect prompt injection has worked on real products                     | Cite `greshake2023`                |
+| No guardrails: all three files deleted, then the 8-call limit, no summary | Test                               |
+| Ask first: six deletion attempts refused, nothing lost                    | Test                               |
+| Only safe tools: it still tried `delete_file`, nothing lost               | Test                               |
+| A 3-step limit still loses one file                                       | Test (replay of the first 3 steps) |
+| Sandboxes isolate code execution                                          | General practice (no demo)         |
 
 ## Changes from the plan
 
-- **Ch 22 live option.** Recorded only (T0); a live fill-mask model is left for later.
-- **Ch 23 routing.** A computed toy router, labeled as simplified, instead of recorded routing:
-  recording a real mixture-of-experts model (several GB) wasn't practical on the available disk.
-- **Ch 24** keeps the memory comparison in its own small widget next to the trainer.
-- **Ch 25 pictures and map.** Simple colored shapes drawn by the script instead of photos, so there
-  are no licensing questions. Every caption–picture similarity falls between 0.18 and 0.36, so a 2D
-  map wouldn't show the matches clearly; the widget ranks pictures for each caption instead. No live
-  caption embedding yet.
-- **Ch 26 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
-  turned it into a blob in the training time a page visit allows.
-- **Ch 27 results.** The small model's thinking gave a mixed result, and the chapter says so.
-- **The recap** became Ch 26 under a new unnumbered "Wrap-up" part; its URL (`/recap`) is unchanged.
-  It is now Ch 33; see [part-8.md](part-8.md).
+- **Model for Part VII recordings.** Qwen2.5-1.5B-Instruct (about 3 GB, recorded offline), not a
+  frontier model. The 0.5B model couldn't complete the agent task. Its failures, like the made-up
+  "Old Mother Hubbard", are kept as real examples.
+- **Harness choices made visible.** The harness stops after the first tool call and the system
+  prompt asks for tools instead of mental counting. Without these, both small models wrote several
+  calls at once with made-up arguments and guessed the word count; the chapter says the harness
+  makes the rules.
+- **Injection text.** The page fakes the end of the tool result and a new user message. A plain
+  "ignore your instructions" note didn't make the model delete anything in testing.
+- **No live tool calling (T3/T4)** in v1; see PLAN.md Future improvements.
+- **Ch 25 views.** The prompt-cache view draws each call as a bar of blocks (system prompt, tasks)
+  rather than rows of token chips, since the prompts are hundreds of tokens long, and it shows
+  tokens processed instead of a time to first token. The KV-cache timing is measured offline on one
+  laptop CPU; live timing in the browser is left for later.
+- **Ch 26 goal.** The injected goal is a false claim in the summary. A first version asked for a
+  reply of only a code word: the model almost never did that, but often worked the word into its
+  summary ("Pineapple confirms they can volunteer…"). A second asked it to add a link, which
+  worked only 3 times in 72. A false claim fits the task the model was given, which is how real
+  attacks on summarizers work.
+- **Ch 26 view.** The lab shows the prompt in its own colored view rather than in the Ch 21 inspector,
+  and a toggle removes the colors to show what the model gets.
+- **Part order.** This was Part VI (Ch 15–21) until milestone 19 moved prompting before it.

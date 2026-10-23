@@ -14,7 +14,7 @@ updates after every token. To predict the next token it has only that memory, ne
 tokens themselves. It's like reading a book while keeping notes on a single index card.
 
 Networks like this are much older than transformers.<Cite id="elman1990" /> Below is a tiny one,
-trained in your browser on the rhymes from Ch 2, like the model in Ch 7. Train it, then slide through
+trained in your browser on the rhymes from Ch 1, like the model in Ch 7. Train it, then slide through
 the phrase and watch its 32-number memory change with each character:
 
 <RecurrentMemory />
@@ -27,7 +27,7 @@ next.
 ## Fixed memory, growing text
 
 The appeal is cost. A transformer's memory grows with the text, because it keeps something for
-every token so later tokens can look back: the KV cache from Ch 19. A recurrent model's memory
+every token so later tokens can look back: the KV cache from Ch 25. A recurrent model's memory
 stays the same size however long the text gets:
 
 <MemoryGrowth />

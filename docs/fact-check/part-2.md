@@ -1,8 +1,17 @@
-# Fact-check: Part II (Ch 4–5)
+# Fact-check: Part II (Ch 3–5)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `src/lib/models/tokenizers.test.ts`, `src/lib/math/bpe.test.ts`, `src/lib/math/vectors.test.ts`,
-`tests/unit/canonical.test.ts`, `tests/e2e/part-2.e2e.ts`.
+`tests/unit/canonical.test.ts`, `tests/unit/part-2-facts.test.ts`, `tests/e2e/part-2.e2e.ts`.
+
+## Ch 3. Text is just numbers
+
+| Claim                                                                   | Backing                                   |
+| ----------------------------------------------------------------------- | ----------------------------------------- |
+| T is 84, h is 104, space is 32, é is 233, 🐱 is 128,049                 | Test (`encodeText`)                       |
+| Unicode has room for more than a million characters                     | Cite `unicode` (U+0000–U+10FFFF), test    |
+| A byte holds 0–255; UTF-8 uses 1 byte for basic English, 2–4 for others | Cite `rfc3629`, test (é = 2, 🐱 = 4)      |
+| GPT-2 starts from bytes so it can read any text                         | Cite `radford2019` (§2.2, byte-level BPE) |
 
 ## Ch 4. Tokens
 

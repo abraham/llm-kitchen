@@ -24,7 +24,7 @@
 		},
 		{
 			add: ['tools'],
-			text: 'Descriptions of the tools the model may ask for, and the format to ask in (Ch 16).'
+			text: 'Descriptions of the tools the model may ask for, and the format to ask in (Ch 22).'
 		},
 		{
 			add: ['call', 'result', 'assistant'],

@@ -12,7 +12,7 @@ call. But a model can only read so much at once: its <GlossaryPopover term="cont
 limit, long prompts also get slower and more expensive. So the harness has to choose what the model
 sees.
 
-Below, the agent from Ch 17 has done the same task for all six rhymes. Then you ask about the first
+Below, the agent from Ch 23 has done the same task for all six rhymes. Then you ask about the first
 one. To make the problem visible we set a small budget of 1,500 tokens; the model itself can read
 far more. Pick what the harness does when the conversation doesn't fit:
 

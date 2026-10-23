@@ -46,7 +46,7 @@
 			{@const used = sizes(s, strategy)}
 			{@const scale = (n: number) => (n / all) * 100}
 			<p class="intro">
-				The agent from Ch 17 did six tasks in a row, one per rhyme. Then you ask: <strong
+				The agent from Ch 23 did six tasks in a row, one per rhyme. Then you ask: <strong
 					>“{s.question}”</strong
 				>
 			</p>

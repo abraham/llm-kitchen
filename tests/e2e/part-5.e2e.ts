@@ -6,7 +6,8 @@ for (const path of [
 	'/generating-text',
 	'/scale',
 	'/predictor-to-assistant',
-	'/quirks-and-limits'
+	'/quirks-and-limits',
+	'/reasoning-models'
 ]) {
 	test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
 		await gotoHydrated(page, path);
@@ -75,4 +76,17 @@ test('Ch 14: quirks lab presets and the spelling blind spot', async ({ page }) =
 	await expect(spelling.getByText('the model sees: one token')).toBeVisible();
 	await spelling.getByLabel(/Text/).fill('strawberry');
 	await expect(spelling.getByText('the model sees: 3 tokens')).toBeVisible();
+});
+
+test('Ch 15: thinking fixes strawberry, at a cost', async ({ page }) => {
+	await gotoHydrated(page, '/reasoning-models');
+	const widget = page.getByRole('region', { name: 'Thinking off, thinking on' });
+	await widget.getByLabel('Puzzle').selectOption({ index: 2 });
+	await expect(widget.getByText(/Answered 2, wrong/)).toBeVisible();
+	await expect(widget.getByText(/Answered 3, right/)).toBeVisible();
+	await widget.getByRole('button', { name: 'Show it all' }).click();
+	await expect(widget.getByRole('region', { name: 'Scratch work' })).toContainText(
+		'S-T-R-A-W-B-E-R-R-Y'
+	);
+	await expect(widget.getByRole('row', { name: /Thinking on 4 of 6/ })).toBeVisible();
 });

@@ -13,7 +13,7 @@
 	const sees = (w: string) => words.slice(start).includes(w);
 
 	const presets = [
-		{ label: 'Ch 2 bigram (1 word)', size: 1 },
+		{ label: 'Ch 1 bigram (1 word)', size: 1 },
 		{ label: '3 words', size: 3 },
 		{ label: 'whole sentence', size: 12 }
 	];

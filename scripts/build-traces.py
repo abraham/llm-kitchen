@@ -47,7 +47,7 @@ SPECS = [
         "The cat sat on the",
         max_new_tokens=12,
         top_k=50,
-        note="Ch 0, Ch 3, Ch 11: the running example, greedy.",
+        note="Ch 0, Ch 2, Ch 11: the running example, greedy.",
     ),
     *[
         Spec(
@@ -57,7 +57,7 @@ SPECS = [
             top_k=10,
             temperature=t,
             seed=seed,
-            note=f"Ch 3: sampled at temperature {t}.",
+            note=f"Ch 2: sampled at temperature {t}.",
         )
         for t, seed in [(0.0, 0), (0.7, 7), (1.5, 15)]
     ],

@@ -9,7 +9,7 @@
 
 When you type into a chat, it feels like asking a question. To the model it is the start of a
 document, and its only job is to guess what comes next (Ch 0). The prompt is the context (Ch 8), and
-every word in it pulls the probabilities of the next token one way or another (Ch 3). <GlossaryPopover term="prompt-engineering">Prompt engineering</GlossaryPopover>
+every word in it pulls the probabilities of the next token one way or another (Ch 2). <GlossaryPopover term="prompt-engineering">Prompt engineering</GlossaryPopover>
 is choosing that text so that the answer you want becomes the likely continuation.
 
 You can watch this happen with GPT-2, which has had no training to follow instructions. Change one

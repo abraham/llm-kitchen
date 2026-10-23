@@ -3,13 +3,11 @@ import { expect, test } from '@playwright/test';
 import { gotoHydrated } from './helpers.ts';
 
 const PAGES = [
-	'/the-model-is-not-the-product',
-	'/tools',
-	'/the-agent-loop',
-	'/managing-the-context',
-	'/caching',
-	'/prompt-injection',
-	'/trust-and-guardrails'
+	'/prompts-as-documents',
+	'/few-shot',
+	'/instructions-and-roles',
+	'/steps-and-structure',
+	'/where-prompts-break'
 ];
 
 for (const path of PAGES) {
@@ -22,78 +20,50 @@ for (const path of PAGES) {
 	});
 }
 
-test('Ch 15: peeling back the prompt', async ({ page }) => {
-	await gotoHydrated(page, '/the-model-is-not-the-product');
-	const widget = page.getByRole('region', { name: 'What the model actually sees' });
-	const raw = widget.getByLabel('The text sent to the model');
-	await expect(raw).toHaveText('Finish this: The cat sat on the');
-	await widget.getByRole('button', { name: 'Next →' }).click();
-	await expect(raw).toContainText('<|im_start|>user');
-	for (let i = 0; i < 4; i++) await widget.getByRole('button', { name: 'Next →' }).click();
-	await expect(raw).toContainText('<tool_response>');
-	await expect(widget.getByText('The second call: 493 tokens')).toBeVisible();
+test('Ch 16: setting the scene changes the next word', async ({ page }) => {
+	await gotoHydrated(page, '/prompts-as-documents');
+	const widget = page.getByRole('region', { name: 'Change the start of the document' });
+	await widget.getByLabel(/It was bedtime/).check();
+	await expect(widget.getByRole('row', { name: /bed.*22%/ }).first()).toBeVisible();
+	await widget.getByLabel('Frame a question').check();
+	await expect(widget.getByRole('table', { name: /Chance of “Paris” next/ })).toBeVisible();
 });
 
-test('Ch 16: tools off gets it wrong, tools on gets it right', async ({ page }) => {
-	await gotoHydrated(page, '/tools');
-	const widget = page.getByRole('region', { name: 'Tools off, tools on' });
-	await expect(widget.getByText('7,050,952').last()).toBeVisible();
-	await widget.getByLabel(/Tools on/).check();
-	for (let i = 0; i < 3; i++) await widget.getByRole('button', { name: 'Next →' }).click();
-	await expect(widget.getByText('<call calculator>1234 * 5678</call>')).toBeVisible();
-	await expect(widget.getByText('The product of 1234 and 5678 is 7006652.')).toBeVisible();
+test('Ch 17: examples teach a made-up rule', async ({ page }) => {
+	await gotoHydrated(page, '/few-shot');
+	const widget = page.getByRole('region', { name: 'Learning from examples' });
+	await expect(widget.getByRole('row', { name: /happy sad .* 96%/ })).toBeVisible();
+	await widget.getByLabel('Made-up labels').check();
+	await widget.getByLabel('0', { exact: true }).check();
+	await expect(widget.locator('pre')).toHaveText(/^pear -> ___$/);
+
+	const head = page.getByRole('region', { name: 'Where the arrow looks' });
+	await expect(head.getByText(/attention head 5\.0/)).toBeVisible();
 });
 
-test('Ch 17: the agent loop ends with an answer', async ({ page }) => {
-	await gotoHydrated(page, '/the-agent-loop');
-	const widget = page.getByRole('region', { name: 'The agent loop' });
-	const next = widget.getByRole('button', { name: 'Next →' });
-	for (let i = 0; i < 4; i++) await next.click();
-	await expect(widget.getByText(/contains 30 words/)).toBeVisible();
-	await expect(widget.getByText(/this is the answer and the loop ends/)).toBeVisible();
+test('Ch 18: a persona does not help with sums', async ({ page }) => {
+	await gotoHydrated(page, '/instructions-and-roles');
+	const widget = page.getByRole('region', { name: 'Same question, different system prompts' });
+	await widget.getByLabel('A persona').check();
+	await expect(widget.locator('.template .system')).toHaveText('You are a world-famous physicist.');
+	await expect(widget.getByRole('row', { name: /Right 5 of 8 3 of 8/ })).toBeVisible();
 });
 
-test('Ch 18: strategies change what the model can answer', async ({ page }) => {
-	await gotoHydrated(page, '/managing-the-context');
-	const widget = page.getByRole('region', { name: 'The context budget' });
-	await widget.getByLabel('Drop the oldest').check();
-	await expect(widget.getByText(/Old Mother Hubbard/)).toBeVisible();
-	await widget.getByLabel(/Retrieve/).check();
-	await expect(widget.getByRole('img', { name: /task 1 is the closest/ })).toBeVisible();
-	await expect(widget.locator('.answer')).toContainText('30 words');
+test('Ch 19: each ending scores 4 of 6; the format is followed once', async ({ page }) => {
+	await gotoHydrated(page, '/steps-and-structure');
+	const widget = page.getByRole('region', { name: 'Ask for steps, ask for a format' });
+	await expect(widget.getByText(/^0\.10$/)).toBeVisible();
+	await expect(
+		widget.getByRole('row', { name: /Steps, then a fixed format 4 of 6 1 of 6/ })
+	).toBeVisible();
 });
 
-test('Ch 19: the KV cache and the prompt cache', async ({ page }) => {
-	await gotoHydrated(page, '/caching');
-	const kv = page.getByRole('region', { name: 'Reusing keys and values' });
-	for (let i = 0; i < 4; i++) await kv.getByRole('button', { name: 'Next →' }).click();
-	await expect(kv.locator('.readout')).toContainText('run 35 token positions with the cache off');
-	await kv.getByRole('radio', { name: 'On', exact: true }).check();
-	await expect(kv.locator('.readout')).toContainText('run 9 token positions with the cache on');
-
-	const view = page.getByRole('region', { name: 'What the provider can reuse' });
-	await expect(view.getByText('6,100 (80%)')).toBeVisible();
-	await view.getByLabel('Put the time at the top').check();
-	await expect(view.getByText('0 (0%)')).toBeVisible();
-});
-
-test('Ch 20: an injected claim reaches the summary', async ({ page }) => {
-	await gotoHydrated(page, '/prompt-injection');
-	const lab = page.getByRole('region', { name: 'The prompt injection lab' });
-	await expect(lab.getByText(/has been cancelled due to unforeseen circumstances/)).toBeVisible();
-	await expect(lab.getByText('The attacker’s claim made it into the summary.')).toBeVisible();
-	await lab
-		.getByRole('button', { name: /A fake new message from you, Remove chat markers/ })
-		.click();
-	await lab.getByLabel('Color by source').uncheck();
-	await expect(lab.locator('.note')).toContainText('with 3 role markers');
-});
-
-test('Ch 21: guardrails protect the files', async ({ page }) => {
-	await gotoHydrated(page, '/trust-and-guardrails');
-	const widget = page.getByRole('region', { name: 'A poisoned web page' });
-	await expect(widget.getByText('taxes.pdf (deleted)')).toBeVisible();
-	await widget.getByLabel('Ask before deleting').check();
-	await expect(widget.getByText('taxes.pdf (deleted)')).toHaveCount(0);
-	await expect(widget.getByText('blocked by the harness').first()).toBeVisible();
+test('Ch 20: order, layout, and position', async ({ page }) => {
+	await gotoHydrated(page, '/where-prompts-break');
+	const widget = page.getByRole('region', { name: 'Small changes, different answers' });
+	await expect(widget.getByRole('row', { name: /8 of 8/ })).toBeVisible();
+	await widget.getByLabel('Formatting').check();
+	await expect(widget.getByRole('row', { name: /Sentiment.*7 of 8/ })).toBeVisible();
+	await widget.getByLabel('Position in a long prompt').check();
+	await expect(widget.getByText(/8 of 88 answers went wrong/)).toBeVisible();
 });

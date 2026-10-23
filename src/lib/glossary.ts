@@ -14,23 +14,23 @@ export const GLOSSARY = {
 	bigram: {
 		term: 'bigram model',
 		definition: 'A model that predicts the next word using only the one word before it.',
-		chapter: 2
+		chapter: 1
 	},
 	distribution: {
 		term: 'probability distribution',
 		definition: 'A list of possible outcomes with how likely each one is. The chances add up to 1.',
-		chapter: 3
+		chapter: 2
 	},
 	sampling: {
 		term: 'sampling',
 		definition: 'Picking one outcome at random, where likelier outcomes get picked more often.',
-		chapter: 3
+		chapter: 2
 	},
 	temperature: {
 		term: 'temperature',
 		definition:
 			'A setting that sharpens (low) or flattens (high) the probabilities before sampling.',
-		chapter: 3
+		chapter: 2
 	},
 	token: {
 		term: 'token',
@@ -127,101 +127,101 @@ export const GLOSSARY = {
 		term: 'harness',
 		definition:
 			'The ordinary code around a model that builds its prompt, calls it, and acts on its output.',
-		chapter: 15
+		chapter: 21
 	},
 	'system-prompt': {
 		term: 'system prompt',
 		definition:
 			'Instructions the app adds at the start of every conversation, usually hidden from the user.',
-		chapter: 15
+		chapter: 21
 	},
 	retrieval: {
 		term: 'retrieval',
 		definition:
 			'Finding the stored text most relevant to a question (often by comparing embeddings) and putting it into the prompt.',
-		chapter: 18
+		chapter: 24
 	},
 	'tool-call': {
 		term: 'tool call',
 		definition:
 			'Text the model writes in an agreed format asking the harness to run a tool, such as a calculator.',
-		chapter: 16
+		chapter: 22
 	},
 	agent: {
 		term: 'agent',
 		definition:
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
-		chapter: 17
+		chapter: 23
 	},
 	'kv-cache': {
 		term: 'KV cache',
 		definition:
 			'The keys and values a model has already worked out for earlier tokens, stored so each new token only has to compute its own.',
-		chapter: 19
+		chapter: 25
 	},
 	'prompt-caching': {
 		term: 'prompt caching',
 		definition:
 			'A provider keeping the KV cache for the start of a prompt, so a later prompt that starts the same way is cheaper and faster.',
-		chapter: 19
+		chapter: 25
 	},
 	'prompt-injection': {
 		term: 'prompt injection',
 		definition:
 			'Instructions hidden in text the model reads (like a web page) that try to override the real instructions.',
-		chapter: 20
+		chapter: 26
 	},
 	encoder: {
 		term: 'encoder',
 		definition:
 			'A transformer that reads the whole text at once, words before and after, to understand it rather than continue it.',
-		chapter: 22
+		chapter: 28
 	},
 	'mixture-of-experts': {
 		term: 'mixture of experts (MoE)',
 		definition:
 			'A model whose MLPs are split into many experts, with a router sending each token to only a few of them.',
-		chapter: 23
+		chapter: 29
 	},
 	'recurrent-model': {
 		term: 'recurrent model',
 		definition:
 			'A model that reads one token at a time and carries a fixed-size memory from each token to the next.',
-		chapter: 24
+		chapter: 30
 	},
 	multimodal: {
 		term: 'multimodal model',
 		definition: 'A model that takes in more than one kind of input, such as text and pictures.',
-		chapter: 25
+		chapter: 31
 	},
 	diffusion: {
 		term: 'diffusion model',
 		definition:
 			'A model that makes pictures (or other data) by starting from random noise and removing a little of it at each step.',
-		chapter: 26
+		chapter: 32
 	},
 	'reasoning-model': {
 		term: 'reasoning model',
 		definition:
 			'A language model trained to write out its working before it answers, spending more tokens to get more right.',
-		chapter: 27
+		chapter: 15
 	},
 	'prompt-engineering': {
 		term: 'prompt engineering',
 		definition:
 			'Choosing the text a model continues so that the answer you want becomes the likely continuation.',
-		chapter: 28
+		chapter: 16
 	},
 	'in-context-learning': {
 		term: 'in-context learning',
 		definition:
 			'A model picking up a task from examples in its prompt, without any change to its weights.',
-		chapter: 29
+		chapter: 17
 	},
 	'chain-of-thought': {
 		term: 'chain of thought',
 		definition: 'Working written out step by step before the answer, by the model itself.',
-		chapter: 31
+		chapter: 19
 	}
 } as const satisfies Record<string, GlossaryEntry>;
 

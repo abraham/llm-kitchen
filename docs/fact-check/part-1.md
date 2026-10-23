@@ -1,4 +1,4 @@
-# Fact-check: Part I (Ch 0–3)
+# Fact-check: Part I (Ch 0–2)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Each claim is cited, checked by a
 test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-facts.test.ts`,
@@ -15,16 +15,7 @@ test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-fact
 | The model chooses from 50,257 possible pieces of text                                 | `models/canonical.json`, checked by build-traces |
 | Generation repeats: predict, pick, append                                             | Recorded trace replay (greedy)                   |
 
-## Ch 1. Text is just numbers
-
-| Claim                                                                   | Backing                                   |
-| ----------------------------------------------------------------------- | ----------------------------------------- |
-| T is 84, h is 104, space is 32, é is 233, 🐱 is 128,049                 | Test (`encodeText`)                       |
-| Unicode has room for more than a million characters                     | Cite `unicode` (U+0000–U+10FFFF), test    |
-| A byte holds 0–255; UTF-8 uses 1 byte for basic English, 2–4 for others | Cite `rfc3629`, test (é = 2, 🐱 = 4)      |
-| GPT-2 starts from bytes so it can read any text                         | Cite `radford2019` (§2.2, byte-level BPE) |
-
-## Ch 2. Predicting by counting
+## Ch 1. Predicting by counting
 
 | Claim                                                                                    | Backing                                                  |
 | ---------------------------------------------------------------------------------------- | -------------------------------------------------------- |
@@ -36,7 +27,7 @@ test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-fact
 | Words with no followers only ever ended a rhyme                                          | Follows from counting; test of dead-end stop             |
 | Rhymes are traditional/public domain; wording varies                                     | Noted in `src/lib/data/rhymes.ts`                        |
 
-## Ch 3. Probability and sampling
+## Ch 2. Probability and sampling
 
 | Claim                                                                                                     | Backing                                                                                         |
 | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -53,5 +44,5 @@ test, or labeled in the text as a simplification. Tests: `tests/unit/part-1-fact
 - Ch 0's "guesses from other people" word cloud was dropped: there is no real survey data, and
   made-up crowd data would be presented as fact. The widget compares the visitor's guess with
   GPT-2's recorded top 50 instead.
-- Live (T2) options for Ch 0 and Ch 3 come with the in-browser model in later milestones; Ch 3's
+- Live (T2) options for Ch 0 and Ch 2 come with the in-browser model in later milestones; Ch 2's
   temperature comparison uses recorded runs for now.

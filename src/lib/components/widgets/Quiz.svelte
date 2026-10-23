@@ -39,7 +39,7 @@
 			q: 'When an assistant uses a calculator, who actually runs it?',
 			options: ['The model', 'The harness', 'The tokenizer', 'The user'],
 			answer: 1,
-			why: 'The model only writes a tool call as text; the harness runs it (Ch 16).'
+			why: 'The model only writes a tool call as text; the harness runs it (Ch 22).'
 		},
 		{
 			q: 'An agent re-sends its whole, growing conversation on every call. Why is that often cheaper than it sounds?',
@@ -50,7 +50,7 @@
 				'Long prompts are free'
 			],
 			answer: 1,
-			why: 'Prompt caching keeps the keys and values for a prompt’s exact start; the model itself remembers nothing (Ch 19).'
+			why: 'Prompt caching keeps the keys and values for a prompt’s exact start; the model itself remembers nothing (Ch 25).'
 		},
 		{
 			q: 'Why can a hidden line in a web page change what a summarizer writes?',
@@ -61,7 +61,7 @@
 				'It can’t; models ignore instructions in documents'
 			],
 			answer: 1,
-			why: 'Nothing marks which words came from you and which from the page (Ch 20).'
+			why: 'Nothing marks which words came from you and which from the page (Ch 26).'
 		},
 		{
 			q: 'A web page tells the agent to delete your files. What stops it?',
@@ -72,7 +72,7 @@
 				'Nothing can help'
 			],
 			answer: 1,
-			why: 'To the model, the page is just more text; the harness has to supply the safety (Ch 21).'
+			why: 'To the model, the page is just more text; the harness has to supply the safety (Ch 27).'
 		},
 		{
 			q: 'Why can BERT fill in a blank in the middle of a sentence better than GPT-2?',
@@ -83,7 +83,7 @@
 				'It uses a higher temperature'
 			],
 			answer: 1,
-			why: 'An encoder lets every token see every other token, both before and after (Ch 22).'
+			why: 'An encoder lets every token see every other token, both before and after (Ch 28).'
 		},
 		{
 			q: 'What does a reasoning model do differently from an ordinary chat model?',
@@ -94,7 +94,7 @@
 				'It never makes mistakes'
 			],
 			answer: 2,
-			why: 'It is still predicting tokens; it was trained to write its working first (Ch 27).'
+			why: 'It is still predicting tokens; it was trained to write its working first (Ch 15).'
 		},
 		{
 			q: 'You add four worked examples to a prompt. What changes inside the model?',
@@ -105,7 +105,7 @@
 				'Its vocabulary grows'
 			],
 			answer: 1,
-			why: 'In-context learning uses the examples as context; no weights change (Ch 29).'
+			why: 'In-context learning uses the examples as context; no weights change (Ch 17).'
 		}
 	];
 

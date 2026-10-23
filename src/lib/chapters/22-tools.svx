@@ -31,9 +31,9 @@ On this site, calls are shown in a simpler made-up form, like
 `<call calculator>1234 * 5678</call>`, so they're easy to read.
 
 The tools in these chapters are toys that run in your browser: a calculator, a search over the six
-nursery rhymes from Ch 2, a word counter, a fake web page, and a pretend file list. Real assistants
+nursery rhymes from Ch 1, a word counter, a fake web page, and a pretend file list. Real assistants
 use the same pattern for web search, code execution, sending email, and more, which is exactly why
-the harness has to be careful about which tools it runs (Ch 21).
+the harness has to be careful about which tools it runs (Ch 27).
 
 <RecapCard>
 

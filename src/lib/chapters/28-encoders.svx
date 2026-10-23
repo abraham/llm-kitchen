@@ -44,7 +44,7 @@ The embedding model behind the map in Ch 5 is a small encoder of the same design
 
 The original transformer had both halves: an encoder to read a sentence in one language and a
 decoder to write it in another.<Cite id="vaswani2017" /> Many systems still pair them, like an
-encoder that finds the relevant documents (Ch 18) and a decoder that writes the answer.
+encoder that finds the relevant documents (Ch 24) and a decoder that writes the answer.
 
 <RecapCard>
 

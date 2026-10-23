@@ -8,7 +8,7 @@
 
 ## Doing the same work twice
 
-The agent in Ch 17 re-sent the whole conversation on every call: 301 tokens, then 394, then 483.
+The agent in Ch 23 re-sent the whole conversation on every call: 301 tokens, then 394, then 483.
 Inside each call, the token loop from Ch 11 does the same: to pick each new token, the model reads
 everything before it again. Does it really redo all that work every time?
 
@@ -31,7 +31,7 @@ order.
 The price is memory. GPT-2 small stores a key and a value in each of its 12 blocks for every token:
 2 × 12 × 768 = 18,432 numbers per token. For large models and long prompts the cache runs to
 gigabytes, and keeping it small is a big part of serving them efficiently.<Cite id="pope2022" /> The
-recurrent models in Ch 24 avoid it by keeping a fixed-size memory instead.
+recurrent models in Ch 30 avoid it by keeping a fixed-size memory instead.
 
 ## Caching across calls
 
@@ -44,7 +44,7 @@ starts sooner, because there is less to work through first.<Cite id="openai-prom
 
 The match has to be exact, from the very first token. Change one early word and every key and value
 after it is different, because each depends on all the text before it. So the cache only helps up
-to the first difference. See what that means for the Ch 18 session:
+to the first difference. See what that means for the Ch 24 session:
 
 <PromptCacheView />
 
@@ -53,7 +53,7 @@ to the first difference. See what that means for the Ch 18 session:
 - **Putting the time at the top** of the system prompt makes every prompt different from its first
   line, so nothing is reused.
 - **Editing the system prompt** throws the cache away once; later calls build a new one.
-- **Dropping the oldest task** (Ch 18) sends fewer tokens, 5,776, but costs more than keeping them
+- **Dropping the oldest task** (Ch 24) sends fewer tokens, 5,776, but costs more than keeping them
   all: every drop changes the text right after the system prompt, so little else matches.
 - **Summarizing** sends the fewest tokens and caches well between summaries, so it costs the least.
 
@@ -63,7 +63,7 @@ time or the new message, goes at the end, and the conversation only grows. The p
 guides give the same advice.<Cite id="openai-prompt-caching" />
 
 The cache is not memory. It holds the model's working for text that is still in the prompt, so the
-model knows nothing more than it did (Ch 18), and it is deleted after a while without use. It
+model knows nothing more than it did (Ch 24), and it is deleted after a while without use. It
 doesn't change the answer either: a cached prompt gets the same kind of reply as an uncached one.
 
 Simplified: providers only cache prompts above a minimum length, from a few hundred to a few

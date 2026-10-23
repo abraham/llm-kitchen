@@ -26,7 +26,7 @@ weights learned in training:
 To score how relevant one token is to another, multiply the first token's query with the second
 token's key, number by number, and add up the results. When the two vectors point in similar
 directions (think of the nearby words in Ch 5), the score is high. The scores are divided by a fixed number
-to keep them from getting too large, then softmax (Ch 3) turns them into percentages. Finally each
+to keep them from getting too large, then softmax (Ch 2) turns them into percentages. Finally each
 token takes a weighted blend of the values.
 
 Step through it with made-up numbers:

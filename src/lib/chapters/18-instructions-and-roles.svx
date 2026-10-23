@@ -6,7 +6,7 @@
 
 ## The slot at the top
 
-Every chat starts with a system prompt (Ch 15), placed in a slot of the chat template (Ch 13) ahead
+Every chat starts with a system prompt (Ch 21), placed in a slot of the chat template (Ch 13) ahead
 of your message. Chat models were tuned on examples of an assistant following instructions, and on
 people's ratings of which replies were better.<Cite id="ouyang2022" /> So instructions there tend
 to be followed. But what kind of instructions help?
