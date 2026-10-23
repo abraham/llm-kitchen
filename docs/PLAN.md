@@ -14,6 +14,7 @@ A static site that teaches how a large language model works. It starts with "gue
 - **Let visitors try things first.** Each chapter has a "try it" widget before the formal explanation.
 - **Keep it fully static.** The site must work without a backend. Live model features are optional extras and are never required to follow the lessons.
 - **Support accessibility and reduced motion.** Respect `prefers-reduced-motion`, make everything keyboard-navigable, and give each animation a text description and a step-through mode.
+- **Be accurate and cite sources.** Every factual claim and number links to a primary source (paper, model card, or official docs). Deliberate simplifications are labeled as such instead of being stated as fact.
 
 ---
 
@@ -40,7 +41,7 @@ A static site that teaches how a large language model works. It starts with "gue
 ## 3. Curriculum
 
 Every chapter has the same structure:
-**Hook question → Try-it widget → Explanation and main animation → Live LLM option (if useful) → Recap card → The question that leads to the next chapter.**
+**Hook question → Try-it widget → Explanation and main animation → Live LLM option (if useful) → Recap card → Sources → The question that leads to the next chapter.**
 
 ### Part I — Prediction
 
@@ -255,6 +256,7 @@ llm-kitchen/
       ci.yml                      # format, lint, type check, unit tests, build, Playwright, ci-success
       firebase-hosting-pr.yml     # build, deploy a preview channel per PR
       firebase-hosting-merge.yml  # build, deploy to the live channel on merge to main
+      links.yml                   # weekly external link check of references.json (opens an issue on failure)
   src/
     routes/
       +layout.svelte         # ChapterLayout shell, progress rail
@@ -268,7 +270,8 @@ llm-kitchen/
       components/
         primitives/          # TokenChip, VectorStrip, ProbBars, SamplerWheel, ...
         widgets/             # BigramBuilder, BPEStepper, EmbeddingMap, AttentionViewer, GlassBoxGenerator, TinyTrainer, PromptInspector, AgentStepper, ...
-        layout/              # StepController, WidgetFrame, DataSourceBadge, IngredientsBox, RecapCard, ProgressNav, GlossaryPopover
+        layout/              # StepController, WidgetFrame, DataSourceBadge, IngredientsBox, RecapCard, ProgressNav, GlossaryPopover, Cite, Sources
+      references.json        # bibliography: id, authors, title, year, venue, URL/DOI, accessed date
       stores/                # progress.svelte.ts, motion-prefs.svelte.ts, model-tier.svelte.ts (rune-based shared state)
       models/                # ModelProvider + recorded/transformers/webllm/remote impls
       harness/               # toy agent loop, tool registry, in-browser toy tools
@@ -285,6 +288,7 @@ llm-kitchen/
 
 - **Navigation:** a linear chapter flow with a progress rail. Progress is saved in `localStorage`, and a "skip ahead" glossary is available.
 - **Glossary popovers:** the first use of each term links to its chapter.
+- **Citations:** chapters cite with `<Cite id="..." />`, which renders a numbered footnote link. Each chapter ends with a `Sources` list generated from the ids it used. Entries live in `src/lib/references.json`. A unit test fails if a chapter uses an unknown id or if an entry is never cited.
 
 ### CI
 
@@ -317,6 +321,8 @@ llm-kitchen/
 ---
 
 ## 7. Milestones
+
+Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapter-fact-check-part-of-every-chapter-milestone-510) for its chapters. Milestone 12 is a final review of those facts across the whole site.
 
 1. **Foundation: scaffold and CI**
    - SvelteKit + adapter-static + mdsvex scaffold with the `[chapter]` route and one placeholder `.svx` chapter.
@@ -356,15 +362,37 @@ llm-kitchen/
     - Live tool calling via T3/T4, limited to the toy tools.
 11. **Polish**
     - Accessibility audit, performance budget (<150 KB JS on text-only pages), Playwright visual tests, mobile layouts, custom domain on Firebase Hosting.
+12. **Final fact review**
+    - Re-check every chapter's claim checklist (from the per-chapter fact-check below) against the finished site. Confirm that the claims are consistent across chapters, e.g. the same GPT-2 numbers everywhere and no chapter contradicting an earlier simplification.
+    - Re-verify time-sensitive facts, such as Ch 12's frontier-model figures and the providers' tool-calling behavior. Update the sources and "accessed" dates.
+    - **Expert review:** someone with ML background reads each Part end to end for errors and misleading simplifications. Findings are fixed or logged as issues before launch.
+    - Run the link check and fix or replace any dead sources.
+    - *Done when:* every claim checklist has been re-checked, the citation unit test and link check pass, and expert review has no open findings.
+
+### Per-chapter fact-check (part of every chapter milestone, 5–10)
+
+A chapter isn't done until its fact-check is done in the same PR:
+
+- **Claim checklist:** the PR description lists every factual claim and number in the chapter. Each one is either backed by a `<Cite>` to a primary source or rewritten as a labeled simplification ("Simplified: real models also…").
+- **Numbers from the source:** model facts (GPT-2 small's layers, heads, vocabulary size, context length) come from `models/canonical.json` and the model's own config, with `build-traces.py` asserting they match. Any other figure cites the paper or model card it came from.
+- **Demos match the prose:** Vitest checks that the widgets produce the numbers the text describes (e.g. the bigram counts, the BPE merges, the tokenizer split of "strawberry"). Recorded traces are spot-checked against a fresh run of the model.
+- **Sources list:** the chapter ends with its `Sources` list, and the citation unit test passes.
+- **Core sources each Part must cite** (at minimum):
+  - Part II: Sennrich et al. 2016 (BPE) and Mikolov et al. 2013 (word vectors and analogies).
+  - Part III: Rumelhart et al. 1986 (backpropagation).
+  - Part IV: Levesque et al. 2012 (Winograd Schema Challenge, for the trophy/suitcase example) and Vaswani et al. 2017 (attention and transformers).
+  - Part V: Radford et al. 2019 (GPT-2), Kaplan et al. 2020 and Hoffmann et al. 2022 (scaling laws), and Ouyang et al. 2022 (instruction and preference tuning).
+  - Part VI: Schick et al. 2023 (Toolformer), Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG), and Greshake et al. 2023 (prompt injection).
 
 ---
 
 ## 8. Success criteria
 
 - A visitor with no ML background can explain "next-token prediction, tokens, embeddings, attention, sampling" and how a harness turns a model into an agent after finishing.
-- Every chapter works fully offline with recorded traces. Live model features are opt-in only.
+- Every chapter worksd its per-chapter fact-check and the final fact reviewrded traces. Live model features are opt-in only.
 - Lighthouse scores ≥ 95 for performance and accessibility on chapter pages that have no live model.
 - All animations can be stepped through and respect reduced motion.
+- Every chapter passes the Validate milestone: factual claims are cited or labeled as simplifications, and expert review has no open findings.
 
 ---
 
