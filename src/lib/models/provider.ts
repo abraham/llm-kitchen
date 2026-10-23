@@ -7,6 +7,8 @@ export interface CanonicalModel {
 	displayName: string;
 	huggingFaceId: string;
 	onnxId: string;
+	/** Hugging Face commit of `onnxId` that the live demos download. */
+	onnxRevision: string;
 	/** ONNX file in `onnxId` to run (without the `_quantized` suffix), and its 8-bit size. */
 	onnxFile: string;
 	onnxMB: number;
@@ -19,6 +21,8 @@ export interface CanonicalModel {
 	mlpSize: number;
 	vocabularySize: number;
 	contextLength: number;
+	/** The bigger model of the same family that this one drafts for (speculative decoding). */
+	draftTarget: { huggingFaceId: string; displayName: string };
 }
 
 export const canonical: CanonicalModel = canonicalJson;

@@ -15,9 +15,9 @@ import datetime
 import torch
 from transformers import AutoModel, AutoTokenizer
 
-from .common import revision, write_dataset
+from .common import EMBEDDER, revision, write_dataset
 
-MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+MODEL = EMBEDDER["huggingFaceId"]
 
 GROUPS = {
     "animals": ["cat", "kitten", "dog", "puppy", "cow", "horse", "mouse", "lion", "tiger", "fish", "bird"],

@@ -3,7 +3,7 @@
 Usage: scripts/.venv/bin/python -m scripts.record speculative
 (downloads GPT-2 medium, about 1.5 GB, on the first run; GPT-2 small is already cached)
 
-Writes static/data/speculative/gpt2.json. For each prompt, the drafter guesses DRAFT tokens greedily,
+Writes static/data/speculative/<canonical model>/drafts.json. For each prompt, the drafter guesses DRAFT tokens greedily,
 then the big model reads the text plus all the guesses in one pass. It keeps the guesses that match
 its own top token, and at the first mismatch it adds its own token instead (if every guess
 matched, it adds one more of its own). Both models share GPT-2's tokenizer. The script checks that
@@ -17,10 +17,10 @@ import datetime
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import revision, write_dataset
+from .common import CANONICAL, revision, write_dataset
 
-DRAFTER = "openai-community/gpt2"
-TARGET = "openai-community/gpt2-medium"
+DRAFTER = CANONICAL["huggingFaceId"]
+TARGET = CANONICAL["draftTarget"]["huggingFaceId"]
 DRAFT = 4
 NEW_TOKENS = 30
 PROMPTS = [
@@ -99,13 +99,13 @@ def main() -> None:
         )
 
     write_dataset(
-        "speculative/gpt2",
+        "speculative/drafts",
         {
             "version": 1,
-            "drafter": {"id": DRAFTER, "displayName": "GPT-2 small", "revision": revision(DRAFTER),
+            "drafter": {"id": DRAFTER, "displayName": CANONICAL["displayName"], "revision": revision(DRAFTER),
                         "parameters": sizes["drafter"]},
-            "target": {"id": TARGET, "displayName": "GPT-2 medium", "revision": revision(TARGET),
-                       "parameters": sizes["target"]},
+            "target": {"id": TARGET, "displayName": CANONICAL["draftTarget"]["displayName"],
+                       "revision": revision(TARGET), "parameters": sizes["target"]},
             "draft": DRAFT,
             "newTokens": NEW_TOKENS,
             "runs": runs,

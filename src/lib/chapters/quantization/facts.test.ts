@@ -4,7 +4,7 @@ import canonical from '../../../../models/canonical.json';
 import type { QuantizeRun } from '#lib/math/quantize.ts';
 
 describe('fewer bits per number', () => {
-	const run: QuantizeRun = readDataset('quantize/gpt2');
+	const run: QuantizeRun = readDataset('quantize/precisions');
 	const at = (label: string) => run.precisions.find((p) => p.label === label)!;
 	const text = (label: string) =>
 		at(label)

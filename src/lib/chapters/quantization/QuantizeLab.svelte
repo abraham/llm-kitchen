@@ -7,7 +7,7 @@
 	import { levels } from '#lib/math/quantize.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
-	const data = useDataset('quantize/gpt2');
+	const data = useDataset('quantize/precisions');
 	const id = $props.id();
 	let index = $state(0);
 

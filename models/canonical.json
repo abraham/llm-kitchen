@@ -3,6 +3,7 @@
 	"displayName": "GPT-2 small",
 	"huggingFaceId": "openai-community/gpt2",
 	"onnxId": "Xenova/gpt2",
+	"onnxRevision": "bf2c7f02e0b826c60d03af341171bde20893da66",
 	"onnxFile": "decoder_model_merged",
 	"onnxMB": 128,
 	"tokenizer": "gpt2",
@@ -12,5 +13,9 @@
 	"embeddingSize": 768,
 	"mlpSize": 3072,
 	"vocabularySize": 50257,
-	"contextLength": 1024
+	"contextLength": 1024,
+	"draftTarget": {
+		"huggingFaceId": "openai-community/gpt2-medium",
+		"displayName": "GPT-2 medium"
+	}
 }

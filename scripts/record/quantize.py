@@ -2,7 +2,7 @@
 
 Usage: HF_HUB_OFFLINE=1 scripts/.venv/bin/python -m scripts.record quantize
 
-Writes static/data/quantize/gpt2.json. For each precision (32-bit floats as trained, 16-bit floats, and
+Writes static/data/quantize/<canonical model>/precisions.json. For each precision (32-bit floats as trained, 16-bit floats, and
 8, 4, 3, and 2-bit integers) it records the weights' size, the top next-token guesses for "The cat
 sat on the", the greedy continuation, and the loss on a short test passage. Integer precisions use
 plain round-to-nearest in blocks of 32 numbers that share one 16-bit scale, like llama.cpp's Q4_0
@@ -122,7 +122,7 @@ def main() -> None:
 
     top = sample.abs().max()
     write_dataset(
-        "quantize/gpt2",
+        "quantize/precisions",
         {
             "version": 1,
             "model": {"id": model_id, "displayName": CANONICAL["displayName"], "revision": revision(model_id)},

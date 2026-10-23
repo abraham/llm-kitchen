@@ -32,16 +32,16 @@ Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.m
 
 ## Ch 5. Embeddings
 
-| Claim                                                                  | Backing                                                                                           |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| GPT-2 small turns each token into 768 numbers                          | `canonical.json` (checked against the model config)                                               |
-| The vectors shown are GPT-2's real token embeddings                    | Exported by `record/traces.py` from `wte`                                                         |
-| Embeddings start random and are learned in training                    | Cite `radford2019`                                                                                |
-| all-MiniLM-L6-v2 maps text to 384 numbers                              | Cite `minilm-model-card`; test (`dimensions` = 384)                                               |
-| cat's nearest neighbor is kitten                                       | Test                                                                                              |
-| The 2D map keeps only a small share of the differences (~13%)          | Shown live from PCA explained variance; test (< 20%)                                              |
-| Neighbors use all 384 numbers                                          | Test (browser math matches precomputed neighbors)                                                 |
-| king − man + woman is nearest to queen among the map's words           | Test; text says "on this map" and "doesn't work for every analogy"                                |
-| man → woman partly lines up with king → queen, but not on the flat map | Test (cosine above 0.2, more aligned than over 90% of word-pair steps; under 0.5 in 2D)           |
-| The king/queen example was first shown in 2013 with word2vec vectors   | Cite `mikolov2013`                                                                                |
-| Live option: ~23 MB model + ~27 MB runtime, cached, runs on device     | Hugging Face file size (22,972,370 B); ORT asyncify wasm (26.9 MB); Transformers.js browser cache |
+| Claim                                                                  | Backing                                                                                                                                            |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GPT-2 small turns each token into 768 numbers                          | `canonical.json` (checked against the model config)                                                                                                |
+| The vectors shown are GPT-2's real token embeddings                    | Exported by `record/traces.py` from `wte`                                                                                                          |
+| Embeddings start random and are learned in training                    | Cite `radford2019`                                                                                                                                 |
+| all-MiniLM-L6-v2 maps text to 384 numbers                              | Cite `minilm-model-card`; test (`dimensions` = 384)                                                                                                |
+| cat's nearest neighbor is kitten                                       | Test                                                                                                                                               |
+| The 2D map keeps only a small share of the differences (~13%)          | Shown live from PCA explained variance; test (< 20%)                                                                                               |
+| Neighbors use all 384 numbers                                          | Test (browser math matches precomputed neighbors)                                                                                                  |
+| king − man + woman is nearest to queen among the map's words           | Test; text says "on this map" and "doesn't work for every analogy"                                                                                 |
+| man → woman partly lines up with king → queen, but not on the flat map | Test (cosine above 0.2, more aligned than over 90% of word-pair steps; under 0.5 in 2D)                                                            |
+| The king/queen example was first shown in 2013 with word2vec vectors   | Cite `mikolov2013`                                                                                                                                 |
+| Live option: ~24 MB model + ~27 MB runtime, cached, runs on device     | `python -m scripts.record check live` (files at the pinned commit, 23.7 MB); ORT asyncify wasm (26.9 MB, unit test); Transformers.js browser cache |

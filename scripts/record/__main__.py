@@ -3,6 +3,7 @@
 Usage, from the repository root:
     scripts/.venv/bin/python -m scripts.record <module> [args]   # one module, e.g. traces
     scripts/.venv/bin/python -m scripts.record all               # every module, in order
+    scripts/.venv/bin/python -m scripts.record check <module>    # re-record and compare (see check.py)
 
 Each module writes its datasets to static/data/ through common.write_dataset.
 """
@@ -36,9 +37,19 @@ def run(name: str, args: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2 or sys.argv[1] not in [*MODULES, "all"]:
-        raise SystemExit(f"usage: python -m scripts.record <{'|'.join(MODULES)}|all> [args]")
-    if sys.argv[1] == "all":
+    if sys.argv[1:2] == ["check"]:
+        from . import check
+
+        target = sys.argv[2] if len(sys.argv) > 2 else ""
+        if target == "live":
+            check.live()
+        elif target in MODULES:
+            check.recordings(run, target, sys.argv[3:])
+        else:
+            raise SystemExit(f"usage: python -m scripts.record check <{'|'.join(MODULES)}|live> [args]")
+    elif len(sys.argv) < 2 or sys.argv[1] not in [*MODULES, "all"]:
+        raise SystemExit(f"usage: python -m scripts.record <{'|'.join(MODULES)}|all|check> [args]")
+    elif sys.argv[1] == "all":
         for name in MODULES:
             run(name, [])
     else:

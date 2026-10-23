@@ -28,7 +28,10 @@ function dataset<T>(file: string, parse: Check<T>, script: string, version = 1):
 	return { file, parse, script, version };
 }
 
-const traceFile = (name: string) => dataset(`traces/${canonical.id}/${name}.json`, trace, 'traces');
+/** A dataset recorded from the canonical model, kept in a folder per model like the traces. */
+const perModel = <T>(kind: string, name: string, parse: Check<T>, script: string) =>
+	dataset(`${kind}/${canonical.id}/${name}.json`, parse, script);
+const traceFile = (name: string) => perModel('traces', name, trace, 'traces');
 
 /** Every recorded dataset the site reads. Files live at `static/data/<file>`. */
 export const DATASETS = {
@@ -52,19 +55,15 @@ export const DATASETS = {
 	'traces/quirk-math': traceFile('quirk-math'),
 	'traces/quirk-moon': traceFile('quirk-moon'),
 	'traces/quirk-painter': traceFile('quirk-painter'),
-	'vectors/the-cat-sat': dataset(
-		`vectors/${canonical.id}/the-cat-sat.json`,
-		tokenVectors,
-		'traces'
-	),
+	'vectors/the-cat-sat': perModel('vectors', 'the-cat-sat', tokenVectors, 'traces'),
 	'embeddings/minilm-map': dataset('embeddings/minilm-map.json', embeddingMap, 'embeddings'),
 	'embeddings/minilm-vectors': dataset(
 		'embeddings/minilm-vectors.json',
 		embeddingVectors,
 		'embeddings'
 	),
-	'quantize/gpt2': dataset('quantize/gpt2.json', quantizeRun, 'quantize'),
-	'speculative/gpt2': dataset('speculative/gpt2.json', speculativeRecording, 'speculative'),
+	'quantize/precisions': perModel('quantize', 'precisions', quantizeRun, 'quantize'),
+	'speculative/drafts': perModel('speculative', 'drafts', speculativeRecording, 'speculative'),
 	'chat/base-vs-instruct': dataset('chat/base-vs-instruct.json', baseVsInstruct, 'chat'),
 	'reasoning/thinking': dataset('reasoning/thinking.json', thinking, 'reasoning'),
 	'prompts/wording': dataset('prompts/wording.json', wording, 'prompts'),

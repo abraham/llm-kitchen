@@ -1,9 +1,11 @@
 <script lang="ts">
 	import type { BrowserModel } from '#lib/models/browser-model.svelte.ts';
+	import { RUNTIME_MB } from '#lib/models/onnx-runtime.ts';
 
 	let { model, purpose }: { model: BrowserModel; purpose: string } = $props();
 
 	const id = $props.id();
+	const downloadMB = $derived(model.spec.modelMB + RUNTIME_MB);
 </script>
 
 <div class="consent">
@@ -11,13 +13,12 @@
 		<p id="{id}-title" class="title">Run a real model in your browser?</p>
 		<p>
 			{purpose} This downloads <strong>{model.spec.label}</strong>: about {model.spec.modelMB} MB for
-			the model plus {model.spec.runtimeMB} MB for the code that runs it, about {model.spec
-				.downloadMB}
+			the model plus {RUNTIME_MB} MB for the code that runs it, about {downloadMB}
 			MB in total. Your browser keeps a copy, so it's only downloaded once. Everything runs on your device;
 			nothing you type is sent anywhere.
 		</p>
 		<button type="button" onclick={() => model.load()}>
-			Download about {model.spec.downloadMB} MB and run it
+			Download about {downloadMB} MB and run it
 		</button>
 	{:else if model.status.state === 'loading'}
 		<p id="{id}-title" class="title">Downloading {model.spec.label}…</p>

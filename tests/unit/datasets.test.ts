@@ -25,6 +25,8 @@ describe('recorded datasets', () => {
 		const head = JSON.parse(readFileSync(`static/data/${DATASETS[id].file}`, 'utf8'));
 		expect(head.script).toBe(`record/${DATASETS[id].script}.py`);
 		expect(head.models.length).toBeGreaterThan(0);
+		for (const m of head.models) expect(m.revision, m.id).toMatch(/^[0-9a-f]{40}$/);
+		expect(head.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}/);
 	});
 
 	it('every dataset is used by the site', () => {

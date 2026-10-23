@@ -1,5 +1,5 @@
 {
-	"dataset": "speculative/gpt2",
+	"dataset": "speculative/drafts",
 	"version": 1,
 	"script": "record/speculative.py",
 	"models": [

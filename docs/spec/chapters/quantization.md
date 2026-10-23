@@ -17,7 +17,7 @@ its quality at 4 bits.
 
 ## Data
 
-Recorded by `scripts/record/quantize.py` (`static/data/quantize/gpt2.json`) at 32, 16, 8, 6, 5, 4, 3, and
+Recorded by `scripts/record/quantize.py` (`static/data/quantize/gpt2/precisions.json`) at 32, 16, 8, 6, 5, 4, 3, and
 2 bits.
 
 ## Decisions

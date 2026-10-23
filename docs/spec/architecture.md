@@ -80,10 +80,11 @@ src/
     site.ts                      name, tagline, description, origin, URL helpers
   styles/                        tokens.css, global.css
 static/
-  data/                          recorded datasets (traces and vectors under a folder per model)
+  data/                          recorded datasets (canonical-model ones under a folder per model)
   vision/                        the pictures the CLIP recording draws
   og/                            generated social images (git-ignored)
 models/canonical.json            the canonical small model
+models/embedder.json             the embedding model
 scripts/
   record/                        Python package: common.py plus one module per recording
   build-og.ts                    social images

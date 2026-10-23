@@ -1,6 +1,6 @@
 import type { Candidate, Token } from '#lib/models/provider.ts';
 
-/** static/quantize/gpt2.json, written by scripts/build-quantize.py. */
+/** The `quantize/precisions` dataset, written by scripts/record/quantize.py. */
 export interface QuantizeRun {
 	version: 1;
 	model: { id: string; displayName: string; revision: string | null };

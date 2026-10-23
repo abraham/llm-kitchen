@@ -4,7 +4,7 @@ import canonical from '../../../../models/canonical.json';
 import { writtenAfter, type SpeculativeRecording } from '#lib/math/speculative.ts';
 
 describe('guessing ahead', () => {
-	const rec: SpeculativeRecording = readDataset('speculative/gpt2');
+	const rec: SpeculativeRecording = readDataset('speculative/drafts');
 	const run = (prompt: string) => rec.runs.find((r) => r.prompt === prompt)!;
 
 	it('drafts 4 tokens at a time with GPT-2 small (124M) for GPT-2 medium (355M)', () => {

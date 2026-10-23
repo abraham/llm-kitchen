@@ -13,15 +13,15 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 11. Generating text
 
-| Claim                                                                                 | Backing                                                                    |
-| ------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep." | Test (recorded trace)                                                      |
-| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"         | Test (`the-cat-sat-bed`)                                                   |
-| Greedy decoding tends to repeat; sampling mostly avoids it                            | Cite `holtzman2020`                                                        |
-| Each token costs a full run through all 124 million weights                           | Model architecture (no caching is shown); `canonical.json`                 |
-| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                               | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)               |
-| The live copy is about 155 MB including the runtime                                   | `canonical.json` `onnxMB` (128, Hugging Face file listing) + 27 MB runtime |
-| The live 8-bit copy's percentages differ from the recorded ones                       | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                  |
+| Claim                                                                                 | Backing                                                                                                       |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep." | Test (recorded trace)                                                                                         |
+| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"         | Test (`the-cat-sat-bed`)                                                                                      |
+| Greedy decoding tends to repeat; sampling mostly avoids it                            | Cite `holtzman2020`                                                                                           |
+| Each token costs a full run through all 124 million weights                           | Model architecture (no caching is shown); `canonical.json`                                                    |
+| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                               | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)                                                  |
+| The live copy is about 155 MB including the runtime                                   | `canonical.json` `onnxMB` (128 at the pinned commit, `scripts.record check live`) + 27 MB runtime (unit test) |
+| The live 8-bit copy's percentages differ from the recorded ones                       | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                                                     |
 
 ## Ch 12. Scale
 
@@ -43,7 +43,7 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 13. Fewer bits per number
 
-Data: `static/data/quantize/gpt2.json` from `scripts/record/quantize.py` (GPT-2 small, pinned revision in
+Data: `static/data/quantize/gpt2/precisions.json` from `scripts/record/quantize.py` (GPT-2 small, pinned revision in
 the file): every weight matrix rounded to nearest in blocks of 32 with one 16-bit scale per block,
 then the top guesses for "The cat sat on the", a 12-token greedy continuation, and the loss on a
 short public-domain passage (Lewis Carroll).
@@ -65,7 +65,7 @@ short public-domain passage (Lewis Carroll).
 
 ## Ch 14. Guessing ahead
 
-Data: `static/data/speculative/gpt2.json` from `scripts/record/speculative.py`: GPT-2 small (124,439,808
+Data: `static/data/speculative/gpt2/drafts.json` from `scripts/record/speculative.py`: GPT-2 small (124,439,808
 weights) guesses 4 tokens per round for GPT-2 medium (354,823,168), greedy, 30 new tokens per prompt.
 The script asserts the result equals GPT-2 medium's own greedy output.
 

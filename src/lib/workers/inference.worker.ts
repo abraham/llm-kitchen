@@ -13,18 +13,12 @@ import {
 // CDN), so they get long-lived caching and the page CSP can stay 'self'.
 import asyncifyMjs from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url';
 import asyncifyWasm from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
-import plainMjs from 'onnxruntime-web/ort-wasm-simd-threaded.mjs?url';
-import plainWasm from 'onnxruntime-web/ort-wasm-simd-threaded.wasm?url';
 
 env.allowLocalModels = false;
-// Same choice Transformers.js makes: Safari without WebGPU needs the non-asyncify build.
-const isOldSafari =
-	/^((?!chrome|android).)*safari/i.test(navigator.userAgent) && !('gpu' in navigator);
 const abs = (url: string) => new URL(url, self.location.href).href;
+// One build for every supported browser; only Safari older than 26 (no WebGPU) needed another.
 if (env.backends.onnx.wasm) {
-	env.backends.onnx.wasm.wasmPaths = isOldSafari
-		? { mjs: abs(plainMjs), wasm: abs(plainWasm) }
-		: { mjs: abs(asyncifyMjs), wasm: abs(asyncifyWasm) };
+	env.backends.onnx.wasm.wasmPaths = { mjs: abs(asyncifyMjs), wasm: abs(asyncifyWasm) };
 }
 
 export type WorkerRequest =
@@ -33,6 +27,8 @@ export type WorkerRequest =
 			type: 'load';
 			task: 'embed' | 'next-token';
 			model: string;
+			/** Hugging Face commit to download, so the files can't change under the site. */
+			revision: string;
 			device: 'webgpu' | 'wasm';
 			/** ONNX file to load instead of the default, without the dtype suffix. */
 			file?: string;
@@ -108,6 +104,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			const options = {
 				dtype: 'q8' as const,
 				device: request.device,
+				revision: request.revision,
 				progress_callback,
 				...(request.file ? { model_file_name: request.file } : {})
 			};

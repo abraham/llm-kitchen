@@ -17,8 +17,9 @@ its chapters and what backs it. A pull request that adds or changes a claim upda
   model card.
 - **Demos match the prose.** Each chapter's `facts.test.ts` checks the numbers it states
   (bigram counts, BPE merges, the tokenizer's split of "strawberry", recorded results, and so on).
-- **Recordings are reproducible.** Scripts decode greedily or with a fixed seed, and spot checks
-  regenerate a few traces and compare them byte for byte.
+- **Recordings are reproducible.** Scripts decode greedily or with a fixed seed, pin their Python
+  packages and model commits, and `python -m scripts.record check <module>` re-records a module and
+  compares it with the committed data.
 - **Time-sensitive facts** (model lineups and cards, provider caching and tool-calling rules,
   frontier-model figures) carry accessed dates and are re-checked when the site is reviewed.
 - **Links** are checked weekly in CI (see [quality.md](quality.md)). Some publishers answer bots with
