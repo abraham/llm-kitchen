@@ -66,6 +66,9 @@ Other recorded data has its own script in the same environment:
   ViT-B/32, about 600 MB).
 - `scripts/build-reasoning.py`: the Ch 25 thinking off/on runs (`static/reasoning/`; downloads
   Qwen3-0.6B, about 1.5 GB).
+- `scripts/build-prompts.py`: the Part VIII prompt experiments (`static/prompts/`; reuses GPT-2
+  small and Qwen2.5-1.5B-Instruct, and reads the Ch 25 puzzles from `static/reasoning/`). Pass job
+  names (`wording`, `fewshot`, `system`, `steps`, `fragile`) to rerun only some.
 
 ### Citations and fact-checks
 

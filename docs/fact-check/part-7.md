@@ -1,4 +1,4 @@
-# Fact-check: Part VII (Ch 20–25) and the recap (Ch 26)
+# Fact-check: Part VII (Ch 20–25)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-7-facts.test.ts` (the recorded data says what the prose says),
@@ -82,11 +82,6 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | DeepSeek trained with rewards for checkable answers; answers grew longer; AIME 15.6% → 71.0% | Cite `deepseek2025` (§2.2) |
 | Qwen3's thinking settings allow 32,768 output tokens and warn against greedy decoding        | Cite `qwen3-model-card`    |
 
-## Ch 26. Recap
-
-The diagram and quiz restate earlier chapters; each box links to its chapter. Quiz answers are
-checked by e2e.
-
 ## Changes from the plan
 
 - **Ch 20 live option.** Recorded only (T0); a live fill-mask model is left for later.
@@ -101,3 +96,4 @@ checked by e2e.
   turned it into a blob in the training time a page visit allows.
 - **Ch 25 results.** The small model's thinking gave a mixed result, and the chapter says so.
 - **The recap** became Ch 26 under a new unnumbered "Wrap-up" part; its URL (`/recap`) is unchanged.
+  It is now Ch 31; see [part-8.md](part-8.md).

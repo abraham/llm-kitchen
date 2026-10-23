@@ -25,9 +25,45 @@
 		you: {
 			id: 'you',
 			name: 'You',
-			what: 'You type a message and read the reply.',
-			chapters: [15],
+			what: 'You type a message and read the reply. Your words are the start of the document the model continues.',
+			chapters: [15, 26],
+			color: 'prob',
+			children: ['wording', 'examples', 'instructions', 'steps', 'fragile']
+		},
+		wording: {
+			id: 'wording',
+			name: 'Wording',
+			what: 'Every word shifts the next-token probabilities.',
+			chapters: [26],
+			color: 'token'
+		},
+		examples: {
+			id: 'examples',
+			name: 'Examples',
+			what: 'A few examples in the prompt can teach a task, with no change to the weights.',
+			chapters: [27],
+			color: 'attention'
+		},
+		instructions: {
+			id: 'instructions',
+			name: 'Instructions and roles',
+			what: 'Specific instructions help; a persona changes style, not ability.',
+			chapters: [28],
+			color: 'harness'
+		},
+		steps: {
+			id: 'steps',
+			name: 'Steps and formats',
+			what: 'Working written out first; a fixed format for programs to read.',
+			chapters: [29],
 			color: 'prob'
+		},
+		fragile: {
+			id: 'fragile',
+			name: 'Fragile prompts',
+			what: 'Order, layout, and position can change the answer: test variants.',
+			chapters: [30],
+			color: 'loss'
 		},
 		harness: {
 			id: 'harness',

@@ -484,5 +484,45 @@
 		"year": 2025,
 		"url": "https://huggingface.co/Qwen/Qwen3-0.6B",
 		"accessed": "2026-10-23"
+	},
+	{
+		"id": "olsson2022",
+		"authors": ["Catherine Olsson", "Nelson Elhage", "Neel Nanda", "Nicholas Joseph"],
+		"title": "In-context Learning and Induction Heads",
+		"venue": "Transformer Circuits Thread",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2209.11895"
+	},
+	{
+		"id": "zheng2024",
+		"authors": ["Mingqian Zheng", "Jiaxin Pei", "Lajanugen Logeswaran", "Moontae Lee"],
+		"title": "When \"A Helpful Assistant\" Is Not Really Helpful: Personas in System Prompts Do Not Improve Performances of Large Language Models",
+		"venue": "Findings of EMNLP 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2311.10054"
+	},
+	{
+		"id": "kojima2022",
+		"authors": ["Takeshi Kojima", "Shixiang Shane Gu", "Machel Reid", "Yutaka Matsuo"],
+		"title": "Large Language Models are Zero-Shot Reasoners",
+		"venue": "NeurIPS 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2205.11916"
+	},
+	{
+		"id": "lu2022",
+		"authors": ["Yao Lu", "Max Bartolo", "Alastair Moore", "Sebastian Riedel"],
+		"title": "Fantastically Ordered Prompts and Where to Find Them: Overcoming Few-Shot Prompt Order Sensitivity",
+		"venue": "ACL 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2104.08786"
+	},
+	{
+		"id": "liu2024",
+		"authors": ["Nelson F. Liu", "Kevin Lin", "John Hewitt", "Ashwin Paranjape"],
+		"title": "Lost in the Middle: How Language Models Use Long Contexts",
+		"venue": "TACL 12",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2307.03172"
 	}
 ]

@@ -511,6 +511,7 @@ Each chapter milestone (5–10, 14, and 15) includes the [per-chapter fact-check
     - A recording script in `scripts/` for the prompt variants, reusing GPT-2 small and the Qwen2.5 instruct models already downloaded, with outputs under `static/`.
     - Move the recap to the end again: rename `26-recap.svx` to `31-recap.svx` (the `recap` slug and URL stay the same), add Part VIII to `PARTS` and the curriculum in `src/lib/chapters/meta.ts`, point Ch 25's next question at Ch 26, and add Part VIII to the recap diagram and quiz.
     - _Done when:_ every Part VIII chapter has its widget, recap card, sources, and `docs/fact-check/part-8.md`, and the recap covers all eight Parts.
+    - v1: all five chapters and the recap move are done; see [docs/fact-check/part-8.md](fact-check/part-8.md) for changes from this plan (the system-prompt comparison has its own template view rather than the Ch 15 prompt inspector, and the Ch 29 replies are graded by hand).
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, and 15)
 

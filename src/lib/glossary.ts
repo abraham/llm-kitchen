@@ -193,6 +193,23 @@ export const GLOSSARY = {
 		definition:
 			'A language model trained to write out its working before it answers, spending more tokens to get more right.',
 		chapter: 25
+	},
+	'prompt-engineering': {
+		term: 'prompt engineering',
+		definition:
+			'Choosing the text a model continues so that the answer you want becomes the likely continuation.',
+		chapter: 26
+	},
+	'in-context-learning': {
+		term: 'in-context learning',
+		definition:
+			'A model picking up a task from examples in its prompt, without any change to its weights.',
+		chapter: 27
+	},
+	'chain-of-thought': {
+		term: 'chain of thought',
+		definition: 'Working written out step by step before the answer, by the model itself.',
+		chapter: 29
 	}
 } as const satisfies Record<string, GlossaryEntry>;
 

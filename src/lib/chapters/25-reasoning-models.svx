@@ -56,4 +56,4 @@ money.
 
 </RecapCard>
 
-**Next question:** how do all the pieces fit together?
+**Next question:** knowing how the model works, how do you write prompts that work with it?

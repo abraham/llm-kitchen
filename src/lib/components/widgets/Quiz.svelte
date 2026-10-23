@@ -73,6 +73,17 @@
 			],
 			answer: 2,
 			why: 'It is still predicting tokens; it was trained to write its working first (Ch 25).'
+		},
+		{
+			q: 'You add four worked examples to a prompt. What changes inside the model?',
+			options: [
+				'Its weights are updated to learn the task',
+				'Nothing but its context: attention can copy the pattern from the examples',
+				'It switches to a different, specialized model',
+				'Its vocabulary grows'
+			],
+			answer: 1,
+			why: 'In-context learning uses the examples as context; no weights change (Ch 27).'
 		}
 	];
 

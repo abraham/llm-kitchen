@@ -8,8 +8,7 @@ const PAGES = [
 	'/recurrent-models',
 	'/seeing-pictures',
 	'/diffusion',
-	'/reasoning-models',
-	'/recap'
+	'/reasoning-models'
 ];
 
 for (const path of PAGES) {
@@ -92,30 +91,4 @@ test('Ch 25: thinking fixes strawberry, at a cost', async ({ page }) => {
 		'S-T-R-A-W-B-E-R-R-Y'
 	);
 	await expect(widget.getByRole('row', { name: /Thinking on 4 of 6/ })).toBeVisible();
-});
-
-test('Ch 26: zoom into the model and take the quiz', async ({ page }) => {
-	await gotoHydrated(page, '/recap');
-	const picture = page.getByRole('region', { name: 'The whole picture' });
-	await picture.getByRole('button', { name: 'Zoom in on the model' }).click();
-	await picture.getByRole('button', { name: /Zoom in on 12 transformer blocks/ }).click();
-	await expect(picture.getByRole('link', { name: /Ch 9: Attention/ })).toBeVisible();
-	await picture.getByRole('button', { name: 'The model' }).click();
-	await picture.getByRole('button', { name: 'Zoom in on other kinds of models' }).click();
-	await expect(picture.getByRole('link', { name: /Ch 24: Painting from noise/ })).toBeVisible();
-
-	const quiz = page.getByRole('region', { name: 'Quick check' });
-	for (const answer of [
-		'Probabilities for the next token',
-		'It reads tokens, not letters',
-		'It lets each token pull in information from any earlier token',
-		'The harness',
-		'Guardrails in the harness, like asking you first',
-		'Its attention can look at the words after the blank too',
-		'It writes scratch work as tokens before answering'
-	]) {
-		await quiz.getByLabel(answer, { exact: true }).check();
-	}
-	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('7 of 7 right.')).toBeVisible();
 });

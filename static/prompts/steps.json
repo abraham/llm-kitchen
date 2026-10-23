@@ -1,0 +1,208 @@
+{
+	"version": 1,
+	"model": {
+		"id": "Qwen/Qwen2.5-1.5B-Instruct",
+		"displayName": "Qwen2.5-1.5B-Instruct",
+		"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+	},
+	"conditions": [
+		{
+			"name": "Just the answer",
+			"suffix": " Reply with only the final answer, nothing else."
+		},
+		{
+			"name": "Step by step",
+			"suffix": " Let's think step by step."
+		},
+		{
+			"name": "Steps, then a fixed format",
+			"suffix": " Think step by step, then write the final answer on its own last line as: Answer: <answer>"
+		}
+	],
+	"puzzles": [
+		{
+			"question": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+			"expected": "5 cents",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "0.10",
+					"tokens": 4,
+					"stopped": true,
+					"correct": false,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "Let's break this down step by step:\n\n1) We know that the total cost of the bat and the ball is $1.10.\n2) We also know that the bat costs $1.00 more than the ball.\n\nLet's denote:\n- The cost of the ball as \\( x \\)\n- The cost of the bat as \\( y \\)\n\nFrom the information given, we can set up two equations:\n1) \\( x + y = 1.10 \\) (total cost equation)\n2) \\( y = x + 1.00 \\) (bat costs $1.00 more than the ball)\n\nNow let's solve these equations:\n\nStep 1: Substitute the second equation into the first equation to eliminate one variable.\n\\( x + (x + 1.00) = 1.10 \\)\n\nStep 2: Simplify and solve for \\( x \\).\n\\( 2x + 1.00 = 1.10 \\)\n\\( 2x = 0.10 \\)\n\\( x = 0.05 \\)\n\nSo, the ball costs $0.05.\n\nTo verify:\nIf the ball costs $0.05, then the bat would cost $0.10 ($0.05 + $0.10).\n\nTotal cost: $0.05 + $0.10 = $0.15\n\nHowever, there seems to be an error because the correct answer should be $0.10 for the bat and $0.05 for the ball, which adds up to $0.15, not $1.10. This indicates that the problem might have been misinterpreted or there could be additional context not provided here.",
+					"tokens": 366,
+					"stopped": true,
+					"correct": false,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "Let's denote the cost of the ball as \\( x \\) dollars.\n\nAccording to the problem:\n- The bat costs $1.00 more than the ball.\n- Therefore, the cost of the bat is \\( x + 1.00 \\) dollars.\n- Together, they cost $1.10.\n\nWe can set up the following equation based on these facts:\n\n\\[ x + (x + 1.00) = 1.10 \\]\n\nSimplify and solve for \\( x \\):\n\n\\[ 2x + 1.00 = 1.10 \\]\n\\[ 2x = 1.10 - 1.00 \\]\n\\[ 2x = 0.10 \\]\n\\[ x = \\frac{0.10}{2} \\]\n\\[ x = 0.05 \\]\n\nSo, the ball costs **$0.05** or 5 cents.",
+					"tokens": 197,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				}
+			]
+		},
+		{
+			"question": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+			"expected": "5 minutes",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "5 minutes",
+					"tokens": 2,
+					"stopped": true,
+					"correct": true,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "To solve this problem, let's break it down step by step:\n\n1. **Understand the initial scenario:**\n   - 5 machines can make 5 widgets in 5 minutes.\n\n2. **Determine the rate of production per machine:**\n   - Since 5 machines produce 5 widgets in 5 minutes, each machine produces \\( \\frac{5 \\text{ widgets}}{5 \\text{ machines} \\times 5 \\text{ minutes}} = 1 \\text{ widget per minute per machine} \\).\n\n3. **Calculate the total number of widgets produced by 100 machines in 5 minutes:**\n   - If one machine makes 1 widget per minute, then 100 machines will make \\( 100 \\text{ machines} \\times 1 \\text{ widget per minute per machine} = 100 \\text{ widgets per minute} \\).\n   - In 5 minutes, these 100 machines will produce \\( 100 \\text{ widgets per minute} \\times 5 \\text{ minutes} = 500 \\text{ widgets} \\).\n\n4. **Compare with the desired outcome:**\n   - The question asks how long it would take for 100 machines to make 100 widgets.\n   - From our calculation above, we know that 100 machines can produce 500 widgets in 5 minutes.\n   - To find out how many minutes it takes to produce 100 widgets, we divide the number of widgets needed by the number of widgets produced per minute:\n     \\[\n     \\text{Time required} = \\frac{\\text{Number of widgets needed}}{\\text{Widgets produced per minute}} = \\frac{100 \\text{ widgets}}{500 \\text{ widgets per minute}} = 0.2 \\text{ minutes}\n     \\]\n\nTherefore, it would take 100 machines 0.2 minutes (or 12 seconds) to make 100 widgets.",
+					"tokens": 427,
+					"stopped": true,
+					"correct": false,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "To solve this problem, let's break it down step by step:\n\n1. **Understand the initial condition**: \n   - 5 machines can make 5 widgets in 5 minutes.\n\n2. **Determine the rate of production**:\n   - Since 5 machines produce 5 widgets in 5 minutes, each machine produces \\( \\frac{5}{5} = 1 \\) widget in 5 minutes.\n   \n3. **Calculate the time for one machine to make one widget**:\n   - If one machine makes 1 widget in 5 minutes, then it will take 5 minutes for any single machine to make 1 widget.\n\n4. **Extend the scenario with 100 machines**:\n   - Now we have 100 machines instead of 5 machines.\n   - Each machine still takes 5 minutes to make 1 widget.\n\n5. **Conclusion**:\n   - With 100 machines working together at the same rate, they will also take 5 minutes to make 1 widget.\n\nTherefore, the answer is: 5 minutes.",
+					"tokens": 223,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				}
+			]
+		},
+		{
+			"question": "How many times does the letter r appear in the word strawberry?",
+			"expected": "3",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "3",
+					"tokens": 1,
+					"stopped": true,
+					"correct": true,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "To determine how many times the letter 'r' appears in the word \"strawberry\", let's break it down step by step:\n\n1. **Identify the word**: The word is \"strawberry\".\n2. **List each character**: We have:\n   - s\n   - t\n   - r\n   - w\n   - o\n   - g\n   - r\n   - b\n   - e\n   - r\n\n3. **Count the occurrences of 'r'**:\n   - First 'r': In the first position.\n   - Second 'r': In the fourth position (after 'o').\n   - Third 'r': In the seventh position (after 'e').\n\n4. **Summarize the count**: There are three instances of the letter 'r' in the word \"strawberry\".\n\nTherefore, the letter 'r' appears 3 times in the word \"strawberry\".",
+					"tokens": 194,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "To determine how many times the letter 'r' appears in the word \"strawberry\", we can count each occurrence of 'r'. Let's break it down:\n\n1. Start with no counts.\n2. Count the first 'r': 0 + 1 = 1\n3. Count the second 'r': 1 + 1 = 2\n4. Count the third 'r': 2 + 1 = 3\n\nSo, the letter 'r' appears 3 times in the word \"strawberry\".\n\nAnswer: 3",
+					"tokens": 115,
+					"stopped": true,
+					"correct": true,
+					"formatted": true
+				}
+			]
+		},
+		{
+			"question": "What is 17 × 24?",
+			"expected": "408",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "408",
+					"tokens": 3,
+					"stopped": true,
+					"correct": true,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "Sure! Let's break down the multiplication of 17 and 24 into steps:\n\n### Step 1: Break down 24 into tens and ones.\n- We can write 24 as \\(20 + 4\\).\n\n### Step 2: Multiply each part separately.\n- First, multiply 17 by 20:\n  \\[\n  17 \\times 20 = 340\n  \\]\n- Next, multiply 17 by 4:\n  \\[\n  17 \\times 4 = 68\n  \\]\n\n### Step 3: Add the results together.\n- Now we add the two products from Step 2:\n  \\[\n  340 + 68 = 408\n  \\]\n\nSo, \\(17 \\times 24 = 408\\).",
+					"tokens": 183,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "To solve this multiplication problem, we can break it down into simpler steps:\n\nStep 1: Break down the numbers.\n17 can be thought of as 10 + 7\n24 can be thought of as 20 + 4\n\nStep 2: Multiply each part separately.\n10 × 20 = 200\n7 × 20 = 140 (or simply add 7 to itself twice)\n7 × 4 = 28\n\nStep 3: Add all the results together.\n200 + 140 + 28 = 368\n\nTherefore, 17 × 24 = 368.",
+					"tokens": 145,
+					"stopped": true,
+					"correct": false,
+					"formatted": false
+				}
+			]
+		},
+		{
+			"question": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have?",
+			"expected": "1",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "1",
+					"tokens": 1,
+					"stopped": true,
+					"correct": true,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "Let's break down the information given:\n\n1. Sally has 3 brothers.\n2. Each of her brothers has 2 sisters.\n\nFrom this, we can deduce that all three of Sally's brothers share the same two sisters. Therefore, Sally is one of those two sisters.\n\nSo, Sally has **one sister**.",
+					"tokens": 66,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "Let's break it down step by step:\n\n1. Sally has 3 brothers.\n2. Each brother has 2 sisters.\n\nSince Sally is one of these sisters, we need to determine how many other sisters there are besides herself.\n\nIf each brother has 2 sisters and Sally is one of them, that means there must be at least two more sisters who are not Sally.\n\nTherefore, Sally has 2 sisters in addition to herself.\n\nFinal answer: Sally has 2 sisters.",
+					"tokens": 97,
+					"stopped": true,
+					"correct": false,
+					"formatted": false
+				}
+			]
+		},
+		{
+			"question": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now?",
+			"expected": "3",
+			"runs": [
+				{
+					"condition": "Just the answer",
+					"text": "2",
+					"tokens": 1,
+					"stopped": true,
+					"correct": false,
+					"formatted": true
+				},
+				{
+					"condition": "Step by step",
+					"text": "Let's break down the problem step by step:\n\n1. **Initial number of apples**: You start with 3 apples.\n2. **Eat one apple**: After eating one apple, you have:\n   \\[\n   3 - 1 = 2 \\text{ apples}\n   \\]\n3. **Buy 4 more apples**: Adding these to your current count gives:\n   \\[\n   2 + 4 = 6 \\text{ apples}\n   \\]\n4. **Give half of your apples to a friend**: Half of 6 apples is:\n   \\[\n   \\frac{6}{2} = 3 \\text{ apples}\n   \\]\n5. **Remaining apples**: Subtracting the given apples from your total gives:\n   \\[\n   6 - 3 = 3 \\text{ apples}\n   \\]\n\nSo, after all these steps, you end up with 3 apples.",
+					"tokens": 189,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				},
+				{
+					"condition": "Steps, then a fixed format",
+					"text": "Let's break down the problem step by step:\n\n1. Initially, you have 3 apples.\n2. You eat one apple:\n   - Apples left: \\(3 - 1 = 2\\)\n3. Then you buy 4 more apples:\n   - Total apples now: \\(2 + 4 = 6\\)\n4. Finally, you give half of your apples to a friend:\n   - Half of 6 is \\(6 / 2 = 3\\)\n   - Apples left after giving away half: \\(6 - 3 = 3\\)\n\nSo, the final number of apples you have is **3**.",
+					"tokens": 134,
+					"stopped": true,
+					"correct": true,
+					"formatted": false
+				}
+			]
+		}
+	],
+	"generatedAt": "2026-10-23",
+	"source": {
+		"torch": "2.14.1"
+	}
+}

@@ -21,6 +21,7 @@ export const PARTS = {
 	together: { number: 'V', title: 'Putting it together' },
 	harnesses: { number: 'VI', title: 'Harnesses' },
 	others: { number: 'VII', title: 'Other kinds of models' },
+	prompting: { number: 'VIII', title: 'Prompt engineering' },
 	wrapup: { number: null, title: 'Wrap-up' }
 } as const satisfies Record<string, Part>;
 
@@ -54,6 +55,11 @@ const rows: Row[] = [
 	['seeing-pictures', 'Seeing pictures', 'others', [5, 10]],
 	['diffusion', 'Painting from noise', 'others', [7, 11]],
 	['reasoning-models', 'Thinking before answering', 'others', [11, 13]],
+	['prompts-as-documents', 'A prompt is the start of a document', 'prompting', [3, 8, 9]],
+	['few-shot', 'Learning from examples in the prompt', 'prompting', [9, 26]],
+	['instructions-and-roles', 'Instructions, roles, and the system prompt', 'prompting', [13, 15]],
+	['steps-and-structure', 'Asking for steps and structure', 'prompting', [16, 25]],
+	['where-prompts-break', 'Where prompts break', 'prompting', [14, 19, 27]],
 	['recap', 'Recap: the whole picture', 'wrapup', []]
 ];
 
