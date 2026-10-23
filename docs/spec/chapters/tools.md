@@ -15,7 +15,7 @@ itself.
 
 ## Data
 
-Recorded by `scripts/build-agent-traces.py` (`static/agent/math-no-tools.json`,
+Recorded by `scripts/record/agent.py` (`static/data/agent/math-no-tools.json`,
 `math-tools.json`): Qwen2.5-1.5B-Instruct.
 
 ## Decisions

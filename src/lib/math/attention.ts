@@ -1,7 +1,7 @@
 import { softmax } from './sampling.ts';
 
 /**
- * Single-head causal self-attention on small, readable vectors (Ch 9). Same math as a
+ * Single-head causal self-attention on small, readable vectors (`attention`). Same math as a
  * transformer head: scores = q·k / sqrt(d), mask the future, softmax each row, mix the values.
  */
 export interface AttentionInput {
@@ -38,7 +38,7 @@ export function attend({ tokens, queries, keys, values }: AttentionInput): Atten
 	return { scores, weights, outputs };
 }
 
-/** Made-up vectors for the Ch 9 walkthrough. Not from a real model; chosen to be readable. */
+/** Made-up vectors for the `attention` walkthrough. Not from a real model; chosen to be readable. */
 export const TOY_ATTENTION: AttentionInput = {
 	tokens: ['The', 'trophy', 'suitcase', 'it'],
 	queries: [

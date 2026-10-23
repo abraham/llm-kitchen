@@ -10,7 +10,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CURRICULUM, partLabel, type ChapterMeta } from '../src/lib/chapters/meta.ts';
+import { CURRICULUM, label, partLabel, type Chapter } from '../src/lib/curriculum/index.ts';
 import { MENU_IMAGE, OG_IMAGE_SIZE, SITE_NAME, SITE_TAGLINE } from '../src/lib/site.ts';
 
 const { width: W, height: H } = OG_IMAGE_SIZE;
@@ -36,7 +36,7 @@ const mark = readFileSync(new URL('../src/lib/assets/favicon.svg', import.meta.u
 // resvg skips @media rules, so the nested favicon keeps its light colors.
 const markHref = `data:image/svg+xml;base64,${mark.toString('base64')}`;
 
-export type OgPage = { name: string; chapter?: ChapterMeta };
+export type OgPage = { name: string; chapter?: Chapter };
 
 /** One image for the menu, then one per curriculum entry, named by slug. */
 export function ogPages(): OgPage[] {
@@ -116,7 +116,7 @@ function menuSvg(): string {
 <text x="${W / 2}" y="${H - 140}" text-anchor="middle" font-family="${SERIF}" font-size="40" fill="${COLORS.muted}">${escape(SITE_TAGLINE)}</text>`);
 }
 
-function chapterSvg(chapter: ChapterMeta, fonts: string[]): string {
+function chapterSvg(chapter: Chapter, fonts: string[]): string {
 	const { size, lines } = layoutTitle(chapter.title, fonts);
 	const lineHeight = Math.round(size * 1.12);
 	const firstBaseline = 540 - (lines.length - 1) * lineHeight;
@@ -131,7 +131,7 @@ function chapterSvg(chapter: ChapterMeta, fonts: string[]): string {
 <image x="${MARGIN}" y="56" width="64" height="64" href="${markHref}"/>
 <text x="${MARGIN + 84}" y="102" font-family="${SERIF}" font-size="40" fill="${COLORS.ink}" stroke="${COLORS.ink}" stroke-width="0.8" stroke-linejoin="round">${escape(SITE_NAME)}</text>
 <text x="${MARGIN}" y="${numberBaseline - 60}" font-family="${MONO}" font-size="26" fill="${COLORS.muted}">${escape(partLabel(chapter.part, ' · '))}</text>
-<text x="${MARGIN}" y="${numberBaseline}" font-family="${MONO}" font-size="38" fill="${COLORS.tokenInk}">${escape(`Ch ${chapter.number}.`)}</text>
+<text x="${MARGIN}" y="${numberBaseline}" font-family="${MONO}" font-size="38" fill="${COLORS.tokenInk}">${escape(`${label(chapter.slug)}.`)}</text>
 <text font-family="${SERIF}" font-size="${size}" fill="${COLORS.ink}" stroke="${COLORS.ink}" stroke-width="${size / 40}" stroke-linejoin="round">${title}</text>`);
 }
 

@@ -1,10 +1,9 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { readDataset } from '#lib/datasets/read.ts';
 import { QWEN_DEFAULT_SYSTEM, chatTemplate } from './chat-template.ts';
 
-const recorded: { prompts: { prompt: string; template: string }[] } = JSON.parse(
-	readFileSync('static/chat/base-vs-instruct.json', 'utf8')
-);
+const recorded: { prompts: { prompt: string; template: string }[] } =
+	readDataset('chat/base-vs-instruct');
 
 describe('chatTemplate', () => {
 	it('matches the text Qwen2.5-Instruct’s own tokenizer produced', () => {

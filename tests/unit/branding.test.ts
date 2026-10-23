@@ -9,7 +9,7 @@ import {
 	renderTouchIcon,
 	unpackFonts
 } from '../../scripts/build-og.ts';
-import { CURRICULUM } from '../../src/lib/chapters/meta.ts';
+import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import {
 	absoluteUrl,
 	MENU_IMAGE,

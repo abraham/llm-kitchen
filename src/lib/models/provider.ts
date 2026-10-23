@@ -59,14 +59,25 @@ export interface GenerateOptions {
 	random?: () => number;
 }
 
+/** Text, or the exact tokens so far (re-tokenizing generated text can split it differently). */
+export type ProviderInput = string | readonly Token[];
+
 /** One interface for every data source: recorded traces, in-browser models, and remote APIs. */
 export interface ModelProvider {
 	readonly source: DataSource;
 	tokenize(text: string): Promise<Token[]>;
-	nextTokenDistribution(text: string, options?: { topK?: number }): Promise<NextTokenDistribution>;
-	generate(text: string, options: GenerateOptions): Promise<GenerationStep[]>;
+	nextTokenDistribution(
+		input: ProviderInput,
+		options?: { topK?: number }
+	): Promise<NextTokenDistribution>;
+	generate(input: ProviderInput, options: GenerateOptions): Promise<GenerationStep[]>;
 	attention?(text: string): Promise<Attention>;
 	embed?(texts: string[]): Promise<number[][]>;
+}
+
+/** The text of a provider input. */
+export function inputText(input: ProviderInput): string {
+	return typeof input === 'string' ? input : input.map((t) => t.text).join('');
 }
 
 /** Thrown by providers that can only answer for prompts they have data for. */

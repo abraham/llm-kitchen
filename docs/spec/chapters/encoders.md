@@ -18,7 +18,7 @@ token at a time.
 
 ## Data
 
-Recorded by `scripts/build-encoder.py` (`static/encoders/fill-mask.json`): BERT base (uncased) and
+Recorded by `scripts/record/encoder.py` (`static/data/encoders/fill-mask.json`): BERT base (uncased) and
 GPT-2 small.
 
 ## Decisions

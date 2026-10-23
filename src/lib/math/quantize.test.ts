@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { levels, weightBytes } from './quantize.ts';
 
 describe('weightBytes', () => {
-	it('matches the numbers in Ch 13', () => {
+	it('matches the numbers in quantization', () => {
 		expect(Math.round(weightBytes(124_439_808, 32) / 1e6)).toBe(498);
 		expect(Math.round(weightBytes(124_439_808, 16) / 1e6)).toBe(249);
 		expect(weightBytes(405e9, 16) / 1e9).toBe(810);

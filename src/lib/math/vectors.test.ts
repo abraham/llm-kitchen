@@ -1,14 +1,10 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import type { EmbeddingMapData, EmbeddingVectors } from '#lib/models/load-json.ts';
+import { readDataset } from '#lib/datasets/read.ts';
+import type { EmbeddingMapData, EmbeddingVectors } from '#lib/datasets/parsers/embeddings.ts';
 import { add, cosine, nearest, project, sub } from './vectors.ts';
 
-const map = JSON.parse(
-	readFileSync('static/embeddings/minilm-map.json', 'utf8')
-) as EmbeddingMapData;
-const raw = JSON.parse(
-	readFileSync('static/embeddings/minilm-vectors.json', 'utf8')
-) as EmbeddingVectors;
+const map = readDataset('embeddings/minilm-map') as EmbeddingMapData;
+const raw = readDataset('embeddings/minilm-vectors') as EmbeddingVectors;
 const items = raw.words.map((word, i) => ({ word, vector: raw.vectors[i] }));
 const vec = (w: string) => raw.vectors[raw.words.indexOf(w)];
 
@@ -20,7 +16,7 @@ describe('vector helpers', () => {
 	});
 });
 
-describe('embedding map data (Ch 5)', () => {
+describe('embedding map data (embeddings)', () => {
 	it('stores the same neighbors the browser computes from the full vectors', () => {
 		for (const w of map.words) {
 			const browser = nearest(vec(w.word), items, 5, new Set([w.word])).map((n) => n.word);

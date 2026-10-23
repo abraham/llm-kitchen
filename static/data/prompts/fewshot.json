@@ -1,0 +1,1423 @@
+{
+	"dataset": "prompts/fewshot",
+	"version": 1,
+	"script": "record/prompts.py",
+	"models": [
+		{
+			"id": "openai-community/gpt2",
+			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+		},
+		{
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		}
+	],
+	"generatedAt": "2026-10-23",
+	"data": {
+		"version": 1,
+		"models": {
+			"gpt2": {
+				"id": "openai-community/gpt2",
+				"displayName": "GPT-2 small",
+				"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+			},
+			"qwen": {
+				"id": "Qwen/Qwen2.5-1.5B-Instruct",
+				"displayName": "Qwen2.5-1.5B-Instruct",
+				"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+			}
+		},
+		"shots": [
+			0,
+			1,
+			2,
+			4
+		],
+		"tasks": [
+			{
+				"name": "Opposites",
+				"examples": [
+					[
+						"hot",
+						"cold"
+					],
+					[
+						"big",
+						"small"
+					],
+					[
+						"up",
+						"down"
+					],
+					[
+						"fast",
+						"slow"
+					]
+				],
+				"tests": [
+					{
+						"query": "happy",
+						"answer": "sad",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "happy ->",
+								"gpt2": 6e-05,
+								"qwen": 0.009,
+								"gpt2Top": [
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.02648
+									},
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.02532
+									},
+									{
+										"text": " 1",
+										"id": 352,
+										"p": 0.01704
+									},
+									{
+										"text": " [",
+										"id": 685,
+										"p": 0.01525
+									},
+									{
+										"text": " true",
+										"id": 2081,
+										"p": 0.01339
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "hot -> cold\nhappy ->",
+								"gpt2": 0.03199,
+								"qwen": 0.66239,
+								"gpt2Top": [
+									{
+										"text": " happy",
+										"id": 3772,
+										"p": 0.2509
+									},
+									{
+										"text": " sad",
+										"id": 6507,
+										"p": 0.03199
+									},
+									{
+										"text": " cold",
+										"id": 4692,
+										"p": 0.02858
+									},
+									{
+										"text": " hot",
+										"id": 3024,
+										"p": 0.01584
+									},
+									{
+										"text": " warm",
+										"id": 5814,
+										"p": 0.01298
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "hot -> cold\nbig -> small\nhappy ->",
+								"gpt2": 0.0664,
+								"qwen": 0.82782,
+								"gpt2Top": [
+									{
+										"text": " happy",
+										"id": 3772,
+										"p": 0.64689
+									},
+									{
+										"text": " sad",
+										"id": 6507,
+										"p": 0.0664
+									},
+									{
+										"text": " angry",
+										"id": 7954,
+										"p": 0.01091
+									},
+									{
+										"text": " joyful",
+										"id": 48977,
+										"p": 0.0082
+									},
+									{
+										"text": " unhappy",
+										"id": 19283,
+										"p": 0.00781
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "hot -> cold\nbig -> small\nup -> down\nfast -> slow\nhappy ->",
+								"gpt2": 0.05432,
+								"qwen": 0.95898,
+								"gpt2Top": [
+									{
+										"text": " happy",
+										"id": 3772,
+										"p": 0.75684
+									},
+									{
+										"text": " sad",
+										"id": 6507,
+										"p": 0.05432
+									},
+									{
+										"text": " unhappy",
+										"id": 19283,
+										"p": 0.01181
+									},
+									{
+										"text": " joyful",
+										"id": 48977,
+										"p": 0.00968
+									},
+									{
+										"text": " angry",
+										"id": 7954,
+										"p": 0.00924
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "light",
+						"answer": "dark",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "light ->",
+								"gpt2": 0.00014,
+								"qwen": 0.00458,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.02369
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.01162
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.01043
+									},
+									{
+										"text": " [",
+										"id": 685,
+										"p": 0.00827
+									},
+									{
+										"text": " 1",
+										"id": 352,
+										"p": 0.0077
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "hot -> cold\nlight ->",
+								"gpt2": 0.08969,
+								"qwen": 0.48233,
+								"gpt2Top": [
+									{
+										"text": " light",
+										"id": 1657,
+										"p": 0.15572
+									},
+									{
+										"text": " dark",
+										"id": 3223,
+										"p": 0.08969
+									},
+									{
+										"text": " cold",
+										"id": 4692,
+										"p": 0.07
+									},
+									{
+										"text": " bright",
+										"id": 6016,
+										"p": 0.03061
+									},
+									{
+										"text": " fire",
+										"id": 2046,
+										"p": 0.02206
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "hot -> cold\nbig -> small\nlight ->",
+								"gpt2": 0.13193,
+								"qwen": 0.3033,
+								"gpt2Top": [
+									{
+										"text": " light",
+										"id": 1657,
+										"p": 0.18368
+									},
+									{
+										"text": " medium",
+										"id": 7090,
+										"p": 0.14971
+									},
+									{
+										"text": " dark",
+										"id": 3223,
+										"p": 0.13193
+									},
+									{
+										"text": " bright",
+										"id": 6016,
+										"p": 0.09237
+									},
+									{
+										"text": " small",
+										"id": 1402,
+										"p": 0.02754
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "hot -> cold\nbig -> small\nup -> down\nfast -> slow\nlight ->",
+								"gpt2": 0.0672,
+								"qwen": 0.13059,
+								"gpt2Top": [
+									{
+										"text": " light",
+										"id": 1657,
+										"p": 0.42217
+									},
+									{
+										"text": " bright",
+										"id": 6016,
+										"p": 0.06765
+									},
+									{
+										"text": " dark",
+										"id": 3223,
+										"p": 0.0672
+									},
+									{
+										"text": " medium",
+										"id": 7090,
+										"p": 0.04811
+									},
+									{
+										"text": " low",
+										"id": 1877,
+										"p": 0.03629
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "open",
+						"answer": "closed",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "open ->",
+								"gpt2": 0.0002,
+								"qwen": 0.01932,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.0319
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.02285
+									},
+									{
+										"text": " {",
+										"id": 1391,
+										"p": 0.01569
+									},
+									{
+										"text": " get",
+										"id": 651,
+										"p": 0.01278
+									},
+									{
+										"text": " \"",
+										"id": 366,
+										"p": 0.01145
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "hot -> cold\nopen ->",
+								"gpt2": 0.03083,
+								"qwen": 0.62331,
+								"gpt2Top": [
+									{
+										"text": " open",
+										"id": 1280,
+										"p": 0.18535
+									},
+									{
+										"text": " cold",
+										"id": 4692,
+										"p": 0.1194
+									},
+									{
+										"text": " hot",
+										"id": 3024,
+										"p": 0.05211
+									},
+									{
+										"text": " closed",
+										"id": 4838,
+										"p": 0.03083
+									},
+									{
+										"text": " warm",
+										"id": 5814,
+										"p": 0.02596
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "hot -> cold\nbig -> small\nopen ->",
+								"gpt2": 0.09589,
+								"qwen": 0.73186,
+								"gpt2Top": [
+									{
+										"text": " open",
+										"id": 1280,
+										"p": 0.36385
+									},
+									{
+										"text": " closed",
+										"id": 4838,
+										"p": 0.09589
+									},
+									{
+										"text": " close",
+										"id": 1969,
+										"p": 0.02539
+									},
+									{
+										"text": " warm",
+										"id": 5814,
+										"p": 0.02269
+									},
+									{
+										"text": " cold",
+										"id": 4692,
+										"p": 0.02142
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "hot -> cold\nbig -> small\nup -> down\nfast -> slow\nopen ->",
+								"gpt2": 0.11051,
+								"qwen": 0.78397,
+								"gpt2Top": [
+									{
+										"text": " open",
+										"id": 1280,
+										"p": 0.35144
+									},
+									{
+										"text": " close",
+										"id": 1969,
+										"p": 0.11821
+									},
+									{
+										"text": " closed",
+										"id": 4838,
+										"p": 0.11051
+									},
+									{
+										"text": " wide",
+										"id": 3094,
+										"p": 0.0129
+									},
+									{
+										"text": " opened",
+										"id": 4721,
+										"p": 0.01119
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "old",
+						"answer": "young",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "old ->",
+								"gpt2": 5e-05,
+								"qwen": 0.00034,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.01652
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.01461
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.01022
+									},
+									{
+										"text": " 1",
+										"id": 352,
+										"p": 0.00939
+									},
+									{
+										"text": " \"",
+										"id": 366,
+										"p": 0.00799
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "hot -> cold\nold ->",
+								"gpt2": 0.0012,
+								"qwen": 0.4656,
+								"gpt2Top": [
+									{
+										"text": " cold",
+										"id": 4692,
+										"p": 0.12729
+									},
+									{
+										"text": " hot",
+										"id": 3024,
+										"p": 0.0326
+									},
+									{
+										"text": " new",
+										"id": 649,
+										"p": 0.02944
+									},
+									{
+										"text": " old",
+										"id": 1468,
+										"p": 0.02941
+									},
+									{
+										"text": " warm",
+										"id": 5814,
+										"p": 0.02325
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "hot -> cold\nbig -> small\nold ->",
+								"gpt2": 0.01183,
+								"qwen": 0.78144,
+								"gpt2Top": [
+									{
+										"text": " old",
+										"id": 1468,
+										"p": 0.32827
+									},
+									{
+										"text": " new",
+										"id": 649,
+										"p": 0.12425
+									},
+									{
+										"text": " big",
+										"id": 1263,
+										"p": 0.06012
+									},
+									{
+										"text": " small",
+										"id": 1402,
+										"p": 0.025
+									},
+									{
+										"text": " large",
+										"id": 1588,
+										"p": 0.01993
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "hot -> cold\nbig -> small\nup -> down\nfast -> slow\nold ->",
+								"gpt2": 0.01373,
+								"qwen": 0.75282,
+								"gpt2Top": [
+									{
+										"text": " new",
+										"id": 649,
+										"p": 0.42682
+									},
+									{
+										"text": " old",
+										"id": 1468,
+										"p": 0.36485
+									},
+									{
+										"text": " young",
+										"id": 1862,
+										"p": 0.01373
+									},
+									{
+										"text": " fresh",
+										"id": 4713,
+										"p": 0.00742
+									},
+									{
+										"text": " fast",
+										"id": 3049,
+										"p": 0.00688
+									}
+								]
+							}
+						]
+					}
+				],
+				"head": {
+					"layer": 5,
+					"head": 0,
+					"text": "hot -> cold\nbig -> small\nup -> down\nfast -> slow\nhappy ->",
+					"tokens": [
+						{
+							"text": "hot",
+							"id": 8940
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " cold",
+							"id": 4692
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "big",
+							"id": 14261
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " small",
+							"id": 1402
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "up",
+							"id": 929
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " down",
+							"id": 866
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "fast",
+							"id": 7217
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " slow",
+							"id": 3105
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "happy",
+							"id": 34191
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						}
+					],
+					"attention": [
+						0.0185,
+						0.0001,
+						0.0518,
+						0.0001,
+						0.0004,
+						0.0002,
+						0.2393,
+						0.0001,
+						0.0004,
+						0.0002,
+						0.3339,
+						0.0002,
+						0.0004,
+						0.0002,
+						0.3516,
+						0.0002,
+						0.0022,
+						0.0002
+					],
+					"score": 0.9766
+				}
+			},
+			{
+				"name": "Made-up labels",
+				"examples": [
+					[
+						"apple",
+						"blip"
+					],
+					[
+						"dog",
+						"zork"
+					],
+					[
+						"banana",
+						"blip"
+					],
+					[
+						"cat",
+						"zork"
+					]
+				],
+				"tests": [
+					{
+						"query": "pear",
+						"answer": "blip",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "pear ->",
+								"gpt2": 0.0,
+								"qwen": 0.0,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.01812
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.0099
+									},
+									{
+										"text": " I",
+										"id": 314,
+										"p": 0.00837
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.00834
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.00739
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "apple -> blip\npear ->",
+								"gpt2": 0.0589,
+								"qwen": 0.0726,
+								"gpt2Top": [
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.08
+									},
+									{
+										"text": " pe",
+										"id": 613,
+										"p": 0.02945
+									},
+									{
+										"text": " p",
+										"id": 279,
+										"p": 0.02533
+									},
+									{
+										"text": " po",
+										"id": 745,
+										"p": 0.01433
+									},
+									{
+										"text": " pear",
+										"id": 25286,
+										"p": 0.01194
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "apple -> blip\ndog -> zork\npear ->",
+								"gpt2": 0.00396,
+								"qwen": 0.00812,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.09778
+									},
+									{
+										"text": " p",
+										"id": 279,
+										"p": 0.02157
+									},
+									{
+										"text": " po",
+										"id": 745,
+										"p": 0.01328
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.01076
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.00962
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "apple -> blip\ndog -> zork\nbanana -> blip\ncat -> zork\npear ->",
+								"gpt2": 0.11539,
+								"qwen": 0.59808,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.57828
+									},
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.11654
+									},
+									{
+										"text": " Z",
+										"id": 1168,
+										"p": 0.01316
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.00609
+									},
+									{
+										"text": " po",
+										"id": 745,
+										"p": 0.00505
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "horse",
+						"answer": "zork",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "horse ->",
+								"gpt2": 0.0,
+								"qwen": 2e-05,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.02074
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.01008
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.00892
+									},
+									{
+										"text": " 1",
+										"id": 352,
+										"p": 0.00889
+									},
+									{
+										"text": " -",
+										"id": 532,
+										"p": 0.00831
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "apple -> blip\nhorse ->",
+								"gpt2": 0.0,
+								"qwen": 0.00129,
+								"gpt2Top": [
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.07702
+									},
+									{
+										"text": " horse",
+										"id": 8223,
+										"p": 0.03054
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.01805
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.01189
+									},
+									{
+										"text": " r",
+										"id": 374,
+										"p": 0.00964
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "apple -> blip\ndog -> zork\nhorse ->",
+								"gpt2": 0.0586,
+								"qwen": 0.06915,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.0736
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.02104
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.01353
+									},
+									{
+										"text": " p",
+										"id": 279,
+										"p": 0.01313
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.01188
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "apple -> blip\ndog -> zork\nbanana -> blip\ncat -> zork\nhorse ->",
+								"gpt2": 0.69046,
+								"qwen": 0.78121,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.6934
+									},
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.06686
+									},
+									{
+										"text": " Z",
+										"id": 1168,
+										"p": 0.01225
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.00788
+									},
+									{
+										"text": " bob",
+										"id": 29202,
+										"p": 0.00578
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "cherry",
+						"answer": "blip",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "cherry ->",
+								"gpt2": 0.0,
+								"qwen": 0.0,
+								"gpt2Top": [
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.01546
+									},
+									{
+										"text": " [",
+										"id": 685,
+										"p": 0.01097
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.01053
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.00778
+									},
+									{
+										"text": " {",
+										"id": 1391,
+										"p": 0.00642
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "apple -> blip\ncherry ->",
+								"gpt2": 0.06287,
+								"qwen": 0.05805,
+								"gpt2Top": [
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.08885
+									},
+									{
+										"text": " cherry",
+										"id": 23612,
+										"p": 0.04599
+									},
+									{
+										"text": " ch",
+										"id": 442,
+										"p": 0.02063
+									},
+									{
+										"text": " cl",
+										"id": 537,
+										"p": 0.01473
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.01355
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "apple -> blip\ndog -> zork\ncherry ->",
+								"gpt2": 0.00845,
+								"qwen": 0.01492,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.09972
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.016
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.01454
+									},
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.0142
+									},
+									{
+										"text": " j",
+										"id": 474,
+										"p": 0.0135
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "apple -> blip\ndog -> zork\nbanana -> blip\ncat -> zork\ncherry ->",
+								"gpt2": 0.15548,
+								"qwen": 0.59865,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.63208
+									},
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.15695
+									},
+									{
+										"text": " Z",
+										"id": 1168,
+										"p": 0.00947
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.00595
+									},
+									{
+										"text": " x",
+										"id": 2124,
+										"p": 0.00372
+									}
+								]
+							}
+						]
+					},
+					{
+						"query": "mouse",
+						"answer": "zork",
+						"runs": [
+							{
+								"shots": 0,
+								"text": "mouse ->",
+								"gpt2": 0.0,
+								"qwen": 0.0,
+								"gpt2Top": [
+									{
+										"text": " \"",
+										"id": 366,
+										"p": 0.01898
+									},
+									{
+										"text": "\n",
+										"id": 198,
+										"p": 0.01527
+									},
+									{
+										"text": " (",
+										"id": 357,
+										"p": 0.0137
+									},
+									{
+										"text": " 0",
+										"id": 657,
+										"p": 0.01311
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.01144
+									}
+								]
+							},
+							{
+								"shots": 1,
+								"text": "apple -> blip\nmouse ->",
+								"gpt2": 0.0,
+								"qwen": 3e-05,
+								"gpt2Top": [
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.13405
+									},
+									{
+										"text": " mouse",
+										"id": 10211,
+										"p": 0.10104
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.02283
+									},
+									{
+										"text": " b",
+										"id": 275,
+										"p": 0.01193
+									},
+									{
+										"text": " d",
+										"id": 288,
+										"p": 0.01138
+									}
+								]
+							},
+							{
+								"shots": 2,
+								"text": "apple -> blip\ndog -> zork\nmouse ->",
+								"gpt2": 0.0719,
+								"qwen": 0.00743,
+								"gpt2Top": [
+									{
+										"text": " mouse",
+										"id": 10211,
+										"p": 0.10499
+									},
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.10118
+									},
+									{
+										"text": " m",
+										"id": 285,
+										"p": 0.01836
+									},
+									{
+										"text": " d",
+										"id": 288,
+										"p": 0.01831
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.01583
+									}
+								]
+							},
+							{
+								"shots": 4,
+								"text": "apple -> blip\ndog -> zork\nbanana -> blip\ncat -> zork\nmouse ->",
+								"gpt2": 0.63248,
+								"qwen": 0.22391,
+								"gpt2Top": [
+									{
+										"text": " z",
+										"id": 1976,
+										"p": 0.63592
+									},
+									{
+										"text": " bl",
+										"id": 698,
+										"p": 0.09331
+									},
+									{
+										"text": " mouse",
+										"id": 10211,
+										"p": 0.02257
+									},
+									{
+										"text": " Z",
+										"id": 1168,
+										"p": 0.01169
+									},
+									{
+										"text": " k",
+										"id": 479,
+										"p": 0.00831
+									}
+								]
+							}
+						]
+					}
+				],
+				"head": {
+					"layer": 5,
+					"head": 0,
+					"text": "apple -> blip\ndog -> zork\nbanana -> blip\ncat -> zork\npear ->",
+					"tokens": [
+						{
+							"text": "apple",
+							"id": 18040
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " bl",
+							"id": 698
+						},
+						{
+							"text": "ip",
+							"id": 541
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "dog",
+							"id": 9703
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " z",
+							"id": 1976
+						},
+						{
+							"text": "ork",
+							"id": 967
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "ban",
+							"id": 3820
+						},
+						{
+							"text": "ana",
+							"id": 2271
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " bl",
+							"id": 698
+						},
+						{
+							"text": "ip",
+							"id": 541
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "cat",
+							"id": 9246
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						},
+						{
+							"text": " z",
+							"id": 1976
+						},
+						{
+							"text": "ork",
+							"id": 967
+						},
+						{
+							"text": "\n",
+							"id": 198
+						},
+						{
+							"text": "pe",
+							"id": 431
+						},
+						{
+							"text": "ar",
+							"id": 283
+						},
+						{
+							"text": " ->",
+							"id": 4613
+						}
+					],
+					"attention": [
+						0.0669,
+						0.0005,
+						0.0882,
+						0.0001,
+						0.0002,
+						0.0009,
+						0.0012,
+						0.188,
+						0.0011,
+						0.0009,
+						0.0035,
+						0.0004,
+						0.002,
+						0.4323,
+						0.0024,
+						0.001,
+						0.0012,
+						0.001,
+						0.1997,
+						0.0036,
+						0.0006,
+						0.0029,
+						0.0003,
+						0.0008
+					],
+					"score": 0.9082
+				}
+			}
+		],
+		"generatedAt": "2026-10-23",
+		"source": {
+			"torch": "2.14.1"
+		}
+	}
+}

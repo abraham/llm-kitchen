@@ -1,26 +1,27 @@
 import type { Component } from 'svelte';
-import { CURRICULUM, chapterFileName, findChapter, type ChapterMeta } from './meta.ts';
+import { findChapter, type Chapter } from '#lib/curriculum/index.ts';
+import type { DatasetId } from '#lib/datasets/registry.ts';
 
-export * from './meta.ts';
+const modules = import.meta.glob<{ default: Component }>('./*/chapter.svx');
+const configs = import.meta.glob<{ datasets: readonly DatasetId[] }>('./*/chapter.ts', {
+	eager: true
+});
 
-const modules = import.meta.glob<{ default: Component }>('./*.svx');
-
-/** File names of every chapter that has been written so far. */
-export function chapterFiles(): string[] {
-	return Object.keys(modules).map((path) => path.slice(2));
+/** Slugs of every chapter folder. */
+export function chapterFolders(): string[] {
+	return Object.keys(modules).map((path) => path.split('/')[1]);
 }
 
-/** Curriculum entries that have a chapter file, in reading order. */
-export function writtenChapters(): ChapterMeta[] {
-	const files = new Set(chapterFiles());
-	return CURRICULUM.filter((chapter) => files.has(chapterFileName(chapter)));
+/** The datasets a chapter's widgets show on first view, listed in its `chapter.ts`. */
+export function chapterDatasets(slug: string): readonly DatasetId[] {
+	return configs[`./${slug}/chapter.ts`]?.datasets ?? [];
 }
 
 export async function loadChapter(
 	slug: string
-): Promise<{ meta: ChapterMeta; component: Component } | undefined> {
+): Promise<{ meta: Chapter; component: Component } | undefined> {
 	const meta = findChapter(slug);
-	const load = meta && modules[`./${chapterFileName(meta)}`];
+	const load = meta && modules[`./${meta.slug}/chapter.svx`];
 	if (!meta || !load) return undefined;
 	return { meta, component: (await load()).default };
 }

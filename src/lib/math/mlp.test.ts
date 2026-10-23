@@ -34,7 +34,7 @@ function gradCheck(
 	}
 }
 
-describe('neuron (Ch 6)', () => {
+describe('neuron (a-neuron)', () => {
 	it('multiplies, adds, and squashes', () => {
 		const { sum, output } = neuron([1, 2], [0.5, -1], 0.25, 'relu');
 		expect(sum).toBeCloseTo(0.5 - 2 + 0.25);
@@ -74,7 +74,7 @@ describe('neuron (Ch 6)', () => {
 	});
 });
 
-describe('CurveNet (Ch 7 curve fitting)', () => {
+describe('CurveNet (learning-from-mistakes curve fitting)', () => {
 	const xs = Array.from({ length: 20 }, (_, i) => -3 + (6 * i) / 19);
 	const ys = xs.map(Math.sin);
 
@@ -97,7 +97,7 @@ describe('CurveNet (Ch 7 curve fitting)', () => {
 	});
 });
 
-describe('CharModel (Ch 7 tiny language model)', () => {
+describe('CharModel (learning-from-mistakes tiny language model)', () => {
 	const text = RHYMES.map((r) => r.text.toLowerCase());
 	const vocab = ['\u0000', ...new Set(text.join(''))].sort();
 	const config = { vocab, context: 3, embedding: 8, hidden: 64 };

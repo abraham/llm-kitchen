@@ -3,12 +3,14 @@
 	import { resolve } from '$app/paths';
 	import ChapterLayout from '#lib/components/layout/ChapterLayout.svelte';
 	import PageMeta from '#lib/components/layout/PageMeta.svelte';
+	import { provideDatasets } from '#lib/datasets/use.ts';
 	import { chapterHeading, chapterImageAlt, SITE_NAME } from '#lib/site.ts';
 	import { progress } from '#lib/stores/progress.svelte.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 	const Chapter = $derived(data.component);
+	provideDatasets(() => data.datasets);
 
 	$effect(() => {
 		const slug = data.meta.slug;
@@ -26,6 +28,6 @@
 	type="article"
 />
 
-<ChapterLayout meta={data.meta} next={data.next}>
+<ChapterLayout meta={data.meta}>
 	<Chapter />
 </ChapterLayout>

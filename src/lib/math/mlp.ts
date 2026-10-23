@@ -1,6 +1,6 @@
 /**
  * Tiny neural networks with hand-written forward and backward passes (no libraries), used by
- * Ch 6 and Ch 7. Everything is small enough to read; tests check the gradients numerically.
+ * `a-neuron` and `learning-from-mistakes`. Everything is small enough to read; tests check the gradients numerically.
  */
 import { seededRandom } from './sampling.ts';
 
@@ -30,7 +30,7 @@ export function layer(inputs: number[], weights: number[][], biases: number[], k
 	return weights.map((w, i) => neuron(inputs, w, biases[i], kind));
 }
 
-/** Ch 6's network: three ReLU neurons, one per triangle edge, feed an output that is 1 inside. */
+/** `a-neuron`'s network: three ReLU neurons, one per triangle edge, feed an output that is 1 inside. */
 export const TRIANGLE = {
 	weights: [
 		[0, 1],

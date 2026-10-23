@@ -1,7 +1,7 @@
-import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { readDataset } from '#lib/datasets/read.ts';
+import { DATASETS, type TraceName } from '#lib/datasets/registry.ts';
 import canonical from '../../../models/canonical.json';
-import { parseTrace } from '#lib/models/trace.ts';
 import { TOY_ATTENTION, attend } from './attention.ts';
 
 describe('attend', () => {
@@ -31,14 +31,14 @@ describe('attend', () => {
 	});
 });
 
-describe('recorded GPT-2 attention (Ch 9)', () => {
-	const dir = `static/traces/${canonical.id}`;
-	const load = (name: string) =>
-		parseTrace(JSON.parse(readFileSync(`${dir}/${name}.json`, 'utf8')));
+describe('recorded GPT-2 attention (attention)', () => {
+	const load = (name: TraceName) => readDataset(`traces/${name}`);
 
 	it('has attention for every layer and head on the attention prompts', () => {
-		for (const f of readdirSync(dir).filter((f) => f.startsWith('attn-'))) {
-			const t = load(f.slice(0, -5));
+		const names = Object.keys(DATASETS).filter((id) => id.startsWith('traces/attn-'));
+		expect(names.length).toBeGreaterThan(0);
+		for (const id of names) {
+			const t = load(id.slice('traces/'.length) as TraceName);
 			expect(t.attention!.weights).toHaveLength(canonical.layers);
 			for (const layer of t.attention!.weights) expect(layer).toHaveLength(canonical.heads);
 		}
@@ -75,7 +75,7 @@ describe('recorded GPT-2 attention (Ch 9)', () => {
 	});
 
 	it('head 9.0 links " its" to " lamb", and " it" to " suitcase" (the chapter’s examples)', () => {
-		const at = (name: string, from: string, to: string) => {
+		const at = (name: TraceName, from: string, to: string) => {
 			const t = load(name);
 			const toks = t.attention!.tokens.map((x) => x.text);
 			return t.attention!.weights[9][0][toks.indexOf(from)][toks.indexOf(to)];
@@ -86,17 +86,17 @@ describe('recorded GPT-2 attention (Ch 9)', () => {
 	});
 
 	it('most of the time, heads put over half their attention on the first token', () => {
-		for (const f of readdirSync(dir).filter((f) => f.startsWith('attn-'))) {
-			const t = load(f.slice(0, -5));
+		for (const id of Object.keys(DATASETS).filter((id) => id.startsWith('traces/attn-'))) {
+			const t = load(id.slice('traces/'.length) as TraceName);
 			const rows = t.attention!.weights.flat().flatMap((h) => h.slice(3));
 			const sink = rows.filter((row) => row[0] > 0.5).length;
-			expect(sink / rows.length, f).toBeGreaterThan(0.5);
+			expect(sink / rows.length, id).toBeGreaterThan(0.5);
 		}
 	});
 });
 
-describe('logit lens on "The cat sat on the" (Ch 10)', () => {
-	const v = JSON.parse(readFileSync(`static/vectors/${canonical.id}/the-cat-sat.json`, 'utf8'));
+describe('logit lens on "The cat sat on the" (the-transformer-block)', () => {
+	const v = readDataset(`vectors/the-cat-sat`);
 	const top = (layer: number) => v.logitLens[layer][0];
 
 	it('has one row per stage: start plus one per block', () => {
@@ -105,9 +105,7 @@ describe('logit lens on "The cat sat on the" (Ch 10)', () => {
 	});
 
 	it('the last stage matches the recorded prediction', () => {
-		const trace = parseTrace(
-			JSON.parse(readFileSync(`static/traces/${canonical.id}/the-cat-sat.json`, 'utf8'))
-		);
+		const trace = readDataset('traces/the-cat-sat');
 		const first = trace.steps[0].candidates[0];
 		expect(top(canonical.layers).token.text).toBe(first.token.text);
 		expect(top(canonical.layers).prob).toBeCloseTo(first.prob, 3);

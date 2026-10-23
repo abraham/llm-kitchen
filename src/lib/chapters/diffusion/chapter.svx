@@ -1,0 +1,52 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import DiffusionToy from './DiffusionToy.svelte';
+</script>
+
+## Not one piece at a time
+
+GPT-2 writes text one token at a time, left to right (<ChapterRef to="generating-text" />). A picture could be made the same
+way, one patch after another, but many image generators work differently: they start with the whole
+picture as random noise and clean it up a little at a time, everywhere at once. This is a <GlossaryPopover term="diffusion">diffusion model</GlossaryPopover>.
+
+Training works backwards from the result. Take a real picture and add a little random noise, then a
+little more, step by step, until nothing of the picture is left. A network is trained to look at a
+noisy picture, told how many steps of noise it has had, and guess the noise that was
+added.<Cite id="sohl-dickstein2015" /> To make something new, start from pure noise and repeatedly
+subtract the noise the network predicts. Each step leaves something a little more like the training
+pictures.<Cite id="ho2020" />
+
+## Try it with dots
+
+A real image has millions of numbers. Here, each "picture" is a single dot with just two numbers,
+its position, and the training pictures are dots scattered along a shape. Train the tiny network
+(two layers of neurons like the ones in <ChapterRef to="a-neuron" />) to predict the noise, then paint 400 new dots,
+each starting from pure noise:
+
+<DiffusionToy />
+
+Each dot is drawn independently, from its own random start, yet together they land on the shape.
+The network never stored the training dots; it learned which way to nudge a noisy dot to make it
+more like them. Before training, the nudges are random, and painting gives a smudge.
+
+## From dots to pictures
+
+Real image generators do the same thing with far bigger networks and with every pixel's colors
+instead of two numbers. To save work, *latent* diffusion models remove the noise from a compressed
+version of the image, and they can steer each step with a text description, so the noise becomes
+the picture you asked for.<Cite id="rombach2022" /> The original recipe took 1,000 small steps to
+make one picture;<Cite id="ho2020" /> the toy above uses 50.
+
+<RecapCard>
+
+- A diffusion model learns to predict the noise that was added to a training example.
+- To make something new, it starts from pure noise and removes a little predicted noise at each
+  step.
+- Unlike GPT-2's one-token-at-a-time writing, it refines the whole picture at every step.
+
+</RecapCard>
+
+**Next question:** how do all the pieces fit together?

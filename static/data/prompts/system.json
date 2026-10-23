@@ -1,0 +1,150 @@
+{
+	"dataset": "prompts/system",
+	"version": 1,
+	"script": "record/prompts.py",
+	"models": [
+		{
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		}
+	],
+	"generatedAt": "2026-10-23",
+	"data": {
+		"version": 1,
+		"model": {
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"displayName": "Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		},
+		"question": "Why is the sky blue?",
+		"replies": [
+			{
+				"name": "Default",
+				"system": "You are Qwen, created by Alibaba Cloud. You are a helpful assistant.",
+				"prompt": "<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>\n<|im_start|>user\nWhy is the sky blue?<|im_end|>\n<|im_start|>assistant\n",
+				"text": "The sky appears blue because of a phenomenon called Rayleigh scattering. This occurs when sunlight passes through Earth's atmosphere and interacts with gas molecules in the air. The shorter wavelengths of light (blue and violet) scatter more easily than the longer wavelengths (red and orange), which means that they are scattered in all directions throughout the atmosphere. As a result, we see the blue color of the sky from the ground.",
+				"tokens": 82,
+				"stopped": true
+			},
+			{
+				"name": "A persona",
+				"system": "You are a world-famous physicist.",
+				"prompt": "<|im_start|>system\nYou are a world-famous physicist.<|im_end|>\n<|im_start|>user\nWhy is the sky blue?<|im_end|>\n<|im_start|>assistant\n",
+				"text": "The sky appears blue because of a phenomenon called Rayleigh scattering, which occurs when light from the sun travels through Earth's atmosphere and interacts with gas molecules in the air.\n\nWhen sunlight enters our atmosphere, it encounters particles such as nitrogen and oxygen molecules. These particles scatter the light in all directions. The shorter wavelengths (blue and violet) of light are scattered more easily than longer wavelengths (red and orange). This means that most of the blue light is scattered away from us towards the edges of the sky, while red and orange light continues to travel straight ahead.\n\nAs we look up at the sky, we see this scattered blue light, which makes the sky appear blue during the day. However, on clear nights without much atmospheric haze or pollution, the sky can also appear dark blue due to the absence of any significant scattering effects by the atmosphere.\n\nThis effect is why the sky looks different depending on whether you're looking at it during the day or at night.",
+				"tokens": 192,
+				"stopped": true
+			},
+			{
+				"name": "Specific instructions",
+				"system": "Answer in two short sentences that a ten-year-old can follow, then give one everyday example.",
+				"prompt": "<|im_start|>system\nAnswer in two short sentences that a ten-year-old can follow, then give one everyday example.<|im_end|>\n<|im_start|>user\nWhy is the sky blue?<|im_end|>\n<|im_start|>assistant\n",
+				"text": "The sky appears blue because sunlight passes through Earth's atmosphere and some of the shorter blue wavelengths scatter more than others.\n\nAn example: On a sunny day, when you look up at the sky, you might see a beautiful blue color due to this scattering effect.",
+				"tokens": 52,
+				"stopped": true
+			}
+		],
+		"persona": "You are a brilliant mathematician who never makes mistakes.",
+		"math": [
+			{
+				"question": "What is 47 × 38? Reply with only the number.",
+				"expected": 1786,
+				"default": {
+					"text": "1796",
+					"correct": false
+				},
+				"persona": {
+					"text": "1796",
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 63 × 29? Reply with only the number.",
+				"expected": 1827,
+				"default": {
+					"text": "1827",
+					"correct": true
+				},
+				"persona": {
+					"text": "1847",
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 84 × 57? Reply with only the number.",
+				"expected": 4788,
+				"default": {
+					"text": "4818",
+					"correct": false
+				},
+				"persona": {
+					"text": "4836",
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 125 × 16? Reply with only the number.",
+				"expected": 2000,
+				"default": {
+					"text": "2000",
+					"correct": true
+				},
+				"persona": {
+					"text": "2000",
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 238 × 47? Reply with only the number.",
+				"expected": 11186,
+				"default": {
+					"text": "10966",
+					"correct": false
+				},
+				"persona": {
+					"text": "10966",
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 19 × 99? Reply with only the number.",
+				"expected": 1881,
+				"default": {
+					"text": "1881",
+					"correct": true
+				},
+				"persona": {
+					"text": "1861",
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 356 × 24? Reply with only the number.",
+				"expected": 8544,
+				"default": {
+					"text": "8544",
+					"correct": true
+				},
+				"persona": {
+					"text": "8544",
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 73 × 73? Reply with only the number.",
+				"expected": 5329,
+				"default": {
+					"text": "5329",
+					"correct": true
+				},
+				"persona": {
+					"text": "5329",
+					"correct": true
+				}
+			}
+		],
+		"generatedAt": "2026-10-23",
+		"source": {
+			"torch": "2.14.1"
+		}
+	}
+}

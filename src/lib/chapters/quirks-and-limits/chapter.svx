@@ -1,0 +1,81 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import GlassBoxGenerator from '#lib/components/widgets/GlassBoxGenerator.svelte';
+	import SpellingBlindSpot from './SpellingBlindSpot.svelte';
+</script>
+
+Every quirk in this chapter follows from what you've already seen: a model predicts likely tokens,
+reads tokens rather than letters, and only knows its training text. The lab below has recorded
+GPT-2 runs for each one; run GPT-2 live to try your own.
+
+<GlassBoxGenerator
+	title="Quirks lab"
+	presets={[
+		{ trace: 'quirk-moon', label: 'Made up: the first person on the moon' },
+		{ trace: 'quirk-painter', label: 'Made up: a painter who doesn’t exist' },
+		{ trace: 'quirk-iphone', label: 'Out of date: the latest iPhone' },
+		{ trace: 'quirk-math', label: 'Arithmetic: 2 + 2' },
+		{ trace: 'quirk-france', label: 'Wording: “The capital of France is”' },
+		{ trace: 'quirk-france-qa', label: 'Wording: as a question and answer' },
+		{ trace: 'quirk-loop', label: 'Stuck in a loop' }
+	]}
+/>
+
+## Likely isn't the same as true
+
+Ask GPT-2 who first walked on the moon and it writes that it was "a man named John, who was born in
+1829." Ask about a painter who doesn't exist, and it describes his famous painting. This is called <GlossaryPopover term="hallucination">hallucination</GlossaryPopover>.<Cite id="ji2023" /> The model
+was trained to produce text that *looks like* its training text, and a confident sentence about a
+painter looks like many real ones. Nothing in the loop from <ChapterRef to="generating-text" /> checks whether it's true.
+
+Tuning helps: in the InstructGPT tests, the tuned models made up information about half as often as
+GPT-3, 21% of the time instead of 41%.<Cite id="ouyang2022" /> But the cause is the same, so it never
+goes away completely. That's one reason assistants are given tools to look things up.
+
+## Frozen in time
+
+GPT-2's training text only includes web links from before 2018.<Cite id="radford2019" /> Ask it
+for the latest iPhone and its top guesses are the iPhone 6, 5, and 7, the ones that filled the pages
+it read. Every model has a cutoff like this: it knows nothing about later events unless they're put
+into its prompt.
+
+## Tokens, not letters
+
+Ask a model how many r's are in "strawberry" and it may get it wrong, because it never sees the
+letters:
+
+<SpellingBlindSpot />
+
+Numbers have the same problem: they are split into tokens in uneven ways, so the model can't simply
+line up the digits and carry, the way you would on paper. In the lab, after "2 + 2 =", GPT-2 rates
+" 3" more likely than " 4".
+
+## Wording matters
+
+"The capital of France is" and "Q: What is the capital of France? A:" ask the same thing, but they
+look like different kinds of text. In the lab, the first makes GPT-2 ramble about "the capital of
+the French Republic"; the second gets "Paris" in its first sentence. Much larger models can also
+swing with small formatting changes: one study found accuracy differences of up to 76 percentage
+points from formatting alone.<Cite id="sclar2024" />
+
+## Limited memory and loops
+
+A model only sees its context window (<ChapterRef to="the-context-problem" />): for GPT-2, 1,024 tokens. Anything earlier is cut off
+and simply gone. And as <ChapterRef to="generating-text" /> showed, always taking the most likely token can trap a model in a
+loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
+
+<RecapCard>
+
+- Models produce likely text, not checked facts, so they can confidently make things up.
+- They know nothing after their training cutoff unless told.
+- They read tokens, not letters or digits, which makes spelling and arithmetic hard.
+- Small changes in wording can change the answer, and anything outside the context window is
+  forgotten.
+
+</RecapCard>
+
+**Next question:** chat apps and coding agents work around many of these limits. What are they
+doing besides calling the model?

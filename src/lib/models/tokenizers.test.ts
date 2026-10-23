@@ -1,14 +1,11 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import canonical from '../../../models/canonical.json';
-import { parseTrace } from './trace.ts';
+import { readDataset } from '#lib/datasets/read.ts';
+
 import { tokenize } from './tokenizers.ts';
 
 describe('browser tokenizers', () => {
 	it('the GPT-2 tokenizer matches the tokens recorded from the real model', async () => {
-		const trace = parseTrace(
-			JSON.parse(readFileSync(`static/traces/${canonical.id}/the-cat-sat.json`, 'utf8'))
-		);
+		const trace = readDataset('traces/the-cat-sat');
 		expect(await tokenize('gpt2', trace.prompt)).toEqual(trace.tokens);
 		const generated = trace.prompt + trace.steps.map((s) => s.chosen.text).join('');
 		expect((await tokenize('gpt2', generated)).map((t) => t.id)).toEqual([
@@ -17,7 +14,7 @@ describe('browser tokenizers', () => {
 		]);
 	});
 
-	it('splits "strawberry" differently with and without a leading space (Ch 4)', async () => {
+	it('splits "strawberry" differently with and without a leading space (tokens)', async () => {
 		expect((await tokenize('gpt2', 'strawberry')).map((t) => t.text)).toEqual([
 			'st',
 			'raw',

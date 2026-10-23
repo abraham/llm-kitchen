@@ -1,15 +1,15 @@
 # Fact-check: Part VIII (Ch 30–34) and the wrap-up (Ch 35–38)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
-`tests/unit/part-8-facts.test.ts` (the recorded data says what the prose says),
+each chapter's `facts.test.ts` (the recorded data says what the prose says),
 `src/lib/math/part-8-models.test.ts` (gradient checks and training for the in-browser models),
-`tests/e2e/part-8.e2e.ts`.
+each chapter's `chapter.e2e.ts`.
 
 Data: real runs recorded offline, with each model's pinned revision in its file:
 
-- `static/encoders/fill-mask.json`: BERT base (`google-bert/bert-base-uncased`) and GPT-2 small, by
-  `scripts/build-encoder.py`.
-- `static/vision/`: pictures drawn by `scripts/build-clip.py` (no licensing questions) and CLIP
+- `static/data/encoders/fill-mask.json`: BERT base (`google-bert/bert-base-uncased`) and GPT-2 small, by
+  `scripts/record/encoder.py`.
+- `static/vision/`: pictures drawn by `scripts/record/clip.py` (no licensing questions) and CLIP
   ViT-B/32's patch vectors and caption similarities.
 
 ## Ch 30. Reading both ways
@@ -74,24 +74,24 @@ milestone 20.
 
 ## Ch 36. From message to reply
 
-Each stage restates the chapters it links (`src/lib/data/end-to-end.ts`); the unit test checks that
+Each stage restates the chapters it links (`src/lib/chapters/end-to-end/data.ts`); the unit test checks that
 every Part I–VII is linked from a stage and Part VIII from the closing box. Data comes from three
 existing recordings, labeled in the widget:
 
 - [x] The harness, cache, tool, and reply stages use the Ch 23 recording
-      (`static/agent/chat.json`, Qwen2.5-1.5B-Instruct): call 1 is 400 tokens, call 2 is 493 and
+      (`static/data/agent/chat.json`, Qwen2.5-1.5B-Instruct): call 1 is 400 tokens, call 2 is 493 and
       starts with the whole of call 1, so only 93 tokens need new work (Ch 27). The one tool call
       is `search_rhymes` with `{"query": "cat"}`; the run's policy is `none` (no guardrail asked),
       which the widget says, noting the search only reads (Ch 29).
-- [x] In-model stages use GPT-2 small on "The cat sat on the" (`static/traces/gpt2/the-cat-sat.json`,
-      `static/vectors/gpt2/the-cat-sat.json`): 5 tokens; temperature 0 picks " floor" at 7.6%; the
+- [x] In-model stages use GPT-2 small on "The cat sat on the" (`static/data/traces/gpt2/the-cat-sat.json`,
+      `static/data/vectors/gpt2/the-cat-sat.json`): 5 tokens; temperature 0 picks " floor" at 7.6%; the
       logit lens reads " same" after block 1 and " floor" after blocks 8 and 12 (as Ch 10 says).
 - [x] "GPT-2 adds a vector for the token's position": GPT-2 uses learned absolute position
       embeddings added to the token embeddings (Radford et al. 2019, as in Ch 10's stream "the
       vectors for ' the' and its position"). The text says GPT-2 specifically, since Qwen2.5 uses
       rotary position embeddings inside attention instead.
 - [x] KV cache: 500 tokens took about 10 s with the cache and 43 s without
-      (`static/caching/kv-cache.json`, as in Ch 27).
+      (`static/data/caching/kv-cache.json`, as in Ch 27).
 - [x] "The loop stops at an end-of-turn token": Ch 11 and Ch 15 (chat markers); the Qwen prompt
       ends each turn with `<|im_end|>`.
 - [x] The closing box's one-line summaries match Ch 30–34 (both-ways attention; part of the network
@@ -99,7 +99,7 @@ existing recordings, labeled in the widget:
 
 ## Ch 37. Picking a model
 
-The decoder's names (`src/lib/data/model-names.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
+The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections and the models this site uses, as listed on 2026-10-23. Lineups
 and suffixes change often, so re-check the list in the final fact review. The unit test checks that
 every name splits into known parts that spell it back.
@@ -120,7 +120,7 @@ every name splits into known parts that spell it back.
 
 ## Ch 38. Check yourself
 
-Fourteen questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
+Fourteen questions in reading order (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–VIII
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).

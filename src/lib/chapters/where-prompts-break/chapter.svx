@@ -1,0 +1,53 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import FragileLab from './FragileLab.svelte';
+</script>
+
+## Changes that shouldn't matter
+
+Back in <ChapterRef to="quirks-and-limits" />, small changes in wording changed an answer. Prompts for real tasks have many
+such choices: which examples, in what order, laid out how, and where the important part goes. None
+of them should matter to the meaning. Here are three, each changed on its own:
+
+<FragileLab />
+
+## Order
+
+Shuffling the same four examples changed how many of the eight reviews GPT-2 small labeled right
+from 8 of 8 to 4 of 8, which is no better than a coin. Researchers found the same effect in much
+larger models: some orders do nearly as well as a fully trained classifier and others are no better
+than random guessing, and a good order for one model doesn't carry over to another.<Cite id="lu2022" />
+
+## Layout
+
+Writing the same examples as "Review: … Sentiment: …" got 7 of 8 right; an arrow between review and
+label got 4. A study of open models found differences of up to 76 percentage points from formatting
+alone, and the gap didn't go away with bigger models, more examples, or instruction
+tuning.<Cite id="sclar2024" />
+
+## Position
+
+With 30 lines of locker numbers, Qwen2.5-1.5B-Instruct found the right one almost every time when
+it was the first or last line. All of its 8 misses came with the line somewhere in the middle.
+Large studies show the same U shape: models use information at the start and end of a long prompt
+better than information in the middle.<Cite id="liu2024" />
+
+## What to do about it
+
+Because the model only continues text, every one of these choices is part of the input, and none of
+them is neutral. Good prompting is less about magic words and more about testing: try a few
+wordings, orders, and layouts on real examples, keep what works, and put what matters most near the
+start or the end.
+
+<RecapCard>
+
+- The order of examples, their layout, and where facts sit in a long prompt can all change answers.
+- These effects show up in large models too, and differ from model to model.
+- Test several versions of a prompt on real examples instead of trusting one wording.
+
+</RecapCard>
+
+**Next question:** so far you've written the whole prompt yourself. In a chat app, code you never
+see writes most of it, and some of it is copied from web pages and files. What does that code do?

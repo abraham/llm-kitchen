@@ -1,0 +1,43 @@
+<script lang="ts">
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import TextToNumbers from './TextToNumbers.svelte';
+</script>
+
+## Computers only work with numbers
+
+Inside a computer, everything is a number: pictures, music, and text. So the first job of any
+language model is to turn text into numbers. Type something below and watch each character turn
+into its number.
+
+<TextToNumbers />
+
+## One number per character
+
+Every character has an agreed number, set by the Unicode Standard. Capital *T* is 84, a lowercase
+*h* is 104, and a space is 32. Unicode has room for more than a million characters, covering most
+of the world's writing systems, plus emoji.<Cite id="unicode" />
+
+Try typing *é* or 🐱. They get numbers too, just bigger ones: *é* is 233 and 🐱 is 128,049.
+
+## Bytes: how the numbers are stored
+
+Computers store numbers in **bytes**, and one byte can only hold a number from 0 to 255. A common
+way to store text, called UTF-8, uses one byte for the basic English letters, digits, and
+punctuation, and two to four bytes for everything else.<Cite id="rfc3629" /> Switch the
+widget to *UTF-8 bytes* to see it: *é* becomes two bytes, and 🐱 becomes four.
+
+GPT-2, the model used in this site, starts from these bytes. Its designers chose bytes so that the
+model could read any text at all, in any language, without a special case for each
+one.<Cite id="radford2019" />
+
+<RecapCard>
+
+- Computers only work with numbers, so text must be turned into numbers first.
+- Unicode gives every character a number, like 84 for *T*.
+- UTF-8 stores those numbers as bytes: one for basic English letters, up to four for others.
+
+</RecapCard>
+
+**Next question:** now the text is numbers, one per character. But GPT-2 doesn't read single
+letters, or whole words either. So what does it actually read?

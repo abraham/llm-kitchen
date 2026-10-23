@@ -15,7 +15,7 @@ reliably than correctness; "you never make mistakes" doesn't make it so.
 
 ## Data
 
-Recorded by `scripts/build-prompts.py` (`static/prompts/system.json`): Qwen2.5-1.5B-Instruct,
+Recorded by `scripts/record/prompts.py` (`static/data/prompts/system.json`): Qwen2.5-1.5B-Instruct,
 greedy.
 
 ## Decisions

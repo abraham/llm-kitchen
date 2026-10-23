@@ -2,21 +2,21 @@
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests: `src/lib/math/mlp.test.ts`
 (including numerical gradient checks of every hand-written backward pass),
-`tests/unit/canonical.test.ts`, `tests/e2e/part-3.e2e.ts`.
+`tests/unit/canonical.test.ts`, each chapter's `chapter.e2e.ts`.
 
 ## Ch 6. A neuron
 
-| Claim                                                                                   | Backing                                                                                                |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| A neuron multiplies inputs by weights, adds a bias, and applies an activation function  | Test (`neuron`), e2e (0.5 and −1.8 examples)                                                           |
-| ReLU turns negative totals into 0 and leaves positive ones alone                        | Test (`activate`)                                                                                      |
-| Without an activation, stacked neurons only produce straight lines                      | Composition of linear functions is linear (math fact)                                                  |
-| A layer of three neurons plus an output neuron fences off a triangle; one gives an edge | Test (`triangleNet`), e2e (0.4, 1 and 0 examples)                                                      |
-| McCulloch and Pitts described a mathematical neuron in 1943                             | Cite `mcculloch1943`                                                                                   |
-| Rosenblatt's 1958 perceptron added weights adjusted from examples                       | Cite `rosenblatt1958`                                                                                  |
-| GPT-2 small has 3,072 neurons per block in 12 blocks, each reading 768 numbers          | Cite `gpt2-config`; `canonical.json` (`mlpSize`), checked by `build-traces.py` (`n_inner or 4·n_embd`) |
-| GPT-2 uses GELU, a smooth cousin of ReLU                                                | Cite `hendrycks2016`; GPT-2 config `activation_function: gelu_new`                                     |
-| GPT-2 small has about 124 million numbers (weights)                                     | `canonical.json` parameter count, checked against the model                                            |
+| Claim                                                                                   | Backing                                                                                                 |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| A neuron multiplies inputs by weights, adds a bias, and applies an activation function  | Test (`neuron`), e2e (0.5 and −1.8 examples)                                                            |
+| ReLU turns negative totals into 0 and leaves positive ones alone                        | Test (`activate`)                                                                                       |
+| Without an activation, stacked neurons only produce straight lines                      | Composition of linear functions is linear (math fact)                                                   |
+| A layer of three neurons plus an output neuron fences off a triangle; one gives an edge | Test (`triangleNet`), e2e (0.4, 1 and 0 examples)                                                       |
+| McCulloch and Pitts described a mathematical neuron in 1943                             | Cite `mcculloch1943`                                                                                    |
+| Rosenblatt's 1958 perceptron added weights adjusted from examples                       | Cite `rosenblatt1958`                                                                                   |
+| GPT-2 small has 3,072 neurons per block in 12 blocks, each reading 768 numbers          | Cite `gpt2-config`; `canonical.json` (`mlpSize`), checked by `record/traces.py` (`n_inner or 4·n_embd`) |
+| GPT-2 uses GELU, a smooth cousin of ReLU                                                | Cite `hendrycks2016`; GPT-2 config `activation_function: gelu_new`                                      |
+| GPT-2 small has about 124 million numbers (weights)                                     | `canonical.json` parameter count, checked against the model                                             |
 
 ## Ch 7. Learning from mistakes
 

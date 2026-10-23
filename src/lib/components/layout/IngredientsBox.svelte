@@ -1,10 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { writtenChapters, type ChapterMeta } from '#lib/chapters/index.ts';
+	import { label, type Chapter } from '#lib/curriculum/index.ts';
 
-	let { chapters, empty }: { chapters: ChapterMeta[]; empty?: string } = $props();
-
-	const written = new Set(writtenChapters().map((c) => c.slug));
+	let { chapters, empty }: { chapters: Chapter[]; empty?: string } = $props();
 </script>
 
 <aside class="ingredients" aria-labelledby="ingredients-title">
@@ -15,13 +13,9 @@
 		<ul>
 			{#each chapters as chapter (chapter.slug)}
 				<li>
-					{#if written.has(chapter.slug)}
-						<a href={resolve('/[chapter]', { chapter: chapter.slug })}
-							>Ch {chapter.number}. {chapter.title}</a
-						>
-					{:else}
-						Ch {chapter.number}. {chapter.title}
-					{/if}
+					<a href={resolve('/[chapter]', { chapter: chapter.slug })}
+						>{label(chapter.slug)}. {chapter.title}</a
+					>
 				</li>
 			{/each}
 		</ul>

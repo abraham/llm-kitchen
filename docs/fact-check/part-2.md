@@ -2,7 +2,7 @@
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 `src/lib/models/tokenizers.test.ts`, `src/lib/math/bpe.test.ts`, `src/lib/math/vectors.test.ts`,
-`tests/unit/canonical.test.ts`, `tests/unit/part-2-facts.test.ts`, `tests/e2e/part-2.e2e.ts`.
+`tests/unit/canonical.test.ts`, each chapter's `facts.test.ts`, each chapter's `chapter.e2e.ts`.
 
 ## Ch 3. Text is just numbers
 
@@ -15,27 +15,27 @@ Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.m
 
 ## Ch 4. Tokens
 
-| Claim                                                                      | Backing                                                      |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| " cat" (with the space) is token 3797                                      | Recorded trace + tokenizer test                              |
-| "tokenization" splits into "token" + "ization"                             | Live tokenizer output (shown, not asserted in prose)         |
-| GPT-2 knows exactly 50,257 tokens                                          | Cite `radford2019`; `canonical.json` checked by build-traces |
-| BPE was first used for language/translation models by Sennrich et al. 2016 | Cite `sennrich2016`                                          |
-| BPE: start from characters, repeatedly merge the most frequent pair        | Cite `sennrich2016`; test reproduces the paper's toy merges  |
-| The toy example is the one from their paper (low, lower, newest, widest)   | Cite `sennrich2016` (Algorithm 1); test                      |
-| GPT-2 ran BPE on bytes over web text                                       | Cite `radford2019` (§2.1–2.2)                                |
-| "strawberry" → st + raw + berry; " strawberry" is one token, 41236         | Test (`tokenizers.test.ts`), e2e                             |
-| The model never sees the letters inside a token                            | Follows from the input being token IDs                       |
-| GPT-4 uses cl100k_base, GPT-4o uses o200k_base                             | Cite `tiktoken` (`model.py`)                                 |
-| Newer, bigger vocabularies usually need fewer tokens for the same text     | Hedged ("usually"); widget shows the counts                  |
-| The browser GPT-2 tokenizer matches the real model's tokens                | Test against the recorded trace                              |
+| Claim                                                                      | Backing                                                          |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| " cat" (with the space) is token 3797                                      | Recorded trace + tokenizer test                                  |
+| "tokenization" splits into "token" + "ization"                             | Live tokenizer output (shown, not asserted in prose)             |
+| GPT-2 knows exactly 50,257 tokens                                          | Cite `radford2019`; `canonical.json` checked by record/traces.py |
+| BPE was first used for language/translation models by Sennrich et al. 2016 | Cite `sennrich2016`                                              |
+| BPE: start from characters, repeatedly merge the most frequent pair        | Cite `sennrich2016`; test reproduces the paper's toy merges      |
+| The toy example is the one from their paper (low, lower, newest, widest)   | Cite `sennrich2016` (Algorithm 1); test                          |
+| GPT-2 ran BPE on bytes over web text                                       | Cite `radford2019` (§2.1–2.2)                                    |
+| "strawberry" → st + raw + berry; " strawberry" is one token, 41236         | Test (`tokenizers.test.ts`), e2e                                 |
+| The model never sees the letters inside a token                            | Follows from the input being token IDs                           |
+| GPT-4 uses cl100k_base, GPT-4o uses o200k_base                             | Cite `tiktoken` (`model.py`)                                     |
+| Newer, bigger vocabularies usually need fewer tokens for the same text     | Hedged ("usually"); widget shows the counts                      |
+| The browser GPT-2 tokenizer matches the real model's tokens                | Test against the recorded trace                                  |
 
 ## Ch 5. Embeddings
 
 | Claim                                                                  | Backing                                                                                           |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | GPT-2 small turns each token into 768 numbers                          | `canonical.json` (checked against the model config)                                               |
-| The vectors shown are GPT-2's real token embeddings                    | Exported by `build-traces.py` from `wte`                                                          |
+| The vectors shown are GPT-2's real token embeddings                    | Exported by `record/traces.py` from `wte`                                                         |
 | Embeddings start random and are learned in training                    | Cite `radford2019`                                                                                |
 | all-MiniLM-L6-v2 maps text to 384 numbers                              | Cite `minilm-model-card`; test (`dimensions` = 384)                                               |
 | cat's nearest neighbor is kitten                                       | Test                                                                                              |

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { seededRandom } from '#lib/math/sampling.ts';
-import { NotAvailableError } from './provider.ts';
+import type { BrowserModel } from './browser-model.svelte.ts';
+import { BrowserProvider } from './browser-provider.ts';
+import { NotAvailableError, canonical } from './provider.ts';
 import { RecordedProvider } from './recorded.ts';
 import { sampleTrace } from './sample-trace.ts';
 import { parseTrace, textAfter } from './trace.ts';
@@ -80,5 +82,55 @@ describe('RecordedProvider', () => {
 
 	it('refuses prompts it has no recording for', async () => {
 		await expect(provider.tokenize('Hello')).rejects.toBeInstanceOf(NotAvailableError);
+	});
+
+	it('answers for the exact tokens so far, like the live provider', async () => {
+		const d = await provider.nextTokenDistribution(sampleTrace.tokens);
+		expect(d).toEqual(await provider.nextTokenDistribution(sampleTrace.prompt));
+	});
+});
+
+describe('BrowserProvider', () => {
+	const seen: number[][] = [];
+	const model = {
+		spec: { label: 'Fake GPT-2' },
+		nextToken: async (ids: number[], topK: number) => {
+			seen.push(ids);
+			return { top: [{ id: 3797, prob: 0.6 }].slice(0, topK), rest: 0.4 };
+		},
+		embed: async (texts: string[]) => texts.map(() => [1, 0])
+	} as unknown as BrowserModel;
+	const live = new BrowserProvider(model, 'gpt2');
+
+	it('says it is live', () => {
+		expect(live.source).toEqual({ kind: 'live', model: 'Fake GPT-2' });
+	});
+
+	it('tokenizes text, asks the model, and names the candidate tokens', async () => {
+		const d = await live.nextTokenDistribution('The cat');
+		expect(d.context.map((t) => t.text)).toEqual(['The', ' cat']);
+		expect(d.candidates).toEqual([{ token: { id: 3797, text: ' cat' }, prob: 0.6 }]);
+		expect(d.rest).toBe(0.4);
+	});
+
+	it('only sends the last context-window of tokens', async () => {
+		const long = Array.from({ length: canonical.contextLength + 5 }, (_, i) => ({
+			id: i,
+			text: 'x'
+		}));
+		await live.nextTokenDistribution(long);
+		expect(seen.at(-1)).toEqual(long.slice(5).map((t) => t.id));
+	});
+
+	it('generates by appending the top token', async () => {
+		const steps = await live.generate('The cat', { maxTokens: 2 });
+		expect(steps.map((s) => s.chosen.text)).toEqual([' cat', ' cat']);
+		expect(steps[1].context).toHaveLength(3);
+	});
+
+	it('embeds through the model, and refuses to predict without a tokenizer', async () => {
+		const embedder = new BrowserProvider(model);
+		expect(await embedder.embed(['cat'])).toEqual([[1, 0]]);
+		await expect(embedder.nextTokenDistribution('cat')).rejects.toBeInstanceOf(NotAvailableError);
 	});
 });

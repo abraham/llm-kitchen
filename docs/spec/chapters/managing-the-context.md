@@ -16,8 +16,8 @@ gone for the model, and it may fill the gap by making things up.
 
 ## Data
 
-Recorded by `scripts/build-agent-traces.py` (`static/agent/context.json`), with retrieval over the
-MiniLM map (`static/embeddings/`).
+Recorded by `scripts/record/agent.py` (`static/data/agent/context.json`), with retrieval over the
+MiniLM map (`static/data/embeddings/`).
 
 ## Decisions
 

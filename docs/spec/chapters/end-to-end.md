@@ -28,7 +28,7 @@ Other kinds of models swap one stage and keep the rest of the order.
 
 ## Data
 
-- Stages and their chapter links live in `src/lib/data/end-to-end.ts`.
+- Stages and their chapter links live in `src/lib/chapters/end-to-end/data.ts`.
 - The running example is the recorded conversation from
   [The model is not the product](the-model-is-not-the-product.md) ("Finish this: The cat sat on
   the", one `search_rhymes` call, then the answer).

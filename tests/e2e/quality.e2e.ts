@@ -1,33 +1,38 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-import { CURRICULUM, chapterFileName } from '../../src/lib/chapters/meta.ts';
+import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import { gotoHydrated } from './helpers.ts';
 
-/** Every page on the site: the menu and all written chapters. */
-const PAGES = [
-	'/',
-	...CURRICULUM.filter((c) => existsSync(`src/lib/chapters/${chapterFileName(c)}`)).map(
-		(c) => `/${c.slug}`
-	)
-];
+/** Every page on the site: the menu and all chapters. */
+const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`)];
 
 /** Pages whose widgets run the GPT-2 tokenizer in the page (tier T1). */
 const TOKENIZER_PAGES = new Set(['/tokens', '/quirks-and-limits']);
 const BUDGET_KB = 150;
 const TOKENIZER_BUDGET_KB = 350;
 
-test.describe('dark theme', () => {
-	test.use({ colorScheme: 'dark' });
+for (const colorScheme of ['light', 'dark'] as const) {
+	test.describe(`${colorScheme} theme`, () => {
+		test.use({ colorScheme });
+		for (const path of PAGES) {
+			test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
+				await gotoHydrated(page, path);
+				await expect(page.getByText(/Loading/)).toHaveCount(0);
+				const results = await new AxeBuilder({ page })
+					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+					.analyze();
+				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+			});
+		}
+	});
+}
+
+test.describe('prerendered HTML', () => {
 	for (const path of PAGES) {
-		test(`${path} has no axe violations`, async ({ page }) => {
-			await gotoHydrated(page, path);
-			await expect(page.getByText(/Loading/)).toHaveCount(0);
-			const results = await new AxeBuilder({ page })
-				.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-				.analyze();
-			expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+		test(`${path} shows its recorded data before JavaScript runs`, async ({ request }) => {
+			const html = await (await request.get(path)).text();
+			expect(html).not.toContain('Loading recorded data');
 		});
 	}
 });

@@ -1,0 +1,62 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import MemoryGrowth from './MemoryGrowth.svelte';
+	import RecurrentMemory from './RecurrentMemory.svelte';
+</script>
+
+## Reading with a notepad
+
+Attention lets every token look back at every earlier token (<ChapterRef to="attention" />). A <GlossaryPopover term="recurrent-model">recurrent model</GlossaryPopover>
+works differently: it reads one token at a time and keeps a small, fixed-size **memory**, a vector it
+updates after every token. To predict the next token it has only that memory, never the earlier
+tokens themselves. It's like reading a book while keeping notes on a single index card.
+
+Networks like this are much older than transformers.<Cite id="elman1990" /> Below is a tiny one,
+trained in your browser on the rhymes from <ChapterRef to="predicting-by-counting" />, like the model in <ChapterRef to="learning-from-mistakes" />. Train it, then slide through
+the phrase and watch its 32-number memory change with each character:
+
+<RecurrentMemory />
+
+Before training, the memory changes but means nothing, and the guesses are random. After training,
+it has learned to store what matters for the next character. After "humpty d" it expects a *u*:
+all it has is its memory, and the memory still holds enough of "humpty" to know "dumpty" comes
+next.
+
+## Fixed memory, growing text
+
+The appeal is cost. A transformer's memory grows with the text, because it keeps something for
+every token so later tokens can look back: the KV cache from <ChapterRef to="caching" />. A recurrent model's memory
+stays the same size however long the text gets:
+
+<MemoryGrowth />
+
+The catch is the index card. Everything the model will ever need must be squeezed into those few
+numbers as it reads, and whatever it doesn't note down is gone for good. Early recurrent networks
+were bad at keeping information for long; the LSTM added *gates* that learn what to keep and what
+to forget.<Cite id="hochreiter1997" /> For years, LSTMs were the standard way to model language,
+until the transformer, which needs no recurrence at all, replaced them.<Cite id="vaswani2017" />
+
+## The idea comes back
+
+Recurrent ideas are back in newer designs called *state-space models*. Mamba, from 2023, updates
+its fixed-size state in a way that depends on the token it is reading, so it can choose what to
+keep and what to forget, and its cost grows only in step with the length of the text.<Cite id="gu2023" />
+The fixed memory still has a price: a transformer can copy a long passage it was shown word for
+word, while a model with a fixed-size state struggles once the passage outgrows its
+memory.<Cite id="jelassi2024" />
+
+<RecapCard>
+
+- A recurrent model reads one token at a time and carries a fixed-size memory forward.
+- Its memory doesn't grow with the text, so long texts are cheap, but it has to decide what to
+  forget.
+- Attention keeps every earlier token around, which costs more but lets the model look anything up
+  again.
+
+</RecapCard>
+
+**Next question:** everything so far has read text. How can a model that reads tokens look at a
+picture?

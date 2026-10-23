@@ -1,0 +1,49 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ExpertRouter from './ExpertRouter.svelte';
+</script>
+
+## Every weight, every token
+
+GPT-2 small is *dense*: every one of its 124 million weights takes part in predicting every token.
+Making a dense model bigger makes every token more expensive to process. A <GlossaryPopover term="mixture-of-experts">mixture of experts</GlossaryPopover>
+gets around this. Take the MLP inside each block (<ChapterRef to="the-transformer-block" />) and split it into several smaller MLPs,
+the **experts**. In front of them goes a small **router**: for each token, it scores every expert
+and sends the token only to the best few.<Cite id="shazeer2017" />
+
+Here is the router at work on "The cat sat on the", choosing 2 of 8 experts for each token. Pick a
+token, and change how many experts each token gets:
+
+<ExpertRouter />
+
+Each token's output is a blend of its chosen experts' outputs, weighted by the router's scores. The
+other experts don't run at all for that token, so their weights cost nothing. Different tokens go to
+different experts, so over a whole text every expert gets used.
+
+## Big, but cheap to run
+
+This is how many large open models are built. Mixtral 8x7B has 8 experts in each block and sends
+each token to 2 of them: it has 47 billion weights in total, but each token uses only 13 billion,
+about a quarter.<Cite id="jiang2024" /> DeepSeek-V3 goes further: 671 billion weights in total, 37
+billion per token, about 6%.<Cite id="deepseek2024" />
+
+It is tempting to imagine one expert for grammar, one for science, and one for cooking, but trained
+experts don't divide the work that neatly. When the Mixtral team checked which experts handled text
+on different topics, they found no obvious pattern. What showed up instead was syntax: the word
+`self` in Python code, or the spaces that indent a line, kept going to the same experts.<Cite id="jiang2024" />
+
+<RecapCard>
+
+- A mixture-of-experts model splits each MLP into many experts, and a router sends each token to
+  only a few of them.
+- The model can hold far more weights than it uses for any one token: Mixtral uses 13 of its 47
+  billion.
+- Experts aren't neat topic specialists; the router learns its own way of dividing the work.
+
+</RecapCard>
+
+**Next question:** attention keeps every earlier token around, and that gets expensive for long
+texts. Could a model keep just a short summary instead?

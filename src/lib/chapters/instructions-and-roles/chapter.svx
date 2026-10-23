@@ -1,0 +1,49 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import SystemPrompts from './SystemPrompts.svelte';
+</script>
+
+## The slot at the top
+
+The chat template (<ChapterRef to="predictor-to-assistant" />) has a slot ahead of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
+instructions that apply to the whole chat. In a chat app, its makers write it and you never see
+it; when you use a model directly, you write it yourself. Chat models were tuned on examples of an
+assistant following instructions, and on
+people's ratings of which replies were better.<Cite id="ouyang2022" /> So instructions there tend
+to be followed. But what kind of instructions help?
+
+Here is Qwen2.5-1.5B-Instruct answering the same question under three system prompts. The
+highlighted part is the only text that changes:
+
+<SystemPrompts />
+
+## Specific beats grand
+
+The specific instructions worked: two short sentences and an everyday example, shorter than the
+default answer. The persona, "a world-famous physicist", made the answer more than twice
+as long and no better: it added claims that are muddled, like most blue light being "scattered away
+from us towards the edges of the sky".
+
+The sums tell the same story. Telling the model it is "a brilliant mathematician who never makes
+mistakes" did not make it one: it got 3 of the 8 right, against 5 of 8 with the default system
+prompt. A large study found the same across 162 personas and 2,410 factual questions: adding a
+persona did not improve accuracy on average, and which persona helped on which question was largely
+random.<Cite id="zheng2024" />
+
+That fits how the model works. A persona changes which documents the text resembles, so it changes
+tone, length, and vocabulary. It doesn't add knowledge or skill the model lacks. Instructions that
+say what you actually want (who the reader is, how long, what format) give the model something it
+can follow.
+
+<RecapCard>
+
+- The system prompt is text in a slot at the start of the chat, read like any other text.
+- Clear, specific instructions about audience, length, and format are followed well.
+- A persona changes style, not ability; "you never make mistakes" doesn't make it so.
+
+</RecapCard>
+
+**Next question:** what about asking the model to work step by step, or to answer in a fixed format?

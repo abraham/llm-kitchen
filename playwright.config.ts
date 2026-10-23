@@ -1,8 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-	testDir: 'tests/e2e',
-	testMatch: '**/*.e2e.ts',
+	testDir: '.',
+	testMatch: ['tests/e2e/**/*.e2e.ts', 'src/**/*.e2e.ts'],
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 0,
 	reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',

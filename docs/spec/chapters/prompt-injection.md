@@ -24,7 +24,7 @@ every attack.
 
 ## Data
 
-Recorded by `scripts/build-injection.py` (`static/injection/lab.json`): Qwen2.5-1.5B-Instruct,
+Recorded by `scripts/record/injection.py` (`static/data/injection/lab.json`): Qwen2.5-1.5B-Instruct,
 greedy, over three documents (an email, a web page, and a review) for each attack and defense. Every
 reply is graded by code.
 

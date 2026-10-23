@@ -1,0 +1,55 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import PatchCutter from './PatchCutter.svelte';
+	import PictureMatch from './PictureMatch.svelte';
+</script>
+
+## Pictures as tokens
+
+A transformer doesn't care what its tokens stand for. All it needs is a row of vectors (<ChapterRef to="embeddings" />). Text
+becomes that row by splitting into tokens. A picture can do the same by being cut into square
+**patches**, each turned into a vector by multiplying its pixel values by learned weights, plus a
+position, just like a token. The rest is the familiar stack of blocks. This is the *vision
+transformer*.<Cite id="dosovitskiy2021" />
+
+Here it is with CLIP ViT-B/32, a real model, on simple pictures drawn for this page. It cuts each
+224×224-pixel picture into a 7×7 grid of 32×32-pixel patches: 49 "tokens". Pick a patch:
+
+<PatchCutter />
+
+Notice that patches of plain background all turn into the same vector, the way the same word always
+starts as the same embedding.
+
+## A shared map for words and pictures
+
+CLIP was trained on 400 million pictures paired with their captions from the internet. It has two
+parts, one that reads pictures and one that reads text, and training pushed each picture's vector
+close to its own caption's vector and away from the others.<Cite id="radford2021" /> The result is a
+single space where words and pictures can be compared. Pick some words and see which pictures land
+closest:
+
+<PictureMatch />
+
+For each of the 12 exact descriptions, the right picture comes first. Vaguer words are harder:
+"something round" barely prefers a circle.
+
+## Chat models that see
+
+A <GlossaryPopover term="multimodal">multimodal</GlossaryPopover> chat model puts the two ideas
+together. A vision model like CLIP's turns the picture into patch vectors, a small layer converts
+those into the same kind of vectors as text tokens, and the language model reads them in its
+context alongside your words.<Cite id="liu2023" /> To the language model, the picture is just more
+tokens.
+
+<RecapCard>
+
+- A vision transformer cuts a picture into patches and treats each patch like a token.
+- CLIP puts pictures and captions into one shared space, so words can find matching pictures.
+- Chat models that see turn a picture into tokens and put them in the context next to the text.
+
+</RecapCard>
+
+**Next question:** these models read pictures. How do image generators make them?

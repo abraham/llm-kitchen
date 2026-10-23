@@ -14,7 +14,7 @@ makes the answer you want the most likely continuation.
 
 ## Data
 
-- Recorded by `scripts/build-prompts.py` (`static/prompts/wording.json`): GPT-2 small's next-token
+- Recorded by `scripts/record/prompts.py` (`static/data/prompts/wording.json`): GPT-2 small's next-token
   guesses for each variant and the last token's attention, averaged over all heads, with the first
   token left out and shown separately.
 - Live (T2): GPT-2 small, after consent.

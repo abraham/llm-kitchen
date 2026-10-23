@@ -1,14 +1,11 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { resolve } from '$app/paths';
-	import { chapterByNumber, writtenChapters } from '#lib/chapters/index.ts';
 	import { GLOSSARY, type GlossaryId } from '#lib/glossary.ts';
+	import ChapterRef from './ChapterRef.svelte';
 
 	let { term, children }: { term: GlossaryId; children: Snippet } = $props();
 
 	const entry = $derived(GLOSSARY[term]);
-	const chapter = $derived(chapterByNumber(entry.chapter));
-	const linkable = $derived(writtenChapters().some((c) => c.slug === chapter.slug));
 	const id = $props.id();
 
 	let open = $state(false);
@@ -42,11 +39,7 @@
 		}}>{@render children()}</span
 	><span class="popover" {id} role="note" hidden={!open}>
 		<strong>{entry.term}</strong>: {entry.definition}
-		{#if linkable}
-			<a href={resolve('/[chapter]', { chapter: chapter.slug })}>Ch {chapter.number}</a>
-		{:else}
-			<span class="label">Ch {chapter.number}</span>
-		{/if}
+		<ChapterRef to={entry.chapter} />
 	</span>
 </span>
 

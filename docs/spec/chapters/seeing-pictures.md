@@ -15,7 +15,7 @@ see turn a picture into tokens and put them in the context next to the text.
 
 ## Data
 
-Recorded by `scripts/build-clip.py` (`static/vision/`): CLIP ViT-B/32 on 224 × 224 pictures the
+Recorded by `scripts/record/clip.py` (`static/vision/`): CLIP ViT-B/32 on 224 × 224 pictures the
 script draws itself.
 
 ## Decisions

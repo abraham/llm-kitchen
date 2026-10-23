@@ -37,14 +37,17 @@ failure.
 
 ## Tests
 
-- **Unit (`tests/unit/`, plus `*.test.ts` next to the code):** math and data logic; that each Part's
-  widgets produce the numbers its prose states (`part-N-facts`); GPT-2 numbers against
-  `models/canonical.json` (`consistency`); citations; the curriculum and spec layout (`curriculum`);
-  social images and descriptions (`branding`); hosting headers (`hosting`); color contrast
-  (`tokens`); and recorded trace format (`traces`).
-- **E2E (`tests/e2e/`):** each Part's widgets (`part-N`), stepping and keyboard (`interaction`),
-  themes (`design`), page metadata (`branding`), and on every page (`quality`):
-  - no axe violations, in light and dark;
+- **Unit (`*.test.ts` next to the code, plus `tests/unit/`):** math, harness, model, and curriculum
+  logic; that each chapter's widgets and data produce the numbers its prose states (its
+  `facts.test.ts`); every recorded dataset against its parser (`datasets`); GPT-2 numbers against
+  `models/canonical.json` (`consistency`); citations; the curriculum, spec layout, and derived
+  chapter numbers (`curriculum`); social images and descriptions (`branding`); hosting headers
+  (`hosting`); and color contrast (`tokens`).
+- **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, stepping and
+  keyboard (`interaction`), themes (`design`), page metadata (`branding`), and on every page
+  (`quality`):
+  - no axe violations, in light and dark, once the widgets have loaded;
+  - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
   - no sideways scrolling at phone width;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
     tokenizer.

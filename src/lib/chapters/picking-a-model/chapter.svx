@@ -1,0 +1,88 @@
+<script lang="ts">
+	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
+	import Cite from '#lib/components/layout/Cite.svelte';
+	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import MemoryCalculator from './MemoryCalculator.svelte';
+	import NameDecoder from './NameDecoder.svelte';
+</script>
+
+## Reading a model's name
+
+Open models are shared on sites like Hugging Face, and one release can come in a dozen versions
+with names like `gemma-4-26B-A4B-it` or `gemma-4-E2B-it-qat-mobile-transformers`. Each part of a
+name like that is something an earlier chapter explained. Pick a name, from Google's Gemma 4
+models or the ones this site uses, and click a part to see what it means:
+
+<NameDecoder />
+
+A few parts are worth a closer look:
+
+- **The size is a count of weights**, in billions (<ChapterRef to="scale" />). It tells you roughly how much memory the
+  model needs and, for an ordinary model, how much work each token takes.
+- **`E` and `A` change what the size means.** `E2B` is an effective size: Gemma 4 E2B stores 5.1
+  billion numbers, but most of the extra are per-layer tables that are only looked up, like the
+  token table in <ChapterRef to="embeddings" />, so each token costs about as much as a 2.3-billion-weight
+  model.<Cite id="gemma4-model-card" /> `26B-A4B` is a mixture of experts (<ChapterRef to="mixture-of-experts" />) with 25.2 billion
+  weights, of which about 3.8 billion (8 of 128 experts, plus one shared) run for each token.
+  It runs almost as fast as a 4-billion-weight model, but all 25.2 billion have to fit in
+  memory.<Cite id="gemma4-model-card" />
+- **`it` means instruction-tuned**, for chat and tools; a name without it is a base model that only
+  continues text (<ChapterRef to="predictor-to-assistant" />). Base models are a common starting point for training your own version.
+- **`assistant` is a drafter** for speculative decoding (<ChapterRef to="speculative-decoding" />), not a model to use on its own.
+- **`qat`, `q4_0`, and `w4a16` are about bits per weight** (<ChapterRef to="quantization" />). Gemma 4 comes in four QAT
+  versions: unquantized 16-bit QAT weights for people who round them with their own tools, Q4_0 in a
+  GGUF file for llama.cpp, a mobile version with some 2-bit layers, and 4-bit weights with 16-bit
+  activations for the vLLM serving software.<Cite id="gemma4-qat" /><Cite id="gguf-quant-types" />
+  `transformers`, `ct`, and `gguf` only say how the file is packaged.
+- **`diffusiongemma`** is built on the 26B A4B model but writes by denoising a block of 256 tokens
+  at a time instead of one token per pass, a cousin of the picture models
+  in <ChapterRef to="diffusion" />.<Cite id="diffusiongemma-model-card" />
+
+Some things are never in the name. The model card lists how much text the model can read at once
+(128K tokens for E2B and E4B, 256K for the larger models), what it can take in (all of them read
+images; only E2B, E4B, and 12B hear audio), whether it has a thinking mode (<ChapterRef to="reasoning-models" />), and its
+license.<Cite id="gemma4-model-card" /> Even the size shown on a model's page can disagree with
+its name: it counts the numbers stored in the files, so the page for `gemma-4-E2B` shows 5B.
+
+## Will it fit?
+
+The first question for running a model yourself is memory, and <ChapterRef to="quantization" />'s rule answers it: weights ×
+bits per weight ÷ 8 bytes. Choose a model and a precision:
+
+<MemoryCalculator />
+
+At 16 bits, the 31B model needs about 61 GB just for its weights, more than any of these devices.
+At 4 bits it needs about 15 GB, which is why the QAT versions exist. The small E models are the ones
+built for phones and laptops.<Cite id="gemma4-model-card" /> The weights are only part of the bill:
+the KV cache from <ChapterRef to="caching" /> grows with every token of context, and the software running the model needs
+memory too.
+
+## How to choose
+
+A short list of questions narrows the choice:
+
+1. **What is it for?** Chatting and calling tools need an instruction-tuned model; training your
+   own version often starts from a base model.
+2. **What goes in?** Text only, or images and audio too? Check the model card.
+3. **Where will it run?** The device's memory sets the largest size and the fewest bits you can
+   use; 8 bits usually changes little, 4 bits needs a model made for it (<ChapterRef to="quantization" />).
+4. **How fast must it be?** Fewer active weights per token (<ChapterRef to="mixture-of-experts" />) and a drafter (<ChapterRef to="speculative-decoding" />) both help.
+5. **How much must it read at once?** Long documents need a long context.
+6. **What does the license allow?** It is on the model card too.
+
+Benchmarks on the model card narrow the list further. Your own prompts decide: as <ChapterRef to="where-prompts-break" /> showed, a
+model's answers can change with small differences in wording, so try the finalists on the tasks you
+care about.
+
+<RecapCard>
+
+- A model name packs in its family, size, tuning, and often bits per weight and file format.
+- `E` means an effective size and `A` an active size; both store more weights than they use per
+  token.
+- `it` means instruction-tuned, `assistant` a drafter, and `qat` trained to survive 4-bit rounding.
+- Memory for the weights is about weights × bits ÷ 8, plus the KV cache and the runtime.
+- Narrow by task, inputs, device, speed, context, and license, then test on your own prompts.
+
+</RecapCard>
+
+**Next question:** how much of all this stuck?

@@ -1,11 +1,11 @@
 # Fact-check: Part VII (Ch 23–29)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
-`tests/unit/part-7-facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
-exactly the recorded results; the prompt segmenter loses nothing), `tests/e2e/part-7.e2e.ts`.
+each chapter's `facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
+exactly the recorded results; the prompt segmenter loses nothing), each chapter's `chapter.e2e.ts`.
 
 Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in each file) inside the
-harness in `scripts/build-agent-traces.py`, written to `static/agent/`. The harness stops the model
+harness in `scripts/record/agent.py`, written to `static/data/agent/`. The harness stops the model
 after its first tool call, runs the tool, and calls the model again, up to 8 calls.
 
 ## Ch 23. The model is not the product
@@ -15,7 +15,7 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | The prompt contains a system prompt, tool descriptions, earlier turns, and chat markers | Recorded prompt; segmenter test labels each part              |
 | A 31-character message became a 400-token prompt, then 493 on the second call           | Test (recorded token counts, Qwen tokenizer)                  |
 | The model has no memory; the harness re-sends the conversation                          | Each recorded prompt contains the full history (harness code) |
-| The earlier assistant turn is the model's own reply                                     | `build-agent-traces.py` generates it                          |
+| The earlier assistant turn is the model's own reply                                     | `record/agent.py` generates it                                |
 | Qwen2.5 model family                                                                    | Cite `qwen2024`                                               |
 
 ## Ch 24. Tools
@@ -31,12 +31,12 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 
 ## Ch 25. The agent loop
 
-| Claim                                                                                         | Backing                 |
-| --------------------------------------------------------------------------------------------- | ----------------------- |
-| The run: search_rhymes, then count_words (30), then the answer                                | Test                    |
-| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test                    |
-| The harness stops after the first tool call; the system prompt says to use tools for counting | `build-agent-traces.py` |
-| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`          |
+| Claim                                                                                         | Backing           |
+| --------------------------------------------------------------------------------------------- | ----------------- |
+| The run: search_rhymes, then count_words (30), then the answer                                | Test              |
+| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test              |
+| The harness stops after the first tool call; the system prompt says to use tools for counting | `record/agent.py` |
+| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`    |
 
 ## Ch 26. Managing the context
 
@@ -51,9 +51,9 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 
 ## Ch 27. Caching: reusing the work
 
-Data: `scripts/build-caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
+Data: `scripts/record/caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
 after "The cat sat on the", with and without its KV cache, three times each (median per token),
-written to `static/caching/kv-cache.json`. The prompt-cache view is computed in the browser
+written to `static/data/caching/kv-cache.json`. The prompt-cache view is computed in the browser
 (`src/lib/harness/cache.ts`) from the Ch 26 session's recorded token counts.
 
 | Claim                                                                                  | Backing                                                      |
@@ -74,8 +74,8 @@ written to `static/caching/kv-cache.json`. The prompt-cache view is computed in 
 
 ## Ch 28. Prompt injection
 
-Data: `scripts/build-injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
-(including none) × 6 defenses, written to `static/injection/lab.json`. The injected goal is a false
+Data: `scripts/record/injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
+(including none) × 6 defenses, written to `static/data/injection/lab.json`. The injected goal is a false
 claim in the summary; each reply is graded by a per-document pattern, and every reply was read by
 hand to check the grading ("four out of five stars", the real rating, doesn't count).
 

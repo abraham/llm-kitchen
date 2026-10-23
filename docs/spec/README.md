@@ -19,8 +19,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 ## Rules
 
 - **Present tense.** A spec says what the site does and, when it isn't obvious, why. History lives in
-  git and pull requests. A spec may instead describe a target design, as
-  [architecture.md](architecture.md) does, if it lists where the code doesn't match yet.
+  git and pull requests.
 - **Chapter numbers only in curriculum.md.** Everywhere else, link a chapter by its spec file, e.g.
   [Attention](chapters/attention.md), so moving a chapter changes no other spec.
 - **Chapter specs are named by slug,** which never changes.
@@ -31,9 +30,10 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 
 `tests/unit/curriculum.test.ts` checks that:
 
-- curriculum.md's tables match `src/lib/chapters/meta.ts`;
+- curriculum.md's tables match `src/lib/curriculum/curriculum.ts`;
 - every chapter has `chapters/<slug>.md`, headed with its title, and there are no extra files;
-- no spec file other than curriculum.md mentions a chapter number ("Ch N").
+- no spec file other than curriculum.md mentions a chapter number ("Ch N");
+- nothing in `src/` writes a chapter number either; numbers are derived from `curriculum.ts`.
 
-The claim lists in [docs/fact-check/](../fact-check/README.md) are checked by the `part-N-facts`
-tests; see [sources.md](sources.md).
+The claim lists in [docs/fact-check/](../fact-check/README.md) are checked by each chapter's
+`facts.test.ts`; see [sources.md](sources.md).

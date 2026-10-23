@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { chapterByNumber, partLabel, type ChapterMeta } from '#lib/chapters/index.ts';
+	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
 	import { SITE_NAME } from '#lib/site.ts';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
 
-	let { meta, next, children }: { meta: ChapterMeta; next?: ChapterMeta; children: Snippet } =
-		$props();
+	let { meta, children }: { meta: Chapter; children: Snippet } = $props();
 
-	const ingredients = $derived(meta.buildsOn.map(chapterByNumber));
+	const ingredients = $derived(meta.buildsOn.map(chapter));
+	const after = $derived(next(meta.slug));
 </script>
 
 <div class="chapter-layout">
@@ -31,7 +31,7 @@
 		<main id="content" class="prose">
 			<header>
 				<p class="label">{partLabel(meta.part, ' · ')}</p>
-				<h1><span class="num">Ch {meta.number}.</span> {meta.title}</h1>
+				<h1><span class="num">{label(meta.slug)}.</span> {meta.title}</h1>
 			</header>
 
 			<IngredientsBox
@@ -46,10 +46,10 @@
 			{/key}
 
 			<footer class="next">
-				{#if next}
+				{#if after}
 					<p class="label">Up next</p>
-					<a href={resolve('/[chapter]', { chapter: next.slug })}>
-						Ch {next.number}. {next.title} →
+					<a href={resolve('/[chapter]', { chapter: after.slug })}>
+						{label(after.slug)}. {after.title} →
 					</a>
 				{:else}
 					<p class="label">More chapters are on the way.</p>
