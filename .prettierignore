@@ -1,0 +1,14 @@
+# Package managers
+package-lock.json
+
+# Build output
+/build/
+/.svelte-kit/
+/playwright-report/
+/test-results/
+
+# Generated data
+/static/traces/
+
+# mdsvex chapters: Prettier has no mdsvex parser and would mangle the Svelte syntax.
+*.svx

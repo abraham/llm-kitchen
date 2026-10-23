@@ -1,0 +1,8 @@
+## Finish this sentence
+
+*The cat sat on the ___*
+
+You probably thought of a word straight away. A large language model does the same thing: it
+looks at the text so far and guesses what comes next.
+
+This chapter is a placeholder while the site is being built.
