@@ -44,8 +44,10 @@ widget shows in its badge. Implementations:
 - `BrowserProvider` (T2): wraps a `BrowserModel` that runs in `workers/inference.worker.ts` through
   `inference-client.ts`.
 
-A live widget keeps the same UI as its recorded version; only which provider it asks changes. See
-[architecture.md](architecture.md) for how recorded data is registered, checked, and loaded.
+`GlassBoxGenerator` switches between the two, keeping the same UI; only which provider it asks
+changes. `EmbeddingMap` and `PromptVariants` read their recorded datasets directly and use a
+`BrowserProvider` only for the live option. See [architecture.md](architecture.md) for how recorded
+data is registered, checked, and loaded.
 
 ## Live model rules
 
@@ -60,10 +62,11 @@ A live widget keeps the same UI as its recorded version; only which provider it 
 
 ## Recording scripts
 
-Each module in `scripts/record/` runs offline in `scripts/.venv` (`scripts/requirements.txt`) with
+Each module in `scripts/record/` runs offline in `scripts/.venv` (`scripts/requirements.txt`, with
+exact versions, since a new PyTorch or Transformers can change the numbers) with
 `scripts/.venv/bin/python -m scripts.record <module>`, decodes greedily or with a fixed seed so
-reruns match, and writes its datasets to `static/data/` in the envelope the site checks. The README
-has setup steps.
+reruns match, and writes its datasets to `static/data/` in the envelope the site checks. Every
+dataset names each model's Hugging Face commit. The README has setup steps.
 
 | Script                  | Models                                           | Output                                                  | Used by                                                                                                                                 |
 | ----------------------- | ------------------------------------------------ | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -78,7 +81,7 @@ has setup steps.
 | `record/caching.py`     | GPT-2 small, with and without its KV cache       | `static/data/caching/`                                  | [Caching](chapters/caching.md)                                                                                                          |
 | `record/injection.py`   | Qwen2.5-1.5B-Instruct                            | `static/data/injection/`                                | [Prompt injection](chapters/prompt-injection.md)                                                                                        |
 | `record/encoder.py`     | BERT base (uncased), GPT-2 small                 | `static/data/encoders/`                                 | [Reading both ways](chapters/encoders.md)                                                                                               |
-| `record/clip.py`        | CLIP ViT-B/32                                    | `static/vision/`                                        | [Seeing pictures](chapters/seeing-pictures.md)                                                                                          |
+| `record/clip.py`        | CLIP ViT-B/32                                    | `static/data/vision/`, pictures in `static/vision/`     | [Seeing pictures](chapters/seeing-pictures.md)                                                                                          |
 
 - The agent harness's tools mirror the browser's (`src/lib/harness/tools.ts`); tests check they give
   identical results.
