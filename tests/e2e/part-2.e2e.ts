@@ -22,12 +22,10 @@ test('Ch 4: the GPT-2 tokenizer splits text and compares with other tokenizers',
 	await expect(gpt2.getByText(/\d+ tokens/)).toBeVisible();
 	await widget.getByLabel('Paste or type any text').fill('strawberry');
 	await expect(gpt2.getByText('3 tokens')).toBeVisible();
-	await expect(gpt2.getByRole('listitem', { name: '"raw", token 1831' })).toBeVisible();
+	await expect(gpt2.getByRole('img', { name: '"raw", token 1831' })).toBeVisible();
 
 	await widget.getByLabel('Paste or type any text').fill(' strawberry');
-	await expect(
-		gpt2.getByRole('listitem', { name: '"space strawberry", token 41236' })
-	).toBeVisible();
+	await expect(gpt2.getByRole('img', { name: '"space strawberry", token 41236' })).toBeVisible();
 
 	await widget.getByLabel(/GPT-4o/).check();
 	await expect(widget.getByRole('region', { name: 'GPT-4o tokens' })).toBeVisible();

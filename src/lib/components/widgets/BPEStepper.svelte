@@ -93,7 +93,7 @@
 		font-family: var(--font-mono);
 		padding: 1px 6px;
 		border: 1.5px solid var(--c-token);
-		border-radius: 999px;
+		border-radius: var(--radius);
 		background: var(--c-token-tint);
 		color: var(--c-token-ink);
 		transition: box-shadow var(--duration) var(--ease);

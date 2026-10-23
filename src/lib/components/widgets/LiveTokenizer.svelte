@@ -1,6 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { describeToken, displayToken } from '#lib/components/primitives/format.ts';
+	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import { TOKENIZERS, tokenize, type TokenizerName } from '#lib/models/tokenizers.ts';
 
 	const START = 'The cat sat on the mat. Tokenization splits unbelievably long words into pieces.';
@@ -47,10 +47,7 @@
 				</p>
 				<ol class="tokens">
 					{#each list as token, i (i)}
-						<li class:alt={i % 2 === 1} aria-label={describeToken(token.text, token.id)}>
-							<span class="text">{displayToken(token.text)}</span>
-							<span class="id">{token.id}</span>
-						</li>
+						<li><TokenChip {token} /></li>
 					{/each}
 				</ol>
 			{/await}
@@ -103,32 +100,6 @@
 		margin: 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 2px;
-	}
-
-	.tokens li {
-		display: inline-flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 1px 4px;
-		border: 1.5px solid var(--c-token);
-		border-radius: 999px;
-		background: var(--c-token-tint);
-		color: var(--c-token-ink);
-		font-family: var(--font-mono);
-		line-height: 1.15;
-	}
-
-	.tokens li.alt {
-		background: var(--surface);
-	}
-
-	.text {
-		white-space: pre;
-		font-size: 0.9rem;
-	}
-
-	.id {
-		font-size: 0.6rem;
+		gap: var(--space-1);
 	}
 </style>
