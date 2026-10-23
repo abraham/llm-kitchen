@@ -14,24 +14,26 @@
 
 <nav aria-label="Chapters" class="progress-nav">
 	{#each parts as part (part.title)}
-		<p class="label">{part.title}</p>
-		<ol>
-			{#each part.chapters as chapter (chapter.slug)}
-				<li class:visited={progress.has(chapter.slug)}>
-					<a
-						href={resolve('/[chapter]', { chapter: chapter.slug })}
-						aria-current={chapter.slug === current ? 'page' : undefined}
-					>
-						<span class="num">{chapter.number}</span>
-						{chapter.title}
-						{#if progress.has(chapter.slug) && chapter.slug !== current}
-							<span class="check" aria-hidden="true">✓</span>
-							<span class="visually-hidden">(visited)</span>
-						{/if}
-					</a>
-				</li>
-			{/each}
-		</ol>
+		<details open={part.chapters.some((c) => c.slug === current)}>
+			<summary class="label">{part.title}</summary>
+			<ol>
+				{#each part.chapters as chapter (chapter.slug)}
+					<li class:visited={progress.has(chapter.slug)}>
+						<a
+							href={resolve('/[chapter]', { chapter: chapter.slug })}
+							aria-current={chapter.slug === current ? 'page' : undefined}
+						>
+							<span class="num">{chapter.number}</span>
+							{chapter.title}
+							{#if progress.has(chapter.slug) && chapter.slug !== current}
+								<span class="check" aria-hidden="true">✓</span>
+								<span class="visually-hidden">(visited)</span>
+							{/if}
+						</a>
+					</li>
+				{/each}
+			</ol>
+		</details>
 	{/each}
 </nav>
 
@@ -43,6 +45,11 @@
 
 	.label {
 		margin: var(--space-4) 0 var(--space-1);
+		cursor: pointer;
+	}
+
+	.label:hover {
+		color: var(--ink);
 	}
 
 	ol {

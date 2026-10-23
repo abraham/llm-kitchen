@@ -46,3 +46,17 @@ test('visited chapters are remembered', async ({ page }) => {
 		.poll(() => page.evaluate(() => localStorage.getItem('llm-kitchen:visited')))
 		.toContain('guessing-game');
 });
+
+test('the side menu opens only the current part until another is clicked', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await gotoHydrated(page, '/attention');
+	const rail = page.locator('.rail-static');
+	const openParts = rail.locator('details[open] > summary');
+	await expect(openParts).toHaveText(['Part IV: Context']);
+	await expect(rail.getByRole('link', { name: /Tools/ })).toBeHidden();
+
+	await rail.getByText('Part VI: Harnesses').click();
+	await rail.getByRole('link', { name: /Tools/ }).click();
+	await expect(page).toHaveURL(/\/tools$/);
+	await expect(openParts).toHaveText(['Part VI: Harnesses']);
+});
