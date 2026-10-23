@@ -396,6 +396,7 @@ Each chapter milestone (5–10) includes the [per-chapter fact-check](#per-chapt
     - **Expert review:** someone with ML background reads each Part end to end for errors and misleading simplifications. Findings are fixed or logged as issues before launch.
     - Run the link check and fix or replace any dead sources.
     - _Done when:_ every claim checklist has been re-checked, the citation unit test and link check pass, and expert review has no open findings.
+    - v1 status: see [docs/fact-check/README.md](fact-check/README.md). Everything except the expert review is done; the expert review needs a human reviewer.
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10)
 

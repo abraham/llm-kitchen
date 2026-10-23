@@ -8,6 +8,8 @@ export interface Reference {
 	venue: string;
 	year: number;
 	url: string;
+	/** For pages that change over time (model cards, repos, drafts): when they were last checked. */
+	accessed?: string;
 }
 
 export const REFERENCES: readonly Reference[] = references;

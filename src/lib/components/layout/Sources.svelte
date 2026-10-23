@@ -2,6 +2,14 @@
 	import { findReference, formatAuthors, type Citations } from '#lib/citations.svelte.ts';
 
 	let { citations }: { citations: Citations } = $props();
+
+	const formatDate = (iso: string) =>
+		new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric',
+			timeZone: 'UTC'
+		});
 </script>
 
 {#if citations.ids.length > 0}
@@ -16,6 +24,7 @@
 					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 					<a href={ref.url} rel="noopener noreferrer" target="_blank">{ref.title}</a>.
 					<span class="venue">{ref.venue}.</span>
+					{#if ref.accessed}<span class="venue">Accessed {formatDate(ref.accessed)}.</span>{/if}
 				</li>
 			{/each}
 		</ol>

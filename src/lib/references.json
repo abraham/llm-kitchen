@@ -36,7 +36,8 @@
 		"title": "GPT-2 model card (openai-community/gpt2)",
 		"venue": "Hugging Face",
 		"year": 2019,
-		"url": "https://huggingface.co/openai-community/gpt2"
+		"url": "https://huggingface.co/openai-community/gpt2",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "unicode",
@@ -44,7 +45,8 @@
 		"title": "The Unicode Standard",
 		"venue": "Unicode Consortium",
 		"year": 2025,
-		"url": "https://www.unicode.org/versions/latest/"
+		"url": "https://www.unicode.org/versions/latest/",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "rfc3629",
@@ -60,7 +62,8 @@
 		"title": "N-gram Language Models, in Speech and Language Processing (3rd ed. draft)",
 		"venue": "Stanford University",
 		"year": 2025,
-		"url": "https://web.stanford.edu/~jurafsky/slp3/"
+		"url": "https://web.stanford.edu/~jurafsky/slp3/",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "fan2018",
@@ -92,7 +95,8 @@
 		"title": "tiktoken: model-to-encoding mapping (tiktoken/model.py)",
 		"venue": "GitHub",
 		"year": 2024,
-		"url": "https://github.com/openai/tiktoken/blob/main/tiktoken/model.py"
+		"url": "https://github.com/openai/tiktoken/blob/main/tiktoken/model.py",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "mikolov2013",
@@ -108,7 +112,8 @@
 		"title": "all-MiniLM-L6-v2 model card",
 		"venue": "Hugging Face",
 		"year": 2021,
-		"url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2"
+		"url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "mcculloch1943",
@@ -140,7 +145,8 @@
 		"title": "GPT-2 small configuration (config.json)",
 		"venue": "Hugging Face",
 		"year": 2019,
-		"url": "https://huggingface.co/openai-community/gpt2/blob/main/config.json"
+		"url": "https://huggingface.co/openai-community/gpt2/blob/main/config.json",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "rumelhart1986",
@@ -235,7 +241,8 @@
 		"title": "interpreting GPT: the logit lens",
 		"venue": "LessWrong",
 		"year": 2020,
-		"url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens"
+		"url": "https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens",
+		"accessed": "2026-10-23"
 	},
 	{
 		"id": "kaplan2020",

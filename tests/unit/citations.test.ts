@@ -43,4 +43,11 @@ describe('citations', () => {
 		const unused = ids.filter((id) => !cited.has(id));
 		expect(unused).toEqual([]);
 	});
+
+	it('dates the pages that can change (model cards, repos, drafts, blogs)', () => {
+		const living = /huggingface\.co|github\.com|unicode\.org\/versions\/latest|slp3|lesswrong/;
+		for (const ref of references as { id: string; url: string; accessed?: string }[]) {
+			if (living.test(ref.url)) expect(ref.accessed, ref.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+		}
+	});
 });
