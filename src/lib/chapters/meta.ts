@@ -104,7 +104,11 @@ const rows: Row[] = [
 	['diffusion', 'Painting from noise', 'others', [7, 11],
 		'Image models start from random noise and remove a little at a time. See how diffusion turns static into a picture, step by step.'],
 	['recap', 'Recap: the whole picture', 'wrapup', [],
-		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.']
+		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.'],
+	['end-to-end', 'From message to reply', 'wrapup', [],
+		'Follow one message through every stage, from the prompt the harness builds to the tokens the model picks and the tool it calls.'],
+	['quiz', 'Check yourself', 'wrapup', [],
+		'Twelve questions, at least one from every Part, with the chapter to revisit for each one you miss.']
 ];
 
 /** The full curriculum, in reading order. Chapter files are `NN-slug.svx` in this folder. */

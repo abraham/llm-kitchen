@@ -1,6 +1,5 @@
 <script lang="ts">
 	import RecapCard from '#lib/components/layout/RecapCard.svelte';
-	import Quiz from '#lib/components/widgets/Quiz.svelte';
 	import WholePicture from '#lib/components/widgets/WholePicture.svelte';
 </script>
 
@@ -26,10 +25,6 @@ of models change one piece and keep the rest: encoders read both ways, mixtures 
 of themselves per token, recurrent models keep a fixed memory, vision models read patches, and
 diffusion models paint from noise (Ch 28–32).
 
-## Check yourself
-
-<Quiz />
-
 <RecapCard>
 
 - A language model predicts the next token, nothing more, and does it very well at scale.
@@ -41,5 +36,4 @@ diffusion models paint from noise (Ch 28–32).
 
 </RecapCard>
 
-Thanks for reading. If something here was unclear or wrong, the sources for every claim are listed
-at the bottom of each chapter.
+**Next question:** those are the pieces. In what order do they run when you send a message?

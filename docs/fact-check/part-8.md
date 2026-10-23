@@ -1,4 +1,4 @@
-# Fact-check: Part VIII (Ch 28–32) and the recap (Ch 33)
+# Fact-check: Part VIII (Ch 28–32) and the wrap-up (Ch 33–35)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
 `tests/unit/part-8-facts.test.ts` (the recorded data says what the prose says),
@@ -69,8 +69,43 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Ch 33. Recap
 
-The diagram and quiz restate earlier chapters; each box links to its chapter. Quiz answers are
-checked by e2e.
+The diagram restates earlier chapters; each box links to its chapter. The quiz moved to Ch 35 in
+milestone 20.
+
+## Ch 34. From message to reply
+
+Each stage restates the chapters it links (`src/lib/data/end-to-end.ts`); the unit test checks that
+every Part I–VII is linked from a stage and Part VIII from the closing box. Data comes from three
+existing recordings, labeled in the widget:
+
+- [x] The harness, cache, tool, and reply stages use the Ch 21 recording
+      (`static/agent/chat.json`, Qwen2.5-1.5B-Instruct): call 1 is 400 tokens, call 2 is 493 and
+      starts with the whole of call 1, so only 93 tokens need new work (Ch 25). The one tool call
+      is `search_rhymes` with `{"query": "cat"}`; the run's policy is `none` (no guardrail asked),
+      which the widget says, noting the search only reads (Ch 27).
+- [x] In-model stages use GPT-2 small on "The cat sat on the" (`static/traces/gpt2/the-cat-sat.json`,
+      `static/vectors/gpt2/the-cat-sat.json`): 5 tokens; temperature 0 picks " floor" at 7.6%; the
+      logit lens reads " same" after block 1 and " floor" after blocks 8 and 12 (as Ch 10 says).
+- [x] "GPT-2 adds a vector for the token's position": GPT-2 uses learned absolute position
+      embeddings added to the token embeddings (Radford et al. 2019, as in Ch 10's stream "the
+      vectors for ' the' and its position"). The text says GPT-2 specifically, since Qwen2.5 uses
+      rotary position embeddings inside attention instead.
+- [x] KV cache: 500 tokens took about 10 s with the cache and 43 s without
+      (`static/caching/kv-cache.json`, as in Ch 25).
+- [x] "The loop stops at an end-of-turn token": Ch 11 and Ch 13 (chat markers); the Qwen prompt
+      ends each turn with `<|im_end|>`.
+- [x] The closing box's one-line summaries match Ch 28–32 (both-ways attention; part of the network
+      per token; fixed-size memory; picture patches as tokens; refined from noise).
+
+## Ch 35. Check yourself
+
+Twelve questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
+has at least one. Each answer restates its linked chapter:
+
+- [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
+- [x] Training nudges every weight to make the right next token more likely (Ch 7).
+- [x] The other ten are unchanged from the recap's quiz (Ch 4, 14, 9, 11, 15, 17, 22, 25, 26, 27,
+      28). The e2e test answers all twelve and checks the revisit list.
 
 ## Changes from the plan
 
@@ -84,6 +119,6 @@ checked by e2e.
   caption embedding yet.
 - **Ch 32 shapes.** Ring, square, and two blobs. A spiral was tried, but the small network only
   turned it into a blob in the training time a page visit allows.
-- **The recap** (Ch 33) is checked here, with the last Part; its URL (`/recap`) never changes.
+- **The wrap-up** (Ch 33–35) is checked here, with the last Part; its URLs never change.
 - **Part order.** This was Part VII (Ch 22–27, with Thinking before answering) until milestone 19
   moved reasoning models to Part V and this Part to the end.

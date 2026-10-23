@@ -126,9 +126,11 @@ _What else is built from the same pieces?_
 
 _How does it all fit together?_ Unnumbered Part.
 
-| Ch  | Title                    | Slug    | Builds on |
-| --- | ------------------------ | ------- | --------- |
-| 33  | Recap: the whole picture | `recap` | —         |
+| Ch  | Title                    | Slug         | Builds on |
+| --- | ------------------------ | ------------ | --------- |
+| 33  | Recap: the whole picture | `recap`      | —         |
+| 34  | From message to reply    | `end-to-end` | —         |
+| 35  | Check yourself           | `quiz`       | —         |
 
 ## Why this order
 

@@ -580,6 +580,7 @@ Each chapter milestone (5–10, 14, 15, 18, and 20) includes the [per-chapter fa
     - **Tests:** a unit test that every Part I–VII is linked from at least one stage of Ch 34 and every Part I–VIII from at least one quiz question; e2e tests that step through Ch 34, follow a box's link, and complete the quiz on its new page; axe and phone-width checks for both pages.
     - **Fact-check:** Ch 34 states nothing new, so its claims are checked against the chapters it links (the same numbers and the same order of operations); add both chapters to `docs/fact-check/part-8.md` with the recap.
     - _Done when:_ Ch 34 walks one message through every stage with real data and links, Ch 35 holds the quiz with every Part covered, the recap no longer has a quiz, and CURRICULUM.md, `meta.ts`, and the spec test agree.
+    - v1: done. Stage and quiz data live in `src/lib/data/end-to-end.ts` and `quiz.ts` so the unit test can check Part coverage. Ch 34's diagram shows each loop as a framed group with a labeled return line on every screen size; the in-model stages also link Ch 10 for GPT-2's position vectors, and the prompt stage links Ch 16. The quiz gained a temperature question (Ch 2) and a training question (Ch 7), for 12 in reading order. See [docs/fact-check/part-8.md](fact-check/part-8.md).
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, 15, 18, and 20)
 

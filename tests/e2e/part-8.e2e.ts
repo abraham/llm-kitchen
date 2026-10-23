@@ -8,7 +8,9 @@ const PAGES = [
 	'/recurrent-models',
 	'/seeing-pictures',
 	'/diffusion',
-	'/recap'
+	'/recap',
+	'/end-to-end',
+	'/quiz'
 ];
 
 for (const path of PAGES) {
@@ -80,7 +82,7 @@ test('Ch 32: the diffusion toy trains and paints', async ({ page }) => {
 	await expect(widget.getByText(/Done: the noise has become a new ring/)).toBeVisible();
 });
 
-test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
+test('Ch 33: zoom into the model', async ({ page }) => {
 	await gotoHydrated(page, '/recap');
 	const picture = page.getByRole('region', { name: 'The whole picture' });
 	await picture.getByRole('button', { name: 'Zoom in on the model' }).click();
@@ -92,22 +94,61 @@ test('Ch 33: zoom into the model and take the quiz', async ({ page }) => {
 	await picture.getByRole('button', { name: 'A chat app or agent' }).click();
 	await picture.getByRole('button', { name: 'Zoom in on you' }).click();
 	await expect(picture.getByRole('link', { name: /Ch 17: Learning from examples/ })).toBeVisible();
+});
 
+test('Ch 34: step through one message and follow a link', async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await gotoHydrated(page, '/end-to-end');
+	const widget = page.getByRole('region', { name: 'One message, start to finish' });
+	const detail = widget.locator('.detail');
+	await expect(detail).toContainText('You type a message');
+	await expect(detail).toContainText('Finish this: The cat sat on the');
+
+	await widget.getByRole('button', { name: 'Next →' }).click();
+	await expect(detail).toContainText('400-token');
+	await widget.getByRole('button', { name: 'Next →' }).press('ArrowRight');
+	await expect(detail).toContainText('only the last 93 need new work');
+
+	await widget.getByRole('button', { name: /A probability for every token/ }).click();
+	await expect(
+		widget.getByRole('button', { name: /A probability for every token/ })
+	).toHaveAttribute('aria-pressed', 'true');
+	await expect(detail).toContainText('floor');
+	await widget.getByRole('button', { name: 'Next →' }).click();
+	await expect(detail).toContainText('7.6%');
+
+	await widget.getByRole('button', { name: /Check and run the tool/ }).click();
+	await expect(detail.locator('pre .result')).toContainText('Hey diddle diddle');
+	await widget.getByRole('button', { name: /You see the reply/ }).click();
+	await expect(detail).toContainText('Hey Diddle Diddle');
+
+	await detail.getByRole('link', { name: /Ch 21:/ }).click();
+	await expect(page).toHaveURL(/\/the-model-is-not-the-product\/?$/);
+});
+
+test('Ch 35: take the quiz and see what to revisit', async ({ page }) => {
+	await gotoHydrated(page, '/quiz');
 	const quiz = page.getByRole('region', { name: 'Quick check' });
 	for (const answer of [
-		'Probabilities for the next token',
+		'The model thinks for longer',
 		'It reads tokens, not letters',
+		'Training nudges every weight to make the right next token a little more likely',
 		'It lets each token pull in information from any earlier token',
+		'Probabilities for the next token',
+		'It writes scratch work as tokens before answering',
+		'Nothing but its context: attention can copy the pattern from the examples',
 		'The harness',
 		'The provider reuses its work on the unchanged start of the prompt',
 		'The model reads the page and your request as one stream of text',
 		'Guardrails in the harness, like asking you first',
-		'Its attention can look at the words after the blank too',
-		'It writes scratch work as tokens before answering',
-		'Nothing but its context: attention can copy the pattern from the examples'
+		'Its attention can look at the words after the blank too'
 	]) {
 		await quiz.getByLabel(answer, { exact: true }).check();
 	}
 	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('10 of 10 right.')).toBeVisible();
+	await expect(quiz.getByText('11 of 12 right.')).toBeVisible();
+	const revisit = quiz.locator('.revisit');
+	await expect(revisit.getByRole('link')).toHaveCount(1);
+	await revisit.getByRole('link', { name: /Ch 2:/ }).click();
+	await expect(page).toHaveURL(/\/probability-and-sampling\/?$/);
 });

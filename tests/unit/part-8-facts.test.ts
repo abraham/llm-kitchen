@@ -1,6 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import canonicalJson from '../../models/canonical.json';
+import { chapterByNumber } from '../../src/lib/chapters/meta.ts';
+import { STAGES, VARIANTS, type StageGroup } from '../../src/lib/data/end-to-end.ts';
+import { QUESTIONS } from '../../src/lib/data/quiz.ts';
 import { RHYMES } from '../../src/lib/data/rhymes.ts';
 import { MOE_MODELS } from '../../src/lib/data/moe.ts';
 import { CharRNN, RNNTrainer } from '../../src/lib/math/rnn.ts';
@@ -91,5 +94,73 @@ describe('Ch 31: seeing pictures', () => {
 			...d.captions.slice(0, 12).map((c: { similarity: number[] }) => Math.max(...c.similarity))
 		);
 		expect(Math.max(...caption('a photo of a cat').similarity)).toBeLessThan(exactBest);
+	});
+});
+
+const ORDER: StageGroup[] = ['before', 'model', 'after'];
+
+describe('Ch 34: from message to reply', () => {
+	const run = json('static/agent/chat.json');
+	const trace = json('static/traces/gpt2/the-cat-sat.json');
+	const vectors = json('static/vectors/gpt2/the-cat-sat.json');
+	const kv = json('static/caching/kv-cache.json');
+	const [call1, call2] = run.steps;
+
+	it('links every Part I–VII from a stage, and Part VIII from the closing box', () => {
+		const parts = (chapters: number[]) =>
+			new Set(chapters.map((n) => chapterByNumber(n).part.number));
+		const fromStages = parts(STAGES.flatMap((s) => s.chapters));
+		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']) expect(fromStages).toContain(p);
+		expect([...parts(VARIANTS.map((v) => v.chapter))]).toEqual(['VIII']);
+		expect(VARIANTS.map((v) => v.chapter)).toEqual([28, 29, 30, 31, 32]);
+	});
+
+	it('lists the stages in run order: harness, then the model, then the harness again', () => {
+		const groups = STAGES.map((s) => s.group);
+		expect(groups).toEqual([...groups].sort((a, b) => ORDER.indexOf(a) - ORDER.indexOf(b)));
+		expect(new Set(STAGES.map((s) => s.id)).size).toBe(STAGES.length);
+	});
+
+	it('the second call starts with the whole first call: 400 of 493 tokens', () => {
+		expect(call2.prompt.startsWith(call1.prompt)).toBe(true);
+		expect([call1.promptTokens, call2.promptTokens]).toEqual([400, 493]);
+		expect(call1.call).toEqual({ name: 'search_rhymes', arguments: { query: 'cat' } });
+		expect(call2.call).toBeUndefined();
+		expect(run.policy).toBe('none');
+	});
+
+	it('GPT-2 picks " floor" greedily at 7.6%, and the logit lens reads " same" then " floor"', () => {
+		expect(trace.settings.temperature).toBe(0);
+		expect(trace.steps[0].chosen.text).toBe(' floor');
+		expect(trace.steps[0].candidates[0].prob).toBeCloseTo(0.076, 3);
+		expect(trace.tokens).toHaveLength(5);
+		const guess = (b: number) => vectors.logitLens[b][0].token.text;
+		expect([guess(1), guess(8), guess(12)]).toEqual([' same', ' floor', ' floor']);
+	});
+
+	it('500 tokens took about 10 seconds with the KV cache and 43 without', () => {
+		expect(kv.generated).toHaveLength(500);
+		expect(Math.round(kv.totalMs.cache / 1000)).toBe(10);
+		expect(Math.round(kv.totalMs.noCache / 1000)).toBe(43);
+	});
+});
+
+describe('Ch 35: check yourself', () => {
+	it('asks at least one question from every Part I–VIII', () => {
+		const parts = new Set(
+			QUESTIONS.flatMap((q) => q.chapters.map((n) => chapterByNumber(n).part.number))
+		);
+		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII']) expect(parts).toContain(p);
+	});
+
+	it('keeps the questions in reading order, each with a valid answer', () => {
+		const first = QUESTIONS.map((q) => q.chapters[0]);
+		expect(first).toEqual([...first].sort((a, b) => a - b));
+		for (const q of QUESTIONS) {
+			expect(q.options[q.answer]).toBeDefined();
+			expect(new Set(q.options).size).toBe(q.options.length);
+			expect(q.why).not.toMatch(/Ch \d/);
+		}
+		expect(QUESTIONS).toHaveLength(12);
 	});
 });
