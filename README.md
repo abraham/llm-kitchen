@@ -5,7 +5,7 @@ harness that turns a model into an agent. See [docs/PLAN.md](docs/PLAN.md) for t
 
 ## Development
 
-Requires Node 24 (see `.nvmrc`).
+Requires Node 26 (see `.nvmrc`).
 
 ```sh
 npm install
