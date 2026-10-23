@@ -106,6 +106,24 @@ export const GLOSSARY = {
 			'A formula, fitted to many training runs, that predicts how much a model improves as it gets bigger or reads more text.',
 		chapter: 12
 	},
+	quantization: {
+		term: 'quantization',
+		definition:
+			'Storing a model’s numbers with fewer bits each, by rounding them to a small set of allowed values, so the model takes less memory.',
+		chapter: 13
+	},
+	'quantization-aware-training': {
+		term: 'quantization-aware training (QAT)',
+		definition:
+			'Training a model with the rounding of quantization already in place, so it learns weights that still work after rounding.',
+		chapter: 13
+	},
+	'speculative-decoding': {
+		term: 'speculative decoding',
+		definition:
+			'Letting a small model guess the next few tokens and having the big model check them all in one pass, so it writes the same text faster.',
+		chapter: 14
+	},
 	'base-model': {
 		term: 'base model',
 		definition:

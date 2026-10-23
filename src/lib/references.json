@@ -574,5 +574,64 @@
 		"venue": "TACL 12",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2307.03172"
+	},
+	{
+		"id": "jacob2018",
+		"authors": ["Benoit Jacob", "Skirmantas Kligys", "Bo Chen", "Menglong Zhu"],
+		"title": "Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference",
+		"venue": "CVPR",
+		"year": 2018,
+		"url": "https://arxiv.org/abs/1712.05877"
+	},
+	{
+		"id": "dettmers2022",
+		"authors": ["Tim Dettmers", "Mike Lewis", "Younes Belkada", "Luke Zettlemoyer"],
+		"title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+		"venue": "NeurIPS",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2208.07339"
+	},
+	{
+		"id": "gguf-quant-types",
+		"authors": ["Hugging Face"],
+		"title": "GGUF: quantization types",
+		"venue": "Hugging Face Hub documentation",
+		"year": 2026,
+		"url": "https://huggingface.co/docs/hub/gguf",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "gemma4-qat",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 QAT model card (google/gemma-4-E2B-it-qat-mobile-transformers)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-E2B-it-qat-mobile-transformers",
+		"accessed": "2026-10-23"
+	},
+	{
+		"id": "leviathan2023",
+		"authors": ["Yaniv Leviathan", "Matan Kalman", "Yossi Matias"],
+		"title": "Fast Inference from Transformers via Speculative Decoding",
+		"venue": "ICML",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2211.17192"
+	},
+	{
+		"id": "chen2023",
+		"authors": ["Charlie Chen", "Sebastian Borgeaud", "Geoffrey Irving", "Jean-Baptiste Lespiau"],
+		"title": "Accelerating Large Language Model Decoding with Speculative Sampling",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.01318"
+	},
+	{
+		"id": "gemma4-assistant",
+		"authors": ["Google DeepMind"],
+		"title": "Gemma 4 MTP drafter model card (google/gemma-4-E2B-it-assistant)",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/google/gemma-4-E2B-it-assistant",
+		"accessed": "2026-10-23"
 	}
 ]

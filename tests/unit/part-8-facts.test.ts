@@ -161,6 +161,6 @@ describe('Ch 37: check yourself', () => {
 			expect(new Set(q.options).size).toBe(q.options.length);
 			expect(q.why).not.toMatch(/Ch \d/);
 		}
-		expect(QUESTIONS).toHaveLength(12);
+		expect(QUESTIONS).toHaveLength(14);
 	});
 });

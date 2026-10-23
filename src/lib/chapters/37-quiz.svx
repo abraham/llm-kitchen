@@ -2,7 +2,7 @@
 	import Quiz from '#lib/components/widgets/Quiz.svelte';
 </script>
 
-## Twelve questions
+## Fourteen questions
 
 One or more questions from every Part, in reading order. Pick an answer for each, then check them
 all at once. Each answer links to the chapter that explains it, and any you miss are gathered into a

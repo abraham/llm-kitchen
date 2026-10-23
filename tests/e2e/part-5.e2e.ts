@@ -5,6 +5,8 @@ import { gotoHydrated } from './helpers.ts';
 for (const path of [
 	'/generating-text',
 	'/scale',
+	'/quantization',
+	'/speculative-decoding',
 	'/predictor-to-assistant',
 	'/quirks-and-limits',
 	'/reasoning-models'
@@ -48,6 +50,40 @@ test('Ch 12: switching the scale metric shows unpublished numbers', async ({ pag
 	const chart = page.getByRole('region', { name: 'The scaling curve' });
 	await chart.getByLabel(/Weights:/).fill('11');
 	await expect(chart.locator('.readout')).toContainText('outside the range');
+});
+
+test('Ch 13: rounding to fewer bits holds, drifts, then breaks', async ({ page }) => {
+	await gotoHydrated(page, '/quantization');
+	const widget = page.getByRole('region', { name: "Rounding GPT-2's numbers" });
+	const bits = widget.getByLabel('Bits per number');
+	await expect(widget).toContainText('498 MB');
+	await bits.focus();
+	await page.keyboard.press('ArrowLeft');
+	await page.keyboard.press('ArrowLeft');
+	await expect(bits).toHaveAttribute('aria-valuetext', '8 bits');
+	await expect(widget).toContainText('Same words as the weights as trained.');
+	await page.keyboard.press('ArrowLeft');
+	await page.keyboard.press('ArrowLeft');
+	await page.keyboard.press('ArrowLeft');
+	await expect(bits).toHaveAttribute('aria-valuetext', '4 bits');
+	await expect(widget).toContainText('70 MB');
+	await expect(widget.locator('.generated')).toContainText('stack. The stack.');
+});
+
+test("Ch 14: the big model checks the small model's guesses", async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await gotoHydrated(page, '/speculative-decoding');
+	const widget = page.getByRole('region', { name: 'A small model guesses, a big one checks' });
+	const count = widget.locator('.count');
+	await expect(count).toContainText('3 tokens in 1 pass');
+	const next = widget.getByRole('button', { name: 'Next →' });
+	for (let i = 0; i < 6; i++) await next.click();
+	await expect(count).toContainText('30 tokens in 7 passes');
+	await expect(count).toContainText('exactly what GPT-2 medium writes on its own');
+
+	await widget.getByLabel('Prompt').selectOption('The capital of France is');
+	await expect(count).toContainText('1 token in 1 pass');
+	await expect(widget.locator('.explain')).toContainText('The first guess is wrong');
 });
 
 test('Ch 15: the chat template and base vs. instruct', async ({ page }) => {

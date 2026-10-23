@@ -99,13 +99,17 @@ existing recordings, labeled in the widget:
 
 ## Ch 37. Check yourself
 
-Twelve questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
+Fourteen questions in reading order (`src/lib/data/quiz.ts`); the unit test checks every Part I–VIII
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
 - [x] Training nudges every weight to make the right next token more likely (Ch 7).
+- [x] 4-bit weights take about a quarter of the memory of 16-bit ones, and coarse rounding can hurt
+      (Ch 13; added in milestone 21).
+- [x] Speculative decoding writes exactly the big model's text in fewer passes (Ch 14; added in
+      milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 24, 27, 28, 29,
-      30). The e2e test answers all twelve and checks the revisit list.
+      30). The e2e test answers all fourteen and checks the revisit list.
 
 ## Changes from the plan
 

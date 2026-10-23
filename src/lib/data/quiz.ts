@@ -70,6 +70,30 @@ export const QUESTIONS: QuizQuestion[] = [
 		chapters: [11]
 	},
 	{
+		q: 'You round a model’s weights from 16 bits to 4 bits each. What happens?',
+		options: [
+			'It needs about a quarter of the memory, and coarse rounding can hurt its answers',
+			'It learns new facts',
+			'Its vocabulary shrinks to 16 tokens',
+			'Nothing at all'
+		],
+		answer: 0,
+		why: 'Each weight takes 4 bits instead of 16, so the weights take about a quarter of the memory; quality holds only while the rounding isn’t too coarse.',
+		chapters: [13]
+	},
+	{
+		q: 'A small model drafts tokens and a big model checks them. How does the text compare with the big model writing alone?',
+		options: [
+			'It is exactly the same, written in fewer passes of the big model',
+			'It is shorter',
+			'It mixes the two models’ styles',
+			'It is the small model’s text'
+		],
+		answer: 0,
+		why: 'The big model checks every guess and keeps only the tokens it would have picked itself.',
+		chapters: [14]
+	},
+	{
 		q: 'What does a reasoning model do differently from an ordinary chat model?',
 		options: [
 			'It looks answers up in a database',

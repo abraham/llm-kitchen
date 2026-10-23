@@ -28,6 +28,9 @@ about 20 milliseconds, and the run took 10.0 seconds. Both runs picked exactly t
 their scores differed by at most 0.01, from rounding when the same sums are added up in a different
 order.
 
+The cache works with the guess-and-check trick from Ch 14 too: the text before the guesses already
+has its keys and values stored, so the big model's checking pass only computes them for the guesses.
+
 The price is memory. GPT-2 small stores a key and a value in each of its 12 blocks for every token:
 2 × 12 × 768 = 18,432 numbers per token. For large models and long prompts the cache runs to
 gigabytes, and keeping it small is a big part of serving them efficiently.<Cite id="pope2022" /> Some

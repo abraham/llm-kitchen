@@ -112,7 +112,7 @@ const rows: Row[] = [
 	['end-to-end', 'From message to reply', 'wrapup', [],
 		'Follow one message through every stage, from the prompt the harness builds to the tokens the model picks and the tool it calls.'],
 	['quiz', 'Check yourself', 'wrapup', [],
-		'Twelve questions, at least one from every Part, with the chapter to revisit for each one you miss.']
+		'Fourteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
 ];
 
 /** The full curriculum, in reading order. Chapter files are `NN-slug.svx` in this folder. */

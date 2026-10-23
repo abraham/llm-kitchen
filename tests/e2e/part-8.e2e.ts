@@ -135,6 +135,8 @@ test('Ch 37: take the quiz and see what to revisit', async ({ page }) => {
 		'Training nudges every weight to make the right next token a little more likely',
 		'It lets each token pull in information from any earlier token',
 		'Probabilities for the next token',
+		'It needs about a quarter of the memory, and coarse rounding can hurt its answers',
+		'It is exactly the same, written in fewer passes of the big model',
 		'It writes scratch work as tokens before answering',
 		'Nothing but its context: attention can copy the pattern from the examples',
 		'The harness',
@@ -146,7 +148,7 @@ test('Ch 37: take the quiz and see what to revisit', async ({ page }) => {
 		await quiz.getByLabel(answer, { exact: true }).check();
 	}
 	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('11 of 12 right.')).toBeVisible();
+	await expect(quiz.getByText('13 of 14 right.')).toBeVisible();
 	const revisit = quiz.locator('.revisit');
 	await expect(revisit.getByRole('link')).toHaveCount(1);
 	await revisit.getByRole('link', { name: /Ch 2:/ }).click();

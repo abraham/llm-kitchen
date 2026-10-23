@@ -18,3 +18,5 @@ package-lock.json
 /static/vectors/
 /static/caching/
 /static/injection/
+/static/quantize/
+/static/speculative/

@@ -55,6 +55,9 @@ The script checks `models/canonical.json` against the model's own config before 
 Other recorded data has its own script in the same environment:
 
 - `scripts/build-embeddings.py`: the Ch 5 embedding map (`static/embeddings/`).
+- `scripts/build-quantize.py`: the Ch 13 rounding demo (`static/quantize/`; reuses GPT-2 small).
+- `scripts/build-speculative.py`: the Ch 14 guess-and-check runs (`static/speculative/`; reuses
+  GPT-2 small and downloads GPT-2 medium, about 1.5 GB).
 - `scripts/build-chat.py`: the Ch 15 base vs. instruct comparison (`static/chat/`; downloads
   Qwen2.5-0.5B and Qwen2.5-0.5B-Instruct, about 1 GB each).
 - `scripts/build-agent-traces.py`: the Part VII agent runs (`static/agent/`; downloads

@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import canonical from '../../models/canonical.json';
 import { SCALE, TINY_TRAINING_EXAMPLES, kaplanLoss } from '../../src/lib/data/scale.ts';
+import type { QuantizeRun } from '../../src/lib/math/quantize.ts';
+import { writtenAfter, type SpeculativeRecording } from '../../src/lib/math/speculative.ts';
 import { encode } from 'gpt-tokenizer/encoding/gpt2';
 import { parseTrace, textAfter } from '../../src/lib/models/trace.ts';
 
@@ -67,6 +69,73 @@ describe('Ch 12: scale', () => {
 		const r2 = kaplanLoss(1e9) / kaplanLoss(1e8);
 		expect(r1).toBeCloseTo(r2, 10);
 		expect(r1).toBeCloseTo(10 ** -0.076, 10);
+	});
+});
+
+describe('Ch 13: fewer bits per number', () => {
+	const run: QuantizeRun = json('static/quantize/gpt2.json');
+	const at = (label: string) => run.precisions.find((p) => p.label === label)!;
+	const text = (label: string) =>
+		at(label)
+			.generated.map((t) => t.text)
+			.join('');
+	const top = (label: string) => at(label).candidates[0].token.text;
+
+	it('records GPT-2 small at 32, 16, 8, 6, 5, 4, 3, and 2 bits', () => {
+		expect(run.parameters).toBe(canonical.parameters);
+		expect(run.precisions.map((p) => p.bits)).toEqual([32, 16, 8, 6, 5, 4, 3, 2]);
+		expect(Math.round(at('32-bit').bytes / 1e6)).toBe(498);
+		expect(Math.round(at('16-bit').bytes / 1e6)).toBe(249);
+	});
+
+	it('holds at 16 and 8 bits: same top guess, same 12 tokens, nearly the same loss', () => {
+		for (const label of ['16-bit', '8-bit']) {
+			expect(top(label)).toBe(' floor');
+			expect(text(label)).toBe(text('32-bit'));
+		}
+		expect(at('32-bit').generated).toHaveLength(12);
+		expect(
+			[at('32-bit').loss, at('16-bit').loss, at('8-bit').loss].map((l) => l.toFixed(2))
+		).toEqual(['3.31', '3.31', '3.34']);
+	});
+
+	it('drifts at 6 and 5 bits (" bed", then " table") and breaks at 4 and below', () => {
+		expect([top('6-bit'), top('5-bit')]).toEqual([' bed', ' table']);
+		expect(text('4-bit')).toMatch(/^ stack\. The stack\./);
+		expect(['4-bit', '3-bit', '2-bit'].map((l) => Math.round(at(l).loss))).toEqual([6, 18, 48]);
+	});
+});
+
+describe('Ch 14: guessing ahead', () => {
+	const rec: SpeculativeRecording = json('static/speculative/gpt2.json');
+	const run = (prompt: string) => rec.runs.find((r) => r.prompt === prompt)!;
+
+	it('drafts 4 tokens at a time with GPT-2 small (124M) for GPT-2 medium (355M)', () => {
+		expect(rec.draft).toBe(4);
+		expect(rec.drafter.parameters).toBe(canonical.parameters);
+		expect(Math.round(rec.target.parameters / 1e6)).toBe(355);
+	});
+
+	it('rebuilds the written text from the rounds, 30 tokens each', () => {
+		for (const r of rec.runs) {
+			const rebuilt = r.rounds.flatMap((round) => [
+				...round.guesses.slice(0, round.kept),
+				round.added
+			]);
+			expect(rebuilt.slice(0, rec.newTokens)).toEqual(r.written);
+			expect(r.written).toHaveLength(30);
+			expect(writtenAfter(r, r.rounds.length)).toBe(30);
+		}
+	});
+
+	it('takes 7 passes for the cat and the counting prompt, 9 for France with two empty rounds', () => {
+		expect(run('The cat sat on the').rounds).toHaveLength(7);
+		expect(run('One, two, three, four, five,').rounds).toHaveLength(7);
+		const france = run('The capital of France is');
+		expect(france.rounds).toHaveLength(9);
+		expect(france.rounds.filter((r) => r.kept === 0)).toHaveLength(2);
+		for (const r of rec.runs)
+			expect(Math.max(...r.rounds.map((x) => x.kept + 1))).toBeLessThanOrEqual(5);
 	});
 });
 

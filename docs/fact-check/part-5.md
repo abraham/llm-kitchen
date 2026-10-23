@@ -1,7 +1,7 @@
 # Fact-check: Part V (Ch 11–17)
 
 Claim checklist for the per-chapter fact-check (see PLAN.md §7). Tests:
-`tests/unit/part-5-facts.test.ts`, `src/lib/math/chat-template.test.ts`,
+`tests/unit/part-5-facts.test.ts`, `src/lib/math/quantize.test.ts`, `src/lib/math/chat-template.test.ts`,
 `src/lib/math/transformer.test.ts`, `tests/unit/traces.test.ts`, `tests/e2e/part-5.e2e.ts`.
 
 Data: GPT-2 traces from `scripts/build-traces.py` (`the-cat-sat-*` branches, `quirk-*`); base vs.
@@ -40,6 +40,44 @@ last `\boxed{}`, which the prompt asks for.
 | GPT-2 sizes' non-embedding counts; released totals 124M/355M/774M/1.56B               | Test (`GPT2_FAMILY` totals equal the released checkpoints) |
 | e^(−loss) is the average (geometric mean) probability of the right token              | Definition of cross-entropy                                |
 | Bigger models were much better at learning a task from a few examples in the prompt   | Cite `brown2020`                                           |
+
+## Ch 13. Fewer bits per number
+
+Data: `static/quantize/gpt2.json` from `scripts/build-quantize.py` (GPT-2 small, pinned revision in
+the file): every weight matrix rounded to nearest in blocks of 32 with one 16-bit scale per block,
+then the top guesses for "The cat sat on the", a 12-token greedy continuation, and the loss on a
+short public-domain passage (Lewis Carroll).
+
+| Claim                                                                                                      | Backing                                                                             |
+| ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| GPT-2 small has 124,439,808 weights, published as 32-bit floats (about 498 MB)                             | `canonical.json`; cite `gpt2-model-card` (tensor type F32); test                    |
+| Memory ≈ weights × bits ÷ 8: 249 MB at 16 bits; Llama 3 405B ≈ 810 GB at 16 bits, ≈ 203 GB at 4            | Arithmetic; test (`weightBytes`)                                                    |
+| 32-bit floats keep about 7 significant digits, 16-bit about 3                                              | IEEE 754 (24- and 11-bit significands)                                              |
+| 8 bits allow 256 values, 4 bits 16, 2 bits 4                                                               | 2ⁿ; test (`levels`)                                                                 |
+| GGUF's Q4_0 and Q8_0 round blocks of 32 weights to whole numbers times one scale                           | Cite `gguf-quant-types`                                                             |
+| At 16 and 8 bits: same top guess (" floor"), same 12 tokens, loss 3.31 → 3.31 / 3.34                       | Test (recorded data)                                                                |
+| At 6 and 5 bits the top guess becomes " bed", then " table"                                                | Test                                                                                |
+| At 4 bits and below the output falls apart ("The stack." repeated) and the loss shoots up (6.4, 18, 48)    | Test                                                                                |
+| The live GPT-2 runs 8-bit weights, a 128 MB download, and its percentages differ (" floor" 15.4% vs. 7.6%) | `inference.worker.ts` (`dtype: 'q8'`); `canonical.json` `onnxMB`; Ch 11 check above |
+| Treating a few large outlier numbers separately lets 8-bit match 16-bit up to 175B weights                 | Cite `dettmers2022` (abstract)                                                      |
+| Quantization-aware training simulates the rounding during training                                         | Cite `jacob2018`                                                                    |
+| Gemma 4's QAT versions have quality similar to the 16-bit (bfloat16) models                                | Cite `gemma4-qat` (accessed 2026-10-23)                                             |
+
+## Ch 14. Guessing ahead
+
+Data: `static/speculative/gpt2.json` from `scripts/build-speculative.py`: GPT-2 small (124,439,808
+weights) guesses 4 tokens per round for GPT-2 medium (354,823,168), greedy, 30 new tokens per prompt.
+The script asserts the result equals GPT-2 medium's own greedy output.
+
+| Claim                                                                                                                                      | Backing                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Big-model inference is limited by reading weights from memory, not arithmetic                                                              | Cite `leviathan2023` (§1)                                                    |
+| One transformer pass predicts the next token after every position                                                                          | Architecture (causal attention, Ch 9); the script relies on it               |
+| 30 tokens in 7 passes ("The cat sat on the" and the counting prompt), 9 for "The capital of France is", with two passes keeping no guesses | Test (recorded data)                                                         |
+| The output is exactly the big model's greedy text                                                                                          | Assertion in the script; test                                                |
+| With sampling, an accept-or-resample rule keeps the big model's probabilities exactly                                                      | Cite `leviathan2023`, `chen2023`                                             |
+| About 2–3× faster with identical output                                                                                                    | Cite `leviathan2023` (2–3× on T5-XXL), `chen2023` (2–2.5× on Chinchilla 70B) |
+| Gemma 4 `-assistant` drafters: 78M to 0.5B weights, up to 3× faster, multi-token prediction                                                | Cite `gemma4-assistant`; collection listing (accessed 2026-10-23)            |
 
 ## Ch 15. From predictor to assistant
 
@@ -92,5 +130,10 @@ last `\boxed{}`, which the prompt asks for.
 - **Ch 12 scaling chart** draws Kaplan et al.'s fitted formula (with the GPT-2 sizes placed on it),
   not measured losses, and says so.
 - **Ch 16 quirks lab** reuses the glass-box generator with recorded quirk prompts as presets.
+- **Ch 13 rounding** uses blocks of 32 with one scale, like GGUF's Q4_0, instead of the plan's one
+  scale per row, and adds 6 and 5 bits to show the drift between "holds" and "breaks". The live
+  8-bit model is mentioned, not compared side by side.
+- **Ch 14 drafter** is GPT-2 small (already used on the site) instead of DistilGPT-2, drafting for
+  GPT-2 medium, on four prompts.
 - **Ch 17 results.** The small model's thinking gave a mixed result, and the chapter says so. The
   chapter was Ch 27, in Part VII, until milestone 19 moved it here.

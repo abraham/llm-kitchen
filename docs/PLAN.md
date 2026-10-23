@@ -144,6 +144,18 @@ Every chapter has the same structure:
 - _Animation:_ An interactive log-scale comparison (bigram → tiny model → GPT-2 → modern frontier models) of parameter count, training tokens, and compute.
 - _Key idea:_ The same recipe works much better at very large scale. Show charts illustrating scaling laws.
 
+**Ch 13. Fewer bits per number (quantization)**
+
+- _Try it:_ **Rounding GPT-2's numbers.** Slide GPT-2 small from 32 bits per weight down to 2 and see the weights' size, one block of weights snapping to the allowed values, the top guesses for "The cat sat on the", a short continuation, and the loss on a test passage.
+- _Key idea:_ Memory for the weights is about weights × bits ÷ 8 bytes. Quantization rounds each weight to a few allowed values, with one scale per block; quality holds until the rounding gets too coarse, and quantization-aware training keeps it at fewer bits.
+- _Data:_ Recorded (T0) by `scripts/build-quantize.py`. The live GPT-2 already runs 8-bit weights.
+
+**Ch 14. Guessing ahead (speculative decoding)**
+
+- _Try it:_ Step through GPT-2 small guessing four tokens at a time for GPT-2 medium, which checks them all in one pass, keeps the ones it agrees with, and adds its own. A counter compares passes with and without the drafter.
+- _Key idea:_ One pass predicts the next token after every position, so a big model can check several guesses for the price of one pass. The text is exactly what the big model writes alone.
+- _Data:_ Recorded (T0) by `scripts/build-speculative.py`.
+
 **Ch 15. From predictor to assistant**
 
 - _Try it:_ Show the "chat" formatting that wraps a conversation, revealing that a chat is still just text being continued.
@@ -603,6 +615,7 @@ Each chapter milestone (5–10, 14, 15, 18, and 20) includes the [per-chapter fa
     - **Tests:** unit tests that the recorded quantization and speculative runs say what the prose says (file sizes, the bit width where the top guess changes, accepted counts, and the drafted output equal to the big model's greedy output), and that the quiz still covers every Part. E2e tests that step through Ch 13 and Ch 14; axe and phone-width checks for both pages.
     - **Fact-check:** both chapters go into `docs/fact-check/part-5.md` (with `tests/unit/part-5-facts.test.ts` and `tests/e2e/part-5.e2e.ts`). Add to Part V's core sources: Jacob et al. 2018 (quantization and quantization-aware training), Dettmers et al. 2022 (8-bit inference for large models), and Leviathan et al. 2023 and Chen et al. 2023 (speculative decoding). Gemma 4 drafter figures cite the model cards with accessed dates.
     - _Done when:_ quantization and speculative decoding are Ch 13 and Ch 14 with recorded demos, recap cards, sources, and fact-check entries; every chapter number in prose, tests, and docs matches the new curriculum and old URLs load the same chapters; and CURRICULUM.md, `meta.ts`, and the spec test agree.
+    - v1: done. The renumbering is its own commit, with a milestone 20 mapping in CURRICULUM.md. Ch 13 rounds in blocks of 32 with one scale, like GGUF's Q4_0 (not one scale per row), and adds 6 and 5 bits: GPT-2 small holds at 8 bits, drifts at 6 and 5, and breaks at 4. Ch 14's drafter is GPT-2 small rather than DistilGPT-2, on four prompts (7 to 9 passes for 30 tokens). Both chapters are in the recap paragraph and diagram, the end-to-end loop stage, the quiz (now 14 questions), and the glossary. See [docs/fact-check/part-5.md](fact-check/part-5.md).
 22. **Picking a model: what the name tells you**
     - **Organization first:** add Ch 37 _Picking a model_ (`picking-a-model`) to the Wrap-up after From message to reply, building on Ch 12, 13, 14, 15, 27, 31, and 33 (Scale, Quantization, Speculative decoding, From predictor to assistant, Caching, Many experts, and Seeing pictures). The quiz moves from Ch 37 to Ch 38 (`37-quiz.svx` becomes `38-quiz.svx`; `/quiz` doesn't change); do that rename and the "Ch 37" remap in their own commit, with all tests passing. Update CURRICULUM.md and `meta.ts` to match.
     - **Ch 37, Picking a model:** reads whole model names with everything taught so far, using the Gemma 4 collections linked in milestone 21.

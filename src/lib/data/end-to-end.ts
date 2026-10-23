@@ -73,8 +73,8 @@ export const STAGES: Stage[] = [
 		id: 'append',
 		name: 'Append and go again',
 		group: 'model',
-		what: 'The picked token is added to the end and the model runs again, reusing the earlier tokens’ keys and values (the KV cache). The loop stops at an end-of-turn token. A reasoning model writes its scratch work in this loop too.',
-		chapters: [11, 17, 27]
+		what: 'The picked token is added to the end and the model runs again, reusing the earlier tokens’ keys and values (the KV cache). The loop stops at an end-of-turn token. A reasoning model writes its scratch work in this loop too, and a small drafter can guess several tokens for the model to check in one pass.',
+		chapters: [11, 14, 17, 27]
 	},
 	{
 		id: 'read',

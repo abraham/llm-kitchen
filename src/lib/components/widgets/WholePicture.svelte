@@ -121,7 +121,7 @@
 			what: 'Turns text into probabilities for the next token, one token at a time.',
 			chapters: [0, 11],
 			color: 'prob',
-			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick', 'reasoning', 'variants']
+			children: ['tokens', 'vectors', 'blocks', 'probs', 'pick', 'bits', 'reasoning', 'variants']
 		},
 		tokens: {
 			id: 'tokens',
@@ -176,9 +176,16 @@
 		pick: {
 			id: 'pick',
 			name: 'Pick and append',
-			what: 'Sample a token, add it, and repeat.',
-			chapters: [2, 11],
+			what: 'Sample a token, add it, and repeat. A small drafter can guess ahead for the model to check.',
+			chapters: [2, 11, 14],
 			color: 'prob'
+		},
+		bits: {
+			id: 'bits',
+			name: 'Bits per weight',
+			what: 'The weights can be rounded to fewer bits, so the model takes less memory.',
+			chapters: [13],
+			color: 'weight'
 		},
 		variants: {
 			id: 'variants',

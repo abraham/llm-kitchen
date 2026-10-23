@@ -33,7 +33,8 @@ describe('GPT-2 numbers in the prose match models/canonical.json', () => {
 	}
 
 	it('uses the canonical display name, not a different GPT-2 size', () => {
-		for (const c of chapters) {
+		// Ch 14 has GPT-2 small draft for GPT-2 medium on purpose.
+		for (const c of chapters.filter((c) => !c.file.endsWith('-speculative-decoding.svx'))) {
 			expect(c.text, c.file).not.toMatch(/GPT-2 (medium|large|XL)\b/);
 		}
 	});
