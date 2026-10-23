@@ -33,10 +33,10 @@ last few words can tell that something was "too big", but not what.
 
 ## Why not just look further back?
 
-The obvious fix is a bigger window. For the counting model, that goes badly fast. GPT-2's vocabulary
-has 50,257 tokens, so there are about 2.5 billion possible pairs of tokens and about 127 trillion
-possible triples. Most of them never appear in any training text, so a table of counts would be
-almost entirely zeros.<Cite id="jurafsky-martin-ngrams" />
+The obvious fix is a bigger window. For the counting model, each extra word makes the table vastly
+bigger. GPT-2's vocabulary has 50,257 tokens, so there are about 2.5 billion possible pairs of
+tokens and about 127 trillion possible triples. Most of them never appear in any training text, so a
+table of counts would be almost entirely zeros.<Cite id="jurafsky-martin-ngrams" />
 
 A neural network like the one in Ch 7 handles that better, because similar words get similar
 vectors and can share what they learn.<Cite id="bengio2003" /> But a fixed window still has two
