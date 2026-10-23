@@ -523,6 +523,7 @@ Each chapter milestone (5–10, 14, and 15) includes the [per-chapter fact-check
     - **Social sharing images:** a 1200 × 630 PNG per page (the menu and each chapter), with the mark, "LLM Kitchen", the chapter number and title, and its Part, in the site's fonts and colors. Generated at build time from one SVG template by a script (no screenshots and no network), written under `static/og/`, and covered by the existing caching headers.
     - **Tests:** a unit test checks that every curriculum entry has a social image and a description of reasonable length; an e2e test checks that the menu and a chapter render the full set of tags with absolute URLs; the favicon and images are spot-checked visually.
     - _Done when:_ no visible "llm-kitchen" remains, the new favicon shows in light and dark browser tabs, and sharing any page's URL produces a card with the right title, description, and image (checked with a link preview validator on the PR preview).
+    - v1: done. The mark is a bowl holding three ingredients in the token, vector, and attention colors. `scripts/build-og.ts` runs as the first step of `npm run build` (resvg, with the fontsource WOFF2 files unpacked to TrueType); its output is git-ignored. resvg ignores the variable font's weight axis, so headings are thickened with a matching stroke. Tag values and images point at `SITE_ORIGIN` (the live site), so on a PR preview the card's text is checkable but its image only resolves once the change is live.
 
 ### Per-chapter fact-check (part of every chapter milestone, 5–10, 14, and 15)
 

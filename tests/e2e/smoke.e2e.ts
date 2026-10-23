@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('landing page lists the written chapters', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText('llm-kitchen');
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('LLM Kitchen');
 	await expect(page.getByRole('link', { name: /The guessing game/ })).toBeVisible();
 });
 

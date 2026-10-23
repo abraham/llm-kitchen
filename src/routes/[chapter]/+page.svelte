@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
+	import { resolve } from '$app/paths';
 	import ChapterLayout from '#lib/components/layout/ChapterLayout.svelte';
+	import PageMeta from '#lib/components/layout/PageMeta.svelte';
+	import { chapterHeading, chapterImageAlt, SITE_NAME } from '#lib/site.ts';
 	import { progress } from '#lib/stores/progress.svelte.ts';
 	import type { PageProps } from './$types';
 
@@ -13,15 +16,15 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Ch {data.meta.number}. {data.meta.title} · llm-kitchen</title>
-	<meta
-		name="description"
-		content="Chapter {data.meta
-			.number} of llm-kitchen, an interactive guide to how large language models work: {data.meta
-			.title}."
-	/>
-</svelte:head>
+<PageMeta
+	title="{chapterHeading(data.meta)} · {SITE_NAME}"
+	shareTitle={chapterHeading(data.meta)}
+	description={data.meta.description}
+	path={resolve('/[chapter]', { chapter: data.meta.slug })}
+	image={data.meta.slug}
+	imageAlt={chapterImageAlt(data.meta)}
+	type="article"
+/>
 
 <ChapterLayout meta={data.meta} next={data.next}>
 	<Chapter />

@@ -1,4 +1,4 @@
-# llm-kitchen
+# LLM Kitchen
 
 A static site that teaches how a large language model works, from "guess the next word" to the
 harness that turns a model into an agent. See [docs/PLAN.md](docs/PLAN.md) for the full plan.
@@ -10,7 +10,7 @@ Requires Node 24 (see `.nvmrc`).
 ```sh
 npm install
 npm start.             # dev server
-npm run build          # static build in build/
+npm run build          # social images, then the static build in build/
 npm run preview        # serve the build on :4173
 ```
 
@@ -75,6 +75,14 @@ Other recorded data has its own script in the same environment:
 Sources are in `src/lib/references.json` and cited in chapters with `<Cite id="..." />`. Each
 Part's claim checklist is in `docs/fact-check/`.
 
+### Branding and link previews
+
+The site name, description, and origin for canonical and Open Graph URLs are in `src/lib/site.ts`;
+each chapter's description is in `src/lib/chapters/meta.ts`. `npm run build` first runs
+`scripts/build-og.ts`, which renders a 1200 × 630 social image per page into `static/og/` and the
+`apple-touch-icon.png`, from the favicon mark (`src/lib/assets/favicon.svg`) and the site's fonts.
+Both outputs are git-ignored.
+
 ## Manual setup (not automated)
 
 - **Branch protection on `main`:** require the `ci-success` status check.
@@ -86,7 +94,7 @@ Part's claim checklist is in `docs/fact-check/`.
   `npx @abraham/firebase-wif status`. This creates the `FIREBASE_WIF_PROVIDER` and
   `FIREBASE_WIF_SERVICE_ACCOUNT` repo variables the deploy workflows read.
 - **Custom domain (optional):** add it in the Firebase console under Hosting, then create the DNS
-  records it shows.
+  records it shows, and set `SITE_ORIGIN` in `src/lib/site.ts` to it.
 
 ## Deploys
 

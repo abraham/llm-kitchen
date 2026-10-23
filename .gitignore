@@ -25,3 +25,7 @@ vite.config.ts.timestamp-*
 test-results
 playwright-report
 scripts/.venv
+
+# Social images and touch icon, rendered by scripts/build-og.ts during npm run build
+/static/og/
+/static/apple-touch-icon.png

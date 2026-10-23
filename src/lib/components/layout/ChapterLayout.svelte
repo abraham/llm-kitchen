@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { chapterByNumber, partLabel, type ChapterMeta } from '#lib/chapters/index.ts';
+	import { SITE_NAME } from '#lib/site.ts';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
@@ -21,7 +22,7 @@
 			<ProgressNav current={meta.slug} />
 		</details>
 		<div class="rail-static">
-			<a class="home" href={resolve('/')}>llm-kitchen</a>
+			<a class="home" href={resolve('/')}>{SITE_NAME}</a>
 			<ProgressNav current={meta.slug} />
 		</div>
 	</aside>

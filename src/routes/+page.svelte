@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { CURRICULUM, writtenChapters } from '#lib/chapters/index.ts';
+	import PageMeta from '#lib/components/layout/PageMeta.svelte';
+	import { MENU_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from '#lib/site.ts';
 
 	const written = new Set(writtenChapters().map((c) => c.slug));
 	const parts = [...new Set(CURRICULUM.map((c) => c.part))].map((part) => ({
@@ -10,18 +12,19 @@
 	const first = writtenChapters()[0];
 </script>
 
-<svelte:head>
-	<title>llm-kitchen: how a large language model works</title>
-	<meta
-		name="description"
-		content="An interactive guide to how large language models work, from guessing the next word to agents."
-	/>
-</svelte:head>
+<PageMeta
+	title="{SITE_NAME}: how a large language model works"
+	description={SITE_DESCRIPTION}
+	path={resolve('/')}
+	image={MENU_IMAGE}
+	imageAlt="{SITE_NAME}: {SITE_TAGLINE}"
+	type="website"
+/>
 
 <main class="prose menu">
 	<header>
 		<p class="label">Today's menu</p>
-		<h1>llm-kitchen</h1>
+		<h1>{SITE_NAME}</h1>
 		<p class="lede">
 			How a large language model works, one idea at a time. Start with guessing the next word, build
 			up to an agent that uses tools, and finish with other kinds of models made from the same

@@ -15,7 +15,11 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={favicon} type="image/svg+xml" />
+	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+	<!-- The --page color from tokens.css, for browser chrome. -->
+	<meta name="theme-color" content="#fbf8f3" media="(prefers-color-scheme: light)" />
+	<meta name="theme-color" content="#1c1a17" media="(prefers-color-scheme: dark)" />
 </svelte:head>
 
 {@render children()}
