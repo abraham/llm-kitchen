@@ -125,7 +125,11 @@
 			<div class="controls">
 				<label class="label" for="{id}-word">Word</label>
 				<select id="{id}-word" bind:value={selected}>
-					{#each all as w (w.word)}<option value={w.word}>{w.word}</option>{/each}
+					{#each all
+						.map((w) => w.word)
+						.toSorted((a, b) => a.localeCompare(b)) as word (word)}<option value={word}
+							>{word}</option
+						>{/each}
 				</select>
 				<label class="check">
 					<input type="checkbox" bind:checked={showAnalogy} /> Show king − man + woman
