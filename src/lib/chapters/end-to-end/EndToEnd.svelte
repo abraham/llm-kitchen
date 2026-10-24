@@ -4,7 +4,9 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
+	import ChatLog from '#lib/components/primitives/ChatLog.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import { roleSwatch } from '#lib/components/primitives/roles.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
@@ -59,9 +61,7 @@
 {/snippet}
 
 {#snippet promptText(parts: PromptPart[], label: string)}
-	<pre class="raw" {@attach scrollable} aria-label={label}>{#each parts as p, i (i)}<span
-				class={p.kind}>{p.text}</span
-			>{/each}</pre>
+	<PromptText {parts} {label} maxHeight="14rem" emphasis={['message', 'call']} />
 {/snippet}
 
 <WidgetFrame
@@ -135,12 +135,10 @@
 				{/if}
 				<div class="example">
 					{#if stage.id === 'message'}
-						<ol class="chat" aria-label="The chat, as the app shows it">
-							{#each run.history as m, i (i)}
-								<li class={m.role}>{m.content}</li>
-							{/each}
-							<li class="user">{run.task}</li>
-						</ol>
+						<ChatLog
+							label="The chat, as the app shows it"
+							messages={[...run.history, { role: 'user', content: run.task }]}
+						/>
 					{:else if stage.id === 'prompt'}
 						{@render promptText(segmentPrompt(call1.prompt), 'The text sent to the model')}
 						<p>
@@ -256,9 +254,9 @@
 							'What the harness added for call 2'
 						)}
 						<p>
-							<span class="swatch result"></span>Untrusted: the tool result goes into the prompt as
-							plain text. This harness runs every call without asking, which is safe for a search
-							that only reads.
+							<span class="swatch" style={roleSwatch('result')}></span>Untrusted: the tool result
+							goes into the prompt as plain text. This harness runs every call without asking, which
+							is safe for a search that only reads.
 						</p>
 					{:else if stage.id === 'context'}
 						<p>
@@ -267,10 +265,13 @@
 							to choose what to keep.
 						</p>
 					{:else if stage.id === 'reply'}
-						<ol class="chat" aria-label="The reply, as the app shows it">
-							<li class="user">{run.task}</li>
-							<li class="assistant">{call2.thought}</li>
-						</ol>
+						<ChatLog
+							label="The reply, as the app shows it"
+							messages={[
+								{ role: 'user', content: run.task },
+								{ role: 'assistant', content: call2.thought }
+							]}
+						/>
 					{/if}
 				</div>
 			{/snippet}
@@ -414,54 +415,13 @@
 		min-height: 8rem;
 	}
 
-	.raw {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-size: 0.75rem;
-		max-height: 14rem;
-		overflow-y: auto;
-		padding: var(--space-2);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-	}
-
-	.marker {
-		color: var(--c-token-ink);
-	}
-
-	.history {
-		color: var(--ink-muted);
-	}
-
-	.system,
-	.tools,
-	.call {
-		color: var(--c-harness-ink);
-	}
-
-	.call {
-		font-weight: 700;
-	}
-
-	.message {
-		font-weight: 700;
-	}
-
-	.result {
-		background: var(--c-loss-tint);
-		color: var(--c-loss-ink);
-	}
-
 	.swatch {
 		display: inline-block;
 		width: 0.8em;
 		height: 0.8em;
 		margin-right: var(--space-1);
 		vertical-align: -0.05em;
-	}
-
-	.swatch.result {
-		border: 1px solid var(--c-loss);
+		box-shadow: inset 0 0 0 1px var(--rule);
 	}
 
 	.swatch.new {
@@ -484,31 +444,6 @@
 
 	.key .new {
 		margin-left: var(--space-3);
-	}
-
-	.chat {
-		list-style: none;
-		padding: 0;
-		margin: 0 0 var(--space-2);
-		display: grid;
-		gap: var(--space-2);
-		font-size: 0.9rem;
-	}
-
-	.chat li {
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius);
-		white-space: pre-wrap;
-		max-width: 85%;
-	}
-
-	.chat .user {
-		justify-self: end;
-		background: var(--c-prob-tint);
-	}
-
-	.chat .assistant {
-		background: var(--surface-2);
 	}
 
 	.bars {

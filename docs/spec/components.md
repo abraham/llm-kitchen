@@ -28,13 +28,13 @@ src/lib/components/
   widgets/      whole widgets used by two or more chapters
 ```
 
-| Folder        | Contents                                                                                                                                                               |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`; the `scrollable` attachment; the `Concept` type                                                                   |
-| `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`; `format.ts`, `roles.ts` |
-| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `Scrolly`, `FrameLoop` (`loop.svelte.ts`)      |
-| `page/`       | `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`                         |
-| `widgets/`    | `GlassBoxGenerator`                                                                                                                                                    |
+| Folder        | Contents                                                                                                                                                                          |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`; the `scrollable` attachment; the `Concept` type                                                                              |
+| `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`, `RoleKey`; `format.ts`, `roles.ts` |
+| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `Scrolly`, `FrameLoop` (`loop.svelte.ts`)                 |
+| `page/`       | `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`                                    |
+| `widgets/`    | `GlassBoxGenerator`                                                                                                                                                               |
 
 Where a new component goes:
 
@@ -221,37 +221,49 @@ colored-span `<pre>` blocks in EndToEnd, PromptInspector, ChatTemplate, SystemPr
 InjectionLab.
 
 ```ts
-type PromptPart = { text: string; role: Role };
 props: {
-	parts: readonly PromptPart[];
-	label: string; // the ScrollBox name
-	legend?: boolean; // a key of the roles present, replacing the hand-built legends
-	plain?: boolean; // one color, as InjectionLab's "what the model sees" toggle shows
+	parts: readonly { text: string; kind: Role }[]; // the shape chatTemplate() returns
+	label: string; // the region's name
+	maxHeight?: string; // default '16rem'; 'none' to show it all
+	plain?: boolean; // one color, as InjectionLab's "Color by source" toggle shows
+	emphasis?: readonly Role[]; // roles set in bold, such as the part a widget is about
+	after?: Snippet; // after the last part, such as ChatTemplate's cursor
 };
 ```
 
-**`ChatLog`** renders the same conversation as a chat app shows it: an `<ol>` of messages, each
-labeled with its role in text. It replaces the `<ol class="chat">` lists in ChatTemplate,
-PromptInspector, and EndToEnd.
+- It is a `<pre role="region">` with the `scrollable` attachment rather than a `ScrollBox`, so the
+  text keeps one box and one set of text styles. Each part's `<span>` carries `data-role`, which
+  e2e tests select by.
 
-`roles.ts` holds the `Role` type and one table both use. Roles aren't concepts in
-[design.md](design.md), so this is the one place concept colors stand for something else; every
-role is also named in text or set off by its template marker, so color is never the only cue.
+**`ChatLog`** renders the same conversation as a chat app shows it: an `<ol>` of system, user, and
+assistant messages, each labeled in text ("You", "Assistant"). It replaces the `<ol class="chat">`
+lists in ChatTemplate, PromptInspector, and EndToEnd.
 
-| Role          | Written by                         | Color                       |
-| ------------- | ---------------------------------- | --------------------------- |
-| `marker`      | the chat template                  | token ink on token tint     |
-| `system`      | the developer, sent by the harness | harness ink on harness tint |
-| `user`        | the visitor                        | prob ink on prob tint       |
-| `assistant`   | the model                          | vector ink                  |
-| `tool-call`   | the model, for the harness         | harness ink                 |
-| `tool-result` | the harness, from the tool         | harness tint, dashed edge   |
-| `document`    | retrieved text the harness inserts | vector tint                 |
-| `attack`      | an attacker, inside a document     | loss ink on loss tint       |
+**`RoleKey`** is the key under a prompt: a swatch and a label per role, with `off` for roles not
+shown yet. It replaces the hand-built legends in PromptInspector and InjectionLab.
 
-- This keeps the colors three of the five widgets already use. It changes SystemPrompts' user text
-  (token to prob) and the tool result in PromptInspector (attention) and EndToEnd (loss), which were
-  the outliers.
+`roles.ts` holds the `Role` type and the one table all three use, through `roleStyle(role)` (inline
+text style) and `roleSwatch(role)`. Roles aren't concepts in [design.md](design.md), so this is the
+one place concept colors stand for something else; every role is also named in text or set off by
+its template marker, so color is never the only cue.
+
+| Role                 | Written by                                | Color                       |
+| -------------------- | ----------------------------------------- | --------------------------- |
+| `marker`             | the chat template                         | token ink on token tint     |
+| `system`             | the developer, sent by the harness        | harness ink on harness tint |
+| `tools`              | the harness: the tool definitions         | harness ink, italic         |
+| `harness`            | the harness, in a toy prompt              | harness ink                 |
+| `history`            | earlier turns                             | muted ink                   |
+| `user`, `message`    | the visitor (`message`: the latest one)   | prob ink                    |
+| `assistant`          | the model                                 | vector ink                  |
+| `call`               | the model: a tool call                    | harness ink                 |
+| `result`, `document` | text from outside that the harness pastes | ink on vector tint          |
+| `attack`             | an attacker, inside a document            | loss ink on loss tint       |
+
+- This keeps the colors most of the widgets already used. SystemPrompts' user text moved from token
+  to prob, and the tool result in PromptInspector (attention) and EndToEnd (loss) moved to vector
+  tint, the color InjectionLab already gave pasted documents.
+- Tinted swatches are outlined in their concept color; a swatch that is `off` is plain grey.
 
 `format.ts` gains `formatCount(n)` (`toLocaleString('en-US')`), which 13 widgets call inline.
 
@@ -317,8 +329,8 @@ pull request.
    all mechanical). Update the source layout in [architecture.md](architecture.md).
 3. **Controls.** `Choice`, `Slider`, and `Toggle`, then migrate their widgets.
 4. **Containers.** `ScrollBox` and `Status`, then migrate.
-5. **Prompts.** `roles.ts`, `PromptText`, and `ChatLog`, then migrate. This is the only step with
-   intended color changes (see the role table).
+5. **Prompts.** `roles.ts`, `PromptText`, `ChatLog`, and `RoleKey`, then migrate. This is the only
+   step with intended color changes (see the role table).
 6. **Loops.** `FrameLoop` and `formatCount`, then migrate.
 7. **Guard.** Add `component-patterns.test.ts` once nothing it checks is left, and list the common
    set in [design.md](design.md)'s shared elements.
@@ -337,6 +349,6 @@ When a step lands, its components move to **Built** below.
 | Global styles                                                                                                                                  | `global.css`            | Built   |
 | `Choice`, `Slider`, `Toggle`, `concept.ts`                                                                                                     | `ui/`                   | Built   |
 | `ScrollBox`, `Status`                                                                                                                          | `ui/`                   | Built   |
-| `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned |
+| `PromptText`, `ChatLog`, `RoleKey`, `roles.ts`                                                                                                 | `primitives/`           | Built   |
 | `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned |
 | `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned |

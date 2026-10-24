@@ -1,5 +1,8 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ChatLog from '#lib/components/primitives/ChatLog.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import { roleStyle } from '#lib/components/primitives/roles.ts';
 	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import { QWEN_DEFAULT_SYSTEM, chatTemplate, type ChatMessage } from '#lib/math/chat-template.ts';
 
@@ -19,7 +22,6 @@
 		{ role: 'user', content: message }
 	]);
 	const parts = $derived(chatTemplate(messages));
-	const names = { system: 'System', user: 'You', assistant: 'Assistant' } as const;
 </script>
 
 <WidgetFrame
@@ -43,21 +45,19 @@
 	</div>
 
 	{#if raw}
-		<pre class="raw" aria-label="The text sent to the model">{#each parts as p, i (i)}<span
-					class={p.kind}>{p.text}</span
-				>{/each}<span class="cursor" aria-hidden="true">▍</span></pre>
+		<PromptText {parts} label="The text sent to the model" maxHeight="none">
+			{#snippet after()}<span class="cursor" aria-hidden="true">▍</span>{/snippet}
+		</PromptText>
 		<p class="note">
-			<span class="key marker">markers</span> are special tokens that only the chat format uses;
-			<span class="key system">system</span>, <span class="key user">you</span>, and
-			<span class="key assistant">assistant</span> show where each piece came from. The model writes
-			from the cursor on, and stops when it writes <code>&lt;|im_end|&gt;</code>.
+			<span class="key" style={roleStyle('marker')}>markers</span> are special tokens that only the
+			chat format uses; <span class="key" style={roleStyle('system')}>system</span>,
+			<span class="key" style={roleStyle('user')}>you</span>, and
+			<span class="key" style={roleStyle('assistant')}>assistant</span> show where each piece came
+			from. The model writes from the cursor on, and stops when it writes
+			<code>&lt;|im_end|&gt;</code>.
 		</p>
 	{:else}
-		<ol class="chat">
-			{#each messages as m, i (i)}
-				<li class={m.role}><span class="who">{names[m.role]}</span> {m.content}</li>
-			{/each}
-		</ol>
+		<ChatLog {messages} label="The chat, as an app shows it" />
 		<p class="note">
 			This is how a chat app shows it. Turn on the raw text to see what the model gets.
 		</p>
@@ -77,35 +77,8 @@
 		margin-bottom: var(--space-2);
 	}
 
-	.raw {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-family: var(--font-mono);
-		font-size: 0.85rem;
-		line-height: 1.6;
-		padding: var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		margin: var(--space-3) 0 0;
-	}
-
-	.marker {
-		color: var(--c-token-ink);
-		background: var(--c-token-tint);
-		border-radius: 2px;
-	}
-
-	.system {
-		color: var(--c-harness-ink);
-		background: var(--c-harness-tint);
-	}
-
-	.user {
-		color: var(--c-prob-ink);
-	}
-
-	.assistant {
-		color: var(--c-vector-ink);
+	.views {
+		margin-bottom: var(--space-3);
 	}
 
 	.cursor {
@@ -116,43 +89,6 @@
 		font-family: var(--font-mono);
 		font-size: 0.85em;
 		padding: 0 2px;
-	}
-
-	.chat {
-		list-style: none;
-		padding: 0;
-		margin: var(--space-3) 0 0;
-		display: grid;
-		gap: var(--space-2);
-	}
-
-	.chat li {
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius);
-		max-width: 80%;
-	}
-
-	.chat .user {
-		justify-self: end;
-		background: var(--c-prob-tint);
-	}
-
-	.chat .assistant {
-		background: var(--c-vector-tint);
-	}
-
-	.chat .system {
-		font-size: 0.85rem;
-		font-style: italic;
-	}
-
-	.who {
-		display: block;
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
 	}
 
 	.note {

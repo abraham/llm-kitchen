@@ -24,7 +24,7 @@ test('step through one message and follow a link', async ({ page }) => {
 	await expect(detail).toContainText('7.6%');
 
 	await widget.getByRole('button', { name: /Check and run the tool/ }).click();
-	await expect(detail.locator('pre .result')).toContainText('Hey diddle diddle');
+	await expect(detail.locator('pre [data-role="result"]')).toContainText('Hey diddle diddle');
 	await widget.getByRole('button', { name: /You see the reply/ }).click();
 	await expect(detail).toContainText('Hey Diddle Diddle');
 

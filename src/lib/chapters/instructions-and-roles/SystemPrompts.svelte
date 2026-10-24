@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
@@ -24,10 +25,17 @@
 				bind:value={pick}
 			/>
 			<p class="label">What the model reads</p>
-			<pre
-				class="template">{#each chatTemplate( [{ role: 'system', content: r.system }, { role: 'user', content: d.question }] ) as part, i (i)}<span
-						class={part.kind}>{part.text}</span
-					>{/each}</pre>
+			<div class="template">
+				<PromptText
+					parts={chatTemplate([
+						{ role: 'system', content: r.system },
+						{ role: 'user', content: d.question }
+					])}
+					label="What the model reads"
+					maxHeight="none"
+					emphasis={['system']}
+				/>
+			</div>
 			<p class="label">Its reply ({r.tokens} tokens)</p>
 			<ScrollBox
 				label="Reply with the {r.name.toLowerCase()} system prompt"
@@ -82,27 +90,6 @@
 <style>
 	.template {
 		margin: var(--space-1) 0 var(--space-3);
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		font-size: 0.8rem;
-		white-space: pre-wrap;
-	}
-
-	.template .marker {
-		color: var(--ink-muted);
-	}
-
-	.template .system {
-		background: var(--c-harness-tint);
-		outline: 1.5px solid var(--c-harness);
-		border-radius: 2px;
-		font-weight: 700;
-	}
-
-	.template .user {
-		background: var(--c-token-tint);
-		border-radius: 2px;
 	}
 
 	.reply {

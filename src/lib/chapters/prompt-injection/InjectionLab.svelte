@@ -2,10 +2,11 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import RoleKey from '#lib/components/primitives/RoleKey.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import Toggle from '#lib/components/ui/Toggle.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { findRun, promptPieces, tally } from '#lib/harness/injection.ts';
 
 	const data = useDataset('injection/lab');
@@ -77,21 +78,25 @@
 				<p class="label">What the model reads</p>
 				<Toggle label="Color by source" bind:checked={colored} />
 			</div>
-			<pre
-				class="prompt"
-				class:plain={!colored}
-				{@attach scrollable}
-				aria-label="The text sent to the model">{#each promptPieces(run) as p, i (i)}<span
-						class={p.source}
-						class:marker={p.marker}>{p.text}</span
-					>{/each}</pre>
+			<PromptText
+				parts={promptPieces(run).map((p) => ({
+					text: p.text,
+					kind: p.marker ? 'marker' : p.source
+				}))}
+				label="The text sent to the model"
+				maxHeight="22rem"
+				plain={!colored}
+				emphasis={['marker']}
+			/>
 			{#if colored}
-				<ul class="legend" aria-hidden="true">
-					<li><span class="swatch harness"></span>written by the harness</li>
-					<li><span class="swatch document"></span>the document</li>
-					<li><span class="swatch attack"></span>the attack</li>
-					<li><span class="swatch marker"></span>chat markers</li>
-				</ul>
+				<RoleKey
+					roles={[
+						{ kind: 'harness', label: 'written by the harness' },
+						{ kind: 'document', label: 'the document' },
+						{ kind: 'attack', label: 'the attack' },
+						{ kind: 'marker', label: 'chat markers' }
+					]}
+				/>
 			{:else}
 				<p class="note">
 					Without the colors, this is all the model gets: one stream of text, with {run.markerTokens}
@@ -177,89 +182,11 @@
 		justify-content: space-between;
 		align-items: baseline;
 		gap: var(--space-2);
+		margin-bottom: var(--space-1);
 	}
 
 	.prompt-head .label {
 		margin: 0;
-	}
-
-	.prompt {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-size: 0.75rem;
-		line-height: 1.5;
-		padding: var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		margin: var(--space-1) 0 0;
-		max-height: 22rem;
-		overflow: auto;
-	}
-
-	.prompt .harness {
-		color: var(--c-harness-ink);
-	}
-
-	.prompt .document {
-		color: var(--ink);
-		background: var(--c-vector-tint);
-	}
-
-	.prompt .attack {
-		color: var(--c-loss-ink);
-		background: var(--c-loss-tint);
-	}
-
-	.prompt .marker {
-		color: var(--c-token-ink);
-		font-weight: 700;
-	}
-
-	.prompt.plain span {
-		color: var(--ink);
-		background: none;
-		font-weight: 400;
-	}
-
-	.legend {
-		list-style: none;
-		padding: 0;
-		margin: var(--space-2) 0 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-	}
-
-	.legend li {
-		display: flex;
-		align-items: center;
-		gap: var(--space-1);
-	}
-
-	.swatch {
-		width: 0.8rem;
-		height: 0.8rem;
-		border-radius: 2px;
-	}
-
-	.swatch.harness {
-		background: var(--c-harness);
-	}
-
-	.swatch.document {
-		background: var(--c-vector-tint);
-		box-shadow: inset 0 0 0 1px var(--c-vector);
-	}
-
-	.swatch.attack {
-		background: var(--c-loss-tint);
-		box-shadow: inset 0 0 0 1px var(--c-loss);
-	}
-
-	.swatch.marker {
-		background: var(--c-token);
 	}
 
 	.note {
