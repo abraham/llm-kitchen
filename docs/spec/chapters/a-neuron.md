@@ -19,3 +19,10 @@ stacked, can represent complicated patterns; GPT-2 small has 3,072 per block in 
 
 Computed in the browser. The activation is ReLU; the text notes that GPT-2 uses GELU, a smooth
 cousin.
+
+## Decisions
+
+- [Levels](../levels.md): Simple describes the three steps in a paragraph and drops the history and
+  GPT-2's sizes beyond 3,072 neurons per block. In depth writes the neuron and a layer as formulas,
+  shows why two layers without a squash collapse into one, and gives GPT-2's MLP with its share of
+  the weights and the GELU formula.
