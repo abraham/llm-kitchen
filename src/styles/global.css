@@ -19,7 +19,7 @@ body {
 	font-size: 1.125rem;
 	line-height: 1.6;
 	font-optical-sizing: auto;
-	/* JetBrains Mono's code ligatures (e.g. "<|" drawn as an arrow) are contextual alternates;
+	/* Some monospace fonts draw code ligatures (e.g. "<|" as an arrow) as contextual alternates;
 	   turning them off shows tokens exactly as typed. */
 	font-variant-ligatures: no-contextual;
 }

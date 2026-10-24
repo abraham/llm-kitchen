@@ -16,13 +16,20 @@ for (const colorScheme of ['light', 'dark'] as const) {
 	test.describe(`${colorScheme} theme`, () => {
 		test.use({ colorScheme });
 		for (const path of PAGES) {
-			test(`${path} loads its widgets and has no axe violations`, async ({ page }) => {
+			test(`${path} loads its widgets and has no axe violations`, async ({ page, baseURL }) => {
+				// Models download only after consent, so nothing on a page may fetch from another origin.
+				const offSite: string[] = [];
+				page.on('request', (r) => {
+					if (!/^(data|blob):/.test(r.url()) && !r.url().startsWith(baseURL!))
+						offSite.push(r.url());
+				});
 				await gotoHydrated(page, path);
 				await expect(page.getByText(/Loading/)).toHaveCount(0);
 				const results = await new AxeBuilder({ page })
 					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
 					.analyze();
 				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+				expect(offSite).toEqual([]);
 			});
 		}
 	});

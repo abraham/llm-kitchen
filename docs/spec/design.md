@@ -20,10 +20,12 @@
 - **Widget frame:** every widget uses `WidgetFrame`, with a "Try it" label, a reset button, step
   controls where it steps, and a `DataSourceBadge` showing where its data comes from: **Recorded ·
   &lt;model&gt;**, **Live · &lt;model&gt;**, **Computed in your browser**, or **Made-up example**.
-- **Typography:** Source Serif 4 for prose, JetBrains Mono for tokens and numbers, and the system sans
-  for buttons and labels. Fonts are self-hosted variable fonts from `@fontsource-variable`, bundled
-  by Vite with hashed names; their `unicode-range` subsets mean browsers download only the Latin
-  files.
+- **Typography:** system fonts only: a serif for prose (Iowan Old Style or Charter on Apple devices,
+  Georgia on Windows, Noto Serif on Android), the system monospace for tokens and numbers, and the
+  system sans for buttons and labels. Nothing is downloaded, so text never reflows after first paint
+  (web fonts loaded with `font-display: swap` caused layout shifts of 0.1 or more on a third of the
+  pages). Social images still use Source Serif 4 and JetBrains Mono (`@fontsource-variable`, a dev
+  dependency), so they render the same on every machine.
 - **Charts:** hand-written SVG. Thin lines with direct labels instead of legends, and no gridlines
   unless needed.
 
