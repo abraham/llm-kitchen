@@ -27,3 +27,7 @@ points, and some directions carry meaning, like _man_ to _woman_.
 
 - Visitors pick words rather than drag them: moving a point in the 2D picture wouldn't change its
   real vector, so neighbors after a drag would mislead.
+- [Levels](../levels.md): Simple drops the sizes and the model's name. In depth shows the embedding
+  as a row of a lookup table (and its share of GPT-2's weights), defines cosine similarity, says the
+  map is PCA keeping about 13%, and shows that the analogy only lands on _queen_ once the input
+  words are skipped.

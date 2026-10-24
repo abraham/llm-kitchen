@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -8,9 +9,21 @@
 
 ## From ID to a list of numbers
 
+<At levels="simple">
+
+A token's number is just a label: 3797 says nothing about cats. So GPT-2 swaps each token for a
+long list of numbers, called an <GlossaryPopover term="embedding">embedding</GlossaryPopover>.
+Step through to see the running example become lists of numbers. (Only the first 48 numbers are
+drawn; striped cells are negative.)
+
+</At>
+<At levels="standard deep">
+
 A token ID is just a label: 3797 for *" cat"* says nothing about cats. So the first thing GPT-2 does
 with each token is look up a list of 768 numbers for it, called an <GlossaryPopover term="embedding">embedding</GlossaryPopover> or a vector. Step through to see the
 running example become vectors. (Only the first 48 numbers are drawn; striped cells are negative.)
+
+</At>
 
 <TokenToVector />
 
@@ -18,22 +31,99 @@ Nobody chose these numbers. They start out random and are adjusted during traini
 explains. After training, tokens that are used in similar ways end up with similar
 lists.<Cite id="radford2019" />
 
+<At levels="deep">
+
+### A lookup table
+
+GPT-2 keeps every token's vector in one table, $W_E$, with a row for each of its 50,257 tokens and
+768 columns. Turning token $t$ into its vector $e_t$ just reads row $t$:
+
+$$
+e_t = W_E[t] = \mathbf{1}_t^{\top} W_E
+$$
+
+where $\mathbf{1}_t$ is a list of 50,257 zeros with a single 1 in place $t$. Multiplying by it
+picks out one row, which is why training can adjust the table like any other weights. The table
+holds 50,257 × 768 = 38,597,376 numbers, about 31% of GPT-2 small's 124 million weights, and GPT-2
+uses it twice: at the end of the model, the same table turns the final vector back into a score for
+every token.
+
+</At>
+
 ## Similar meanings, nearby points
+
+<At levels="simple">
+
+A list of numbers can be read as a place: two numbers mark a point on a flat map, and longer lists
+mark points in a space with more directions. Nearby points mean similar things.
+
+</At>
+<At levels="standard deep">
 
 A list of numbers can be read as a position. Two numbers place a point on a flat map; 384 or 768
 numbers place it in a space with that many directions. Nearby points have similar lists, and similar
 lists turn out to mean similar things.
 
+</At>
+
+<At levels="simple">
+
+The map below uses a small model built for comparing meanings.<Cite id="minilm-model-card" />
+Pick a word to see its nearest neighbors.
+
+</At>
+<At levels="standard deep">
+
 The map below uses all-MiniLM-L6-v2, a small model built for comparing meanings, which turns any
 text into 384 numbers.<Cite id="minilm-model-card" /> Pick a word to see its nearest neighbors.
 
+</At>
+
 <EmbeddingMap />
+
+<At levels="simple">
+
+The map squashes many numbers onto a flat page, so a few neighbors may look far apart on it.
+
+</At>
+<At levels="standard deep">
 
 The map is a flattened view. Squashing 384 numbers onto a page loses most of the detail, so a few
 neighbors may look far apart on the map. The lists of neighbors and similarity scores use all 384
 numbers.
 
+</At>
+<At levels="deep">
+
+### Measuring "nearby"
+
+The neighbors are ranked by **cosine similarity**, which compares the directions of two vectors $a$
+and $b$ and ignores their lengths:
+
+$$
+\cos(a, b) = \frac{a \cdot b}{\lVert a \rVert \, \lVert b \rVert}, \qquad a \cdot b = \sum_{i} a_i b_i, \qquad \lVert a \rVert = \sqrt{a \cdot a}
+$$
+
+where $a_i$ is the $i$-th number in $a$. It is 1 when the vectors point the same way, 0 when they
+are at right angles, and −1 when they point opposite ways; *cat* and *kitten* score 0.79. This
+model's vectors all have length 1, so here cosine similarity is just the sum $a \cdot b$.
+
+The flat map comes from principal component analysis: it keeps the two directions along which
+these words' vectors spread out the most, and drops the other 382. Those two directions hold
+only about 13% of the spread, which is why neighbors on the map can mislead.
+
+</At>
+
 ## Directions mean something too
+
+<At levels="simple">
+
+Tick *Show king − man + woman*. Start at *king*, take away *man*, add *woman*, and the nearest
+word is *queen*. So directions in the space can carry meaning, like the step from *man* to
+*woman*. It doesn't work for every pair of words.<Cite id="mikolov2013" />
+
+</At>
+<At levels="standard deep">
 
 Tick *Show king − man + woman*. Taking the vector for *king*, subtracting *man*, and adding *woman*
 gives a list of numbers whose nearest word on this map, comparing all 384 numbers, is *queen*. That
@@ -44,12 +134,34 @@ This famous example was first shown in
 every analogy, and on this map it only has a few dozen words to choose from, but it shows that
 directions in the space can carry meaning.
 
+</At>
+<At levels="deep">
+
+In vectors, the search finds the word whose vector is most similar to
+
+$$
+v_{\text{king}} - v_{\text{man}} + v_{\text{woman}}
+$$
+
+by cosine similarity, where $v_x$ is the vector for word $x$.<Cite id="mikolov2013" /> The search
+skips the three words that went in. Counted with them, the nearest word is *king* itself, at 0.63
+against 0.58 for *queen*: the sum lands close to where it started, and *queen* is only the best of
+the rest.
+
+</At>
+
 <RecapCard>
 
 - Each token is turned into a vector: a list of numbers (768 for GPT-2 small).
 - The numbers are learned, and tokens used in similar ways end up with similar vectors.
 - Similar vectors are nearby points, and some directions carry meaning, like *man* to *woman*.
 
+<At levels="deep">
+
+- An embedding is a row of a learned table; nearness is cosine similarity, the angle between
+  vectors.
+
+</At>
 </RecapCard>
 
 **Next question:** the vectors are learned, but learned by what? What does the model do with all

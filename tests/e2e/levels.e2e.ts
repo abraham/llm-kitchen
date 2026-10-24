@@ -1,10 +1,18 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { existsSync, readFileSync } from 'node:fs';
+import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import { gotoHydrated } from './helpers.ts';
 
 // Test-only pages in tests/e2e/fixtures, built with VITE_FIXTURES.
 const FIXTURE = '/fixtures/levels';
 const RECAP_AND_QUIZ = '/fixtures/recap-and-quiz';
+
+/** A chapter whose chapter.ts lists no levels yet, if any is left. */
+const UNLEVELED = CURRICULUM.map((c) => c.slug).find((slug) => {
+	const config = `src/lib/chapters/${slug}/chapter.ts`;
+	return !existsSync(config) || !/export const levels\b/.test(readFileSync(config, 'utf8'));
+});
 
 const control = (page: Page) => page.getByRole('banner').getByLabel('Explanations');
 const top = (page: Page, text: string) =>
@@ -153,7 +161,8 @@ test('recap cards and the quiz show and score the current level', async ({ page 
 });
 
 test('a chapter without passages for a level says so at that level', async ({ page }) => {
-	await gotoHydrated(page, '/embeddings');
+	test.skip(!UNLEVELED, 'every chapter has passages for every level');
+	await gotoHydrated(page, `/${UNLEVELED}`);
 	const notes = page.getByText(/This chapter has no .* passages yet/).filter({ visible: true });
 	await expect(notes).toHaveCount(0);
 	await control(page).selectOption('deep');
