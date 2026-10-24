@@ -55,8 +55,11 @@ major that supports Node 26.
   from a URL and gets only the header's policy. Workers under `/_app/immutable/workers/` get a
   complete header policy of their own (see [security.md](security.md#in-the-browser)).
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a
-  `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB, and
-  `Cross-Origin-Opener-Policy: same-origin`.
+  `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB,
+  `Cross-Origin-Opener-Policy: same-origin`, and
+  `Strict-Transport-Security: max-age=63072000; includeSubDomains`.
+- After each live deploy, `scripts/check-live-headers.ts` checks that the live site serves these
+  headers as configured.
 
 ## Caching
 

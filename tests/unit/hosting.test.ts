@@ -38,6 +38,11 @@ describe('firebase hosting config', () => {
 		expect(header(all, 'Content-Security-Policy')).toContain("frame-ancestors 'none'");
 	});
 
+	it('keeps browsers on HTTPS for two years, without the preload list', () => {
+		const all = hosting.headers.find((r) => r.source === '**');
+		expect(header(all, 'Strict-Transport-Security')).toBe('max-age=63072000; includeSubDomains');
+	});
+
 	it('gives workers a full policy, after the page default so it takes precedence', () => {
 		const all = hosting.headers.findIndex((r) => r.source === '**');
 		const workers = hosting.headers.findIndex((r) => r.source === '/_app/immutable/workers/**');

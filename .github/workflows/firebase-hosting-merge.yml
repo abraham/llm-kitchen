@@ -49,3 +49,6 @@ jobs:
           projectId: ${{ steps.wif.outputs.project_id }}
           channelId: live
           firebaseToolsVersion: ${{ steps.firebase-tools.outputs.version }}
+      # The emulator can't show what Hosting's CDN adds or overrides, such as HSTS.
+      - name: Check the live headers
+        run: node scripts/check-live-headers.ts https://llm.kitchen

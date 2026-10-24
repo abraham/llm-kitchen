@@ -32,7 +32,7 @@ this spec in the same pull request. The rules for bring-your-own API keys are in
 | A compromised npm package or GitHub Action                     | Lockfile installs, two runtime dependencies, actions locked to commits, deploy credentials only in deploy jobs |
 | A pull request that tries to deploy or read credentials        | Fork pull requests get no OIDC token; `production` deploys only from `main`                                    |
 | A model given real power by a harness demo                     | Demos expose only in-browser toy tools; no network, file system, or `eval` access                              |
-| A downgrade to HTTP                                            | HSTS from Firebase Hosting; [Hardening](#hardening) strengthens it                                             |
+| A downgrade to HTTP                                            | HSTS for two years, including subdomains                                                                       |
 
 Anyone with write access to the repository can push a branch whose pull request runs a modified
 workflow with the `preview` environment's credentials, which can deploy to Hosting. Write access is
@@ -55,6 +55,15 @@ the trust boundary, so it stays limited to maintainers.
   it makes from the site's own file), the Hugging Face `connect-src`, `object-src 'none'`,
   `base-uri 'self'`, and `frame-ancestors 'none'`. Pages keep a header without `script-src`, since
   one without SvelteKit's hashes would block their inline scripts.
+- **HSTS for two years.** `firebase.json` sends
+  `Strict-Transport-Security: max-age=63072000; includeSubDomains`, which Hosting serves on the
+  custom domain (it overrides HSTS only on `*.web.app`). Every subdomain in use (`www`) is on
+  Hosting and HTTPS. No `preload`: leaving the preload list takes months, and the domain may host
+  other things.
+- **Live headers are checked after each deploy.** The live deploy job runs
+  `scripts/check-live-headers.ts`, which fails if `https://llm.kitchen` or its inference worker
+  serves a configured header with a different value, since the emulator can't show what Hosting's
+  CDN adds or overrides.
 - **Every dataset is checked** before use: its envelope (id, version, recording script, model
   revisions) and its data, by the parser `registry.ts` names (see
   [architecture.md](architecture.md#data)). Invalid data throws and the widget shows the error; it
@@ -99,37 +108,33 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **Stronger HSTS.** Firebase Hosting sends `Strict-Transport-Security: max-age=31556926` on its
-   own. `firebase.json` sets `max-age=63072000; includeSubDomains`, and a check against the live
-   site confirms what is served, since the emulator doesn't add HSTS. No `preload`: leaving the
-   preload list takes months, and the domain may host other things.
-2. **No stored Git credentials.** Every `actions/checkout` sets `persist-credentials: false`; no job
+1. **No stored Git credentials.** Every `actions/checkout` sets `persist-credentials: false`; no job
    pushes.
-3. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
+2. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
    `.github/workflows/` and fails on any finding of medium severity or higher.
-4. **Dependency review.** Pull requests that change `package-lock.json` run
+3. **Dependency review.** Pull requests that change `package-lock.json` run
    `actions/dependency-review-action`, which fails on a new dependency with a known vulnerability of
    high severity or higher.
-5. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
+4. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
    (`cooldown: default-days: 7`), so a hijacked release is usually caught and pulled before it
    reaches the lockfile. Dependabot security updates stay immediate.
-6. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
+5. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
    scripts: `onnxruntime-node` and `protobufjs`, which the site doesn't run, and `re2`, a native
    module the Hosting emulator may need. If the emulator breaks without it, CI runs
    `npm rebuild re2` after `npm ci`, and the README says to do the same.
-7. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
+6. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
    ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
    script verifies them, and the worker checks each download's hash before loading it, through
    Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
    script check and the reason is recorded here.
-8. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+7. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-9. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+8. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-10. **Repository settings,** recorded here because no file holds them: secret scanning with push
-    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
-    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-11. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+9. **Repository settings,** recorded here because no file holds them: secret scanning with push
+   protection, Dependabot alerts and security updates, private vulnerability reporting, and a
+   ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
+10. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
     [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
     recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
     `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
