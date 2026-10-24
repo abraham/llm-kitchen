@@ -25,3 +25,6 @@ Computed in the browser (`src/lib/math/rnn.ts`); the KV cache size comes from
 ## Decisions
 
 - The memory comparison is its own small widget next to the trainer.
+- [Levels](../levels.md): Simple keeps the index-card picture and the history in one line each. In
+  depth writes out the tiny model's update, explains why plain recurrent networks forget, and
+  compares memory sizes.

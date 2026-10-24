@@ -26,3 +26,5 @@ GPT-2 small.
 - Recorded only; a live fill-mask model is on the [roadmap](../roadmap.md).
 - Each chapter in this Part starts from what changed compared with GPT-2 and reuses earlier widgets
   and visuals.
+- [Levels](../levels.md): Simple keeps the two blanks and the mask in words. In depth adds the
+  dog sentence, the mask written into the attention formula, and BERT's 80/10/10 masking rule.

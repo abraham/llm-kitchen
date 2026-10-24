@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -9,11 +10,22 @@
 
 ## Pictures as tokens
 
+<At levels="simple">
+
+A transformer doesn't care what its tokens stand for; it just needs a row of vectors (<ChapterRef to="embeddings" />). A
+picture can become one by being cut into square **patches**, each turned into a vector, just like a
+token. This is the *vision transformer*.<Cite id="dosovitskiy2021" />
+
+</At>
+<At levels="standard deep">
+
 A transformer doesn't care what its tokens stand for. All it needs is a row of vectors (<ChapterRef to="embeddings" />). Text
 becomes that row by splitting into tokens. A picture can do the same by being cut into square
 **patches**, each turned into a vector by multiplying its pixel values by learned weights, plus a
 position, just like a token. The rest is the familiar stack of blocks. This is the *vision
 transformer*.<Cite id="dosovitskiy2021" />
+
+</At>
 
 Here it is with CLIP ViT-B/32, a real model, on simple pictures drawn for this page. It cuts each
 224×224-pixel picture into a 7×7 grid of 32×32-pixel patches: 49 "tokens". Pick a patch:
@@ -23,7 +35,29 @@ Here it is with CLIP ViT-B/32, a real model, on simple pictures drawn for this p
 Notice that patches of plain background all turn into the same vector, the way the same word always
 starts as the same embedding.
 
+<At levels="deep">
+
+### A patch, in numbers
+
+Each 32×32 patch has 3 colors per pixel: 32 × 32 × 3 = 3,072 numbers. One learned 3,072 × 768
+weight matrix turns it into 768 numbers, the same matrix for every patch, and a position vector is
+added. One extra learned vector goes at the front, a *class token*, so the transformer reads 50
+vectors, and at the end the class token's vector stands for the whole picture.<Cite id="dosovitskiy2021" />
+CLIP then maps that vector, and the text side's summary of a caption, into a shared space of 512
+numbers.
+
+</At>
+
 ## A shared map for words and pictures
+
+<At levels="simple">
+
+CLIP was trained on 400 million pictures with their captions from the internet, learning to put
+each picture close to its own caption.<Cite id="radford2021" /> So words and pictures land in one shared space. Pick some
+words and see which pictures land closest:
+
+</At>
+<At levels="standard deep">
 
 CLIP was trained on 400 million pictures paired with their captions from the internet. It has two
 parts, one that reads pictures and one that reads text, and training pushed each picture's vector
@@ -31,12 +65,36 @@ close to its own caption's vector and away from the others.<Cite id="radford2021
 single space where words and pictures can be compared. Pick some words and see which pictures land
 closest:
 
+</At>
+
 <PictureMatch />
 
 For each of the 12 exact descriptions, the right picture comes first. Vaguer words are harder:
 "something round" barely prefers a circle.
 
+<At levels="deep">
+
+### Comparing a caption with pictures
+
+For each caption, CLIP takes the cosine similarity with each picture's vector and multiplies by a
+learned temperature, 100 for this model, before the softmax. The similarities themselves sit close
+together: "a red circle" scores 0.271 with the red circle and 0.268 with the red square. Multiplied
+by 100, that 0.003 gap gives the circle 42% and the square 32%. In training, each batch held 32,768
+picture–caption pairs: every picture had to pick out its own caption from all 32,768, and every
+caption its picture.<Cite id="radford2021" />
+
+</At>
+
 ## Chat models that see
+
+<At levels="simple">
+
+A <GlossaryPopover term="multimodal">multimodal</GlossaryPopover> chat model combines the two
+ideas: a vision model turns the picture into vectors, and the language model reads them alongside
+your words.<Cite id="liu2023" /> To the language model, the picture is just more tokens.
+
+</At>
+<At levels="standard deep">
 
 A <GlossaryPopover term="multimodal">multimodal</GlossaryPopover> chat model puts the two ideas
 together. A vision model like CLIP's turns the picture into patch vectors, a small layer converts
@@ -44,12 +102,20 @@ those into the same kind of vectors as text tokens, and the language model reads
 context alongside your words.<Cite id="liu2023" /> To the language model, the picture is just more
 tokens.
 
+</At>
+
 <RecapCard>
 
 - A vision transformer cuts a picture into patches and treats each patch like a token.
 - CLIP puts pictures and captions into one shared space, so words can find matching pictures.
 - Chat models that see turn a picture into tokens and put them in the context next to the text.
 
+<At levels="deep">
+
+- A patch's 3,072 pixel values become 768 numbers; CLIP scales its similarities by 100 before the
+  softmax.
+
+</At>
 </RecapCard>
 
 **Next question:** these models read pictures. How do image generators make them?

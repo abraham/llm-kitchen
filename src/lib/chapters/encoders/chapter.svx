@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -9,14 +10,36 @@
 
 ## A blank in the middle
 
+<At levels="simple">
+
+Every model so far has filled in a blank at the end of the text. Put the blank in the middle and
+GPT-2 has a problem: it only reads the words before the blank. In *The cat sat on the ___ of the
+fridge*, the clue comes after the gap.
+
+</At>
+<At levels="standard deep">
+
 Every model so far has filled in a blank at the end of the text. Put the blank in the middle and
 GPT-2 has a problem: it only reads the words before the blank. In *The cat sat on the ___ of the
 fridge*, the clue comes after the gap, where GPT-2 can't look.
+
+</At>
+
+<At levels="simple">
+
+A different kind of transformer, the <GlossaryPopover term="encoder">encoder</GlossaryPopover>,
+reads the whole text at once. The best known is BERT, trained by hiding some words and guessing
+them from the words on both sides.<Cite id="devlin2019" /> Here are real guesses from BERT and GPT-2:
+
+</At>
+<At levels="standard deep">
 
 A different kind of transformer, the <GlossaryPopover term="encoder">encoder</GlossaryPopover>,
 reads the whole text at once. The best known is BERT, trained by hiding 15% of the tokens in its
 training text and guessing each one from the words on both sides.<Cite id="devlin2019" /> Here are
 real guesses from BERT and GPT-2:
+
+</At>
 
 <FillTheBlank />
 
@@ -24,11 +47,30 @@ For the fridge, GPT-2's best guess is *floor*, a fine way to continue "The cat s
 BERT's is *top*. GPT-2 sends the shopper for bread to the *hospital*; BERT, which can see "to buy
 some bread", says *market*.
 
+<At levels="deep">
+
+The sentence about the dog shows the gap at its widest. In "The ___ wagged its tail and barked",
+GPT-2 has only "The" to go on, and its top guess is a new line, at 1.4%. BERT reads the rest and
+says *dog*, at 61%. Notice too that BERT's tokenizer split *wagged* into "wa" and "##gged", where
+"##" marks a piece that continues the word before it.
+
+</At>
+
 ## The same blocks, a different mask
+
+<At levels="simple">
+
+The difference is one setting in attention (<ChapterRef to="attention" />). In GPT-2, each token can only look at the
+tokens before it. In BERT, every token can look at every other token. Switch between the two:
+
+</At>
+<At levels="standard deep">
 
 The difference comes down to one setting in attention (<ChapterRef to="attention" />). In GPT-2, a *decoder*, each token can
 only look at itself and the tokens before it. In BERT, every token can look at every other token.
 Switch between the two:
+
+</At>
 
 <AttentionMask />
 
@@ -36,12 +78,43 @@ Everything else is the recipe you already know: tokens, embeddings, attention, M
 blocks. BERT base even has the same size blocks as GPT-2 small: 12 of them, each working on vectors
 of 768 numbers.<Cite id="devlin2019" />
 
+<At levels="deep">
+
+### The mask, written down
+
+Attention scores every pair of tokens and turns each row of scores into weights with a softmax. The
+only difference between the two models is a mask $M$ added to the scores first:
+
+$$\operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d}} + M\right)V$$
+
+For GPT-2, $M_{ij}$ is 0 when token $j$ comes no later than token $i$, and $-\infty$ otherwise, so
+later tokens get a weight of exactly 0. For BERT, every $M_{ij}$ is 0. Over the 10 tokens of the
+fridge sentence, GPT-2's mask allows 55 of the 100 pairs and BERT's all 100.
+
+BERT pays for that in training. Only the 15% of tokens it hides give it something to predict, while
+GPT-2 learns from every token. And of the hidden tokens, BERT swapped 80% for a `[MASK]` token, 10%
+for a random token, and left 10% unchanged, so that it couldn't count on seeing `[MASK]`, which
+never appears in real text.<Cite id="devlin2019" />
+
+</At>
+
 ## Good at understanding, not at writing
+
+<At levels="simple">
+
+The price of looking both ways is that an encoder needs the whole text before it starts, so it
+can't write one token at a time. Encoders are used for *understanding* instead: search, spam
+filters, and embeddings like the map in <ChapterRef to="embeddings" />.
+
+</At>
+<At levels="standard deep">
 
 The price of looking both ways is that an encoder needs the whole text before it starts. It can't
 write a story one token at a time, because the tokens after the one it's writing don't exist yet.
 So encoders are used for *understanding*: search, sorting email into spam or not, and embeddings.
 The embedding model behind the map in <ChapterRef to="embeddings" /> is a small encoder of the same design as BERT.
+
+</At>
 
 The original transformer had both halves: an encoder to read a sentence in one language and a
 decoder to write it in another.<Cite id="vaswani2017" /> Many systems still pair them, like an
@@ -55,6 +128,11 @@ encoder that finds the relevant documents (<ChapterRef to="managing-the-context"
   of a blank.
 - Encoders are used for understanding: search, classification, and embeddings.
 
+<At levels="deep">
+
+- Attention adds a mask before the softmax: $-\infty$ for later tokens in GPT-2, nothing in BERT.
+
+</At>
 </RecapCard>
 
 **Next question:** every one of GPT-2's weights works on every token. Could a model be huge but use
