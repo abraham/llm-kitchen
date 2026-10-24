@@ -88,6 +88,11 @@ the trust boundary, so it stays limited to maintainers.
 ### Dependencies
 
 - CI and deploys install with `npm ci` from the lockfile; `.npmrc` sets `engine-strict`.
+- **No install scripts.** `.npmrc` sets `ignore-scripts=true`, so no package runs code when it's
+  installed. Three have install scripts today, and nothing needs them: `onnxruntime-node` (pulled in
+  by Transformers.js, never run by the site), `protobufjs` (a version notice), and `re2` (a native
+  module superstatic can do without). The root `prepare` script (`svelte-kit sync`) is skipped too;
+  `check`, `build`, and the dev server sync on their own.
 - The site ships two runtime dependencies (`@huggingface/transformers`, `gpt-tokenizer`) plus the
   Svelte and SvelteKit runtime. A new runtime dependency needs a reason in its pull request.
 - Dependabot proposes npm and GitHub Actions updates weekly (`.github/dependabot.yml`), once a
@@ -118,23 +123,19 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
-   scripts: `onnxruntime-node` and `protobufjs`, which the site doesn't run, and `re2`, a native
-   module the Hosting emulator may need. If the emulator breaks without it, CI runs
-   `npm rebuild re2` after `npm ci`, and the README says to do the same.
-2. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
+1. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
    ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
    script verifies them, and the worker checks each download's hash before loading it, through
    Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
    script check and the reason is recorded here.
-3. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+2. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-4. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+3. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-5. **Repository settings,** recorded here because no file holds them: secret scanning with push
+4. **Repository settings,** recorded here because no file holds them: secret scanning with push
    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-6. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+5. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
