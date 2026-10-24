@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,32 +9,98 @@
 
 ## Every weight, every token
 
+<At levels="simple">
+
+GPT-2 small is *dense*: all 124 million of its weights work on every token, so a bigger dense
+model is slower for every token. A <GlossaryPopover term="mixture-of-experts">mixture of experts</GlossaryPopover>
+gets around this. It splits the MLP in each block into several smaller ones, the **experts**, and
+adds a small **router** that sends each token to only the best few.<Cite id="shazeer2017" />
+
+</At>
+<At levels="standard deep">
+
 GPT-2 small is *dense*: every one of its 124 million weights takes part in predicting every token.
 Making a dense model bigger makes every token more expensive to process. A <GlossaryPopover term="mixture-of-experts">mixture of experts</GlossaryPopover>
 gets around this. Take the MLP inside each block (<ChapterRef to="the-transformer-block" />) and split it into several smaller MLPs,
 the **experts**. In front of them goes a small **router**: for each token, it scores every expert
 and sends the token only to the best few.<Cite id="shazeer2017" />
 
+</At>
+
 Here is the router at work on "The cat sat on the", choosing 2 of 8 experts for each token. Pick a
 token, and change how many experts each token gets:
 
 <ExpertRouter />
 
+<At levels="simple">
+
+Each token's result blends the outputs of its chosen experts. The other experts don't run for
+that token at all.
+
+</At>
+<At levels="standard deep">
+
 Each token's output is a blend of its chosen experts' outputs, weighted by the router's scores. The
 other experts don't run at all for that token, so their weights cost nothing. Different tokens go to
 different experts, so over a whole text every expert gets used.
 
+</At>
+<At levels="deep">
+
+### The router, written down
+
+For a token's vector $x$, the router multiplies by a weight matrix $W_g$ to get one score per
+expert, keeps the top $k$, and turns those into weights with a softmax. The output is the weighted
+sum of the chosen experts' outputs:
+
+$$y = \sum_{i \in \text{top } k} g_i(x)\, E_i(x), \qquad g(x) = \operatorname{softmax}\big(\text{top}_k(x W_g)\big)$$
+
+That's Mixtral's layer, with $k = 2$.<Cite id="jiang2024" /> The widget takes a softmax over all
+eight scores and then rescales the top $k$ to add up to 1, which gives the same weights.
+
+Only the MLPs are split; attention and the embeddings are shared by every token. That's why Mixtral
+uses 13 billion weights per token, not a quarter of 47. If each expert has $E$ weights and $S$ are
+shared, then $S + 8E = 47$ billion and $S + 2E = 13$ billion, so each expert holds about 5.7
+billion and about 1.7 billion are shared.
+
+Training needs a push to spread the work. A router that favors a few experts trains them more,
+which makes it favor them even more, so Shazeer and his colleagues added a loss term that penalizes
+uneven use.<Cite id="shazeer2017" /> DeepSeek-V3 balances its experts without an extra loss
+term.<Cite id="deepseek2024" />
+
+</At>
+
 ## Big, but cheap to run
+
+<At levels="simple">
+
+Many large open models work this way. Mixtral 8x7B has 47 billion weights but uses only 13
+billion for each token.<Cite id="jiang2024" /> DeepSeek-V3 has 671 billion and uses 37 billion.<Cite id="deepseek2024" />
+
+</At>
+<At levels="standard deep">
 
 This is how many large open models are built. Mixtral 8x7B has 8 experts in each block and sends
 each token to 2 of them: it has 47 billion weights in total, but each token uses only 13 billion,
 about a quarter.<Cite id="jiang2024" /> DeepSeek-V3 goes further: 671 billion weights in total, 37
 billion per token, about 6%.<Cite id="deepseek2024" />
 
+</At>
+
+<At levels="simple">
+
+You might imagine one expert for grammar and one for cooking, but trained experts don't split the
+work that neatly. In Mixtral, they followed things like code syntax more than topics.<Cite id="jiang2024" />
+
+</At>
+<At levels="standard deep">
+
 It is tempting to imagine one expert for grammar, one for science, and one for cooking, but trained
 experts don't divide the work that neatly. When the Mixtral team checked which experts handled text
 on different topics, they found no obvious pattern. What showed up instead was syntax: the word
 `self` in Python code, or the spaces that indent a line, kept going to the same experts.<Cite id="jiang2024" />
+
+</At>
 
 <RecapCard>
 
@@ -43,6 +110,12 @@ on different topics, they found no obvious pattern. What showed up instead was s
   billion.
 - Experts aren't neat topic specialists; the router learns its own way of dividing the work.
 
+<At levels="deep">
+
+- The output is a weighted sum of the top $k$ experts; only the MLPs are split, so a token uses
+  more than $k/n$ of the weights.
+
+</At>
 </RecapCard>
 
 **Next question:** attention keeps every earlier token around, and that gets expensive for long

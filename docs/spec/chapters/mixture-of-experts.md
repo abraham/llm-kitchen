@@ -24,3 +24,5 @@ learns its own way of dividing the work.
 
 - A toy router instead of recorded routing: recording a real mixture-of-experts model (several GB)
   wasn't practical on the available disk.
+- [Levels](../levels.md): Simple keeps the active-weight counts. In depth writes out the router,
+  works out how much of Mixtral is shared, and explains load balancing.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,9 +9,29 @@
 
 ## Not one piece at a time
 
+<At levels="simple">
+
+GPT-2 writes text one token at a time (<ChapterRef to="generating-text" />). Many image generators work differently: they
+start with the whole picture as random noise and clean it up a little at a time, everywhere at
+once. This is a <GlossaryPopover term="diffusion">diffusion model</GlossaryPopover>.
+
+</At>
+<At levels="standard deep">
+
 GPT-2 writes text one token at a time, left to right (<ChapterRef to="generating-text" />). A picture could be made the same
 way, one patch after another, but many image generators work differently: they start with the whole
 picture as random noise and clean it up a little at a time, everywhere at once. This is a <GlossaryPopover term="diffusion">diffusion model</GlossaryPopover>.
+
+</At>
+
+<At levels="simple">
+
+Training works backwards. Take a real picture and add noise, bit by bit, until nothing of it is
+left. A network learns to look at a noisy picture and guess the noise that was added.<Cite id="sohl-dickstein2015" />
+To make something new, start from pure noise and keep removing the noise it predicts.<Cite id="ho2020" />
+
+</At>
+<At levels="standard deep">
 
 Training works backwards from the result. Take a real picture and add a little random noise, then a
 little more, step by step, until nothing of the picture is left. A network is trained to look at a
@@ -19,12 +40,41 @@ added.<Cite id="sohl-dickstein2015" /> To make something new, start from pure no
 subtract the noise the network predicts. Each step leaves something a little more like the training
 pictures.<Cite id="ho2020" />
 
+</At>
+<At levels="deep">
+
+### The noise, written down
+
+The toy adds noise in 50 steps, each a little bigger than the last: the share $\beta_t$ grows from
+0.001 to 0.2. You don't have to add it step by step. With $\bar\alpha_t$ the product of all the
+$(1 - \beta)$s up to step $t$, the point after $t$ steps is
+
+$$x_t = \sqrt{\bar\alpha_t}\,x_0 + \sqrt{1 - \bar\alpha_t}\,\varepsilon$$
+
+where $x_0$ is the clean point and $\varepsilon$ is fresh random noise.<Cite id="ho2020" /> After all
+50 steps $\bar\alpha$ is about 0.0045, so less than 7% of the original point is left. Training picks
+a random step, makes $x_t$ this way, and scores the network by the squared error between its guess
+and $\varepsilon$.
+
+</At>
+
 ## Try it with dots
+
+<At levels="simple">
+
+Here, each "picture" is a single dot, and the training pictures are dots scattered along a shape.
+Train the tiny network to predict the noise, then paint 400 new dots, each starting from pure
+noise:
+
+</At>
+<At levels="standard deep">
 
 A real image has millions of numbers. Here, each "picture" is a single dot with just two numbers,
 its position, and the training pictures are dots scattered along a shape. Train the tiny network
 (two layers of neurons like the ones in <ChapterRef to="a-neuron" />) to predict the noise, then paint 400 new dots,
 each starting from pure noise:
+
+</At>
 
 <DiffusionToy />
 
@@ -32,13 +82,38 @@ Each dot is drawn independently, from its own random start, yet together they la
 The network never stored the training dots; it learned which way to nudge a noisy dot to make it
 more like them. Before training, the nudges are random, and painting gives a smudge.
 
+<At levels="deep">
+
+### One step back
+
+To paint, each step takes the network's guess $\hat\varepsilon$ and removes the share of it that
+this step would have added, then adds a little fresh noise $\sigma_t z$, none at the very last
+step:
+
+$$x_{t-1} = \frac{1}{\sqrt{1 - \beta_t}}\left(x_t - \frac{\beta_t}{\sqrt{1 - \bar\alpha_t}}\,\hat\varepsilon\right) + \sigma_t z$$
+
+This is the sampling rule from the paper the toy follows.<Cite id="ho2020" /> Run 50 times, from
+step 50 down to 1, it turns a cloud of random dots into the shape.
+
+</At>
+
 ## From dots to pictures
+
+<At levels="simple">
+
+Real image generators do the same with far bigger networks and every pixel's colors. Many work on
+a compressed version of the image and steer each step with your text description.<Cite id="rombach2022" />
+
+</At>
+<At levels="standard deep">
 
 Real image generators do the same thing with far bigger networks and with every pixel's colors
 instead of two numbers. To save work, *latent* diffusion models remove the noise from a compressed
 version of the image, and they can steer each step with a text description, so the noise becomes
 the picture you asked for.<Cite id="rombach2022" /> The original recipe took 1,000 small steps to
 make one picture;<Cite id="ho2020" /> the toy above uses 50.
+
+</At>
 
 <RecapCard>
 
@@ -47,6 +122,12 @@ make one picture;<Cite id="ho2020" /> the toy above uses 50.
   step.
 - Unlike GPT-2's one-token-at-a-time writing, it refines the whole picture at every step.
 
+<At levels="deep">
+
+- $x_t = \sqrt{\bar\alpha_t}\,x_0 + \sqrt{1-\bar\alpha_t}\,\varepsilon$ gives any step's noise in one go; painting
+  removes it one step at a time.
+
+</At>
 </RecapCard>
 
 **Next question:** how do all the pieces fit together?

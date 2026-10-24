@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -9,10 +10,22 @@
 
 ## Reading with a notepad
 
+<At levels="simple">
+
+Attention lets every token look back at every earlier token (<ChapterRef to="attention" />). A <GlossaryPopover term="recurrent-model">recurrent model</GlossaryPopover>
+reads one token at a time and keeps a small **memory** that it updates as it goes. To predict the
+next token it has only that memory. It's like reading a book while keeping notes on a single index
+card.
+
+</At>
+<At levels="standard deep">
+
 Attention lets every token look back at every earlier token (<ChapterRef to="attention" />). A <GlossaryPopover term="recurrent-model">recurrent model</GlossaryPopover>
 works differently: it reads one token at a time and keeps a small, fixed-size **memory**, a vector it
 updates after every token. To predict the next token it has only that memory, never the earlier
 tokens themselves. It's like reading a book while keeping notes on a single index card.
+
+</At>
 
 Networks like this are much older than transformers.<Cite id="elman1990" /> Below is a tiny one,
 trained in your browser on the rhymes from <ChapterRef to="predicting-by-counting" />, like the model in <ChapterRef to="learning-from-mistakes" />. Train it, then slide through
@@ -25,13 +38,48 @@ it has learned to store what matters for the next character. After "humpty d" it
 all it has is its memory, and the memory still holds enough of "humpty" to know "dumpty" comes
 next.
 
+<At levels="deep">
+
+### The update, written down
+
+The tiny model's whole memory update is one line. With $h_{t-1}$ the 32-number memory, $x_t$ the
+character just read, and learned weights $W_h$, $W_x$, $W_y$ and biases $b$, $c$:
+
+$$h_t = \tanh(W_h h_{t-1} + W_x x_t + b), \qquad p(\text{next}) = \operatorname{softmax}(W_y h_t + c)$$
+
+This is the design of Elman's 1990 networks.<Cite id="elman1990" /> The tanh keeps every memory
+number between −1 and 1, so the memory can't grow without limit however long the text. Training
+is the backpropagation from <ChapterRef to="learning-from-mistakes" />, run backwards through the
+characters one step at a time.
+
+</At>
+
 ## Fixed memory, growing text
+
+<At levels="simple">
+
+The appeal is cost. A transformer keeps something for every token it has read (<ChapterRef to="caching" />), so its memory
+grows with the text. A recurrent model's memory stays the same size:
+
+</At>
+<At levels="standard deep">
 
 The appeal is cost. A transformer's memory grows with the text, because it keeps something for
 every token so later tokens can look back: the KV cache from <ChapterRef to="caching" />. A recurrent model's memory
 stays the same size however long the text gets:
 
+</At>
+
 <MemoryGrowth />
+
+<At levels="simple">
+
+The catch is the index card: whatever the model doesn't note down is gone for good. Early
+recurrent networks forgot quickly; the LSTM added *gates* that learn what to keep.<Cite id="hochreiter1997" />
+LSTMs were the standard for language until the transformer replaced them.<Cite id="vaswani2017" />
+
+</At>
+<At levels="standard deep">
 
 The catch is the index card. Everything the model will ever need must be squeezed into those few
 numbers as it reads, and whatever it doesn't note down is gone for good. Early recurrent networks
@@ -39,7 +87,33 @@ were bad at keeping information for long; the LSTM added *gates* that learn what
 to forget.<Cite id="hochreiter1997" /> For years, LSTMs were the standard way to model language,
 until the transformer, which needs no recurrence at all, replaced them.<Cite id="vaswani2017" />
 
+</At>
+<At levels="deep">
+
+### Why plain recurrent networks forget
+
+To learn from a mistake 20 characters later, the error has to travel back through 20 copies of
+that update, multiplied each time by $W_h$ and by the slope of tanh, which is never more than 1.
+Over many steps it usually shrinks to almost nothing, or now and then blows up. The LSTM's fix was
+a separate cell carried forward by adding to it rather than squashing it, which its authors called
+a *constant error carousel*, with gates that learn when to write to it and when to read from
+it.<Cite id="hochreiter1997" />
+
+The size difference is large. At its full 1,024 tokens, GPT-2 small keeps 18,432 numbers per
+token, 18,874,368 in all; the tiny model here keeps 32.
+
+</At>
+
 ## The idea comes back
+
+<At levels="simple">
+
+Recurrent ideas are back in newer designs like Mamba, which learns what to keep as it reads, and
+whose cost grows only in step with the length of the text.<Cite id="gu2023" /> But a fixed memory
+still struggles to copy long passages word for word, which a transformer does easily.<Cite id="jelassi2024" />
+
+</At>
+<At levels="standard deep">
 
 Recurrent ideas are back in newer designs called *state-space models*. Mamba, from 2023, updates
 its fixed-size state in a way that depends on the token it is reading, so it can choose what to
@@ -47,6 +121,8 @@ keep and what to forget, and its cost grows only in step with the length of the 
 The fixed memory still has a price: a transformer can copy a long passage it was shown word for
 word, while a model with a fixed-size state struggles once the passage outgrows its
 memory.<Cite id="jelassi2024" />
+
+</At>
 
 <RecapCard>
 
@@ -56,6 +132,12 @@ memory.<Cite id="jelassi2024" />
 - Attention keeps every earlier token around, which costs more but lets the model look anything up
   again.
 
+<At levels="deep">
+
+- $h_t = \tanh(W_h h_{t-1} + W_x x_t + b)$; the error fades over many steps, which the LSTM's
+  added cell avoids.
+
+</At>
 </RecapCard>
 
 **Next question:** everything so far has read text. How can a model that reads tokens look at a

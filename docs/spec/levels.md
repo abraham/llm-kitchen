@@ -100,4 +100,5 @@ One pull request per phase; each passes every check in [quality.md](quality.md).
    Widgets get level-specific extras (In depth readouts, Simple hiding advanced controls) only where
    a chapter's passages call for them, through `At` inside the widget. Done so far: Part I
    (Prediction), Part II (Representation), Part III (Learning), Part IV (Context), Part V
-   (Putting it together), Part VI (Prompt engineering), and Part VII (Harnesses).
+   (Putting it together), Part VI (Prompt engineering), Part VII (Harnesses), and Part VIII
+   (Other kinds of models).

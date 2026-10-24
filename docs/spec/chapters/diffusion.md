@@ -22,3 +22,5 @@ Computed in the browser (`src/lib/math/diffusion.ts`), with 50 steps (the origin
 
 - Ring, square, and two blobs: a spiral was tried, but the small network only turned it into a blob
   in the training time a page visit allows.
+- [Levels](../levels.md): Simple keeps the idea and the toy. In depth writes out the toy's noise
+  schedule, the one-step formula for any amount of noise, and the sampling step.

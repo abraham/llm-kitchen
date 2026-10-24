@@ -9,6 +9,14 @@ describe('recurrent models', () => {
 		expect(2 * canonicalJson.layers * canonicalJson.embeddingSize).toBe(18432);
 	});
 
+	it('in depth: at 1,024 tokens GPT-2 keeps 18,874,368 numbers; the tiny model 32', () => {
+		const perToken = 2 * canonicalJson.layers * canonicalJson.embeddingSize;
+		expect(perToken * canonicalJson.contextLength).toBe(18874368);
+		const h = new CharRNN(30, 32, 1).step(new Float64Array(32), 0).h;
+		expect(h).toHaveLength(32);
+		for (const x of h) expect(Math.abs(x)).toBeLessThan(1);
+	});
+
 	it('after the widget’s 1,500 training steps, it expects “u” after “humpty d”', () => {
 		const texts = RHYMES.map((r) => r.text.toLowerCase());
 		const vocab = [...new Set(texts.join(''))].sort();

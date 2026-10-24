@@ -17,4 +17,30 @@ describe('encoders', () => {
 		expect(tokens).toHaveLength(10);
 		expect(tokens.indexOf('[MASK]')).toBe(5);
 	});
+
+	it('in depth: the dog: GPT-2 guesses a new line (1.4%), BERT dog (61%); "wagged" splits', () => {
+		const dog = d.sentences[3];
+		expect(dog.tokens).toEqual([
+			'the',
+			'[MASK]',
+			'wa',
+			'##gged',
+			'its',
+			'tail',
+			'and',
+			'barked',
+			'.'
+		]);
+		expect(dog.gpt2[0]).toMatchObject({ text: '\n' });
+		expect(dog.gpt2[0].p).toBeCloseTo(0.014, 3);
+		expect(dog.bert[0]).toMatchObject({ text: 'dog' });
+		expect(dog.bert[0].p).toBeCloseTo(0.61, 2);
+	});
+
+	it('in depth: over 10 tokens, the causal mask allows 55 of 100 pairs', () => {
+		const n = d.sentences[0].tokens.length;
+		let allowed = 0;
+		for (let i = 0; i < n; i++) for (let j = 0; j <= i; j++) allowed++;
+		expect([allowed, n * n]).toEqual([55, 100]);
+	});
 });

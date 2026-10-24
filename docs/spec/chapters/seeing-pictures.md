@@ -24,3 +24,6 @@ script draws itself.
 - A ranked list instead of a shared 2D map: every caption–picture similarity falls between 0.18 and
   0.36, so a map wouldn't show the matches clearly.
 - No live caption embedding yet; see [roadmap.md](../roadmap.md).
+- [Levels](../levels.md): Simple keeps patches, the shared space, and multimodal chat. In depth
+  counts a patch's numbers and the class token, and shows how CLIP's temperature turns close
+  similarities into clear choices.

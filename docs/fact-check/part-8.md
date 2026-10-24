@@ -14,58 +14,85 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Ch 30. Reading both ways
 
-| Claim                                                                                    | Backing                                                             |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| BERT is trained by hiding 15% of tokens and guessing them from both sides                | Cite `devlin2019`                                                   |
-| Fridge: GPT-2's top guess is _floor_, BERT's is _top_; bread: _hospital_ vs. _market_    | Test (recorded data)                                                |
-| GPT-2's mask lets each token see only itself and earlier tokens; BERT's sees every token | Widget computes it; matches Ch 9 and `devlin2019`                   |
-| The blank sees 6 of 10 tokens with GPT-2's mask, 10 of 10 with BERT's                    | Test (BERT's own tokens), e2e                                       |
-| BERT base has 12 blocks working on 768 numbers, like GPT-2 small                         | Cite `devlin2019`; BERT config (`num_hidden_layers`, `hidden_size`) |
-| The Ch 5 embedding model is an encoder of the same design as BERT                        | all-MiniLM-L6-v2 config: `model_type: bert`                         |
-| The original transformer had an encoder and a decoder                                    | Cite `vaswani2017`                                                  |
+| Claim                                                                                                                                   | Backing                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| BERT is trained by hiding 15% of tokens and guessing them from both sides                                                               | Cite `devlin2019`                                                   |
+| Fridge: GPT-2's top guess is _floor_, BERT's is _top_; bread: _hospital_ vs. _market_                                                   | Test (recorded data)                                                |
+| GPT-2's mask lets each token see only itself and earlier tokens; BERT's sees every token                                                | Widget computes it; matches Ch 9 and `devlin2019`                   |
+| The blank sees 6 of 10 tokens with GPT-2's mask, 10 of 10 with BERT's                                                                   | Test (BERT's own tokens), e2e                                       |
+| BERT base has 12 blocks working on 768 numbers, like GPT-2 small                                                                        | Cite `devlin2019`; BERT config (`num_hidden_layers`, `hidden_size`) |
+| The Ch 5 embedding model is an encoder of the same design as BERT                                                                       | all-MiniLM-L6-v2 config: `model_type: bert`                         |
+| The original transformer had an encoder and a decoder                                                                                   | Cite `vaswani2017`                                                  |
+| Simple: restates Standard in plainer words, with no new claims                                                                          | Reviewed against the Standard text                                  |
+| In depth: the dog: GPT-2's top guess a new line at 1.4%, BERT's _dog_ at 61%; _wagged_ is "wa" + "##gged"                               | Test (recorded data)                                                |
+| In depth: the mask M is added before the softmax: −∞ for later tokens (GPT-2), 0 everywhere (BERT)                                      | Ch 9 (`attention.ts`); cite `vaswani2017`, `devlin2019`             |
+| In depth: 10 tokens: 55 of 100 pairs with the causal mask                                                                               | Test                                                                |
+| In depth: only the hidden 15% are predicted; of them 80% `[MASK]`, 10% random, 10% unchanged, since `[MASK]` never appears in real text | Cite `devlin2019` (§3.1, Appendix C.2)                              |
 
 ## Ch 31. Many experts
 
-| Claim                                                                                          | Backing                                                               |
-| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| A router scores every expert and sends each token to the best few                              | Cite `shazeer2017`; `Router` test                                     |
-| Mixtral 8x7B: 8 experts per block, 2 per token, 47B total, 13B per token (about a quarter)     | Cite `jiang2024` (abstract); test                                     |
-| DeepSeek-V3: 671B total, 37B per token (about 6%)                                              | Cite `deepseek2024` (abstract); test                                  |
-| Mixtral's experts show no obvious topic pattern; `self` and indentation go to the same experts | Cite `jiang2024` (§5 Routing analysis)                                |
-| The widget's router                                                                            | Labeled simplification: random weights, reads Ch 5's token embeddings |
+| Claim                                                                                                | Backing                                                               |
+| ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| A router scores every expert and sends each token to the best few                                    | Cite `shazeer2017`; `Router` test                                     |
+| Mixtral 8x7B: 8 experts per block, 2 per token, 47B total, 13B per token (about a quarter)           | Cite `jiang2024` (abstract); test                                     |
+| DeepSeek-V3: 671B total, 37B per token (about 6%)                                                    | Cite `deepseek2024` (abstract); test                                  |
+| Mixtral's experts show no obvious topic pattern; `self` and indentation go to the same experts       | Cite `jiang2024` (§5 Routing analysis)                                |
+| The widget's router                                                                                  | Labeled simplification: random weights, reads Ch 5's token embeddings |
+| Simple: restates Standard in plainer words, with no new claims                                       | Reviewed against the Standard text                                    |
+| In depth: y = Σ over the top k of g_i(x) E_i(x), g = softmax(top_k(x W_g)); Mixtral k = 2            | Cite `jiang2024` (§2.1)                                               |
+| In depth: the widget's rescaled top-k weights equal a softmax over the top k                         | Test (`Router`)                                                       |
+| In depth: only the MLPs are split; S + 8E = 47, S + 2E = 13 gives about 5.7B per expert, 1.7B shared | Cite `jiang2024`; arithmetic, test                                    |
+| In depth: favored experts train faster; a loss term penalizes uneven use                             | Cite `shazeer2017` (§4)                                               |
+| In depth: DeepSeek-V3 balances experts without an extra loss term                                    | Cite `deepseek2024` (abstract)                                        |
 
 ## Ch 32. Remembering without attention
 
-| Claim                                                                      | Backing                                         |
-| -------------------------------------------------------------------------- | ----------------------------------------------- |
-| Recurrent networks predate transformers                                    | Cite `elman1990`                                |
-| The tiny model's memory is 32 numbers however much it has read             | `CharRNN` test                                  |
-| After the widget's 1,500 training steps, it expects _u_ after "humpty d"   | Test (same seed and batches as the widget)      |
-| GPT-2 keeps 2 × 12 × 768 = 18,432 numbers per token, up to 1,024 tokens    | `canonical.json`; test; widget computes from it |
-| The LSTM added gates that learn what to keep and forget                    | Cite `hochreiter1997`                           |
-| Transformers replaced recurrence                                           | Cite `vaswani2017`                              |
-| Mamba's state update depends on the input; cost grows linearly with length | Cite `gu2023` (abstract)                        |
-| Fixed-state models struggle to copy long passages that transformers copy   | Cite `jelassi2024` (abstract)                   |
+| Claim                                                                                                                  | Backing                                         |
+| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Recurrent networks predate transformers                                                                                | Cite `elman1990`                                |
+| The tiny model's memory is 32 numbers however much it has read                                                         | `CharRNN` test                                  |
+| After the widget's 1,500 training steps, it expects _u_ after "humpty d"                                               | Test (same seed and batches as the widget)      |
+| GPT-2 keeps 2 × 12 × 768 = 18,432 numbers per token, up to 1,024 tokens                                                | `canonical.json`; test; widget computes from it |
+| The LSTM added gates that learn what to keep and forget                                                                | Cite `hochreiter1997`                           |
+| Transformers replaced recurrence                                                                                       | Cite `vaswani2017`                              |
+| Mamba's state update depends on the input; cost grows linearly with length                                             | Cite `gu2023` (abstract)                        |
+| Fixed-state models struggle to copy long passages that transformers copy                                               | Cite `jelassi2024` (abstract)                   |
+| Simple: restates Standard in plainer words, with no new claims                                                         | Reviewed against the Standard text              |
+| In depth: h_t = tanh(W_h h_{t−1} + W_x x_t + b), p = softmax(W_y h_t + c), as in the tiny model                        | Implementation (`rnn.ts`); cite `elman1990`     |
+| In depth: tanh keeps the memory between −1 and 1; trained by backpropagation through the steps                         | `rnn.ts`; test                                  |
+| In depth: the error passes through W_h and tanh's slope (at most 1) at every step, so it fades or blows up             | Cite `hochreiter1997` (abstract and §3)         |
+| In depth: the LSTM's cell is carried forward by addition (constant error carousel), with gates for writing and reading | Cite `hochreiter1997` (abstract)                |
+| In depth: GPT-2 at 1,024 tokens keeps 18,874,368 numbers; the tiny model 32                                            | Test (`canonical.json`)                         |
 
 ## Ch 33. Seeing pictures
 
-| Claim                                                                                                                                                   | Backing                               |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                |
-| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data) |
-| Identical background patches get identical vectors                                                                                                      | Test                                  |
-| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)         |
-| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                  |
-| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                        |
+| Claim                                                                                                                                                   | Backing                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                         |
+| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data)          |
+| Identical background patches get identical vectors                                                                                                      | Test                                           |
+| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)                  |
+| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                           |
+| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                                 |
+| Simple: restates Standard in plainer words, with no new claims                                                                                          | Reviewed against the Standard text             |
+| In depth: 32 × 32 × 3 = 3,072 numbers per patch, one learned matrix to 768, plus position                                                               | Cite `dosovitskiy2021` (§3.1); test            |
+| In depth: a class token makes 50 vectors; its output stands for the picture; CLIP's shared space has 512 numbers                                        | Cite `dosovitskiy2021`; test (recorded config) |
+| In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                |
+| In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                |
 
 ## Ch 34. Painting from noise
 
-| Claim                                                                     | Backing                                   |
-| ------------------------------------------------------------------------- | ----------------------------------------- |
-| Train by adding noise in steps and predicting it; generate by removing it | Cite `sohl-dickstein2015`, `ho2020`       |
-| The toy learns to turn noise into the shape                               | Test (ring), gradient checks; e2e         |
-| Latent diffusion works on a compressed image and can be steered by text   | Cite `rombach2022`                        |
-| The original recipe used 1,000 steps; the toy uses 50                     | Cite `ho2020` (T = 1000); `STEPS` in code |
+| Claim                                                                                                        | Backing                                                   |
+| ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| Train by adding noise in steps and predicting it; generate by removing it                                    | Cite `sohl-dickstein2015`, `ho2020`                       |
+| The toy learns to turn noise into the shape                                                                  | Test (ring), gradient checks; e2e                         |
+| Latent diffusion works on a compressed image and can be steered by text                                      | Cite `rombach2022`                                        |
+| The original recipe used 1,000 steps; the toy uses 50                                                        | Cite `ho2020` (T = 1000); `STEPS` in code                 |
+| Simple: restates Standard in plainer words, with no new claims                                               | Reviewed against the Standard text                        |
+| In depth: the toy's β grows from 0.001 to 0.2 over 50 steps                                                  | Test (`BETAS`)                                            |
+| In depth: x_t = √ᾱ_t x_0 + √(1 − ᾱ_t) ε in one go; loss is the squared error of the predicted noise          | Cite `ho2020` (eq. 4, eq. 14); `diffusion.ts`             |
+| In depth: after 50 steps ᾱ ≈ 0.0045, under 7% of the point left                                              | Test                                                      |
+| In depth: the sampling step x_{t−1} = (x_t − β_t/√(1 − ᾱ_t) ε̂)/√(1 − β_t) + σ_t z, no fresh noise at the end | Cite `ho2020` (Algorithm 2); `generate` in `diffusion.ts` |
 
 ## Ch 35. Recap
 
