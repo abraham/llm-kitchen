@@ -36,8 +36,9 @@
 	--c-harness-ink: #334155;
 	--c-harness-tint: #e6e9ee;
 
-	--font-serif: 'Source Serif 4 Variable', 'Iowan Old Style', Georgia, serif;
-	--font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	/* System fonts only: nothing to download, so text never reflows when a web font arrives. */
+	--font-serif: 'Iowan Old Style', Charter, 'Bitstream Charter', Georgia, 'Noto Serif', serif;
+	--font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 	--font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 
 	--measure: 68ch;

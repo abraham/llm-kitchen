@@ -93,7 +93,7 @@ jobs:
   ci-success:
     name: ci-success
     if: always()
-    needs: [checks, build-e2e]
+    needs: [checks, build-e2e, lighthouse]
     runs-on: ubuntu-latest
     steps:
       - name: All CI jobs passed
