@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import TextToNumbers from './TextToNumbers.svelte';
@@ -14,13 +15,34 @@ into its number.
 
 ## One number per character
 
+<At levels="simple">
+
+Every character has an agreed number, set by the Unicode Standard: capital *T* is 84, and a space
+is 32. There are numbers for most of the world's writing systems, and for emoji too. Try typing *é*
+or 🐱.<Cite id="unicode" />
+
+</At>
+<At levels="standard deep">
+
 Every character has an agreed number, set by the Unicode Standard. Capital *T* is 84, a lowercase
 *h* is 104, and a space is 32. Unicode has room for more than a million characters, covering most
 of the world's writing systems, plus emoji.<Cite id="unicode" />
 
 Try typing *é* or 🐱. They get numbers too, just bigger ones: *é* is 233 and 🐱 is 128,049.
 
+</At>
+
 ## Bytes: how the numbers are stored
+
+<At levels="simple">
+
+Computers store those numbers in small pieces called **bytes**. One byte only holds a number up to
+255, so bigger numbers take several bytes. Switch the widget to *UTF-8 bytes* to see it: *é* takes
+two bytes, and 🐱 takes four. GPT-2 reads text as these bytes, so it can read any text at
+all.<Cite id="radford2019" />
+
+</At>
+<At levels="standard deep">
 
 Computers store numbers in **bytes**, and one byte can only hold a number from 0 to 255. A common
 way to store text, called UTF-8, uses one byte for the basic English letters, digits, and
@@ -31,12 +53,42 @@ GPT-2, the model used in this site, starts from these bytes. Its designers chose
 model could read any text at all, in any language, without a special case for each
 one.<Cite id="radford2019" />
 
+</At>
+<At levels="deep">
+
+### How UTF-8 packs a number into bytes
+
+Unicode numbers its characters from 0 to 1,114,111 (written U+0000 to U+10FFFF).<Cite id="unicode" />
+UTF-8 picks how many bytes a character gets from its number $c$: one byte when $c < 128$, two when
+$c < 2{,}048$, three when $c < 65{,}536$, and four for the rest.<Cite id="rfc3629" /> For a
+two-byte character, the bytes are
+
+$$
+b_1 = 192 + \left\lfloor \frac{c}{64} \right\rfloor, \qquad b_2 = 128 + (c \bmod 64)
+$$
+
+where $\lfloor \cdot \rfloor$ rounds down and $c \bmod 64$ is the remainder after dividing by 64.
+For *é*, $c = 233$: 233 is 3 sixty-fours with 41 left over, so the bytes are 195 and 169. Three-
+and four-byte characters split $c$ the same way, six bits per byte after the first.
+
+The scheme was built for two things. Text in plain English, with every character below 128, is
+the same byte for byte as the older ASCII code. And every byte after the first in a character
+starts with the bits 10 (a value from 128 to 191), so a reader dropped anywhere in a stream of
+bytes can find where the next character starts.<Cite id="rfc3629" />
+
+</At>
+
 <RecapCard>
 
 - Computers only work with numbers, so text must be turned into numbers first.
 - Unicode gives every character a number, like 84 for *T*.
 - UTF-8 stores those numbers as bytes: one for basic English letters, up to four for others.
 
+<At levels="deep">
+
+- UTF-8 uses one byte below 128, two below 2,048, three below 65,536, and four for the rest.
+
+</At>
 </RecapCard>
 
 **Next question:** now the text is numbers, one per character. But GPT-2 doesn't read single

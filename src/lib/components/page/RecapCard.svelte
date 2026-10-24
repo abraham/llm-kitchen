@@ -37,4 +37,9 @@
 	.recipe :global(ul) {
 		padding-left: var(--space-6);
 	}
+
+	/* A level's extra points continue the list above them instead of starting a new one. */
+	.recipe :global([data-levels] > ul:first-child) {
+		margin-top: calc(-1 * var(--space-4));
+	}
 </style>

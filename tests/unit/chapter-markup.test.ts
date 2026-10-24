@@ -15,4 +15,16 @@ describe('chapter markup', () => {
 				});
 		}
 	});
+
+	it('starts each level passage on its own (otherwise markdown folds it into the paragraph above)', () => {
+		for (const file of readdirSync(dir, { recursive: true, encoding: 'utf8' }).filter((f) =>
+			f.endsWith('.svx')
+		)) {
+			const lines = readFileSync(`${dir}/${file}`, 'utf8').split('\n');
+			lines.forEach((line, i) => {
+				if (!/^<At\b/.test(line) || i === 0) return;
+				expect(lines[i - 1], `${file}:${i + 1}`).toMatch(/^(\s*|<\/At>|<RecapCard>)$/);
+			});
+		}
+	});
 });

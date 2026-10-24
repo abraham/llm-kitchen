@@ -21,3 +21,6 @@ Computed in the browser.
 - It opens Representation, answering the question that ends
   [Probability and sampling](probability-and-sampling.md): text → numbers → tokens → vectors is one
   story.
+- [Levels](../levels.md): Simple keeps _T_ = 84 and the idea of bytes, without the byte ranges. In
+  depth gives UTF-8's byte counts by code point, the two-byte formula worked for _é_, and why the
+  design keeps ASCII and lets a reader find character boundaries.
