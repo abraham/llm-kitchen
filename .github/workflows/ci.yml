@@ -50,10 +50,8 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-      - if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      # No --with-deps: the runner image already has Chrome's libraries, and apt mirrors can take minutes.
+      - run: npx playwright install chromium
       - run: npm run build
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/3
       - if: failure()
@@ -85,10 +83,8 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
-      - if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
-      - if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+      # No --with-deps: the runner image already has Chrome's libraries, and apt mirrors can take minutes.
+      - run: npx playwright install chromium
       - run: npm run build
       - run: npm run test:lighthouse -- --shard=${{ matrix.shard }}/4
       - if: failure()

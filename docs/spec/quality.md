@@ -31,7 +31,8 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
   added, renamed, or split without changing branch protection; new jobs must be added to its
   `needs`.
 - Node comes from `.nvmrc`. Dependencies install with `npm ci` and the npm cache; Playwright browsers
-  are cached by version.
+  are cached by version. Chromium runs on the libraries already in the runner image; installing
+  them with apt (`--with-deps`) took up to 5 minutes when a mirror was slow.
 - Workflows default to `permissions: contents: read`, pin actions to full versions (locked in
   `.github/workflows/actions.lock` by `gh actions-lock`; Dependabot proposes updates), and cancel
   superseded runs on the same branch with `concurrency`.
