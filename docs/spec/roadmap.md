@@ -32,6 +32,12 @@ belongs to and remove it here.
   have. A rate-limited serverless proxy for a hosted demo would leave the static scope and is a
   separate decision.
 
+## Security
+
+- **Hardening:** a complete worker policy, stronger HSTS, workflow and dependency audits in CI, no
+  install scripts, hash-checked model files, and a guard test. The list and how each is checked are
+  in [security.md](security.md#hardening).
+
 ## Content
 
 - **Math sidebar:** an optional panel per chapter with the equations behind the idea.

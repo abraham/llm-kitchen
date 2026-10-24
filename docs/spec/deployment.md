@@ -38,7 +38,8 @@
 
 ## Headers
 
-Set in `firebase.json`. `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
+Set in `firebase.json`. What they defend against, and the rules around them, are in
+[security.md](security.md). `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
 checks what is actually served: the e2e suite runs against the Firebase Hosting emulator
 (`npm run serve`, project `demo-llm-kitchen`, port 4173), which applies `firebase.json` like
 production. `firebase-tools` is a dev dependency; its `superstatic` is overridden to 11, the first

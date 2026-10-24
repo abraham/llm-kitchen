@@ -14,6 +14,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [models-and-data.md](models-and-data.md) | Recorded data and live models: tiers, the canonical model, recording scripts, and safety rules |
 | [quality.md](quality.md)                 | Checks, tests, accessibility, and performance budgets                                          |
 | [deployment.md](deployment.md)           | Hosting, deploys, preview channels, headers, and caching                                       |
+| [security.md](security.md)               | Attack surface, threats, security rules, and the hardening still to do                         |
 | [sources.md](sources.md)                 | How claims are backed: citations, fact-check lists, and the core sources                       |
 | [roadmap.md](roadmap.md)                 | What isn't built yet, and open questions                                                       |
 
