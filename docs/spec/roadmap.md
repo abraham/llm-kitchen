@@ -34,7 +34,9 @@ belongs to and remove it here.
 
 ## Content
 
-- **Math sidebar:** an optional panel per chapter with the equations behind the idea.
+- **Explanation levels:** Simple, Standard, and In depth, chosen in the app bar. In depth includes
+  the equations behind each idea (formerly the "math sidebar"). The plan and its phases are in
+  [levels.md](levels.md).
 - **Localization:** the site is English only. Translating means deciding whether to also swap the
   example corpora and re-record the data per language.
 - **Expert review:** pending; see [sources.md](sources.md).

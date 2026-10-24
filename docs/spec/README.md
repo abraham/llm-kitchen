@@ -16,6 +16,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [deployment.md](deployment.md)           | Hosting, deploys, preview channels, headers, and caching                                       |
 | [security.md](security.md)               | Attack surface, threats, security rules, reporting, and repository settings                    |
 | [sources.md](sources.md)                 | How claims are backed: citations, fact-check lists, and the core sources                       |
+| [levels.md](levels.md)                   | Plan: Simple, Standard, and In depth explanations, chosen in the app bar                       |
 | [roadmap.md](roadmap.md)                 | What isn't built yet, and open questions                                                       |
 
 ## Rules
