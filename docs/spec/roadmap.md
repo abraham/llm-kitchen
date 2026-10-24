@@ -32,47 +32,6 @@ belongs to and remove it here.
   have. A rate-limited serverless proxy for a hosted demo would leave the static scope and is a
   separate decision.
 
-## New chapters
-
-### Choosing actions (decision models)
-
-A chapter at the end of Other kinds of models about models that pick actions instead of words.
-
-- **Organization:** add _Choosing actions_ (`decision-models`) after
-  [Painting from noise](chapters/diffusion.md), building on
-  [Learning from mistakes](chapters/learning-from-mistakes.md),
-  [Generating text](chapters/generating-text.md), and [The agent loop](chapters/the-agent-loop.md).
-  It belongs in Other kinds of models because it changes what counts as a token. The Part grows to
-  six chapters; the Wrap-up's numbers move up by one, derived from `curriculum.ts`.
-- **Question:** "An agent picks actions by writing text. Could a model predict the actions
-  directly?"
-- **Key idea:** a run of a game becomes a sequence of tokens: the reward still to earn, what the
-  player sees, and what it does, step after step. A small transformer trained on recorded runs
-  predicts the next action the way GPT-2 predicts the next word. At run time you choose the reward
-  to aim for, and the model acts like the runs that earned it: a Decision Transformer. Contrast
-  with reinforcement learning, which learns by trial and error from rewards, and with the agent
-  loop, where a language model describes an action in text and the harness carries it out.
-- **Widget:** a small grid world (a start, a goal, and pits). A slider sets the target reward; the
-  model plays the game step by step in the browser, with the (reward, state, action) tokens shown
-  as a strip of chips under the grid. A low target wanders, a high one heads for the goal, and an
-  impossible one shows what the model does outside its training data.
-- **Data:** a recording script generates runs from a mix of random and scripted players, trains a
-  tiny transformer offline, and ships its weights as JSON (computed in the browser, like the
-  Painting from noise toy). Labeled as a toy.
-- **Levels:** Simple keeps to "it copies runs that scored well"; In depth shows the token layout,
-  the return-to-go arithmetic, and how a model trained on mixed-quality runs can still aim high.
-- **Links:** Painting from noise's Next question leads into it, and its own leads into the Wrap-up.
-  Add it to the recap paragraph and diagram, the closing box of
-  [From message to reply](chapters/end-to-end.md), and a quiz question.
-- **Sources:** Chen et al. 2021 (Decision Transformer), Reed et al. 2022 (Gato, one transformer
-  for text, images, and actions), and Sutton and Barto 2018 (reinforcement learning).
-- **Tests:** unit tests that the grid world's rewards and the token layout match the prose and
-  that the shipped model reaches the goal for high targets; an e2e test that moves the slider and
-  steps through a run; axe and phone-width checks.
-- _Done when:_ the chapter, its spec, and its fact-check entries exist, the toy model reaches the
-  goal for high targets and not for low ones, and curriculum.md, `curriculum.ts`, and the spec
-  test agree.
-
 ## Content
 
 - **Localization:** the site is English only. Translating means deciding whether to also swap the

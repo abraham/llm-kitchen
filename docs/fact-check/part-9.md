@@ -1,4 +1,4 @@
-# Fact-check: Part IX, Other kinds of models (Ch 31–35), and the wrap-up (Ch 36–39)
+# Fact-check: Part IX, Other kinds of models (Ch 31–36), and the wrap-up (Ch 37–40)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts` (the recorded data says what the prose says),
@@ -11,6 +11,9 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
   `scripts/record/encoder.py`.
 - `static/vision/`: pictures drawn by `scripts/record/clip.py` (no licensing questions) and CLIP
   ViT-B/32's patch vectors and caption similarities.
+- `static/data/decisions/grid.json`: the grid world, a summary of 4,000 generated training runs,
+  and the weights of the toy Decision Transformer trained on them, by `scripts/record/decisions.py`
+  (seeded; the model's revision is the SHA-1 of the script).
 
 ## Ch 31. Reading both ways
 
@@ -94,19 +97,44 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: after 50 steps ᾱ ≈ 0.0045, under 7% of the point left                                              | Test                                                      |
 | In depth: the sampling step x_{t−1} = (x_t − β_t/√(1 − ᾱ_t) ε̂)/√(1 − β_t) + σ_t z, no fresh noise at the end | Cite `ho2020` (Algorithm 2); `generate` in `diffusion.ts` |
 
-## Ch 36. Recap
+## Ch 36. Choosing actions
 
-The diagram restates earlier chapters; each box links to its chapter. The quiz moved to Ch 39 in
-milestone 20.
+| Claim                                                                                                                                                     | Backing                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Reinforcement learning learns by trial and error from rewards                                                                                             | Cite `sutton2018`                                       |
+| A Decision Transformer learns from recorded runs and predicts the next action from the return still to earn, past states and actions                      | Cite `chen2021decision` (abstract)                      |
+| The game: 5 × 5, start A1, goal E5, pits B4, D3, B2; −1 a move, +20 the goal, −10 more for a pit; 16 moves                                                | Test (recorded world; `move`)                           |
+| Best score 12: 8 moves, 20 − 8                                                                                                                            | Test                                                    |
+| 4,000 runs: 1,365 random, 2,635 scripted with a 10–70% chance of a random move                                                                            | Test; `decisions.py`                                    |
+| 2,272 fell into a pit, 368 ran out of moves, 1,360 reached the goal, 413 scored 12                                                                        | Test                                                    |
+| Three tokens per step: still to earn, cell, move; the first run's tokens 12, A1, →                                                                        | `decisions.py` (token layout); test                     |
+| Same masked attention as GPT-2                                                                                                                            | `decisions.py` and `decision.ts` (causal mask); Ch 9    |
+| Aim 12: 8 moves to the goal; aim 8: 12 moves, scores 8; every target 4–12 exact                                                                           | Test (browser forward pass)                             |
+| Aim −14: a pit on the fourth move, −14                                                                                                                    | Test                                                    |
+| No run scored −11 to 3; −10 to −2 run out of moves (−16); −1 to 3 score 4                                                                                 | Test                                                    |
+| Above 12 plays the same 8 moves as 12                                                                                                                     | Test                                                    |
+| The browser runs the same network as the script                                                                                                           | Test (moves and first scores match the recorded checks) |
+| Decision Transformers matched or beat model-free offline RL on Atari and Gym (simulated robots)                                                           | Cite `chen2021decision` (abstract)                      |
+| Gato: one network, same weights, plays Atari, captions images, chats, stacks blocks with a real robot arm; outputs text, joint torques, or button presses | Cite `reed2022` (abstract)                              |
+| Simple: restates Standard in plainer words, with no new claims                                                                                            | Reviewed against the Standard text                      |
+| In depth: 24 numbers per token; return scaled by 1/20; tables for cells and moves; a step embedding on every token                                        | `decisions.py`; test (width)                            |
+| In depth: 2 blocks of 2 heads; moves read at cell tokens; 48 tokens for 16 moves; 15,772 weights; 4,000 steps of 128 runs, cross-entropy on moves         | Test; `decisions.py`                                    |
+| In depth: R̂_t = r_t + r_{t+1} + …, R̂_{t+1} = R̂_t − r_t; aiming 12 the tokens go 12 … 19, and the goal pays 19                                             | Cite `chen2021decision`; test                           |
+| In depth: many RL methods estimate the reward a move leads to and pick the best                                                                           | Cite `sutton2018`                                       |
+
+## Ch 37. Recap
+
+The diagram restates earlier chapters; each box links to its chapter. The quiz has been its own
+chapter (now Ch 40) since milestone 20.
 
 - [x] Simple: restates the summary paragraph in plainer words, with no new claims.
 - [x] In depth: GPT-2 in a few lines: h = W_E[x] + W_P[i] (Ch 5, 10); the block update (Ch 10's In
       depth); softmax(LN_f(h_n) W_Eᵀ / T) (Ch 10's logit lens, Ch 3's temperature); cross-entropy
       and the gradient step (Ch 7's In depth). Each formula restates its chapter.
 - [x] In depth: each other kind of model changes one line: the mask (Ch 31), the MLP (Ch 32),
-      attention itself (Ch 33), what a token is (Ch 34), how the output is made (Ch 35).
+      attention itself (Ch 33), what a token stands for (Ch 34, 36), how the output is made (Ch 35).
 
-## Ch 37. From message to reply
+## Ch 38. From message to reply
 
 Each stage restates the chapters it links (`src/lib/chapters/end-to-end/data.ts`); the unit test checks that
 every Part I–VIII is linked from a stage and Part IX from the closing box. Data comes from three
@@ -128,15 +156,16 @@ existing recordings, labeled in the widget:
       (`static/data/caching/kv-cache.json`, as in Ch 25).
 - [x] "The loop stops at an end-of-turn token": Ch 11 and Ch 15 (chat markers); the Qwen prompt
       ends each turn with `<|im_end|>`.
-- [x] The closing box's one-line summaries match Ch 31–35 (both-ways attention; part of the network
-      per token; fixed-size memory; picture patches as tokens; refined from noise).
+- [x] The closing box's one-line summaries match Ch 31–36 (both-ways attention; part of the network
+      per token; fixed-size memory; picture patches as tokens; refined from noise; game moves as
+      tokens).
 - [x] Simple: restates the intro and the two-loops paragraphs, with no new claims.
 - [x] In depth: call 1 wrote a 21-token tool call and call 2 a 59-token reply (Qwen tokenizer, record
       environment); the harness stops at `</tool_call>` (`stop_strings` in `record/agent.py`);
       with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
       21 + 59 + the end-of-turn token.
 
-## Ch 38. Picking a model
+## Ch 39. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
@@ -163,9 +192,9 @@ every name splits into known parts that spell it back.
 | In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 25 In depth (`qwen2024`, config); test                             |
 | In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
 
-## Ch 39. Check yourself
+## Ch 40. Check yourself
 
-Fourteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
+Fifteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
@@ -175,7 +204,9 @@ has at least one. Each answer restates its linked chapter:
 - [x] Speculative decoding writes exactly the big model's text in fewer passes (Ch 14; added in
       milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 25, 27, 29, 30,
-      31). The e2e test answers all fourteen and checks the revisit list.
+      31). The e2e test answers all fifteen and checks the revisit list.
+- [x] A Decision Transformer asked for more than any training run scored plays like the best runs
+      it has seen (Ch 36; added with the chapter).
 - [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
       prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 25 with no new
       claims.

@@ -200,7 +200,7 @@
 			what: 'The same pieces, with one of them changed.',
 			chapters: ['encoders'],
 			color: 'weight',
-			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion']
+			children: ['encoders', 'experts', 'recurrent', 'vision', 'diffusion', 'decisions']
 		},
 		encoders: {
 			id: 'encoders',
@@ -236,6 +236,13 @@
 			what: 'Make a picture by removing noise, a little at every step.',
 			chapters: ['diffusion'],
 			color: 'weight'
+		},
+		decisions: {
+			id: 'decisions',
+			name: 'Decision models',
+			what: 'Game moves become the tokens; aim for a score and it plays like the runs that earned it.',
+			chapters: ['decision-models'],
+			color: 'prob'
 		},
 		reasoning: {
 			id: 'reasoning',

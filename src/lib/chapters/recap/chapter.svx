@@ -22,7 +22,7 @@ sets the numbers inside by making the right next tokens more likely (<ChapterRef
 predicting and picking (<ChapterRef to="generating-text" />). Tuning makes the model an **assistant** (<ChapterRef to="predictor-to-assistant" />). A prompt is the
 start of a document for the model to continue (<ChapterRef to="prompts-as-documents" through="where-prompts-break" />). A **harness** around the model adds
 memory and picks which model answers (<ChapterRef to="the-model-is-not-the-product" through="routing" />), and lets it use **tools** safely (<ChapterRef to="tools" through="trust-and-guardrails" />). Other kinds of models change one piece and
-keep the rest (<ChapterRef to="encoders" through="diffusion" />).
+keep the rest (<ChapterRef to="encoders" through="decision-models" />).
 
 </At>
 <At levels="standard deep">
@@ -42,7 +42,7 @@ and a choice of which model answers (<ChapterRef to="the-model-is-not-the-produc
 loop, with guardrails against prompt injection (<ChapterRef to="tools" through="trust-and-guardrails" />). Other kinds
 of models change one piece and keep the rest: encoders read both ways, mixtures of experts use part
 of themselves per token, recurrent models keep a fixed memory, vision models read patches, and
-diffusion models paint from noise (<ChapterRef to="encoders" through="diffusion" />).
+diffusion models paint from noise, and decision models predict moves instead of words (<ChapterRef to="encoders" through="decision-models" />).
 
 </At>
 <At levels="deep">
@@ -69,7 +69,8 @@ $$L = -\frac{1}{N} \sum_{i=1}^{N} \ln p(x_i \mid x_1, \dots, x_{i-1}), \qquad w 
 
 Tuning changes the weights, not these lines. Prompts and harnesses change the tokens that go in,
 and what happens to the ones that come out. The other kinds of models each change one line: the
-attention mask, the MLP, attention itself, what a token is, or how the output is made.
+attention mask, the MLP, attention itself, what a token stands for (a patch of a picture, or a step
+of a game), or how the output is made.
 
 </At>
 

@@ -85,6 +85,8 @@ export const ROWS = [
 		'Cut a picture into patches and a transformer can read it like text. See CLIP, a real model, match simple pictures with captions.'],
 	['diffusion', 'Painting from noise', 'others', ['learning-from-mistakes', 'generating-text'],
 		'Image models start from random noise and remove a little at a time. See how diffusion turns static into a picture, step by step.'],
+	['decision-models', 'Choosing actions', 'others', ['learning-from-mistakes', 'generating-text', 'the-agent-loop'],
+		'Turn a game into tokens and a small transformer predicts moves instead of words. Pick a score to aim for and watch it play.'],
 	['recap', 'Recap: the whole picture', 'wrapup', [],
 		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.'],
 	['end-to-end', 'From message to reply', 'wrapup', [],
@@ -92,5 +94,5 @@ export const ROWS = [
 	['picking-a-model', 'Picking a model', 'wrapup', ['scale', 'quantization', 'speculative-decoding', 'predictor-to-assistant', 'caching', 'mixture-of-experts', 'seeing-pictures'],
 		'Model names pack in size, tuning, experts, and bits per weight. Learn to read them, and see whether a model fits your device.'],
 	['quiz', 'Check yourself', 'wrapup', [],
-		'Fourteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
+		'Fifteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
 ] as const satisfies readonly Row[];

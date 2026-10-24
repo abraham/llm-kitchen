@@ -23,7 +23,8 @@ describe('from message to reply', () => {
 			'mixture-of-experts',
 			'recurrent-models',
 			'seeing-pictures',
-			'diffusion'
+			'diffusion',
+			'decision-models'
 		]);
 	});
 

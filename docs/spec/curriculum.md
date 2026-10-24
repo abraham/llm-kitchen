@@ -130,6 +130,7 @@ _What else is built from the same pieces?_
 | 33  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
 | 34  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
 | 35  | Painting from noise           | `diffusion`          | 7, 11     |
+| 36  | Choosing actions              | `decision-models`    | 7, 11, 28 |
 
 ### Wrap-up
 
@@ -137,10 +138,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug              | Builds on                  |
 | --- | ------------------------ | ----------------- | -------------------------- |
-| 36  | Recap: the whole picture | `recap`           | —                          |
-| 37  | From message to reply    | `end-to-end`      | —                          |
-| 38  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 32, 34 |
-| 39  | Check yourself           | `quiz`            | —                          |
+| 37  | Recap: the whole picture | `recap`           | —                          |
+| 38  | From message to reply    | `end-to-end`      | —                          |
+| 39  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 32, 34 |
+| 40  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -163,7 +164,8 @@ _How does it all fit together?_ Unnumbered Part.
   loop, and the attacks and guardrails that come with them follow as their own Part, because a
   model that acts raises a different question: how do you keep it safe?
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
-  they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid.
+  they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid, and
+  the agent loop (Ch 28) that decision models replace with predicted moves.
 - **The Wrap-up puts it together.** The recap shows what the pieces are, From message to reply shows
   the order they run in, Picking a model reads real model names with everything taught so far, and
   the quiz comes last.
