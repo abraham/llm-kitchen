@@ -4,6 +4,7 @@
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import StepController from '#lib/components/layout/StepController.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
@@ -58,9 +59,8 @@
 {/snippet}
 
 {#snippet promptText(parts: PromptPart[], label: string)}
-	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-	<pre class="raw" tabindex="0" aria-label={label}>{#each parts as p, i (i)}<span class={p.kind}
-				>{p.text}</span
+	<pre class="raw" {@attach scrollable} aria-label={label}>{#each parts as p, i (i)}<span
+				class={p.kind}>{p.text}</span
 			>{/each}</pre>
 {/snippet}
 

@@ -3,6 +3,7 @@
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import StepController from '#lib/components/layout/StepController.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { positionsProcessed } from '#lib/harness/cache.ts';
@@ -58,8 +59,12 @@
 				<label><input type="radio" name="{id}-c" bind:group={cache} value={true} /> On</label>
 			</fieldset>
 
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<div class="scroll" tabindex="0" role="region" aria-label="Which tokens each step runs">
+			<div
+				class="scroll"
+				{@attach scrollable}
+				role="region"
+				aria-label="Which tokens each step runs"
+			>
 				<table>
 					<caption class="visually-hidden"
 						>For each step, which tokens go through the model and which are reused from the cache</caption

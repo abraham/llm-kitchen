@@ -11,7 +11,7 @@
 	const KEYS = ['w1', 'b1', 'w2'] as const;
 	type Params = Record<'w1' | 'b1' | 'w2' | 'b2', Float64Array>;
 
-	let trainer = $state(new CurveTrainer(new CurveNet(HIDDEN, 7)));
+	let trainer = $state.raw(new CurveTrainer(new CurveNet(HIDDEN, 7)));
 	let losses = $state<number[]>([]);
 	let running = $state(false);
 	let frame = 0;

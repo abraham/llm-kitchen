@@ -1,6 +1,7 @@
 <script lang="ts">
 	import StepController from '#lib/components/layout/StepController.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { RHYMES } from '#lib/data/rhymes.ts';
@@ -77,9 +78,7 @@
 			Counts so far: {seen.length} of {pairs.length} pairs
 			{#if current}· just counted <strong class="mono">{current.from} → {current.to}</strong>{/if}
 		</p>
-		<!-- A scrollable region must be focusable so keyboard users can scroll it (WCAG 2.1.1). -->
-		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-		<div class="table" role="region" aria-label="Next-word counts" tabindex="0">
+		<div class="table" role="region" aria-label="Next-word counts" {@attach scrollable}>
 			{#each rows as [from, followers] (from)}
 				<div class="row" class:active={current?.from === from}>
 					<span class="mono from">{from} →</span>

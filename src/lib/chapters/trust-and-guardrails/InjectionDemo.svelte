@@ -2,6 +2,7 @@
 	import { all, then, useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun } from '#lib/harness/agent.ts';
 	import { FakeFiles, INJECTED_PAGE, START_FILES, runTool } from '#lib/harness/tools.ts';
@@ -74,8 +75,7 @@
 				{/each}
 			</fieldset>
 
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<ol class="log" tabindex="0" aria-label="What the agent did">
+			<ol class="log" {@attach scrollable} aria-label="What the agent did">
 				{#each v.steps as s, i (i)}
 					<li>
 						{#if s.call}
