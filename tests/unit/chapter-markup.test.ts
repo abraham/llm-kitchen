@@ -22,8 +22,12 @@ describe('chapter markup', () => {
 		)) {
 			const lines = readFileSync(`${dir}/${file}`, 'utf8').split('\n');
 			lines.forEach((line, i) => {
-				if (!/^<At\b/.test(line) || i === 0) return;
-				expect(lines[i - 1], `${file}:${i + 1}`).toMatch(/^(\s*|<\/At>|<RecapCard>)$/);
+				if (/^<At\b/.test(line) && i > 0) {
+					expect(lines[i - 1], `${file}:${i + 1}`).toMatch(/^(\s*|<\/At>|<RecapCard>)$/);
+				}
+				if (/^<\/At>/.test(line) && i + 1 < lines.length) {
+					expect(lines[i + 1], `${file}:${i + 1}`).toMatch(/^(\s*|<At\b.*|<\/RecapCard>)$/);
+				}
 			});
 		}
 	});

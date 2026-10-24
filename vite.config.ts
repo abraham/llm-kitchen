@@ -46,6 +46,8 @@ export default defineConfig({
 	],
 	// Tokenizers and Transformers.js are large but only loaded on demand (dynamic import / worker).
 	build: { chunkSizeWarningLimit: 3000 },
+	// ES workers keep dynamic imports as separate chunks, so a tokenizer only downloads its own vocabulary.
+	worker: { format: 'es' },
 	test: {
 		expect: { requireAssertions: true },
 		environment: 'node',

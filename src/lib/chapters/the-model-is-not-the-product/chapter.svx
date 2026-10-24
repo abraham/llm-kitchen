@@ -82,15 +82,15 @@ search result, wrapped in `<tool_response>` tags in a new user turn.
 
 The reply you see is the harness's work too: it reads what the model wrote, runs any tools it
 asked for, and shows you only the answer. The same model can feel very different inside a
-different harness. The next four chapters look at its jobs one by one.
+different harness. The chapters ahead look at its jobs one by one.
 
 </At>
 <At levels="standard deep">
 
 The reply you see is also the harness's work: it reads what the model wrote, spots tool calls,
 runs them, and shows you only the final answer. The same model can feel very different depending
-on the harness around it: its instructions, its tools, and the rules it enforces. The next four
-chapters look at each job in turn.
+on the harness around it: its instructions, its tools, and the rules it enforces. The chapters
+ahead look at each job in turn.
 
 </At>
 
