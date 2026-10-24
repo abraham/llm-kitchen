@@ -98,6 +98,8 @@ the trust boundary, so it stays limited to maintainers.
   and the preview job `pull-requests: write` and `checks: write` for its comment.
 - Actions are locked to commits in `.github/workflows/actions.lock` (see
   [quality.md](quality.md#ci)).
+- Every `actions/checkout` sets `persist-credentials: false`, so later steps can't read or push with
+  the job's token from `.git/config`. No job pushes.
 - Deploys authenticate with OIDC, run `firebase-tools` at the lockfile's version, and use the
   `production` environment (default branch only) or `preview` (see
   [deployment.md](deployment.md)).
@@ -108,36 +110,34 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **No stored Git credentials.** Every `actions/checkout` sets `persist-credentials: false`; no job
-   pushes.
-2. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
+1. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
    `.github/workflows/` and fails on any finding of medium severity or higher.
-3. **Dependency review.** Pull requests that change `package-lock.json` run
+2. **Dependency review.** Pull requests that change `package-lock.json` run
    `actions/dependency-review-action`, which fails on a new dependency with a known vulnerability of
    high severity or higher.
-4. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
+3. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
    (`cooldown: default-days: 7`), so a hijacked release is usually caught and pulled before it
    reaches the lockfile. Dependabot security updates stay immediate.
-5. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
+4. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
    scripts: `onnxruntime-node` and `protobufjs`, which the site doesn't run, and `re2`, a native
    module the Hosting emulator may need. If the emulator breaks without it, CI runs
    `npm rebuild re2` after `npm ci`, and the README says to do the same.
-6. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
+5. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
    ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
    script verifies them, and the worker checks each download's hash before loading it, through
    Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
    script check and the reason is recorded here.
-7. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+6. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-8. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+7. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-9. **Repository settings,** recorded here because no file holds them: secret scanning with push
+8. **Repository settings,** recorded here because no file holds them: secret scanning with push
    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-10. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
-    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
-    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
-    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
+9. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+   [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
+   recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
+   `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
 
 When an item lands, its description moves into [Rules](#rules) and it leaves this list.
 
