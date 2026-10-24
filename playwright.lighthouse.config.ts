@@ -11,6 +11,8 @@ export const DEBUG_PORT = 9222;
 export default defineConfig({
 	testDir: 'tests/lighthouse',
 	testMatch: '**/*.lh.ts',
+	// Lets CI shards split the pages; each shard still runs them one at a time.
+	fullyParallel: true,
 	workers: 1,
 	timeout: 120_000,
 	forbidOnly: !!process.env.CI,
