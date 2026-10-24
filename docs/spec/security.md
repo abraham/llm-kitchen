@@ -105,36 +105,37 @@ the trust boundary, so it stays limited to maintainers.
   [deployment.md](deployment.md)).
 - No workflow uses `pull_request_target` or `workflow_run`, or puts `${{ github.event.* }}` text
   into a `run:` script.
+- The `checks` job runs [zizmor](https://docs.zizmor.sh) (pinned) on `.github/workflows/`, with its
+  online audits, and fails on any finding of medium severity or higher. `.github/zizmor.yml` accepts
+  tag references, because `actions.lock` locks each tag to a commit.
 
 ## Hardening
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
-   `.github/workflows/` and fails on any finding of medium severity or higher.
-2. **Dependency review.** Pull requests that change `package-lock.json` run
+1. **Dependency review.** Pull requests that change `package-lock.json` run
    `actions/dependency-review-action`, which fails on a new dependency with a known vulnerability of
    high severity or higher.
-3. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
+2. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
    (`cooldown: default-days: 7`), so a hijacked release is usually caught and pulled before it
    reaches the lockfile. Dependabot security updates stay immediate.
-4. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
+3. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
    scripts: `onnxruntime-node` and `protobufjs`, which the site doesn't run, and `re2`, a native
    module the Hosting emulator may need. If the emulator breaks without it, CI runs
    `npm rebuild re2` after `npm ci`, and the README says to do the same.
-5. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
+4. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
    ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
    script verifies them, and the worker checks each download's hash before loading it, through
    Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
    script check and the reason is recorded here.
-6. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+5. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-7. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+6. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-8. **Repository settings,** recorded here because no file holds them: secret scanning with push
+7. **Repository settings,** recorded here because no file holds them: secret scanning with push
    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-9. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+8. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
