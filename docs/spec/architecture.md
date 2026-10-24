@@ -111,7 +111,8 @@ per folder in `eslint.config.js`; tests are exempt):
    globals.
 
 A widget used by one chapter lives in that chapter's folder. It moves to `components/widgets/` when
-a second chapter uses it, and back when only one does.
+a second chapter uses it, and back when only one does. How `components/` is organized, and the
+conventions every shared component follows, are in [components.md](components.md).
 
 ## Curriculum and chapter identity
 
