@@ -30,8 +30,9 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 Please read each Part on the deployed preview and log findings as issues. Things worth a close look:
 
 - The simplifications: the made-up numbers in Ch 9's query/key/value walkthrough, the training
-  stages in Ch 15, and the toy harness in Part VII. Each is labeled in the text, but check that none
-  of them teaches something false.
+  stages in Ch 15, and the toy harness in Parts VII and VIII. Each is labeled in the text, but check
+  that none of them teaches something false.
 - Interpretations of real data: the attention heads named in Ch 9 (9.6, 9.9, 9.0), the logit-lens
-  reading in Ch 10, and what the small Qwen models' failures in Part VII do and don't show.
+  reading in Ch 10, and what the small Qwen models' failures in Parts VII and VIII do and don't
+  show.
 - Anything stated without a citation that you'd expect to need one.

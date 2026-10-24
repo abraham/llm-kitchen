@@ -58,11 +58,11 @@ A few parts are worth a closer look:
   GGUF file for llama.cpp, a mobile version with some 2-bit layers, and 4-bit weights with 16-bit
   activations for the vLLM serving software.<Cite id="gemma4-qat" /><Cite id="gguf-quant-types" />
   `transformers`, `ct`, and `gguf` only say how the file is packaged.
-
-</At>
 - **`diffusiongemma`** is built on the 26B A4B model but writes by denoising a block of 256 tokens
   at a time instead of one token per pass, a cousin of the picture models
   in <ChapterRef to="diffusion" />.<Cite id="diffusiongemma-model-card" />
+
+</At>
 
 <At levels="simple">
 
