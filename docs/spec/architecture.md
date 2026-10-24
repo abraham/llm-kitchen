@@ -76,7 +76,7 @@ src/
     workers/                     the inference and trainer workers, with typed messages
     math/                        pure numeric code: sampling, BPE, MLP and backprop, attention, ...
     harness/                     pure toy harness: tools, agent loop, caching, injection
-    stores/                      progress, motion preferences
+    stores/                      progress, theme, motion preferences
     glossary.ts                  terms, definitions, and the slug of the chapter that introduces each
     references.json              the bibliography
     site.ts                      name, tagline, description, origin, URL helpers

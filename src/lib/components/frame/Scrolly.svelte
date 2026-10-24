@@ -69,7 +69,7 @@
 
 	.wide .figure {
 		position: sticky;
-		top: 15vh;
+		top: max(15vh, calc(var(--app-bar-height) + var(--space-4)));
 		align-self: start;
 	}
 

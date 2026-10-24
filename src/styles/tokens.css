@@ -1,40 +1,41 @@
 /*
- * Design tokens. Colors are hex so tests/unit/tokens.test.ts can check WCAG contrast.
+ * Design tokens. Colors are hex so tests/unit/tokens.test.ts can check WCAG contrast, written as
+ * light-dark(light, dark) so the page's color-scheme picks one.
  * Each concept has a fill color (shapes, lines), an ink color (text on the page and on the tint),
  * and a tint (chip and card backgrounds).
  */
 :root {
 	color-scheme: light dark;
 
-	--page: #fbf8f3;
-	--surface: #ffffff;
-	--surface-2: #f3eee6;
-	--ink: #1f1b16;
-	--ink-muted: #5c5349;
-	--rule: #ddd4c6;
-	--focus: #1d4ed8;
+	--page: light-dark(#fbf8f3, #1c1a17);
+	--surface: light-dark(#ffffff, #24211d);
+	--surface-2: light-dark(#f3eee6, #2c2823);
+	--ink: light-dark(#1f1b16, #ece6dc);
+	--ink-muted: light-dark(#5c5349, #b3a999);
+	--rule: light-dark(#ddd4c6, #3f3932);
+	--focus: light-dark(#1d4ed8, #93c5fd);
 
-	--c-token: #d97706;
-	--c-token-ink: #8a3c0b;
-	--c-token-tint: #fdf0d5;
-	--c-vector: #0d9488;
-	--c-vector-ink: #115e59;
-	--c-vector-tint: #d5f2ee;
-	--c-weight: #7c3aed;
-	--c-weight-ink: #5b21b6;
-	--c-weight-tint: #ece4fd;
-	--c-attention: #db2777;
-	--c-attention-ink: #9d174d;
-	--c-attention-tint: #fbe0ec;
-	--c-prob: #2563eb;
-	--c-prob-ink: #1e40af;
-	--c-prob-tint: #dde8fd;
-	--c-loss: #dc2626;
-	--c-loss-ink: #991b1b;
-	--c-loss-tint: #fbe0de;
-	--c-harness: #64748b;
-	--c-harness-ink: #334155;
-	--c-harness-tint: #e6e9ee;
+	--c-token: light-dark(#d97706, #f59e0b);
+	--c-token-ink: light-dark(#8a3c0b, #fbbf24);
+	--c-token-tint: light-dark(#fdf0d5, #3d2f12);
+	--c-vector: light-dark(#0d9488, #14b8a6);
+	--c-vector-ink: light-dark(#115e59, #2dd4bf);
+	--c-vector-tint: light-dark(#d5f2ee, #12332f);
+	--c-weight: light-dark(#7c3aed, #a78bfa);
+	--c-weight-ink: light-dark(#5b21b6, #c4b5fd);
+	--c-weight-tint: light-dark(#ece4fd, #2a2342);
+	--c-attention: light-dark(#db2777, #f472b6);
+	--c-attention-ink: light-dark(#9d174d, #f9a8d4);
+	--c-attention-tint: light-dark(#fbe0ec, #3a1d2b);
+	--c-prob: light-dark(#2563eb, #60a5fa);
+	--c-prob-ink: light-dark(#1e40af, #93c5fd);
+	--c-prob-tint: light-dark(#dde8fd, #1c2a44);
+	--c-loss: light-dark(#dc2626, #f87171);
+	--c-loss-ink: light-dark(#991b1b, #fca5a5);
+	--c-loss-tint: light-dark(#fbe0de, #3d1d1d);
+	--c-harness: light-dark(#64748b, #94a3b8);
+	--c-harness-ink: light-dark(#334155, #cbd5e1);
+	--c-harness-tint: light-dark(#e6e9ee, #2a2f37);
 
 	/* System fonts only: nothing to download, so text never reflows when a web font arrives. */
 	--font-serif: 'Iowan Old Style', Charter, 'Bitstream Charter', Georgia, 'Noto Serif', serif;
@@ -43,6 +44,7 @@
 
 	--measure: 68ch;
 	--wide: 1100px;
+	--app-bar-height: 3.5rem;
 	--radius: 6px;
 	--space-1: 0.25rem;
 	--space-2: 0.5rem;
@@ -56,38 +58,13 @@
 	--duration: 300ms;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--page: #1c1a17;
-		--surface: #24211d;
-		--surface-2: #2c2823;
-		--ink: #ece6dc;
-		--ink-muted: #b3a999;
-		--rule: #3f3932;
-		--focus: #93c5fd;
+/* The app bar's theme toggle overrides the visitor's system setting (stores/theme.svelte.ts). */
+:root[data-theme='light'] {
+	color-scheme: light;
+}
 
-		--c-token: #f59e0b;
-		--c-token-ink: #fbbf24;
-		--c-token-tint: #3d2f12;
-		--c-vector: #14b8a6;
-		--c-vector-ink: #2dd4bf;
-		--c-vector-tint: #12332f;
-		--c-weight: #a78bfa;
-		--c-weight-ink: #c4b5fd;
-		--c-weight-tint: #2a2342;
-		--c-attention: #f472b6;
-		--c-attention-ink: #f9a8d4;
-		--c-attention-tint: #3a1d2b;
-		--c-prob: #60a5fa;
-		--c-prob-ink: #93c5fd;
-		--c-prob-tint: #1c2a44;
-		--c-loss: #f87171;
-		--c-loss-ink: #fca5a5;
-		--c-loss-tint: #3d1d1d;
-		--c-harness: #94a3b8;
-		--c-harness-ink: #cbd5e1;
-		--c-harness-tint: #2a2f37;
-	}
+:root[data-theme='dark'] {
+	color-scheme: dark;
 }
 
 @media (prefers-reduced-motion: reduce) {

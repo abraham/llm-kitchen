@@ -20,7 +20,7 @@
 	type="website"
 />
 
-<main class="prose menu">
+<main id="content" class="prose menu">
 	<header>
 		<p class="label">Today's menu</p>
 		<h1>{SITE_NAME}</h1>

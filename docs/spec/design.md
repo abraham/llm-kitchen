@@ -4,7 +4,8 @@
 
 - **Feel:** warm and editorial, with the interactive figures as the main attraction (in the spirit of
   Bartosz Ciechanowski's explainers and Distill). A warm off-white page in light mode and a warm
-  charcoal in dark mode, following `prefers-color-scheme`. Generous white space and almost no
+  charcoal in dark mode, following `prefers-color-scheme` unless the visitor picks light or dark
+  in the app bar. Generous white space and almost no
   decoration. Concept colors appear only where their concept does, so they stay meaningful.
 - **Kitchen theme in words and structure, not illustration:**
   - The landing page reads like a menu.
@@ -13,6 +14,14 @@
   - The recap card (`RecapCard`) is styled as a recipe card.
   - No food illustrations competing with the figures.
 - **Layout:**
+  - Every page starts with an app bar (`AppBar`) that stays at the top of the viewport as the page
+    scrolls (`--app-bar-height`; in-page links, the chapter rail, and scroll-driven figures sit
+    below it): the site name on the left, linking to the menu, and a theme toggle on the right.
+    The toggle steps through Auto (the system setting, the default), Light, and Dark; its name says
+    which ("Theme: Light") and its icon shows it (half-filled circle, sun, or moon). Light and dark
+    are saved (`stores/theme.svelte.ts`) and an inline script in `app.html` applies them before the
+    page paints; Auto saves nothing. Colors are `light-dark()` pairs in `tokens.css`, and a choice
+    sets `color-scheme` on the root and points the browser's `theme-color` at its page color.
   - Prose sits in a single ~68ch column (`.prose`). Widgets break out wider, up to ~1100px
     (`.breakout`).
   - Scroll-driven figures (`Scrolly`) sit in a sticky column beside the text on desktop. On phones

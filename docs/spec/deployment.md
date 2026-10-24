@@ -47,7 +47,8 @@ major that supports Node 26.
 
 - **Content Security Policy:** SvelteKit emits the page CSP (`csp` in `vite.config.ts`, hash mode, so
   its inline scripts need no `'unsafe-inline'`): `default-src 'self'`, scripts `'self'` plus
-  `'wasm-unsafe-eval'` for ONNX Runtime, styles `'self'` plus `'unsafe-inline'` for Svelte's style
+  `'wasm-unsafe-eval'` for ONNX Runtime and the hash of `app.html`'s inline theme script (computed
+  from the file in `vite.config.ts`), styles `'self'` plus `'unsafe-inline'` for Svelte's style
   attributes, workers `'self'` and `blob:`, and `connect-src 'self'`.
   `firebase.json` adds the header-only `frame-ancestors 'none'` and a `connect-src` that also allows
   Hugging Face. Browsers enforce both policies on a page, so the page itself can only fetch from

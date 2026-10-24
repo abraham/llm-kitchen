@@ -3,17 +3,14 @@ import { describe, expect, it } from 'vitest';
 
 const css = readFileSync('src/styles/tokens.css', 'utf8');
 
-function block(source: string): Record<string, string> {
-	const vars: Record<string, string> = {};
-	for (const [, name, value] of source.matchAll(/--([\w-]+):\s*(#[0-9a-f]{6});/gi)) {
-		vars[name] = value;
-	}
-	return vars;
+const light: Record<string, string> = {};
+const dark: Record<string, string> = {};
+for (const [, name, a, b] of css.matchAll(
+	/--([\w-]+):\s*light-dark\((#[0-9a-f]{6}),\s*(#[0-9a-f]{6})\);/gi
+)) {
+	light[name] = a;
+	dark[name] = b;
 }
-
-const darkStart = css.indexOf('@media (prefers-color-scheme: dark)');
-const light = block(css.slice(0, darkStart));
-const dark = { ...light, ...block(css.slice(darkStart, css.indexOf('@media', darkStart + 1))) };
 
 function luminance(hex: string): number {
 	const [r, g, b] = [1, 3, 5].map((i) => {

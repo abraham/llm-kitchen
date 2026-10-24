@@ -1,7 +1,14 @@
 import { mdsvex } from 'mdsvex';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+
+// app.html's inline theme script runs before the page paints, so the CSP allows it by hash.
+const appScriptHashes = [
+	...readFileSync('src/app.html', 'utf8').matchAll(/<script>([\s\S]*?)<\/script>/g)
+].map(([, code]) => `sha256-${createHash('sha256').update(code).digest('base64')}` as const);
 
 export default defineConfig({
 	plugins: [
@@ -23,7 +30,7 @@ export default defineConfig({
 				mode: 'hash',
 				directives: {
 					'default-src': ['self'],
-					'script-src': ['self', 'wasm-unsafe-eval'],
+					'script-src': ['self', 'wasm-unsafe-eval', ...appScriptHashes],
 					'style-src': ['self', 'unsafe-inline'],
 					'img-src': ['self', 'data:', 'blob:'],
 					'font-src': ['self', 'data:'],

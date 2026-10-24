@@ -9,9 +9,11 @@ The site is static files on Firebase Hosting. It has, and keeps having:
 
 - **No accounts, cookies, forms, server code, or analytics.** Nothing a visitor types leaves their
   browser.
-- **One stored value:** the chapters a visitor has opened, in `localStorage` under
-  `llm-kitchen:visited` (`stores/progress.svelte.ts`). Reading it keeps only strings that are chapter
-  slugs, so anything else in storage is ignored.
+- **Two stored values,** both in `localStorage`, and both ignored unless they're well formed:
+  - the chapters a visitor has opened, under `llm-kitchen:visited` (`stores/progress.svelte.ts`),
+    keeping only strings that are chapter slugs;
+  - the theme chosen in the app bar, under `llm-kitchen:theme` (`stores/theme.svelte.ts` and the
+    inline script in `app.html`), used only if it's `light` or `dark`; choosing Auto removes it.
 - **One outside origin:** Hugging Face, for model files, fetched only by the inference worker and
   only after the visitor agrees to the download (see
   [models-and-data.md](models-and-data.md#live-model-rules)).
