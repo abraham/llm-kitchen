@@ -131,16 +131,26 @@ the trust boundary, so it stays limited to maintainers.
   online audits, and fails on any finding of medium severity or higher. `.github/zizmor.yml` accepts
   tag references, because `actions.lock` locks each tag to a commit.
 
+### Repository settings
+
+No file holds these, so they're recorded here; `gh api repos/abraham/llm-kitchen` and its
+`/rulesets`, `/vulnerability-alerts`, and `/automated-security-fixes` endpoints show them.
+
+- The `CI` ruleset on the default branch requires `ci-success` and blocks force pushes and deletion,
+  with no bypass.
+- Dependabot alerts and Dependabot security updates are on.
+- The repository is private, so secret scanning, push protection, private vulnerability reporting,
+  and dependency review aren't available without GitHub Advanced Security. If it becomes public, turn
+  on secret scanning with push protection and private vulnerability reporting; dependency review
+  starts running by itself.
+
 ## Hardening
 
 Not built yet. Each item says what changes and how it's checked.
 
 1. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-2. **Repository settings,** recorded here because no file holds them: secret scanning with push
-   protection, Dependabot alerts and security updates, private vulnerability reporting, and a
-   ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-3. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+2. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
