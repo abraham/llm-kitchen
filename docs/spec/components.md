@@ -1,8 +1,7 @@
 # Components
 
 How shared Svelte components are organized, what each folder may contain and import, the
-conventions every component follows, and the common set widgets build from. Parts marked
-**Planned** in [Status](#status) aren't built yet; [Migration](#migration) orders the work.
+conventions every component follows, and the common set widgets build from.
 
 ## Goals
 
@@ -150,7 +149,7 @@ props: {
 - A widget that must react to a change, not just store it, uses a function binding:
   `bind:value={() => index, choose}`.
 
-Not migrated, on purpose: the graded quiz (its options show right and wrong and lock after
+Not a `Choice`, on purpose: the graded quiz (its options show right and wrong and lock after
 checking); the checkbox groups in LayerPlayground and LiveTokenizer, which pick several; NameDecoder's
 model list, which uses `<optgroup>`; and the pick-one buttons drawn inside figures (EndToEnd's
 pipeline boxes, ExpertRouter's token cells, NameDecoder's name parts).
@@ -175,7 +174,7 @@ props: {
 - The readout sits in the label, hidden from assistive tech, which hears `aria-valuetext` instead
   (set whenever `format` is). A reserved `width` is in `ch` with `letter-spacing: normal`, because
   `ch` ignores the label's letter-spacing.
-- Not migrated: ContextWindow's slider, whose readout sits mid-sentence ("the last 3 words") beside
+- Not a `Slider`: ContextWindow's slider, whose readout sits mid-sentence ("the last 3 words") beside
   preset buttons, and ResidualStream's, whose label reserves its widest wording.
 
 **`Toggle`** is a labeled checkbox (`label`, `checked` bindable). It replaces the single checkboxes
@@ -317,45 +316,12 @@ and `DataSourceBadge` keep their APIs.
   `FrameLoop`'s unmount cleanup isn't among them, because Vitest's Node environment uses Svelte's
   server build, where effects don't run.
 - `tests/unit/component-patterns.test.ts` fails when a chapter widget hand-writes something the
-  common set provides: `<fieldset`, `<select`, `type="range"`, `type="checkbox"`, `aria-live`,
-  `requestAnimationFrame`, or scoped `select`, `input[type='range']`, or `table` rules. Each pattern
-  allows a short list of named exceptions, with the reason next to it.
+  common set provides: `<fieldset`, `<select`, `type="range"`, `type="checkbox"`, scoped `select`
+  or `input[type='range']` rules, `{@attach scrollable}`, `requestAnimationFrame`, or
+  `toLocaleString('en-US')`. Each pattern lists the widgets still allowed to, with the reason (the
+  exceptions named above), and fails too when an exception is no longer needed.
+- It doesn't check `aria-live` or scoped table rules: the live regions and tables that remain are
+  the lists, tallies, verdicts, and grids that `Status` and `table.data` don't cover.
 - Behavior stays covered where it's visible: each chapter's `chapter.e2e.ts` and the axe pass in
-  `quality.e2e.ts`. A migration that changes how a test finds a control (a button that becomes a
-  radio) updates the locator to the role the visitor now meets.
-
-## Migration
-
-One pull request per step. Each one passes every check in [quality.md](quality.md), including the
-local visual tests; any screenshot that changes is reviewed and its baseline updated in the same
-pull request.
-
-1. **Global styles.** Add the rules in [Global styles](#global-styles) and delete the scoped copies.
-2. **Folders.** Split `layout/` into `frame/` and `page/`, move `scrollable.ts` to `ui/`, add the
-   ESLint layers, and update imports in chapters, `.svx` files, and routes (about 280 import lines,
-   all mechanical). Update the source layout in [architecture.md](architecture.md).
-3. **Controls.** `Choice`, `Slider`, and `Toggle`, then migrate their widgets.
-4. **Containers.** `ScrollBox` and `Status`, then migrate.
-5. **Prompts.** `roles.ts`, `PromptText`, `ChatLog`, and `RoleKey`, then migrate. This is the only
-   step with intended color changes (see the role table).
-6. **Loops.** `FrameLoop`, `formatCount`, and `formatSigned`, then migrate.
-7. **Guard.** Add `component-patterns.test.ts` once nothing it checks is left, and list the common
-   set in [design.md](design.md)'s shared elements.
-
-When a step lands, its components move to **Built** below.
-
-## Status
-
-| Component                                                                                                                                      | Folder                  | Status  |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------- |
-| `WidgetFrame`, `StepController`, `Loading`, `Scrolly`, `ModelConsent`, `DataSourceBadge`                                                       | `frame/`                | Built   |
-| `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover` | `page/`                 | Built   |
-| `scrollable`                                                                                                                                   | `ui/`                   | Built   |
-| `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`                           | `primitives/`           | Built   |
-| `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built   |
-| Global styles                                                                                                                                  | `global.css`            | Built   |
-| `Choice`, `Slider`, `Toggle`, `concept.ts`                                                                                                     | `ui/`                   | Built   |
-| `ScrollBox`, `Status`                                                                                                                          | `ui/`                   | Built   |
-| `PromptText`, `ChatLog`, `RoleKey`, `roles.ts`                                                                                                 | `primitives/`           | Built   |
-| `FrameLoop`, `formatCount`, `formatSigned`                                                                                                     | `frame/`, `primitives/` | Built   |
-| `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned |
+  `quality.e2e.ts`. E2e tests find controls by the role the visitor meets (a radio, a slider, a
+  status), and prompt parts by their `data-role`.

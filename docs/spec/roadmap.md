@@ -32,12 +32,6 @@ belongs to and remove it here.
   have. A rate-limited serverless proxy for a hosted demo would leave the static scope and is a
   separate decision.
 
-## Components
-
-- **The common component set:** shared pickers, sliders, scroll boxes, status lines, prompt text,
-  and frame loops. The design and the order of work are in
-  [components.md](components.md#migration).
-
 ## Content
 
 - **Math sidebar:** an optional panel per chapter with the equations behind the idea.
