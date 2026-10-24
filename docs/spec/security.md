@@ -11,7 +11,8 @@ The site is static files on Firebase Hosting. It has, and keeps having:
 - **No accounts, cookies, forms, server code, or analytics.** Nothing a visitor types leaves their
   browser.
 - **One stored value:** the chapters a visitor has opened, in `localStorage` under
-  `llm-kitchen:visited` (`stores/progress.svelte.ts`).
+  `llm-kitchen:visited` (`stores/progress.svelte.ts`). Reading it keeps only strings that are chapter
+  slugs, so anything else in storage is ignored.
 - **One outside origin:** Hugging Face, for model files, fetched only by the inference worker and
   only after the visitor agrees to the download (see
   [models-and-data.md](models-and-data.md#live-model-rules)).
@@ -132,14 +133,12 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
-   chapter slugs and ignores anything else.
-2. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+1. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-3. **Repository settings,** recorded here because no file holds them: secret scanning with push
+2. **Repository settings,** recorded here because no file holds them: secret scanning with push
    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-4. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+3. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.

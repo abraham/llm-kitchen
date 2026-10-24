@@ -1,9 +1,21 @@
+import { isSlug } from '#lib/curriculum/index.ts';
+
 const STORAGE_KEY = 'llm-kitchen:visited';
+
+/** Saved progress is visitor-controlled storage: keep only strings that are chapter slugs. */
+export function parseVisited(raw: string | null | undefined): string[] {
+	try {
+		const saved: unknown = raw ? JSON.parse(raw) : [];
+		if (!Array.isArray(saved)) return [];
+		return saved.filter((s): s is string => typeof s === 'string' && isSlug(s));
+	} catch {
+		return [];
+	}
+}
 
 function read(): Set<string> {
 	try {
-		const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
-		return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+		return new Set(parseVisited(globalThis.localStorage?.getItem(STORAGE_KEY)));
 	} catch {
 		return new Set();
 	}
