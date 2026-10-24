@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { chapterDatasets, loadChapter } from '#lib/chapters/index.ts';
+import { chapterDatasets, chapterLevels, loadChapter } from '#lib/chapters/index.ts';
 import { CURRICULUM } from '#lib/curriculum/index.ts';
 import { fetchDataset } from '#lib/datasets/load.ts';
 import type { EntryGenerator, PageLoad } from './$types';
@@ -15,5 +15,5 @@ export const load: PageLoad = async ({ params, fetch }) => {
 			chapterDatasets(chapter.meta.slug).map(async (id) => [id, await fetchDataset(id, fetch)])
 		)
 	);
-	return { ...chapter, datasets };
+	return { ...chapter, datasets, levels: chapterLevels(chapter.meta.slug) };
 };

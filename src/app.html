@@ -9,6 +9,8 @@
 			try {
 				const theme = localStorage.getItem('llm-kitchen:theme');
 				if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+				const level = localStorage.getItem('llm-kitchen:level');
+				if (level === 'simple' || level === 'deep') document.documentElement.dataset.level = level;
 			} catch {}
 		</script>
 	</head>

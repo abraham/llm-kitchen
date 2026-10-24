@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import favicon from '#lib/assets/favicon.svg';
 	import AppBar from '#lib/components/page/AppBar.svelte';
+	import { LEVEL_CHOICE } from '#lib/chapters/config.ts';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -34,7 +35,7 @@
 {#if !page.error}
 	<a class="skip" href="#content">Skip to content</a>
 {/if}
-<AppBar />
+<AppBar levelChoice={LEVEL_CHOICE} />
 {@render children()}
 
 <style>

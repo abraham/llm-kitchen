@@ -43,7 +43,8 @@ src/
   routes/
     +layout.svelte, +layout.ts   site shell; prerender = true
     +page.svelte                 the menu, from the curriculum
-    [chapter]/+page.ts           loads a chapter's prose and first-view datasets by slug
+    [chapter]/+page.ts           loads a chapter's prose, first-view datasets, and levels by slug
+    fixtures/[fixture]/          test-only pages from tests/e2e/fixtures, in the end-to-end build only
   lib/
     curriculum/
       parts.ts                   the Parts, in order (Roman numerals derived)
@@ -51,9 +52,10 @@ src/
       index.ts                   CURRICULUM, chapter(slug), label(slug), next(slug), the Slug type
     chapters/
       index.ts                   loads chapter.svx and chapter.ts by slug (import.meta.glob)
+      config.ts                  every chapter.ts, and whether readers can choose a level
       <slug>/
         chapter.svx              the prose
-        chapter.ts               the datasets its widgets show on first view
+        chapter.ts               the datasets its widgets show on first view, and its levels
         *.svelte                 widgets only this chapter uses
         data.ts                  hand-written data only this chapter uses, if any
         facts.test.ts            the numbers and claims the prose states
@@ -220,9 +222,47 @@ lives in `src/lib/data/`.
 
 - Chapters cite with `<Cite id="..." />`, which renders a numbered footnote link. Each chapter ends
   with a `Sources` list generated from the ids it used.
+- In a chapter with passages for other levels, each level hides some citations, so `Citations`
+  numbers each level separately: `Cite` learns its levels from the enclosing `At` and renders one
+  link per level, and `Sources` renders one list per level, each with only what that level cites.
+  The page shows the current level's (see [Explanation levels](#explanation-levels)). Standard's
+  entries keep the plain `#source-<id>` anchors; the others are `#source-<level>-<id>`. A chapter
+  without other levels renders one number and one list, as before.
 - Entries live in `src/lib/references.json` (id, authors, title, year, venue, URL or DOI, and an
   accessed date for pages that change). Hand-written data cites the same ids.
 - `tests/unit/citations.test.ts` fails if a chapter uses an unknown id or an entry is never cited.
+
+## Explanation levels
+
+Each chapter can be read at Simple, Standard (the default), or In depth; the plan, writing rules,
+and remaining phases are in [levels.md](levels.md).
+
+- **Marking passages:** shared text is plain Markdown and shows at every level. A passage for some
+  levels is wrapped in `page/At` (`<At levels="simple">`, `"standard deep"`, `"deep"`; `inline`
+  for a phrase inside a sentence). Simple usually replaces a Standard passage; In depth usually
+  adds one. An unknown or empty `levels` fails the build.
+- **Showing the right one:** `At` renders every level into the HTML with `data-levels`, and
+  `global.css` hides any `[data-levels]` element that doesn't list the level in `data-level` on
+  `<html>` (Standard when it's absent), with `display: none`, so find-in-page and screen readers see
+  only the current level. The inline script in `app.html` sets `data-level` from
+  `llm-kitchen:level` before the page paints, so the right level shows before JavaScript runs and
+  switching re-renders nothing.
+- **The choice:** `stores/level.svelte.ts` holds it; it and the theme store save through
+  `stores/root-choice.ts` (a data attribute on `<html>` plus `localStorage`, nothing for the
+  default). The level is never in the URL. The app bar control is described in
+  [design.md](design.md).
+- **Coverage:** a chapter's `chapter.ts` exports `levels`, the levels that read differently from
+  Standard (a passage shows at the level but not at Standard, or the other way round); none means
+  `[]`. A test in `chapters.test.ts` checks it against the `At` blocks in `chapter.svx`. At a level
+  the chapter doesn't cover, `ChapterLayout` says so under the heading ("This chapter has no In
+  depth passages yet, so it reads like Standard").
+- **Hidden until there's content:** `chapters/config.ts` sets `LEVEL_CHOICE` once any chapter
+  lists a level. Until then the app bar has no control and chapters have no coverage notes.
+- **Tests:** the end-to-end build sets `VITE_FIXTURES`, which turns the control on and adds
+  `/fixtures/levels` (`tests/e2e/fixtures/levels.svx`), a page with passages, inline swaps, and
+  citations at each level. `tests/e2e/levels.e2e.ts` checks switching, saving, applying before
+  hydration, keeping the reader in place, citations, axe at each level, and the coverage note; a
+  unit test renders the same page on the server. Other builds leave the fixtures out.
 
 ## Tests
 

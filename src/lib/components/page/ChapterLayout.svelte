@@ -2,14 +2,31 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
+	import { LEVEL_NAMES, LEVELS, type ExtraLevel } from '#lib/levels.ts';
+	import At from './At.svelte';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
 
-	let { meta, children }: { meta: Chapter; children: Snippet } = $props();
+	let {
+		meta,
+		levels = [],
+		levelChoice = false,
+		children
+	}: {
+		meta: Chapter;
+		/** The levels the chapter has passages for beyond Standard (its chapter.ts `levels`). */
+		levels?: readonly ExtraLevel[];
+		/** Whether readers can choose a level, so a note says when this chapter has none of theirs. */
+		levelChoice?: boolean;
+		children: Snippet;
+	} = $props();
 
 	const ingredients = $derived(meta.buildsOn.map(chapter));
 	const after = $derived(next(meta.slug));
+	const unwritten = $derived(
+		levelChoice ? LEVELS.filter((l) => l !== 'standard' && !levels.includes(l)) : []
+	);
 </script>
 
 <div class="chapter-layout">
@@ -28,6 +45,13 @@
 			<header>
 				<p class="label">{partLabel(meta.part, ' · ')}</p>
 				<h1><span class="num">{label(meta.slug)}.</span> {meta.title}</h1>
+				{#each unwritten as level (level)}
+					<At levels={level}>
+						<p class="label">
+							This chapter has no {LEVEL_NAMES[level]} passages yet, so it reads like Standard.
+						</p>
+					</At>
+				{/each}
 			</header>
 
 			<IngredientsBox
@@ -36,7 +60,7 @@
 			/>
 
 			{#key meta.slug}
-				<CitationScope>
+				<CitationScope {levels}>
 					{@render children()}
 				</CitationScope>
 			{/key}

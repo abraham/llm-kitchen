@@ -11,9 +11,10 @@ export default defineConfig({
 	use: { baseURL: 'http://localhost:4173' },
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 	// The Firebase Hosting emulator applies firebase.json (clean URLs, 404 page, headers) like production.
-	// CI builds in its own step first, so a build failure shows up there.
+	// CI builds in its own step first, so a build failure shows up there. VITE_FIXTURES adds the
+	// test-only pages in tests/e2e/fixtures.
 	webServer: {
-		command: process.env.CI ? 'npm run serve' : 'npm run build && npm run serve',
+		command: process.env.CI ? 'npm run serve' : 'VITE_FIXTURES=1 npm run build && npm run serve',
 		url: 'http://localhost:4173',
 		reuseExistingServer: !process.env.CI
 	}

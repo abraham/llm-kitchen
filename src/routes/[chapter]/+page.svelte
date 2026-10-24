@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { LEVEL_CHOICE } from '#lib/chapters/config.ts';
 	import ChapterLayout from '#lib/components/page/ChapterLayout.svelte';
 	import PageMeta from '#lib/components/page/PageMeta.svelte';
 	import { provideDatasets } from '#lib/datasets/use.ts';
@@ -28,6 +29,6 @@
 	type="article"
 />
 
-<ChapterLayout meta={data.meta}>
+<ChapterLayout meta={data.meta} levels={data.levels} levelChoice={LEVEL_CHOICE}>
 	<Chapter />
 </ChapterLayout>

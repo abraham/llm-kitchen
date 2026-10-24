@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'llm-kitchen:theme';
+import { applyChoice, appliedChoice } from './root-choice.ts';
 
 export type Theme = 'light' | 'dark';
 export type ThemeChoice = 'auto' | Theme;
@@ -28,24 +28,16 @@ class ThemeStore {
 	load() {
 		if (this.#loaded) return;
 		this.#loaded = true;
-		this.#choice = parseTheme(globalThis.document.documentElement.dataset.theme) ?? 'auto';
+		this.#choice = parseTheme(appliedChoice('theme')) ?? 'auto';
 		syncThemeColor(this.#choice);
 	}
 
 	/** Step to the next choice: auto, light, dark, then auto again. */
 	next() {
 		const choice = THEME_CHOICES[(THEME_CHOICES.indexOf(this.#choice) + 1) % THEME_CHOICES.length];
-		const root = globalThis.document.documentElement;
-		if (choice === 'auto') delete root.dataset.theme;
-		else root.dataset.theme = choice;
+		applyChoice('theme', choice === 'auto' ? undefined : choice);
 		this.#choice = choice;
 		syncThemeColor(choice);
-		try {
-			if (choice === 'auto') globalThis.localStorage?.removeItem(STORAGE_KEY);
-			else globalThis.localStorage?.setItem(STORAGE_KEY, choice);
-		} catch {
-			// Storage can be unavailable (private mode, quota); the choice lasts for this page only.
-		}
 	}
 }
 

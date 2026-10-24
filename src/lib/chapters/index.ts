@@ -1,11 +1,10 @@
 import type { Component } from 'svelte';
 import { findChapter, type Chapter } from '#lib/curriculum/index.ts';
 import type { DatasetId } from '#lib/datasets/registry.ts';
+import type { ExtraLevel } from '#lib/levels.ts';
+import { chapterConfig } from './config.ts';
 
 const modules = import.meta.glob<{ default: Component }>('./*/chapter.svx');
-const configs = import.meta.glob<{ datasets: readonly DatasetId[] }>('./*/chapter.ts', {
-	eager: true
-});
 
 /** Slugs of every chapter folder. */
 export function chapterFolders(): string[] {
@@ -14,7 +13,12 @@ export function chapterFolders(): string[] {
 
 /** The datasets a chapter's widgets show on first view, listed in its `chapter.ts`. */
 export function chapterDatasets(slug: string): readonly DatasetId[] {
-	return configs[`./${slug}/chapter.ts`]?.datasets ?? [];
+	return chapterConfig(slug).datasets ?? [];
+}
+
+/** The levels a chapter has passages for beyond Standard, listed in its `chapter.ts`. */
+export function chapterLevels(slug: string): readonly ExtraLevel[] {
+	return chapterConfig(slug).levels ?? [];
 }
 
 export async function loadChapter(
