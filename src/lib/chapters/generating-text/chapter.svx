@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -7,6 +8,16 @@
 </script>
 
 ## One token, then the next
+
+<At levels="simple">
+
+GPT-2 only does one thing: given some text, it gives a chance to every possible next token.
+Writing a paragraph is a loop around that: run the model, pick a token, add it to the end, and
+repeat. Every chat app writes this way. Try it: each press runs the model once. Click any word in
+the list to pick it instead of the model's favorite.
+
+</At>
+<At levels="standard deep">
 
 GPT-2 only ever does one thing: given some text, it gives a probability for every possible next
 token. That's the whole stack from Part IV, run once. Writing a paragraph is just a loop around it:
@@ -19,11 +30,22 @@ token. That's the whole stack from Part IV, run once. Writing a paragraph is jus
 Every model in a chat app writes this way. Try it yourself: each press runs the full model once.
 Click any word in the list to pick it instead of the model's favorite.
 
+</At>
+
 <GlassBoxGenerator
 	title="Glass-box generator"
 	presets={[{ trace: 'the-cat-sat', label: 'The cat sat on the' }]}
 	branches={['the-cat-sat-bed', 'the-cat-sat-couch', 'the-cat-sat-ground', 'the-cat-sat-edge']}
 />
+
+<At levels="simple">
+
+Keep pressing *Add the most likely* and GPT-2 writes "The cat sat on the floor, and the cat was
+still asleep." Go back and pick " bed" instead, and it gets stuck saying the same thing over and
+over. Picking at random, weighted by the chances, mostly avoids loops like this.<Cite id="holtzman2020" />
+
+</At>
+<At levels="standard deep">
 
 Keep pressing *Add the most likely* and GPT-2 writes "The cat sat on the floor, and the cat was
 still asleep." Go back and pick " bed" instead, and it gets stuck: ", and the cat sat on the bed, and
@@ -31,19 +53,70 @@ the cat sat on the bed…". Always taking the single most likely token often fal
 this. Picking at random, weighted by the probabilities (the <GlossaryPopover term="temperature">temperature</GlossaryPopover> spinner from <ChapterRef to="probability-and-sampling" />), mostly
 avoids them, which is one reason most text generators sample instead.<Cite id="holtzman2020" />
 
+</At>
+<At levels="deep">
+
+### Greedy isn't the likeliest text
+
+Written out, greedy decoding takes the top token at each step, and sampling draws one from the
+tempered probabilities $P_T$:
+
+$$
+x_{t+1} = \operatorname*{arg\,max}_{x} P(x \mid x_1, \dots, x_t) \qquad \text{or} \qquad x_{t+1} \sim P_T(\,\cdot \mid x_1, \dots, x_t)
+$$
+
+where $x_1, \dots, x_t$ is the text so far and $\sim$ means "drawn at random from". The best
+token at each step doesn't add up to the best text, because a text's chance is the product of its
+tokens' chances. After *The cat sat on the*, greedy takes " floor" (7.6%), and then a comma (26%):
+about 2% for the pair. " edge" starts lower (4.8%), but " of" follows it 96% of the time, so
+" edge of" has about 4.6%, more than twice as likely. Beam search keeps several partial texts at
+each step to find likelier ones, but the likeliest texts are often the dullest and most
+repetitive, which is part of why open-ended writing samples instead.<Cite id="holtzman2020" />
+
+</At>
+
 ## No going back
+
+<At levels="simple">
+
+Each token is chosen once, and everything after it builds on it. The model doesn't plan ahead or
+go back to fix a word. And every new token means one more full run of the model.
+
+</At>
+<At levels="standard deep">
 
 Each token is chosen once, and everything after it is built on top. The model doesn't plan a
 sentence, write a draft, or go back and fix an earlier word. If it picks " bed", it has to make the
 best of " bed". And each new token costs a full run through all 124 million of GPT-2's weights, so
 a 500-token answer means 500 runs.
 
+</At>
+<At levels="deep">
+
+A run costs about two operations per weight, a multiply and an add, so GPT-2 small needs about
+250 million operations per token, and about 124 billion for those 500 tokens.<Cite id="kaplan2020" />
+Rerunning the model on the whole text for every token would cost far more, since the text grows
+by one token each time. Real systems keep each earlier token's keys and values from attention and
+only run the newest token through the model; <ChapterRef to="caching" /> shows how.<Cite id="pope2022" />
+
+</At>
+
 ## Knowing when to stop
+
+<At levels="simple">
+
+The loop has to stop somehow. It stops when the model picks a special "end of text" token, or
+when it reaches a length limit it was given.
+
+</At>
+<At levels="standard deep">
 
 The loop has to end somehow. GPT-2's vocabulary includes a special token, `<|endoftext|>` (number
 50,256), that means "end of text". When the model picks it, the program stops.<Cite id="gpt2-config" />
 Otherwise, the program stops at a length limit it was given. Chat models work the same way
 with their own end-of-turn token.
+
+</At>
 
 ## Run it live
 
@@ -58,6 +131,12 @@ including the code that runs it) and runs it on your device. Nothing you type le
 - Always taking the top token can loop; sampling with a temperature mostly avoids that.
 - Generation stops at a special end token or a length limit.
 
+<At levels="deep">
+
+- Greedy takes the $\operatorname{arg\,max}$ at each step, which isn't the likeliest whole text:
+  " edge of" (4.6%) beats " floor," (2%).
+
+</At>
 </RecapCard>
 
 **Next question:** GPT-2 writes fluent text that often makes no sense. What happens when the same

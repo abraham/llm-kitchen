@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import canonical from '../../../../models/canonical.json';
-import type { QuantizeRun } from '#lib/math/quantize.ts';
+import { levels, weightBytes, type QuantizeRun } from '#lib/math/quantize.ts';
 
 describe('fewer bits per number', () => {
 	const run: QuantizeRun = readDataset('quantize/precisions');
@@ -34,5 +34,22 @@ describe('fewer bits per number', () => {
 		expect([top('6-bit'), top('5-bit')]).toEqual([' bed', ' table']);
 		expect(text('4-bit')).toMatch(/^ stack\. The stack\./);
 		expect(['4-bit', '3-bit', '2-bit'].map((l) => Math.round(at(l).loss))).toEqual([6, 18, 48]);
+	});
+
+	it('In depth: m = 0.689 gives a 4-bit step of about 0.098; anything under 0.049 becomes 0', () => {
+		expect(run.sample.max).toBeCloseTo(0.689, 3);
+		const step = levels(4, run.sample.max)[1] - levels(4, run.sample.max)[0];
+		expect(step).toBeCloseTo(run.sample.max / 7, 12);
+		expect(Math.round(step * 1000) / 1000).toBe(0.098);
+		expect(Math.round((step / 2) * 1000) / 1000).toBe(0.049);
+		expect(Math.round(0.048 / step)).toBe(0);
+	});
+
+	it('In depth: "4-bit" is about 4.5 bits per weight, 70 MB rather than 62', () => {
+		expect(Math.round(((at('4-bit').bytes * 8) / run.parameters) * 10) / 10).toBe(4.5);
+		expect(Math.round(at('4-bit').bytes / 1e6)).toBe(70);
+		expect(Math.round(weightBytes(run.parameters, 4) / 1e6)).toBe(62);
+		expect(run.block).toBe(32);
+		expect(run.scaleBits / run.block).toBe(0.5);
 	});
 });

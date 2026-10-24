@@ -4,6 +4,7 @@ import { type TraceName } from '#lib/datasets/registry.ts';
 
 import { encode } from 'gpt-tokenizer/encoding/gpt2';
 import { textAfter } from '#lib/models/trace.ts';
+import { tokenize } from '#lib/models/tokenizers.ts';
 const trace = (name: TraceName) => readDataset(`traces/${name}`);
 const full = (name: TraceName) => {
 	const t = trace(name);
@@ -38,5 +39,18 @@ describe('quirks and limits', () => {
 	it('" strawberry" is one token, "strawberry" three', () => {
 		expect(encode(' strawberry')).toHaveLength(1);
 		expect(encode('strawberry')).toHaveLength(3);
+	});
+
+	it('In depth: GPT-2 splits " 2023" as " 20" + "23"; GPT-4 cuts numbers into groups of three from the left', async () => {
+		const texts = async (name: 'gpt2' | 'cl100k', s: string) =>
+			(await tokenize(name, s)).map((t) => t.text);
+		expect(await texts('gpt2', ' 2023')).toEqual([' 20', '23']);
+		expect(await texts('gpt2', ' 1234567')).toEqual([' 123', '45', '67']);
+		expect((await texts('cl100k', ' 2023')).filter((t) => t.trim())).toEqual(['202', '3']);
+		expect((await texts('cl100k', ' 1234567')).filter((t) => t.trim())).toEqual([
+			'123',
+			'456',
+			'7'
+		]);
 	});
 });

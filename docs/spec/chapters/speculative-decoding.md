@@ -28,3 +28,6 @@ output.
   GPT-2's tokenizer.
 - Simplified: real systems also tune how far ahead to guess. Gemma 4's `-assistant` drafters are
   mentioned as a real example, citing their model cards.
+- [Levels](../levels.md): Simple explains guess-then-check and the 7 passes without the sampling
+  rule. In depth gives the accept-or-resample rule and the expected tokens per pass, next to the
+  recorded run's average.

@@ -28,3 +28,6 @@ Recorded by `scripts/record/quantize.py` (`static/data/quantize/gpt2/precisions.
 - 6 and 5 bits are included to show the drift between "holds" and "breaks".
 - The live GPT-2 on the site already runs 8-bit weights (a different rounding method). The chapter
   points this out and quotes how its percentages differ, rather than comparing side by side.
+- [Levels](../levels.md): Simple keeps the memory rule and what happens at each precision, and
+  names QAT without the outlier method. In depth writes block rounding as formulas, works it on the
+  widget's block, counts the scale's half bit, and says how QAT and the outlier method work.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,15 +9,36 @@
 
 ## How big is one number?
 
+<At levels="simple">
+
+GPT-2 small has about 124 million weights, and its files store each one in 4 bytes: about 500 MB
+in all.<Cite id="gpt2-model-card" /> The same rule works for any model:
+
+**memory for the weights ≈ number of weights × bits per weight ÷ 8 bytes**
+
+</At>
+<At levels="standard deep">
+
 GPT-2 small has 124,439,808 weights. Its published files store each one as a 32-bit floating-point
 number: 4 bytes (<ChapterRef to="text-is-numbers" />), enough for about seven significant digits.<Cite id="gpt2-model-card" /> That
 comes to about 498 MB. The same rule works for any model:
 
 **memory for the weights ≈ number of weights × bits per weight ÷ 8 bytes**
 
+</At>
+
 At 16 bits, GPT-2 small needs about 249 MB. The largest Llama 3 model from <ChapterRef to="scale" />, with 405 billion
 weights, needs about 810 GB at 16 bits and about 203 GB at 4 bits. A smaller model is also quicker to
 load and to read from memory.
+
+<At levels="simple">
+
+Does a weight need that much detail? Rounding each number to one of a few allowed values is called <GlossaryPopover term="quantization">quantization</GlossaryPopover>.
+With 8 bits a number can take 256 values; with 4 bits, only 16. Slide GPT-2 small down from 32
+bits and watch what it predicts after "The cat sat on the":
+
+</At>
+<At levels="standard deep">
 
 Does a weight need seven digits? Storing numbers with fewer bits, by rounding each one to a small set
 of allowed values, is called <GlossaryPopover term="quantization">quantization</GlossaryPopover>.
@@ -26,7 +48,17 @@ each weight is stored as a small whole number times that scale. File formats for
 like GGUF's Q4_0 and Q8_0, work this way.<Cite id="gguf-quant-types" /> Slide GPT-2 small down from
 32 bits and watch what it predicts after "The cat sat on the":
 
+</At>
+
 <QuantizeLab />
+
+<At levels="simple">
+
+At 16 and 8 bits nothing visible changes. At 6 and 5 bits the guesses drift, but stay sensible. At
+4 bits and below, the model falls apart and writes gibberish.
+
+</At>
+<At levels="standard deep">
 
 At 16 and 8 bits nothing visible changes: the same top guess, " floor", the same next twelve tokens,
 and almost the same loss (<ChapterRef to="learning-from-mistakes" />) on a test passage. At 6 and 5 bits the guesses drift: " bed", then
@@ -34,11 +66,45 @@ and almost the same loss (<ChapterRef to="learning-from-mistakes" />) on a test 
 writing gibberish, and its loss shoots up. Look at the dots: as the bits run out, each weight snaps
 to a coarser grid, and the small weights in a block with one large weight are rounded hardest.
 
+</At>
+<At levels="deep">
+
+### Block rounding, written down
+
+For a block of 32 weights $w_1, \dots, w_{32}$ whose largest size is $m$, $n$-bit rounding works
+like this:
+
+$$
+s = \frac{m}{2^{\,n-1} - 1}, \qquad q_i = \operatorname{round}\!\left(\frac{w_i}{s}\right), \qquad \hat{w}_i = s\, q_i
+$$
+
+where $s$ is the block's scale (stored once), $q_i$ is the small whole number stored for weight $i$,
+and $\hat{w}_i$ is the value the model uses. Each weight moves by at most $s/2$. In the block the
+widget shows, $m = 0.689$, so at 4 bits the step $s$ is about 0.098, and every weight smaller than
+0.049 becomes exactly 0. That's why the small weights suffer most.
+
+The scale costs 16 bits per block, half a bit per weight, so "4-bit" really means about 4.5 bits
+per weight: GPT-2 small at 4 bits takes 70 MB, not 62. GGUF's Q4_0 stores exactly this, 4-bit
+numbers plus one 16-bit scale per 32.<Cite id="gguf-quant-types" />
+
+</At>
+
 You have been using a quantized model all along. The live GPT-2 on this site runs with 8-bit
 weights, a 128 MB download instead of about 500 MB. It was rounded by a different method than the
 demo's, and its percentages differ from the recorded ones: it gives " floor" 15.4% instead of 7.6%.
 
 ## Rounding with care
+
+<At levels="simple">
+
+This demo rounds in the plainest way. Better methods keep more quality with fewer bits. One lets
+the model practice with the rounding during training, called <GlossaryPopover term="quantization-aware-training">quantization-aware training</GlossaryPopover>
+(QAT). Google's Gemma 4 QAT models use 4-bit weights, and their model card describes their quality
+as similar to the 16-bit originals.<Cite id="gemma4-qat" /> That is what the `qat` in a model name
+means.
+
+</At>
+<At levels="standard deep">
 
 This demo uses the plainest method, rounding to the nearest allowed value. Better methods keep more
 quality at fewer bits. Large transformers have a few unusually large numbers that plain rounding
@@ -49,6 +115,17 @@ With <GlossaryPopover term="quantization-aware-training">quantization-aware trai
 still work after rounding.<Cite id="jacob2018" /> Google's Gemma 4 models come in QAT versions with
 4-bit weights, and their model card describes their quality as similar to the 16-bit
 originals.<Cite id="gemma4-qat" /> That is what the `qat` in a model name means.
+
+</At>
+<At levels="deep">
+
+In QAT, the forward pass uses the rounded weights $\hat{w}$, so the loss includes the rounding
+error, while backpropagation treats rounding as if it weren't there and updates the full-precision
+weights $w$. Rounding has a slope of 0 almost everywhere, so without that shortcut no weight would
+ever move.<Cite id="jacob2018" /> The outlier method instead finds the few feature dimensions with
+very large values and multiplies them in 16 bits, and everything else in 8.<Cite id="dettmers2022" />
+
+</At>
 
 A small model like GPT-2 has less to spare than a big one, and this demo rounds everything,
 including the token table. So read the 4-bit result as "plain rounding has limits", not "4 bits is
@@ -61,6 +138,12 @@ too few".
 - GPT-2 small is unchanged at 8 bits, drifts at 6 and 5, and breaks at 4 with plain rounding.
 - Better methods, like quantization-aware training, keep quality at 4 bits.
 
+<At levels="deep">
+
+- A block's scale is $s = m / (2^{n-1} - 1)$ and each weight stores $\operatorname{round}(w / s)$:
+  about 4.5 bits per weight at 4 bits.
+
+</At>
 </RecapCard>
 
 **Next question:** smaller numbers make a model cheaper to store and read. Could it also write

@@ -31,3 +31,24 @@ describe('base vs. instruct', () => {
 		expect(out).toEqual({ text: 'The capital of France is Paris.', stopped: true });
 	});
 });
+
+describe('In depth', () => {
+	it('the reward loss is small when the preferred answer scores clearly higher', () => {
+		const loss = (gap: number) => -Math.log(1 / (1 + Math.exp(-gap)));
+		expect(loss(0)).toBeCloseTo(Math.log(2), 12);
+		expect(loss(4)).toBeLessThan(0.02);
+		expect(loss(-4)).toBeGreaterThan(4);
+	});
+
+	it('with B at all zeros, W + (alpha / r) B A is exactly W', () => {
+		const W = [
+			[0.3, -0.7],
+			[1.2, 0.4]
+		];
+		const B = [[0], [0]];
+		const A = [[0.9, -1.1]];
+		const BA = B.map((row) => A[0].map((a) => row[0] * a));
+		const updated = W.map((row, i) => row.map((w, j) => w + (16 / 1) * BA[i][j]));
+		expect(updated).toEqual(W);
+	});
+});

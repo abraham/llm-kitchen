@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -26,21 +27,66 @@ GPT-2 runs for each one; run GPT-2 live to try your own.
 
 ## Likely isn't the same as true
 
+<At levels="simple">
+
+Ask GPT-2 who first walked on the moon and it writes that it was "a man named John, who was born
+in 1829." This is called <GlossaryPopover term="hallucination">hallucination</GlossaryPopover>.<Cite id="ji2023" />
+The model learned to write text that looks like its training text, and nothing checks whether it's
+true.
+
+</At>
+<At levels="standard deep">
+
 Ask GPT-2 who first walked on the moon and it writes that it was "a man named John, who was born in
 1829." Ask about a painter who doesn't exist, and it describes his famous painting. This is called <GlossaryPopover term="hallucination">hallucination</GlossaryPopover>.<Cite id="ji2023" /> The model
 was trained to produce text that *looks like* its training text, and a confident sentence about a
 painter looks like many real ones. Nothing in the loop from <ChapterRef to="generating-text" /> checks whether it's true.
 
+</At>
+
+<At levels="simple">
+
+Tuning helps, but it never removes the problem completely. That's one reason assistants are given
+tools to look things up.
+
+</At>
+<At levels="standard deep">
+
 Tuning helps: in the InstructGPT tests, the tuned models made up information about half as often as
 GPT-3, 21% of the time instead of 41%.<Cite id="ouyang2022" /> But the cause is the same, so it never
 goes away completely. That's one reason assistants are given tools to look things up.
 
+</At>
+<At levels="deep">
+
+### Why training rewards a good guess
+
+Training lowers the cross-entropy loss from <ChapterRef to="learning-from-mistakes" />, the average
+of $-\log p$ over the real next tokens. That rewards giving probability to whatever text tends to
+come next, whether it's true or not: after "a man named", a plausible first name earns some
+probability, and the loss has no term for being wrong about the world. Researchers separate
+*intrinsic* hallucinations, which contradict text the model was given, from *extrinsic* ones,
+which can't be checked against it at all.<Cite id="ji2023" />
+
+</At>
+
 ## Frozen in time
+
+<At levels="simple">
+
+GPT-2 learned from web pages from before 2018, so its guesses for the latest iPhone are the iPhone
+6, 5, and 7.<Cite id="radford2019" /> Every model has a cutoff like this, and knows nothing about
+later events unless they're put into its prompt.
+
+</At>
+<At levels="standard deep">
 
 GPT-2's training text only includes web links from before 2018.<Cite id="radford2019" /> Ask it
 for the latest iPhone and its top guesses are the iPhone 6, 5, and 7, the ones that filled the pages
 it read. Every model has a cutoff like this: it knows nothing about later events unless they're put
 into its prompt.
+
+</At>
 
 ## Tokens, not letters
 
@@ -49,11 +95,39 @@ letters:
 
 <SpellingBlindSpot />
 
+<At levels="simple">
+
+Numbers have the same problem. In the lab, after "2 + 2 =", GPT-2 rates " 3" more likely than
+" 4".
+
+</At>
+<At levels="standard deep">
+
 Numbers have the same problem: they are split into tokens in uneven ways, so the model can't simply
 line up the digits and carry, the way you would on paper. In the lab, after "2 + 2 =", GPT-2 rates
 " 3" more likely than " 4".
 
+</At>
+<At levels="deep">
+
+GPT-2's tokens split numbers wherever its merges happened to land: " 2023" is " 20" + "23", and
+" 1234567" is " 123" + "45" + "67", so the same digit can sit in a different place within a
+token from one number to the next. GPT-4's tokenizer cuts numbers into groups of up to three
+digits from the left instead: "202" + "3", and "123" + "456" + "7". That's tidier, but the groups
+still don't line up with the ones, tens, and hundreds you'd add column by column.
+
+</At>
+
 ## Wording matters
+
+<At levels="simple">
+
+Asking the same thing another way can change the answer. "The capital of France is" makes GPT-2
+ramble; "Q: What is the capital of France? A:" gets "Paris". Much larger models swing with small
+formatting changes too.<Cite id="sclar2024" />
+
+</At>
+<At levels="standard deep">
 
 "The capital of France is" and "Q: What is the capital of France? A:" ask the same thing, but they
 look like different kinds of text. In the lab, the first makes GPT-2 ramble about "the capital of
@@ -61,11 +135,23 @@ the French Republic"; the second gets "Paris" in its first sentence. Much larger
 swing with small formatting changes: one study found accuracy differences of up to 76 percentage
 points from formatting alone.<Cite id="sclar2024" />
 
+</At>
+
 ## Limited memory and loops
+
+<At levels="simple">
+
+A model only sees its context window: for GPT-2, 1,024 tokens. Anything earlier is gone. And
+always taking the most likely token can trap a model in a loop.<Cite id="holtzman2020" />
+
+</At>
+<At levels="standard deep">
 
 A model only sees its context window (<ChapterRef to="the-context-problem" />): for GPT-2, 1,024 tokens. Anything earlier is cut off
 and simply gone. And as <ChapterRef to="generating-text" /> showed, always taking the most likely token can trap a model in a
 loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
+
+</At>
 
 <RecapCard>
 
@@ -75,6 +161,12 @@ loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
 - Small changes in wording can change the answer, and anything outside the context window is
   forgotten.
 
+<At levels="deep">
+
+- The loss rewards likely text, not true text; GPT-2's number tokens don't line up with digit
+  columns.
+
+</At>
 </RecapCard>
 
 **Next question:** several of these quirks come from answering straight away. What is a model doing

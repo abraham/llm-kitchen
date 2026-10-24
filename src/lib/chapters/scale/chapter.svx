@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -9,27 +10,85 @@
 
 ## Same recipe, much bigger
 
+<At levels="simple">
+
+Everything so far is how today's largest models work too. What changed is size. A year after
+GPT-2, GPT-3 used the same design with more than 1,000 times as many weights.<Cite id="brown2020" />
+Compare the models on this site with some of the largest ones:
+
+</At>
+<At levels="standard deep">
+
 Everything so far, from tokens to attention to the generation loop, is how today's largest models
 work too. What changed is size. A year after GPT-2, GPT-3 used the same design with 175 billion
 weights, more than 1,000 times GPT-2 small, and read 300 billion tokens in
 training.<Cite id="brown2020" /> Compare the models on this site with some of the largest ones that
 published their numbers:
 
+</At>
+
 <ScaleExplorer />
+
+<At levels="simple">
+
+The bars use a log scale: each step is ten times the one before. The companies behind the
+biggest commercial models mostly don't publish these numbers.
+
+</At>
+<At levels="standard deep">
 
 The bars use a log scale: each step is ten times the one before, or the big models wouldn't fit on
 the screen. Compute is counted in arithmetic operations; the largest Llama 3 model took about
 3.8 × 10²⁵ of them.<Cite id="grattafiori2024" /> The companies behind the biggest commercial models
 mostly don't publish these numbers.
 
+</At>
+<At levels="deep">
+
+### Counting the compute
+
+Training compute is usually estimated as
+
+$$
+C \approx 6\,N D
+$$
+
+operations, where $N$ is the number of weights and $D$ the number of training tokens: about 2 per
+weight for each token going forward through the model, and 4 more for backpropagation.<Cite id="kaplan2020" />
+For GPT-3, $6 \times 175 \times 10^{9} \times 300 \times 10^{9} \approx 3.15 \times 10^{23}$,
+next to the paper's own count of 3.14 × 10²³.<Cite id="brown2020" />
+
+</At>
+
 ## A surprisingly smooth curve
+
+<At levels="simple">
+
+In 2020, researchers found that a model's loss, how wrong its guesses are, falls along a smooth,
+predictable curve as models get bigger, as long as they have enough text to learn
+from.<Cite id="kaplan2020" /> A rule like this is called a <GlossaryPopover term="scaling-law">scaling law</GlossaryPopover>.
+Slide along theirs:
+
+</At>
+<At levels="standard deep">
 
 In 2020, researchers trained many language models of different sizes and found that the loss
 (<ChapterRef to="learning-from-mistakes" />) falls along a smooth, predictable curve as models get bigger, as long as they have enough
 text to learn from.<Cite id="kaplan2020" /> The same held for more training text and more compute.
 A formula like this is called a <GlossaryPopover term="scaling-law">scaling law</GlossaryPopover>. Slide along theirs:
 
+</At>
+
 <ScalingLawChart />
+
+<At levels="simple">
+
+Each tenfold increase in size lowers the loss by about the same fraction, so improvements keep
+coming but each one costs ten times more. Labs use curves like this to predict how a huge model
+will do before they pay for it. The curve doesn't say which skills will appear.
+
+</At>
+<At levels="standard deep">
 
 Each tenfold increase in size lowers the loss by about the same fraction, so improvements keep
 coming but each one costs ten times more. A lower loss means the model is less surprised by real
@@ -40,7 +99,31 @@ spend the money. They also say nothing about *which* skills appear. The GPT-3 pa
 models were much better at picking up a new task from just a few examples in the
 prompt.<Cite id="brown2020" />
 
+</At>
+<At levels="deep">
+
+The curve on the chart is Kaplan and colleagues' fit for size alone:
+
+$$
+L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}, \qquad N_c = 8.8 \times 10^{13}, \quad \alpha_N = 0.076
+$$
+
+where $L$ is the loss in nats per token and $N$ counts the weights outside the token and position
+tables.<Cite id="kaplan2020" /> Ten times the weights multiplies the loss by $10^{-0.076} \approx 0.84$,
+about 16% lower, at any size. That's what a straight line on a log–log chart means.
+
+</At>
+
 ## More text, not just more weights
+
+<At levels="simple">
+
+For the same amount of computing, a smaller model trained on more text can beat a giant one. In
+2022, Chinchilla, with 70 billion weights, beat Gopher, a model four times its size, by reading far
+more text.<Cite id="hoffmann2022" />
+
+</At>
+<At levels="standard deep">
 
 For a fixed amount of compute, should you build a bigger model or train it on more text? In 2022 a
 team trained Chinchilla with 70 billion weights on 1.4 trillion tokens, using the same compute as
@@ -48,6 +131,23 @@ their earlier 280-billion-weight Gopher, which had read 300 billion. The smaller
 more text, did better.<Cite id="hoffmann2022" /> That's about 20 tokens of training text per weight.
 Llama 3's largest model went further, with about 39 tokens per weight: 405 billion weights and
 15.6 trillion tokens.<Cite id="grattafiori2024" />
+
+</At>
+<At levels="deep">
+
+The Chinchilla team fit the loss to both the weights $N$ and the training tokens $D$:
+
+$$
+L(N, D) = E + \frac{A}{N^{\alpha}} + \frac{B}{D^{\beta}}
+$$
+
+with $E = 1.69$, $A = 406.4$, $B = 410.7$, $\alpha = 0.34$, and $\beta = 0.28$. $E$ is the loss no
+model can beat (the text's own unpredictability), and the other two terms are what a finite model
+and a finite amount of text add.<Cite id="hoffmann2022" /> The fit predicts 1.94 for Chinchilla and
+1.99 for Gopher. Spending a budget $C \approx 6ND$ to make $L$ as low as possible grows $N$ and $D$
+together, which works out to about 20 tokens per weight.
+
+</At>
 
 GPT-2 small, for comparison, read text from about 8 million web pages, roughly 40
 GB.<Cite id="radford2019" />
@@ -58,6 +158,12 @@ GB.<Cite id="radford2019" />
 - Loss falls along a smooth curve as size, text, and compute grow: a scaling law.
 - For a fixed budget, more training text and fewer weights can beat a giant model.
 
+<At levels="deep">
+
+- Compute is about $6ND$; loss falls as $N^{-0.076}$ with size, and the best split is about 20
+  tokens per weight.
+
+</At>
 </RecapCard>
 
 **Next question:** a model with 405 billion weights has to keep every one of them in memory. How

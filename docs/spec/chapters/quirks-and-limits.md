@@ -18,3 +18,9 @@ anything outside the context window is forgotten.
 ## Data
 
 Recorded GPT-2 small traces (`quirk-*`); live GPT-2 (T2) and the GPT-2 tokenizer (T1).
+
+## Decisions
+
+- [Levels](../levels.md): Simple keeps each quirk's example and drops the percentages and studies.
+  In depth explains why the loss rewards likely rather than true text, the two kinds of
+  hallucination, and how GPT-2 and GPT-4 split numbers into tokens.
