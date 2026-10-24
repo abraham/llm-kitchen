@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -20,12 +21,56 @@ press *Play*) to watch the counts fill in, one pair of words at a time.
 
 ## From counts to probabilities
 
+<At levels="simple">
+
+Once everything is counted, each word's counts turn into chances: after *little*, the three
+followers each get one in three. Pick a word in the widget to see its chances as bars. To make up
+text, start with a word, pick the next one using those chances, and repeat.
+
+</At>
+<At levels="standard deep">
+
 Once everything is counted, each row turns into probabilities: divide each count by the row's total.
 That's all the model knows. Pick a word in the widget to see its row as bars.
 
 To generate text, start with a word, spin for the next one using those probabilities, then repeat
 with the new word. Claude Shannon generated English this way in 1948, choosing each word based only
 on the one before it.<Cite id="shannon1948" />
+
+</At>
+<At levels="deep">
+
+### The counting rule
+
+As a formula, the bigram model's chance for the next word is
+
+$$
+P(w_i \mid w_{i-1}) = \frac{C(w_{i-1}\,w_i)}{C(w_{i-1})}
+$$
+
+where $w_{i-1}$ is the word just read, $w_i$ is a candidate next word, $C(w_{i-1}\,w_i)$ is how many
+times that pair appears in the training text, and $C(w_{i-1})$ is how many times $w_{i-1}$ appears
+with any word after it. For *little*, $C(\text{little lamb}) = 1$ and $C(\text{little}) = 3$, so
+$P(\text{lamb} \mid \text{little}) = 1/3$. These are the chances that make the training text as
+likely as possible.<Cite id="jurafsky-martin-ngrams" />
+
+Real n-gram models look further back (a trigram uses the last two words) and deal with pairs they
+never saw. Here, any unseen pair gets a chance of 0, and since a sentence's chance is its words'
+chances multiplied, one new pair makes the whole sentence impossible. Smoothing moves a little
+probability onto unseen pairs. The simplest version adds one to every count:
+
+$$
+P_{\text{add-1}}(w_i \mid w_{i-1}) = \frac{C(w_{i-1}\,w_i) + 1}{C(w_{i-1}) + V}
+$$
+
+where $V$ is the number of different words.<Cite id="jurafsky-martin-ngrams" />
+
+Counting also stops scaling. With GPT-2's 50,257 tokens, a table of every pair would have about
+2.5 billion cells, and a table of every triple about 127 trillion. Bengio and colleagues called this
+the curse of dimensionality, and proposed learning to compute a prediction instead of looking one
+up.<Cite id="bengio2003" />
+
+</At>
 
 ## Why the output is bad
 
@@ -44,6 +89,12 @@ them.
   probabilities.
 - It only looks one word back, so its output is locally plausible but wanders.
 
+<At levels="deep">
+
+- $P(w_i \mid w_{i-1}) = C(w_{i-1}\,w_i) / C(w_{i-1})$: the pair's count over the first word's
+  count.
+
+</At>
 </RecapCard>
 
 **Next question:** the model gives probabilities, but something has to decide which word to actually

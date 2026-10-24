@@ -25,3 +25,6 @@ Recorded GPT-2 small traces, including one run per temperature.
 - Log probabilities stand in for the raw scores when dividing by the temperature; adding a constant
   to every score changes nothing, so the chances are the same.
 - The temperature comparison is recorded; a live version is on the [roadmap](../roadmap.md).
+- [Levels](../levels.md): Simple explains greedy picking and temperature in words and leaves out the
+  raw-score widget (`TemperatureMath`). In depth gives softmax with temperature, what happens at 1
+  and near 0, how the recorded runs were sampled, and nucleus sampling.
