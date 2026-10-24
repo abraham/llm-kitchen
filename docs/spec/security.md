@@ -148,8 +148,10 @@ No file holds these, so they're recorded here; `gh api repos/abraham/llm-kitchen
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
-   reporting, which is turned on for the repository.
+1. **A way to report problems.** The repository is private, so a `SECURITY.md` or GitHub's private
+   vulnerability reporting wouldn't reach anyone outside it. The site serves
+   `/.well-known/security.txt` (RFC 9116) with a `Contact` and an `Expires` under a year away, and a
+   test fails once `Expires` has passed. Waiting on a maintainer to choose the contact address.
 
 When an item lands, its description moves into [Rules](#rules) and it leaves this list.
 
