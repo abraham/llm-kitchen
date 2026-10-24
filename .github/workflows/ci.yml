@@ -29,8 +29,12 @@ jobs:
       - run: npm test
 
   build-e2e:
-    name: Build and Playwright
+    name: Build and Playwright (${{ matrix.shard }}/3)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3]
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-node@v7.1.0
@@ -51,17 +55,21 @@ jobs:
       - if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
       - run: npm run build
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --shard=${{ matrix.shard }}/3
       - if: failure()
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 7
 
   lighthouse:
-    name: Lighthouse
+    name: Lighthouse (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: actions/setup-node@v7.1.0
@@ -82,11 +90,11 @@ jobs:
       - if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
       - run: npm run build
-      - run: npm run test:lighthouse
+      - run: npm run test:lighthouse -- --shard=${{ matrix.shard }}/4
       - if: failure()
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: lighthouse-report
+          name: lighthouse-report-${{ matrix.shard }}
           path: lighthouse-report/
           retention-days: 7
 
