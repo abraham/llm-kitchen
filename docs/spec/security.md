@@ -49,6 +49,12 @@ the trust boundary, so it stays limited to maintainers.
   scripts from `'self'` plus `'wasm-unsafe-eval'` for ONNX Runtime, `object-src 'none'`,
   `base-uri 'self'`, `form-action 'self'`, `connect-src 'self'` on pages, and
   `frame-ancestors 'none'`.
+- **Workers get a complete policy.** A worker gets only its response's header policy, not the page's.
+  `firebase.json` sends workers under `/_app/immutable/workers/` `default-src 'self'`,
+  `script-src 'self' 'wasm-unsafe-eval' blob:` (ONNX Runtime imports its loader from a `blob:` URL
+  it makes from the site's own file), the Hugging Face `connect-src`, `object-src 'none'`,
+  `base-uri 'self'`, and `frame-ancestors 'none'`. Pages keep a header without `script-src`, since
+  one without SvelteKit's hashes would block their inline scripts.
 - **Every dataset is checked** before use: its envelope (id, version, recording script, model
   revisions) and its data, by the parser `registry.ts` names (see
   [architecture.md](architecture.md#data)). Invalid data throws and the widget shows the error; it
@@ -93,44 +99,37 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **A complete policy for workers.** Today a worker gets only the header policy, which has
-   `connect-src` and `frame-ancestors` but no `default-src` or `script-src`, so nothing stops a
-   worker from importing a script from another origin. A header rule for `/_app/immutable/workers/**`
-   sends the full policy (`default-src 'self'`, `script-src 'self' 'wasm-unsafe-eval'`, the Hugging
-   Face `connect-src`, `object-src 'none'`). Pages keep their current header, because a header
-   `script-src` without SvelteKit's hashes would block their inline scripts. `hosting.e2e.ts` checks
-   both.
-2. **Stronger HSTS.** Firebase Hosting sends `Strict-Transport-Security: max-age=31556926` on its
+1. **Stronger HSTS.** Firebase Hosting sends `Strict-Transport-Security: max-age=31556926` on its
    own. `firebase.json` sets `max-age=63072000; includeSubDomains`, and a check against the live
    site confirms what is served, since the emulator doesn't add HSTS. No `preload`: leaving the
    preload list takes months, and the domain may host other things.
-3. **No stored Git credentials.** Every `actions/checkout` sets `persist-credentials: false`; no job
+2. **No stored Git credentials.** Every `actions/checkout` sets `persist-credentials: false`; no job
    pushes.
-4. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
+3. **Workflow audit.** The `checks` job runs [zizmor](https://docs.zizmor.sh) on
    `.github/workflows/` and fails on any finding of medium severity or higher.
-5. **Dependency review.** Pull requests that change `package-lock.json` run
+4. **Dependency review.** Pull requests that change `package-lock.json` run
    `actions/dependency-review-action`, which fails on a new dependency with a known vulnerability of
    high severity or higher.
-6. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
+5. **A cooldown on updates.** Dependabot waits 7 days after a release before proposing it
    (`cooldown: default-days: 7`), so a hijacked release is usually caught and pulled before it
    reaches the lockfile. Dependabot security updates stay immediate.
-7. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
+6. **No install scripts.** `.npmrc` sets `ignore-scripts=true`. Today three packages have install
    scripts: `onnxruntime-node` and `protobufjs`, which the site doesn't run, and `re2`, a native
    module the Hosting emulator may need. If the emulator breaks without it, CI runs
    `npm rebuild re2` after `npm ci`, and the README says to do the same.
-8. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
+7. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
    ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
    script verifies them, and the worker checks each download's hash before loading it, through
    Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
    script check and the reason is recorded here.
-9. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+8. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-10. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
-    reporting, which is turned on for the repository.
-11. **Repository settings,** recorded here because no file holds them: secret scanning with push
+9. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+   reporting, which is turned on for the repository.
+10. **Repository settings,** recorded here because no file holds them: secret scanning with push
     protection, Dependabot alerts and security updates, private vulnerability reporting, and a
     ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-12. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+11. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
     [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
     recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
     `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.

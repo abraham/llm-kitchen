@@ -52,7 +52,8 @@ major that supports Node 26.
   `firebase.json` adds the header-only `frame-ancestors 'none'` and a `connect-src` that also allows
   Hugging Face. Browsers enforce both policies on a page, so the page itself can only fetch from
   `'self'`; model downloads work because they run in the inference worker, whose script is loaded
-  from a URL and gets only the header's policy.
+  from a URL and gets only the header's policy. Workers under `/_app/immutable/workers/` get a
+  complete header policy of their own (see [security.md](security.md#in-the-browser)).
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a
   `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB, and
   `Cross-Origin-Opener-Policy: same-origin`.
