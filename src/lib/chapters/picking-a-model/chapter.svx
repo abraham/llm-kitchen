@@ -123,6 +123,9 @@ Benchmarks on the model card narrow the list further. Your own prompts decide: a
 model's answers can change with small differences in wording, so try the finalists on the tasks you
 care about.
 
+You don't have to pick only one. An app can ask a small model first and pass only the questions it
+is unsure of to a bigger one (<ChapterRef to="routing" />).
+
 <RecapCard>
 
 - A model name packs in its family, size, tuning, and often bits per weight and file format.

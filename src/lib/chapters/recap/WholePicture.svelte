@@ -68,10 +68,10 @@
 		harness: {
 			id: 'harness',
 			name: 'The harness',
-			what: 'Ordinary code that builds the prompt, calls the model in a loop, runs tools, and decides what the model gets to see.',
+			what: 'Ordinary code that builds the prompt, picks a model, calls it in a loop, runs tools, and decides what the model gets to see.',
 			chapters: ['the-model-is-not-the-product', 'the-agent-loop'],
 			color: 'harness',
-			children: ['template', 'tools', 'loop', 'context', 'cache', 'guards']
+			children: ['template', 'context', 'cache', 'route', 'tools', 'loop', 'guards']
 		},
 		template: {
 			id: 'template',
@@ -107,6 +107,13 @@
 			what: 'Reuses the work on a prompt’s unchanged start, so long conversations stay cheap and fast.',
 			chapters: ['caching'],
 			color: 'vector'
+		},
+		route: {
+			id: 'route',
+			name: 'Routing',
+			what: 'Picks which model answers: a cheap one first, and a bigger one when it is unsure.',
+			chapters: ['routing'],
+			color: 'prob'
 		},
 		guards: {
 			id: 'guards',

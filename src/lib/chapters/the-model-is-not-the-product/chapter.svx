@@ -108,5 +108,5 @@ chapters look at each job in turn.
 </At>
 </RecapCard>
 
-**Next question:** the prompt listed "tools". How can a model that only writes text use a
-calculator?
+**Next question:** the harness re-sends the whole conversation on every call. What happens when it
+gets too long to fit?

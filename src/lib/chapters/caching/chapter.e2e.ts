@@ -10,7 +10,7 @@ test('the KV cache and the prompt cache', async ({ page }) => {
 	await expect(kv.getByRole('status')).toContainText('run 9 token positions with the cache on');
 
 	const view = page.getByRole('region', { name: 'What the provider can reuse' });
-	await expect(view.getByText('6,100 (80%)')).toBeVisible();
+	await expect(view.getByText('2,342 (79%)')).toBeVisible();
 	await view.getByLabel('Put the time at the top').check();
 	await expect(view.getByText('0 (0%)')).toBeVisible();
 });

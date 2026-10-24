@@ -177,14 +177,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		levels: ['simple']
 	},
 	{
-		q: 'When an assistant uses a calculator, who actually runs it?',
-		options: ['The model', 'The harness', 'The tokenizer', 'The user'],
-		answer: 1,
-		why: 'The model only writes a tool call as text; the harness runs it.',
-		chapters: ['tools']
-	},
-	{
-		q: 'An agent re-sends its whole, growing conversation on every call. Why is that often cheaper than it sounds?',
+		q: 'A chat app re-sends its whole, growing conversation on every call. Why is that often cheaper than it sounds?',
 		options: [
 			'The model remembers the earlier calls',
 			'The provider reuses its work on the unchanged start of the prompt',
@@ -197,7 +190,7 @@ export const QUESTIONS: QuizQuestion[] = [
 		levels: ['standard', 'deep']
 	},
 	{
-		q: 'An agent sends its whole conversation again on every call. What keeps that from being as slow and costly as it sounds?',
+		q: 'A chat app sends its whole conversation again on every call. What keeps that from being as slow and costly as it sounds?',
 		options: [
 			'The provider saves its work on the start of the prompt and reuses it',
 			'The model remembers what it read last time',
@@ -221,6 +214,13 @@ export const QUESTIONS: QuizQuestion[] = [
 		why: 'Step t reruns all p + t tokens, so n steps take n·p + n(n − 1)/2 token passes.',
 		chapters: ['caching'],
 		levels: ['deep']
+	},
+	{
+		q: 'When an assistant uses a calculator, who actually runs it?',
+		options: ['The model', 'The harness', 'The tokenizer', 'The user'],
+		answer: 1,
+		why: 'The model only writes a tool call as text; the harness runs it.',
+		chapters: ['tools']
 	},
 	{
 		q: 'Why can a hidden line in a web page change what a summarizer writes?',

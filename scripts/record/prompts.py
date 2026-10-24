@@ -3,7 +3,7 @@
 Usage: scripts/.venv/bin/python -m scripts.record prompts
 
 Uses only models other scripts already download: GPT-2 small (the canonical model) and
-Qwen2.5-1.5B-Instruct (Part VII). Greedy decoding throughout, so reruns match. Writes
+Qwen2.5-1.5B-Instruct (the Harnesses chapters). Greedy decoding throughout, so reruns match. Writes
 static/data/prompts/:
   wording.json  `prompts-as-documents`: GPT-2's next-token guesses for prompt variants, and where its last token looks
   fewshot.json  `few-shot`: GPT-2 on made-up tasks with 0-4 examples, and its strongest induction head

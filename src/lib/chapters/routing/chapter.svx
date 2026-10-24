@@ -1,0 +1,100 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import RoutingCascade from './RoutingCascade.svelte';
+</script>
+
+## Two models, one app
+
+<At levels="simple">
+
+So far, one model has answered every question. Many apps have two or more: a small one that is
+cheap and quick, and a big one that is better and costs more. The harness decides which one
+answers. One way is a <GlossaryPopover term="cascade">cascade</GlossaryPopover>: ask the small model
+first, and pass the question on to the big one only when the small model seems unsure.<Cite id="chen2023frugal" />
+
+</At>
+<At levels="standard deep">
+
+So far, one model has answered every question. Many apps have several: a small one that is cheap
+and quick, and a big one that does better (<ChapterRef to="scale" />) but costs more for every token. The harness
+decides which one answers, and there are two common ways. A **router** looks at the request and
+picks a model before any of them answers. A <GlossaryPopover term="cascade">cascade</GlossaryPopover>
+asks the small model first and passes the question on to the big one only when the small model
+seems unsure.<Cite id="chen2023frugal" />
+
+</At>
+
+How does a harness know the model is unsure? It can read the probabilities the model gave the
+tokens it wrote (<ChapterRef to="probability-and-sampling" />). Here are 40 short questions with checkable answers, put to
+Qwen2.5-0.5B-Instruct and to Qwen2.5-1.5B-Instruct, about three times its size.<Cite id="qwen2024" />
+The small model got 26 right and the big one 37. Move the line: every question the small model
+answered with less confidence than that goes to the big model instead.
+
+<RoutingCascade />
+
+<At levels="simple">
+
+At 60%, the harness passes on 15 questions and gets 34 right, for 70% of the cost of always asking
+the big model. At 80% it gets all 37 the big model would, and still saves a little. Confidence is a
+useful hint, not proof: the small model was 79% sure that Sydney is the capital of Australia, and
+only 25% sure of Ankara for Turkey, which was right.
+
+</At>
+<At levels="standard deep">
+
+At 60%, the harness passes on 15 questions and gets 34 right, for 70% of the cost of always asking
+the big model. At 80% it passes on 25 and gets 37, as many as the big model alone, for 95%. Every
+one of the small model's 14 wrong answers had a confidence of 79% or less, but so did 11 of its 26
+right ones, so a line high enough to catch every mistake also sends many good answers to the big
+model. Confidence is a hint, not proof: the small model was 79% sure that Sydney is the capital of
+Australia, and only 25% sure of Ankara for Turkey, which was right.
+
+</At>
+<At levels="deep">
+
+### The numbers behind the slider
+
+The confidence is the geometric mean of the probabilities $p_1, \dots, p_k$ the model gave the $k$
+tokens of its answer, so a long answer isn't punished for having more tokens:
+
+$$c = \exp\!\Big(\frac{1}{k} \sum_{i=1}^{k} \ln p_i\Big)$$
+
+The cost counts a call as the model's number of weights: 0.49 billion for the small model and 1.54
+billion for the big one, a ratio of $r \approx 3.12$. Every question pays for the small call, and
+the $m$ passed on pay for a big call too, so out of $n$ questions the cascade costs
+
+$$\frac{n + m\,r}{n\,r}$$
+
+of asking the big model everything: 32% with $m = 0$, and 70% with $m = 15$.
+
+</At>
+
+Simplified: real prices are per token and set by the provider, not by the number of weights, and a
+cascade adds a wait whenever it asks twice. Researchers have built cascades that matched the best
+single model at a small fraction of its cost.<Cite id="chen2023frugal" /> A router avoids the second
+call by deciding up front, for example with a small model trained on which questions the big model
+wins; such routers have cut costs by more than half in some tests without lowering the quality of
+the answers.<Cite id="ong2024" /> Either way, it's the harness, not either model, that does the
+choosing.
+
+<RecapCard>
+
+- An app can use several models, and the harness decides which one answers.
+- A router picks a model up front; a cascade asks a small model first and passes the question on
+  when its confidence is low.
+- The threshold trades cost against quality, and confidence is a useful hint, not proof.
+
+<At levels="deep">
+
+- Confidence here is the geometric mean of the answer tokens' probabilities; cost is
+  $(n + m\,r)/(n\,r)$ of always asking the big model.
+
+</At>
+</RecapCard>
+
+**Next question:** so far the harness has done all the deciding. The prompt in <ChapterRef to="the-model-is-not-the-product" /> also
+listed "tools". How can a model that only writes text use a calculator?

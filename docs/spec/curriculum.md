@@ -11,8 +11,8 @@ This is the only spec that uses chapter numbers.
 
 - **Each Part answers one question** a reader would ask, in the order they'd ask it: what does a
   language model do, how does it see text, how does it learn, how does it use context, how does it
-  become an assistant, how do you talk to it, what is built around it, and what else is built from
-  the same pieces.
+  become an assistant, how do you talk to it, what is built around it, how does it act, and what
+  else is built from the same pieces.
 - **The model before what's built around it.** First the model alone, then how to prompt it, then
   the harness code that wraps it. Prompting needs only the model and its chat template, and the
   harness chapters (system prompts, tool-call formats, prompt injection) are easier once prompting is
@@ -99,29 +99,37 @@ _How do you get the answer you want?_
 
 ### Part VII — Harnesses
 
-_What is built around the model to make a chat app or an agent?_
+_What does the app add around the model?_
 
-| Ch  | Title                        | Slug                           | Builds on  |
-| --- | ---------------------------- | ------------------------------ | ---------- |
-| 23  | The model is not the product | `the-model-is-not-the-product` | 15, 20     |
-| 24  | Tools                        | `tools`                        | 21, 23     |
-| 25  | The agent loop               | `the-agent-loop`               | 11, 24     |
-| 26  | Managing the context         | `managing-the-context`         | 5, 8, 25   |
-| 27  | Caching: reusing the work    | `caching`                      | 9, 11, 25  |
-| 28  | Prompt injection             | `prompt-injection`             | 20, 22, 24 |
-| 29  | Trust and guardrails         | `trust-and-guardrails`         | 25, 28     |
+| Ch  | Title                        | Slug                           | Builds on |
+| --- | ---------------------------- | ------------------------------ | --------- |
+| 23  | The model is not the product | `the-model-is-not-the-product` | 15, 20    |
+| 24  | Managing the context         | `managing-the-context`         | 5, 8, 23  |
+| 25  | Caching: reusing the work    | `caching`                      | 9, 11, 24 |
+| 26  | Which model answers?         | `routing`                      | 2, 12, 23 |
 
-### Part VIII — Other kinds of models
+### Part VIII — Tools and agents
+
+_How does a model act, and how do you keep it safe?_
+
+| Ch  | Title                | Slug                   | Builds on  |
+| --- | -------------------- | ---------------------- | ---------- |
+| 27  | Tools                | `tools`                | 21, 23     |
+| 28  | The agent loop       | `the-agent-loop`       | 11, 27     |
+| 29  | Prompt injection     | `prompt-injection`     | 20, 22, 27 |
+| 30  | Trust and guardrails | `trust-and-guardrails` | 28, 29     |
+
+### Part IX — Other kinds of models
 
 _What else is built from the same pieces?_
 
 | Ch  | Title                         | Slug                 | Builds on |
 | --- | ----------------------------- | -------------------- | --------- |
-| 30  | Reading both ways             | `encoders`           | 5, 9      |
-| 31  | Many experts                  | `mixture-of-experts` | 6, 10     |
-| 32  | Remembering without attention | `recurrent-models`   | 7, 8, 27  |
-| 33  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
-| 34  | Painting from noise           | `diffusion`          | 7, 11     |
+| 31  | Reading both ways             | `encoders`           | 5, 9      |
+| 32  | Many experts                  | `mixture-of-experts` | 6, 10     |
+| 33  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
+| 34  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
+| 35  | Painting from noise           | `diffusion`          | 7, 11     |
 
 ### Wrap-up
 
@@ -129,10 +137,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug              | Builds on                  |
 | --- | ------------------------ | ----------------- | -------------------------- |
-| 35  | Recap: the whole picture | `recap`           | —                          |
-| 36  | From message to reply    | `end-to-end`      | —                          |
-| 37  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 27, 31, 33 |
-| 38  | Check yourself           | `quiz`            | —                          |
+| 36  | Recap: the whole picture | `recap`           | —                          |
+| 37  | From message to reply    | `end-to-end`      | —                          |
+| 38  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 32, 34 |
+| 39  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -149,9 +157,13 @@ _How does it all fit together?_ Unnumbered Part.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
   template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
   familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
-  (Ch 24). Prompt injection (Ch 28) then reads as prompting by an attacker.
+  (Ch 27). Prompt injection (Ch 29) then reads as prompting by an attacker.
+- **Harnesses before Tools and agents.** What an app adds around one model call, the prompt it
+  builds, how it trims and caches it, and which model gets it, needs only a chat. Tools, the agent
+  loop, and the attacks and guardrails that come with them follow as their own Part, because a
+  model that acts raises a different question: how do you keep it safe?
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
-  they draw on every earlier Part, including the KV cache (Ch 27) that recurrent models avoid.
+  they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid.
 - **The Wrap-up puts it together.** The recap shows what the pieces are, From message to reply shows
   the order they run in, Picking a model reads real model names with everything taught so far, and
   the quiz comes last.

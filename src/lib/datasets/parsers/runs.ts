@@ -1,5 +1,6 @@
 import type { KVCacheRun } from '../../harness/cache.ts';
 import type { InjectionLab } from '../../harness/injection.ts';
+import type { RoutingRecording } from '../../harness/routing.ts';
 import type { QuantizeRun } from '../../math/quantize.ts';
 import type { SpeculativeRecording } from '../../math/speculative.ts';
 import {
@@ -98,6 +99,31 @@ export const speculativeRecording: Check<SpeculativeRecording> = object({
 			written: array(token),
 			rounds: array(object({ guesses: array(token), kept: integer, added: token }))
 		})
+	),
+	generatedAt: string
+});
+
+const routingModel = object({
+	id: string,
+	displayName: string,
+	revision: nullable(string),
+	parameters: integer
+});
+
+const routingAnswer = object({
+	answer: string,
+	tokens: integer,
+	confidence: number,
+	correct: boolean
+});
+
+export const routingRecording: Check<RoutingRecording> = object({
+	version: literal(1),
+	system: string,
+	small: routingModel,
+	big: routingModel,
+	questions: array(
+		object({ question: string, accepted: array(string), small: routingAnswer, big: routingAnswer })
 	),
 	generatedAt: string
 });

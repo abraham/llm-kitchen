@@ -1,0 +1,764 @@
+{
+	"dataset": "routing/cascade",
+	"version": 1,
+	"script": "record/routing.py",
+	"models": [
+		{
+			"id": "Qwen/Qwen2.5-0.5B-Instruct",
+			"revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+		},
+		{
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		}
+	],
+	"generatedAt": "2026-10-24",
+	"data": {
+		"version": 1,
+		"system": "Answer with just the answer: a word, a name, or a number. No explanation.",
+		"small": {
+			"id": "Qwen/Qwen2.5-0.5B-Instruct",
+			"displayName": "Qwen2.5-0.5B-Instruct",
+			"revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+			"parameters": 494032768
+		},
+		"big": {
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"displayName": "Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+			"parameters": 1543714304
+		},
+		"questions": [
+			{
+				"question": "What is 17 + 25?",
+				"accepted": [
+					"42"
+				],
+				"small": {
+					"answer": "Twenty-two",
+					"tokens": 2,
+					"confidence": 0.4268,
+					"correct": false
+				},
+				"big": {
+					"answer": "42",
+					"tokens": 2,
+					"confidence": 0.9999,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 9 × 8?",
+				"accepted": [
+					"72"
+				],
+				"small": {
+					"answer": "90",
+					"tokens": 2,
+					"confidence": 0.416,
+					"correct": false
+				},
+				"big": {
+					"answer": "72",
+					"tokens": 2,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 23 × 17?",
+				"accepted": [
+					"391"
+				],
+				"small": {
+					"answer": "481",
+					"tokens": 3,
+					"confidence": 0.5602,
+					"correct": false
+				},
+				"big": {
+					"answer": "401",
+					"tokens": 3,
+					"confidence": 0.9849,
+					"correct": false
+				}
+			},
+			{
+				"question": "What is 144 ÷ 12?",
+				"accepted": [
+					"12"
+				],
+				"small": {
+					"answer": "12",
+					"tokens": 2,
+					"confidence": 0.3669,
+					"correct": true
+				},
+				"big": {
+					"answer": "12",
+					"tokens": 2,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 58 + 67?",
+				"accepted": [
+					"125"
+				],
+				"small": {
+					"answer": "125",
+					"tokens": 3,
+					"confidence": 0.7639,
+					"correct": true
+				},
+				"big": {
+					"answer": "125",
+					"tokens": 3,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 36 × 24?",
+				"accepted": [
+					"864"
+				],
+				"small": {
+					"answer": "1152",
+					"tokens": 4,
+					"confidence": 0.568,
+					"correct": false
+				},
+				"big": {
+					"answer": "864",
+					"tokens": 3,
+					"confidence": 0.9993,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 1000 − 357?",
+				"accepted": [
+					"643"
+				],
+				"small": {
+					"answer": "243",
+					"tokens": 3,
+					"confidence": 0.5483,
+					"correct": false
+				},
+				"big": {
+					"answer": "643",
+					"tokens": 3,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is 15 squared?",
+				"accepted": [
+					"225"
+				],
+				"small": {
+					"answer": "225",
+					"tokens": 3,
+					"confidence": 0.6806,
+					"correct": true
+				},
+				"big": {
+					"answer": "225",
+					"tokens": 3,
+					"confidence": 0.9997,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of France?",
+				"accepted": [
+					"Paris"
+				],
+				"small": {
+					"answer": "Paris",
+					"tokens": 1,
+					"confidence": 0.9772,
+					"correct": true
+				},
+				"big": {
+					"answer": "Paris",
+					"tokens": 1,
+					"confidence": 0.9865,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Japan?",
+				"accepted": [
+					"Tokyo"
+				],
+				"small": {
+					"answer": "Tokyo",
+					"tokens": 2,
+					"confidence": 0.9843,
+					"correct": true
+				},
+				"big": {
+					"answer": "Tokyo",
+					"tokens": 2,
+					"confidence": 0.9989,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Australia?",
+				"accepted": [
+					"Canberra"
+				],
+				"small": {
+					"answer": "Sydney",
+					"tokens": 2,
+					"confidence": 0.79,
+					"correct": false
+				},
+				"big": {
+					"answer": "Canberra",
+					"tokens": 2,
+					"confidence": 0.9969,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Canada?",
+				"accepted": [
+					"Ottawa"
+				],
+				"small": {
+					"answer": "Toronto",
+					"tokens": 1,
+					"confidence": 0.3438,
+					"correct": false
+				},
+				"big": {
+					"answer": "Ottawa",
+					"tokens": 3,
+					"confidence": 0.9454,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Brazil?",
+				"accepted": [
+					"Brasília",
+					"Brasilia"
+				],
+				"small": {
+					"answer": "Brasília",
+					"tokens": 3,
+					"confidence": 0.6712,
+					"correct": true
+				},
+				"big": {
+					"answer": "Brasília",
+					"tokens": 3,
+					"confidence": 0.9134,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Turkey?",
+				"accepted": [
+					"Ankara"
+				],
+				"small": {
+					"answer": "Ankara",
+					"tokens": 1,
+					"confidence": 0.2546,
+					"correct": true
+				},
+				"big": {
+					"answer": "Ankara",
+					"tokens": 3,
+					"confidence": 0.8992,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Kenya?",
+				"accepted": [
+					"Nairobi"
+				],
+				"small": {
+					"answer": "Kampala",
+					"tokens": 3,
+					"confidence": 0.4139,
+					"correct": false
+				},
+				"big": {
+					"answer": "Nairobi",
+					"tokens": 2,
+					"confidence": 0.9901,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of New Zealand?",
+				"accepted": [
+					"Wellington"
+				],
+				"small": {
+					"answer": "Wellington",
+					"tokens": 2,
+					"confidence": 0.5151,
+					"correct": true
+				},
+				"big": {
+					"answer": "Wellington",
+					"tokens": 2,
+					"confidence": 0.9929,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Switzerland?",
+				"accepted": [
+					"Bern",
+					"Berne"
+				],
+				"small": {
+					"answer": "Bern",
+					"tokens": 1,
+					"confidence": 0.8691,
+					"correct": true
+				},
+				"big": {
+					"answer": "Bern",
+					"tokens": 1,
+					"confidence": 0.945,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Morocco?",
+				"accepted": [
+					"Rabat"
+				],
+				"small": {
+					"answer": "Marrakech",
+					"tokens": 4,
+					"confidence": 0.5558,
+					"correct": false
+				},
+				"big": {
+					"answer": "Rabat",
+					"tokens": 3,
+					"confidence": 0.9897,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Vietnam?",
+				"accepted": [
+					"Hanoi",
+					"Ha Noi"
+				],
+				"small": {
+					"answer": "Hanoi",
+					"tokens": 2,
+					"confidence": 0.8867,
+					"correct": true
+				},
+				"big": {
+					"answer": "Hanoi",
+					"tokens": 2,
+					"confidence": 0.9478,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Nigeria?",
+				"accepted": [
+					"Abuja"
+				],
+				"small": {
+					"answer": "Ibadan",
+					"tokens": 3,
+					"confidence": 0.6068,
+					"correct": false
+				},
+				"big": {
+					"answer": "Abuja",
+					"tokens": 2,
+					"confidence": 0.9348,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Peru?",
+				"accepted": [
+					"Lima"
+				],
+				"small": {
+					"answer": "Lima",
+					"tokens": 2,
+					"confidence": 0.7365,
+					"correct": true
+				},
+				"big": {
+					"answer": "Lima",
+					"tokens": 2,
+					"confidence": 0.992,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the capital of Egypt?",
+				"accepted": [
+					"Cairo"
+				],
+				"small": {
+					"answer": "Cairo",
+					"tokens": 2,
+					"confidence": 0.6092,
+					"correct": true
+				},
+				"big": {
+					"answer": "Cairo",
+					"tokens": 2,
+					"confidence": 0.972,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the chemical symbol for gold?",
+				"accepted": [
+					"Au"
+				],
+				"small": {
+					"answer": "Au",
+					"tokens": 1,
+					"confidence": 0.9677,
+					"correct": true
+				},
+				"big": {
+					"answer": "Au",
+					"tokens": 1,
+					"confidence": 0.7353,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the chemical symbol for sodium?",
+				"accepted": [
+					"Na"
+				],
+				"small": {
+					"answer": "Na",
+					"tokens": 1,
+					"confidence": 0.9736,
+					"correct": true
+				},
+				"big": {
+					"answer": "Na",
+					"tokens": 1,
+					"confidence": 0.9907,
+					"correct": true
+				}
+			},
+			{
+				"question": "Which planet is the largest in our solar system?",
+				"accepted": [
+					"Jupiter"
+				],
+				"small": {
+					"answer": "Jupiter",
+					"tokens": 2,
+					"confidence": 0.947,
+					"correct": true
+				},
+				"big": {
+					"answer": "Jupiter",
+					"tokens": 2,
+					"confidence": 0.841,
+					"correct": true
+				}
+			},
+			{
+				"question": "Which planet is closest to the Sun?",
+				"accepted": [
+					"Mercury"
+				],
+				"small": {
+					"answer": "Mercury",
+					"tokens": 2,
+					"confidence": 0.8938,
+					"correct": true
+				},
+				"big": {
+					"answer": "Mercury",
+					"tokens": 2,
+					"confidence": 0.9995,
+					"correct": true
+				}
+			},
+			{
+				"question": "How many legs does a spider have?",
+				"accepted": [
+					"8",
+					"eight"
+				],
+				"small": {
+					"answer": "six legs.",
+					"tokens": 3,
+					"confidence": 0.603,
+					"correct": false
+				},
+				"big": {
+					"answer": "8",
+					"tokens": 1,
+					"confidence": 0.9205,
+					"correct": true
+				}
+			},
+			{
+				"question": "At what temperature in Celsius does water boil at sea level?",
+				"accepted": [
+					"100"
+				],
+				"small": {
+					"answer": "100 Celsius degrees.",
+					"tokens": 6,
+					"confidence": 0.61,
+					"correct": true
+				},
+				"big": {
+					"answer": "100",
+					"tokens": 3,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "At what temperature in Fahrenheit does water freeze?",
+				"accepted": [
+					"32"
+				],
+				"small": {
+					"answer": "0 degrees Fahrenheit",
+					"tokens": 3,
+					"confidence": 0.5034,
+					"correct": false
+				},
+				"big": {
+					"answer": "32",
+					"tokens": 2,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "Who wrote Romeo and Juliet?",
+				"accepted": [
+					"Shakespeare"
+				],
+				"small": {
+					"answer": "William Shakespeare",
+					"tokens": 2,
+					"confidence": 0.8163,
+					"correct": true
+				},
+				"big": {
+					"answer": "William Shakespeare",
+					"tokens": 2,
+					"confidence": 0.7229,
+					"correct": true
+				}
+			},
+			{
+				"question": "Who painted the Mona Lisa?",
+				"accepted": [
+					"Leonardo",
+					"da Vinci"
+				],
+				"small": {
+					"answer": "Leonardo da Vinci",
+					"tokens": 4,
+					"confidence": 0.8442,
+					"correct": true
+				},
+				"big": {
+					"answer": "Leonardo da Vinci",
+					"tokens": 4,
+					"confidence": 0.9765,
+					"correct": true
+				}
+			},
+			{
+				"question": "Who wrote Pride and Prejudice?",
+				"accepted": [
+					"Austen"
+				],
+				"small": {
+					"answer": "Jane Austen",
+					"tokens": 3,
+					"confidence": 0.927,
+					"correct": true
+				},
+				"big": {
+					"answer": "Jane Austen",
+					"tokens": 3,
+					"confidence": 0.9929,
+					"correct": true
+				}
+			},
+			{
+				"question": "Who was the first person to walk on the Moon?",
+				"accepted": [
+					"Armstrong"
+				],
+				"small": {
+					"answer": "Neil Armstrong",
+					"tokens": 2,
+					"confidence": 0.9021,
+					"correct": true
+				},
+				"big": {
+					"answer": "Neil Armstrong",
+					"tokens": 2,
+					"confidence": 0.8982,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the largest ocean on Earth?",
+				"accepted": [
+					"Pacific"
+				],
+				"small": {
+					"answer": "Mediterranean Sea",
+					"tokens": 5,
+					"confidence": 0.7733,
+					"correct": false
+				},
+				"big": {
+					"answer": "Atlantic Ocean",
+					"tokens": 2,
+					"confidence": 0.7444,
+					"correct": false
+				}
+			},
+			{
+				"question": "How many days are in a leap year?",
+				"accepted": [
+					"366"
+				],
+				"small": {
+					"answer": "366",
+					"tokens": 3,
+					"confidence": 0.9715,
+					"correct": true
+				},
+				"big": {
+					"answer": "366",
+					"tokens": 3,
+					"confidence": 0.9999,
+					"correct": true
+				}
+			},
+			{
+				"question": "How many sides does a hexagon have?",
+				"accepted": [
+					"6",
+					"six"
+				],
+				"small": {
+					"answer": "six",
+					"tokens": 1,
+					"confidence": 0.9143,
+					"correct": true
+				},
+				"big": {
+					"answer": "6",
+					"tokens": 1,
+					"confidence": 0.9288,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the square root of 81?",
+				"accepted": [
+					"9",
+					"nine"
+				],
+				"small": {
+					"answer": "18",
+					"tokens": 2,
+					"confidence": 0.4004,
+					"correct": false
+				},
+				"big": {
+					"answer": "9",
+					"tokens": 1,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "In what year did World War II end?",
+				"accepted": [
+					"1945"
+				],
+				"small": {
+					"answer": "1945",
+					"tokens": 4,
+					"confidence": 0.9997,
+					"correct": true
+				},
+				"big": {
+					"answer": "1945",
+					"tokens": 4,
+					"confidence": 1.0,
+					"correct": true
+				}
+			},
+			{
+				"question": "What is the smallest prime number?",
+				"accepted": [
+					"2",
+					"two"
+				],
+				"small": {
+					"answer": "two",
+					"tokens": 1,
+					"confidence": 0.3396,
+					"correct": true
+				},
+				"big": {
+					"answer": "2",
+					"tokens": 1,
+					"confidence": 0.9963,
+					"correct": true
+				}
+			},
+			{
+				"question": "How many continents are there?",
+				"accepted": [
+					"7",
+					"seven"
+				],
+				"small": {
+					"answer": "seven",
+					"tokens": 1,
+					"confidence": 0.1925,
+					"correct": true
+				},
+				"big": {
+					"answer": "5",
+					"tokens": 1,
+					"confidence": 0.7746,
+					"correct": false
+				}
+			}
+		],
+		"generatedAt": "2026-10-24"
+	}
+}

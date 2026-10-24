@@ -11,23 +11,24 @@
 
 <At levels="simple">
 
-Every tool result and every reply is added to the prompt, and the model re-reads all of it on
-every call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover>.
+Every message and every reply is added to the prompt, and the model re-reads all of it on every
+call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover>.
 Long prompts are also slower and cost more. So the harness has to choose what the model sees.
 
 </At>
 <At levels="standard deep">
 
-Every tool result and every reply is added to the prompt, and the model re-reads all of it on every
-call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover> (<ChapterRef to="the-context-problem" />). Long before that
+Every message and every reply is added to the prompt, and the model re-reads all of it on every
+call (<ChapterRef to="the-model-is-not-the-product" />). But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover> (<ChapterRef to="the-context-problem" />). Long before that
 limit, long prompts also get slower and more expensive. So the harness has to choose what the model
 sees.
 
 </At>
 
-Below, the agent from <ChapterRef to="the-agent-loop" /> has done the same task for all six rhymes. Then you ask about the first
-one. To make the problem visible we set a small budget of 1,500 tokens; the model itself can read
-far more. Pick what the harness does when the conversation doesn't fit:
+Below is a long chat with the model from <ChapterRef to="the-model-is-not-the-product" />. You shared six nursery rhymes, each loved
+by a different child in your class, and asked what happens in each. Then you ask about the first
+one. To make the problem visible we set a small budget of 600 tokens; the model itself can read far
+more. Pick what the harness does when the conversation doesn't fit:
 
 <ContextBudget />
 
@@ -35,24 +36,25 @@ far more. Pick what the harness does when the conversation doesn't fit:
 
 <At levels="simple">
 
-- **Drop the oldest.** Simple, but here the first task was the one you asked about. Without it,
-  the model made up an answer.
+- **Drop the oldest.** Simple, but here the first rhyme was the one you asked about. Without it,
+  the model couldn't say which child loves it.
 - **Summarize.** The harness asks the model to shrink old turns into a short note. The note kept
-  "30 words", so the answer was right, but summaries can lose details that turn out to matter.
+  "Lily", so the answer was right, but summaries can lose details that turn out to matter.
 - **Retrieve.** The harness stores old turns outside the prompt and puts back the ones closest in
-  meaning to the question.<Cite id="lewis2020" /> The cat task came back, and the answer was right.
+  meaning to the question.<Cite id="lewis2020" /> The cat rhyme came back, and the answer was right.
 
 </At>
 <At levels="standard deep">
 
-- **Drop the oldest.** Simple, and often fine. But here the first task was the one you asked about.
-  With it gone, the model made up an answer: a rhyme called "Old Mother Hubbard" with 18 words.
+- **Drop the oldest.** Simple, and often fine. But here the first rhyme was the one you asked about.
+  With it gone, the model said the conversation didn't mention it. Here it admitted the gap; a model
+  can just as easily fill one with a confident guess (<ChapterRef to="quirks-and-limits" />).
 - **Summarize.** The harness asks the model to condense the old turns into a short note, then keeps
-  the note instead. The summary kept "30 words", so the answer was right. Summaries lose detail,
-  though, and you can't always tell in advance which details will matter.
+  the note instead. The summary kept "Lily", so the answer was right. Summaries lose detail, though,
+  and you can't always tell in advance which details will matter.
 - **Retrieve.** The harness keeps the old turns stored outside the prompt, and when a question
   comes in, finds the ones most similar in meaning, using embeddings like the map in <ChapterRef to="embeddings" />, and puts
-  them back.<Cite id="lewis2020" /> The cat task was the closest match to the question, so it came
+  them back.<Cite id="lewis2020" /> The cat rhyme was the closest match to the question, so it came
   back and the model answered correctly.
 
 </At>
@@ -60,16 +62,18 @@ far more. Pick what the harness does when the conversation doesn't fit:
 
 ### Picking by similarity
 
-The harness turned the question and each stored task into 384 numbers with MiniLM, the embedding
-model from <ChapterRef to="embeddings" />, and scored each task by the cosine of the angle between
-its vector $v$ and the question's vector $u$:
+The harness turned the question and each stored exchange into 384 numbers with MiniLM, the
+embedding model from <ChapterRef to="embeddings" />, and scored each exchange by the cosine of the angle between its
+vector $v$ and the question's vector $u$:
 
 $$\cos\theta = \frac{u \cdot v}{\lVert u \rVert \, \lVert v \rVert}$$
 
-The cat task scored 0.67 and the other five 0.53 to 0.60, so it came first. None scored low,
-because every task shares "nursery rhyme" and "count its words": close in meaning isn't always the
-same as useful. The summary was cheaper still, shrinking the 221-token cat task to a 29-token note,
-but it only worked because the note happened to keep the number you later asked about.
+The cat rhyme scored 0.49 and the other five 0.35 to 0.45, so it came first. None scored very low,
+because every exchange shares "nursery rhyme" and "loves": close in meaning isn't always the same as
+useful. The summary was cheaper still, shrinking the 149-token first exchange to a 30-token note, but
+it only worked because the note happened to keep the name you later asked about. It also kept a
+mistake: the model's first reply said a cat catches a mouse, which the rhyme never says, and the
+summary repeated it.
 
 </At>
 
@@ -82,7 +86,8 @@ model and put back into the prompt later.
 
 - The model only knows what's in its prompt, and the prompt has a limit.
 - When it fills up, the harness drops, summarizes, or retrieves text.
-- Whatever is left out is simply gone for the model, and it may fill the gap by making things up.
+- Whatever is left out is simply gone for the model: it may say it doesn't know, or fill the gap
+  with a guess.
 
 <At levels="deep">
 

@@ -15,8 +15,8 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
 - `KVCacheStepper`: steps through generation with the cache off and on. Off, every new token reruns
   the whole text so far; on, earlier tokens' keys and values are reused and only the new token is
   computed. A counter tallies the work for each, alongside measured time per token.
-- `PromptCacheView`: the calls from a recorded agent session, each drawn as a bar of blocks (system
-  prompt, tasks), with the part that matches an earlier call's start shaded as cached. The visitor
+- `PromptCacheView`: the calls from the recorded chat, each drawn as a bar of blocks (system
+  prompt, turns), with the part that matches an earlier call's start shaded as cached. The visitor
   makes the edits harnesses make (append a turn, change the system prompt, put the time at the top,
   drop or summarize old turns) and sees tokens reused and an illustrative cost.
 
@@ -25,7 +25,8 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
 - Work counts from GPT-2 small's config (`models/canonical.json`).
 - Time per token measured offline on one laptop CPU by `scripts/record/caching.py`
   (`static/data/caching/kv-cache.json`), which also checks both runs pick the same tokens.
-- Token counts from the recorded session in [Managing the context](managing-the-context.md).
+- Token counts from the recorded chat in [Managing the context](managing-the-context.md), with a
+  400-token budget for the drop and summarize edits.
 - Provider rules (minimum length, discount, how long a cache lives) cite provider docs with accessed
   dates and are labeled as varying by provider; prices are round, illustrative numbers.
 
@@ -37,4 +38,4 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
 - Live timing in the browser is on the [roadmap](../roadmap.md).
 - [Levels](../levels.md): Simple keeps the measured times and the exact-start rule. In depth counts
   the token passes against the measured times, works out Qwen's cache with grouped-query attention,
-  and prices the appending session.
+  and prices the appending chat.
