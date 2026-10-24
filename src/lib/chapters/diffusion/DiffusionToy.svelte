@@ -24,7 +24,7 @@
 
 	let shape = $state<Shape>('ring');
 	let random = seededRandom(1);
-	let trainer = $state(new DiffusionTrainer(new Denoiser(32, seededRandom(1))));
+	let trainer = $state.raw(new DiffusionTrainer(new Denoiser(32, seededRandom(1))));
 	let losses = $state<number[]>([]);
 	let steps = $state(0);
 	let running = $state(false);

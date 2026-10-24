@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 
 	const data = useDataset('prompts/steps');
 	const id = $props.id();
@@ -49,8 +50,9 @@
 					: 'a person has to read it to find the answer'} ·
 				{r.tokens} tokens
 			</p>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<div class="reply" tabindex="0" role="region" aria-label="The model's reply">{r.text}</div>
+			<div class="reply" {@attach scrollable} role="region" aria-label="The model's reply">
+				{r.text}
+			</div>
 
 			<table>
 				<caption>All {d.puzzles.length} puzzles</caption>

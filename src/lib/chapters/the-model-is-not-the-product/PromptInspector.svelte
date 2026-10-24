@@ -3,6 +3,7 @@
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import StepController from '#lib/components/layout/StepController.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
 	import { segmentPrompt, type PromptPartKind } from '#lib/harness/agent.ts';
 	import { label } from '#lib/curriculum/index.ts';
@@ -67,10 +68,9 @@
 					<li class="assistant">{last.thought}</li>
 				</ol>
 				<div class="raw-wrap">
-					<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 					<pre
 						class="raw"
-						tabindex="0"
+						{@attach scrollable}
 						aria-label="The text sent to the model">{#each parts as p, i (i)}{#if visible.has(p.kind)}<span
 									class={p.kind}>{p.text}</span
 								>{/if}{/each}</pre>

@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { findRun, promptPieces, tally } from '#lib/harness/injection.ts';
 
 	const data = useDataset('injection/lab');
@@ -84,11 +85,10 @@
 					><input type="checkbox" bind:checked={colored} /> Color by source</label
 				>
 			</div>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<pre
 				class="prompt"
 				class:plain={!colored}
-				tabindex="0"
+				{@attach scrollable}
 				aria-label="The text sent to the model">{#each promptPieces(run) as p, i (i)}<span
 						class={p.source}
 						class:marker={p.marker}>{p.text}</span
@@ -121,8 +121,12 @@
 				</p>
 			</div>
 
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<div class="scroll" tabindex="0" role="region" aria-label="How often each attack worked">
+			<div
+				class="scroll"
+				{@attach scrollable}
+				role="region"
+				aria-label="How often each attack worked"
+			>
 				<table>
 					<caption
 						>How many of the {lab.documents.length} documents each attack worked on, under each defense</caption

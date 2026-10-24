@@ -4,6 +4,7 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 
 	const data = useDataset('reasoning/thinking');
 	let index = $state(0);
@@ -82,10 +83,9 @@
 							>
 						</div>
 						{#if shown > 0}
-							<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 							<pre
 								class="scratch"
-								tabindex="0"
+								{@attach scrollable}
 								role="region"
 								aria-label="Scratch work">{p.on.thinking.slice(0, shown)}{shown <
 								p.on.thinking.length
@@ -134,8 +134,7 @@
 </WidgetFrame>
 
 {#snippet bubble(text: string, label: string)}
-	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-	<div class="bubble" tabindex="0" role="region" aria-label={label}>{text}</div>
+	<div class="bubble" {@attach scrollable} role="region" aria-label={label}>{text}</div>
 {/snippet}
 
 {#snippet result(run: ThinkingRun)}

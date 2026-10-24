@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 
@@ -47,8 +48,7 @@
 				</label>
 				<input id="{id}-stage" type="range" min="0" max={canonical.layers} bind:value={stage} />
 			</div>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-			<div class="scroll" tabindex="0" role="region" aria-label="Stream at each stage">
+			<div class="scroll" {@attach scrollable} role="region" aria-label="Stream at each stage">
 				<table>
 					<caption class="visually-hidden">Top guesses if the model stopped at each stage</caption>
 					<thead>

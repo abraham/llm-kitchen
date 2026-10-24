@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { untrack } from 'svelte';
 	import { then, useDatasets } from '#lib/datasets/use.ts';
 	import { label } from '#lib/curriculum/index.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
@@ -38,13 +37,16 @@
 
 	const datasets = useDatasets();
 	const data = $derived(datasets(`agent/${name}`));
-	let stepper = $state(new Stepper(1));
-	then(
-		untrack(() => data),
-		(run) => (stepper = new Stepper(events(run).length))
-	);
-	$effect(() => {
-		then(data, (run) => (stepper = new Stepper(events(run).length)));
+	// Preloaded runs get the right stepper at once (and in the prerendered HTML); fetched ones
+	// start with a placeholder that's overridden when the run arrives, unless the run changed.
+	let stepper = $derived.by(() => {
+		const current = data;
+		const ready = then(current, (run) => new Stepper(events(run).length));
+		if (ready instanceof Stepper) return ready;
+		ready.then((s) => {
+			if (data === current) stepper = s;
+		});
+		return new Stepper(1);
 	});
 </script>
 

@@ -3,6 +3,7 @@
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import StepController from '#lib/components/layout/StepController.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 
@@ -48,8 +49,7 @@
 			{#if !tools}
 				{@const guess = lastNumber(off.steps[0].output)}
 				<p class="label">The model’s reply, written token by token</p>
-				<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-				<pre class="reply" tabindex="0">{off.steps[0].output}</pre>
+				<pre class="reply" {@attach scrollable}>{off.steps[0].output}</pre>
 				<p class="verdict" aria-live="polite">
 					Its answer: <strong class="mono wrong">{n(guess)}</strong>. The right answer is
 					<strong class="mono">{n(correct)}</strong>. Every digit was predicted like any other

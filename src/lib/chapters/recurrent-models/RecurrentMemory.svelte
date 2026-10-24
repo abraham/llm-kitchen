@@ -15,7 +15,7 @@
 	const encode = (s: string) => [...s].map((c) => vocab.indexOf(c));
 
 	let random = seededRandom(1);
-	let trainer = $state(new RNNTrainer(new CharRNN(vocab.length, HIDDEN, 1)));
+	let trainer = $state.raw(new RNNTrainer(new CharRNN(vocab.length, HIDDEN, 1)));
 	let losses = $state<number[]>([]);
 	let running = $state(false);
 	let version = $state(0);

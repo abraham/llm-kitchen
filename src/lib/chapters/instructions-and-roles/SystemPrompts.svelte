@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/layout/Loading.svelte';
 	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/layout/scrollable.ts';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
 
 	const data = useDataset('prompts/system');
@@ -31,10 +32,9 @@
 						class={part.kind}>{part.text}</span
 					>{/each}</pre>
 			<p class="label">Its reply ({r.tokens} tokens)</p>
-			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<div
 				class="reply"
-				tabindex="0"
+				{@attach scrollable}
 				role="region"
 				aria-label="Reply with the {r.name.toLowerCase()} system prompt"
 			>
