@@ -13,8 +13,12 @@ import {
 // CDN), so they get long-lived caching and the page CSP can stay 'self'.
 import asyncifyMjs from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url';
 import asyncifyWasm from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
+import canonical from '../../../models/canonical.json';
+import embedder from '../../../models/embedder.json';
+import { verifiedFetch } from './verified-fetch.ts';
 
 env.allowLocalModels = false;
+env.fetch = verifiedFetch([canonical, embedder]);
 const abs = (url: string) => new URL(url, self.location.href).href;
 // One build for every supported browser; only Safari older than 26 (no WebGPU) needed another.
 if (env.backends.onnx.wasm) {

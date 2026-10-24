@@ -58,6 +58,7 @@
 	},
 	"dependencies": {
 		"@huggingface/transformers": "^4.3.1",
+		"@noble/hashes": "^2.4.0",
 		"gpt-tokenizer": "^4.1.0"
 	},
 	"overrides": {

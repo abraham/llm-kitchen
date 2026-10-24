@@ -10,18 +10,13 @@ Usage, from the repository root:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import urllib.request
 from pathlib import Path
 
 from . import common
-
-# The files Transformers.js downloads for each kind of live model (8-bit weights).
-LIVE_FILES = {
-    "next-token": lambda m: ["config.json", "generation_config.json", f"onnx/{m['onnxFile']}_quantized.onnx"],
-    "embed": lambda m: ["config.json", "tokenizer.json", "tokenizer_config.json", "onnx/model_quantized.onnx"],
-}
 
 
 def _comparable(path: Path) -> dict:
@@ -55,20 +50,36 @@ def recordings(run, name: str, args: list[str]) -> None:
         raise SystemExit(f"{len(differ)} of {len(written)} datasets differ from the committed files")
 
 
+def _sha256(url: str) -> str:
+    digest = hashlib.sha256()
+    with urllib.request.urlopen(url, timeout=60) as response:
+        for chunk in iter(lambda: response.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
 def live() -> None:
-    """Check that each live model's pinned commit exists and its download matches the stated size."""
-    models = [("next-token", common.CANONICAL), ("embed", common.EMBEDDER)]
+    """Check that each live model's pinned commit has the files its config lists (`onnxFiles`, the
+    files Transformers.js downloads), with the stated total size and each file's SHA-256."""
     failures = []
-    for task, model in models:
-        url = f"https://huggingface.co/api/models/{model['onnxId']}/revision/{model['onnxRevision']}?blobs=true"
+    for model in (common.CANONICAL, common.EMBEDDER):
+        repo, revision = model["onnxId"], model["onnxRevision"]
+        url = f"https://huggingface.co/api/models/{repo}/revision/{revision}?blobs=true"
         with urllib.request.urlopen(url, timeout=30) as response:
             sizes = {s["rfilename"]: s["size"] for s in json.load(response)["siblings"]}
-        files = LIVE_FILES[task](model)
+        files: dict[str, str] = model["onnxFiles"]
         missing = [f for f in files if f not in sizes]
         mb = round(sum(sizes.get(f, 0) for f in files) / 1e6)
         ok = not missing and mb == model["onnxMB"]
-        print(f"{'ok' if ok else 'WRONG':6} {model['onnxId']}@{model['onnxRevision'][:7]}: {mb} MB, stated {model['onnxMB']}")
+        print(f"{'ok' if ok else 'WRONG':6} {repo}@{revision[:7]}: {mb} MB, stated {model['onnxMB']}")
         if not ok:
-            failures.append(f"{model['onnxId']}: missing {missing}" if missing else model["onnxId"])
+            failures.append(f"{repo}: missing {missing}" if missing else f"{repo}: size")
+        for name, want in files.items():
+            if name in missing:
+                continue
+            got = _sha256(f"https://huggingface.co/{repo}/resolve/{revision}/{name}")
+            print(f"{'ok' if got == want else 'WRONG':6}   {name} {got}")
+            if got != want:
+                failures.append(f"{repo}: {name}")
     if failures:
         raise SystemExit(f"live models don't match their config: {failures}")

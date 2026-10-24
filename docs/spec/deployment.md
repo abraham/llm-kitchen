@@ -38,7 +38,8 @@
 
 ## Headers
 
-Set in `firebase.json`. `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
+Set in `firebase.json`. What they defend against, and the rules around them, are in
+[security.md](security.md). `tests/unit/hosting.test.ts` checks the config, and `tests/e2e/hosting.e2e.ts`
 checks what is actually served: the e2e suite runs against the Firebase Hosting emulator
 (`npm run serve`, project `demo-llm-kitchen`, port 4173), which applies `firebase.json` like
 production. `firebase-tools` is a dev dependency; its `superstatic` is overridden to 11, the first
@@ -51,10 +52,14 @@ major that supports Node 26.
   `firebase.json` adds the header-only `frame-ancestors 'none'` and a `connect-src` that also allows
   Hugging Face. Browsers enforce both policies on a page, so the page itself can only fetch from
   `'self'`; model downloads work because they run in the inference worker, whose script is loaded
-  from a URL and gets only the header's policy.
+  from a URL and gets only the header's policy. Workers under `/_app/immutable/workers/` get a
+  complete header policy of their own (see [security.md](security.md#in-the-browser)).
 - `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, a
-  `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB, and
-  `Cross-Origin-Opener-Policy: same-origin`.
+  `Permissions-Policy` that turns off camera, microphone, geolocation, payment, and USB,
+  `Cross-Origin-Opener-Policy: same-origin`, and
+  `Strict-Transport-Security: max-age=63072000; includeSubDomains`.
+- After each live deploy, `scripts/check-live-headers.ts` checks that the live site serves these
+  headers as configured.
 
 ## Caching
 

@@ -37,4 +37,26 @@ describe('firebase hosting config', () => {
 		const all = hosting.headers.find((r) => r.source === '**');
 		expect(header(all, 'Content-Security-Policy')).toContain("frame-ancestors 'none'");
 	});
+
+	it('keeps browsers on HTTPS for two years, without the preload list', () => {
+		const all = hosting.headers.find((r) => r.source === '**');
+		expect(header(all, 'Strict-Transport-Security')).toBe('max-age=63072000; includeSubDomains');
+	});
+
+	it('gives workers a full policy, after the page default so it takes precedence', () => {
+		const all = hosting.headers.findIndex((r) => r.source === '**');
+		const workers = hosting.headers.findIndex((r) => r.source === '/_app/immutable/workers/**');
+		expect(workers).toBeGreaterThan(all);
+		const csp = header(hosting.headers[workers], 'Content-Security-Policy')!;
+		for (const directive of [
+			"default-src 'self'",
+			"script-src 'self' 'wasm-unsafe-eval'",
+			"object-src 'none'"
+		]) {
+			expect(csp).toContain(directive);
+		}
+		const page = header(hosting.headers[all], 'Content-Security-Policy')!;
+		const downloads = (policy: string) => policy.match(/connect-src ([^;]+)/)![1];
+		expect(downloads(csp)).toBe(downloads(page));
+	});
 });
