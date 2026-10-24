@@ -34,9 +34,8 @@ belongs to and remove it here.
 
 ## Content
 
-- **Explanation levels:** Simple, Standard, and In depth, chosen in the app bar. In depth includes
-  the equations behind each idea (formerly the "math sidebar"). The plan and its phases are in
-  [levels.md](levels.md).
+- **Explanation levels:** Simple and In depth passages for the chapters that don't have them yet;
+  Tokens, Attention, and The agent loop do. The rollout is phase 4 of [levels.md](levels.md).
 - **Localization:** the site is English only. Translating means deciding whether to also swap the
   example corpora and re-record the data per language.
 - **Expert review:** pending; see [sources.md](sources.md).

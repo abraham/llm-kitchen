@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vitest/config';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { remarkMath } from './scripts/mdsvex-math.ts';
 
 // app.html's inline theme script runs before the page paints, so the CSP allows it by hash.
 const appScriptHashes = [
@@ -19,7 +20,7 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter({ strict: true, fallback: '404.html' }),
-			preprocess: [mdsvex({ extensions: ['.svx'] })],
+			preprocess: [mdsvex({ extensions: ['.svx'], remarkPlugins: [remarkMath] })],
 			extensions: ['.svelte', '.svx'],
 			// The chapter route can load any chapter, so every page links every chapter's small CSS
 			// file. Inlining files under 6 KB removes those render-blocking requests (Lighthouse).

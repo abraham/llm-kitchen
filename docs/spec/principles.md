@@ -35,6 +35,20 @@ Every chapter has the same shape: **hook question → try-it widget → explanat
 animation → live option (if useful) → recap card → sources → the question that leads to the next
 chapter.** Each opens with an "Ingredients" box linking the earlier chapters it builds on.
 
+## Writing for each level
+
+A chapter can add Simple and In depth passages around its Standard text (see
+[levels.md](levels.md)):
+
+- **Simple:** no notation, no number that isn't the point, at most one analogy per idea, and every
+  term defined on first use. Aim for about half the words of Standard. Never introduce a claim
+  Standard doesn't make.
+- **In depth:** equations follow the picture and the words, never replace them. Each equation
+  names every symbol. Implementation notes say which model or paper they're true for. New sources
+  are cited like any other claim and added to the chapter's fact-check list.
+- **All levels:** the running example stays _"The cat sat on the"_; the chapter's question and the
+  question that leads on stay the same.
+
 ## Success criteria
 
 - A visitor with no ML background can, after finishing:

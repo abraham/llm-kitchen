@@ -1,11 +1,20 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import { gotoHydrated } from './helpers.ts';
 
 /** Every page on the site: the menu and all chapters. */
 const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`)];
+
+/** Chapters whose chapter.ts lists levels: they're checked at every level, not just Standard. */
+const LEVELED_PAGES = readdirSync('src/lib/chapters')
+	.filter((slug) => {
+		const config = `src/lib/chapters/${slug}/chapter.ts`;
+		return existsSync(config) && /export const levels\b/.test(readFileSync(config, 'utf8'));
+	})
+	.map((slug) => `/${slug}`);
 
 /** Pages whose widgets run the GPT-2 tokenizer in the page (tier T1). */
 const TOKENIZER_PAGES = new Set(['/tokens', '/quirks-and-limits']);
@@ -34,6 +43,35 @@ for (const colorScheme of ['light', 'dark'] as const) {
 		}
 	});
 }
+
+test.describe('explanation levels', () => {
+	test('some chapters have other levels to check', () => {
+		expect(LEVELED_PAGES.length).toBeGreaterThan(0);
+	});
+
+	for (const path of LEVELED_PAGES) {
+		for (const level of ['simple', 'deep']) {
+			test(`${path} at ${level} has no axe violations and doesn't scroll sideways on a phone`, async ({
+				page
+			}) => {
+				await page.addInitScript((l) => localStorage.setItem('llm-kitchen:level', l), level);
+				await gotoHydrated(page, path);
+				await expect(page.locator('html')).toHaveAttribute('data-level', level);
+				await expect(page.getByText(/Loading/)).toHaveCount(0);
+				const results = await new AxeBuilder({ page })
+					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+					.analyze();
+				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+
+				await page.setViewportSize({ width: 375, height: 740 });
+				const overflow = await page.evaluate(
+					() => document.documentElement.scrollWidth - document.documentElement.clientWidth
+				);
+				expect(overflow).toBeLessThanOrEqual(0);
+			});
+		}
+	}
+});
 
 test.describe('prerendered HTML', () => {
 	for (const path of PAGES) {

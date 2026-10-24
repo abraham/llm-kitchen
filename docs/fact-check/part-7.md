@@ -34,12 +34,16 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 
 ## Ch 25. The agent loop
 
-| Claim                                                                                         | Backing           |
-| --------------------------------------------------------------------------------------------- | ----------------- |
-| The run: search_rhymes, then count_words (30), then the answer                                | Test              |
-| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test              |
-| The harness stops after the first tool call; the system prompt says to use tools for counting | `record/agent.py` |
-| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`    |
+| Claim                                                                                         | Backing                                                  |
+| --------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| The run: search_rhymes, then count_words (30), then the answer                                | Test                                                     |
+| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test                                                     |
+| The harness stops after the first tool call; the system prompt says to use tools for counting | `record/agent.py`                                        |
+| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`                                           |
+| Simple: restates Standard in plainer words, with no new claims                                | Reviewed against the Standard text                       |
+| In depth: K calls read K·p₀ + a·K(K−1)/2 tokens, growing with the square of the steps         | Arithmetic; test (within 5 tokens of the run)            |
+| In depth: 301 + 394 + 483 = 1,178 tokens; each step added about 90                            | Test                                                     |
+| In depth: providers reuse their work on an unchanged start of the prompt                      | Cite `openai-prompt-caching`, `anthropic-prompt-caching` |
 
 ## Ch 26. Managing the context
 

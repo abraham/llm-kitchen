@@ -17,4 +17,16 @@ describe('the agent loop', () => {
 		expect(r.steps.map((s) => s.promptTokens)).toEqual([301, 394, 483]);
 		expect(r.maxSteps).toBe(8);
 	});
+
+	it('In depth: "1,178 tokens" in all, "each step added about 90", as the formula says', () => {
+		const prompts = r.steps.map((s) => s.promptTokens);
+		const total = prompts.reduce((a, b) => a + b, 0);
+		expect(total).toBe(1178);
+		const added = prompts.slice(1).map((p, i) => p - prompts[i]);
+		for (const a of added) expect(Math.abs(a - 90)).toBeLessThanOrEqual(5);
+		// K p0 + a K(K-1)/2 with the average step size comes within a few tokens of the total.
+		const K = prompts.length;
+		const a = (prompts[K - 1] - prompts[0]) / (K - 1);
+		expect(Math.abs(K * prompts[0] + (a * K * (K - 1)) / 2 - total)).toBeLessThanOrEqual(5);
+	});
 });

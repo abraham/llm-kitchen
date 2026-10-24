@@ -58,7 +58,8 @@ down never blocks a merge; a failure shows up as a failed run.
   a fixture page (`levels`), page metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
   caching), and on every page (`quality`):
-  - no axe violations, in light and dark, once the widgets have loaded;
+  - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
+    on chapters with passages for those levels;
   - no requests to another origin, so nothing downloads before consent;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
   - no sideways scrolling at phone width;

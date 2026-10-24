@@ -32,4 +32,41 @@ describe('attention', () => {
 			1024 * canonical.embeddingSize
 		);
 	});
+
+	it('In depth: "d_k = 768 / 12 = 64", divided by "sqrt(64) = 8", in "144 heads"', () => {
+		const dk = canonical.embeddingSize / canonical.heads;
+		expect(dk).toBe(64);
+		expect(Math.sqrt(dk)).toBe(8);
+		expect(canonical.layers * canonical.heads).toBe(144);
+	});
+
+	it('In depth: the mask leaves n(n+1)/2 scores, "524,800 for a full window"', () => {
+		const n = 5;
+		const toy = Array.from({ length: n }, (_, i) => [i + 1, 1]);
+		const { scores } = attend({ tokens: toy.map(String), queries: toy, keys: toy, values: toy });
+		expect(scores.flat().filter((s) => s !== null)).toHaveLength((n * (n + 1)) / 2);
+		expect((canonical.contextLength * (canonical.contextLength + 1)) / 2).toBe(524_800);
+	});
+
+	it('In depth: rotary scores depend on places only through the distance m - n', () => {
+		// Turn each pair of numbers by place * theta_j, theta_j = base^(-2j/d), as in RoFormer.
+		const rotate = (v: number[], place: number, base: number) =>
+			v.flatMap((_, i) => {
+				if (i % 2) return [];
+				const angle = place * base ** (-i / v.length);
+				const [x, y] = [v[i], v[i + 1]];
+				return [
+					x * Math.cos(angle) - y * Math.sin(angle),
+					x * Math.sin(angle) + y * Math.cos(angle)
+				];
+			});
+		const dot = (a: number[], b: number[]) => a.reduce((s, x, i) => s + x * b[i], 0);
+		const q = [0.3, -1.2, 0.8, 0.5];
+		const k = [1.1, 0.4, -0.6, 0.9];
+		for (const base of [10_000, 500_000]) {
+			const score = (m: number, n: number) => dot(rotate(q, m, base), rotate(k, n, base));
+			expect(score(7, 3)).toBeCloseTo(score(104, 100), 10);
+			expect(score(7, 3)).not.toBeCloseTo(score(7, 5), 3);
+		}
+	});
 });

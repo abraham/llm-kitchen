@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -17,6 +18,17 @@ that almost every modern LLM uses, GPT-2 included.<Cite id="vaswani2017" />
 
 ## Queries, keys, and values
 
+<At levels="simple">
+
+How does a token decide where to shine? Each token makes three things from its numbers, using
+weights learned in training: a **query** (what it's looking for), a **key** (what it has to offer),
+and a **value** (what it passes on). Where one token's query matches another token's key well, the
+spotlight shines brighter. Each token then takes in a blend of the values, mostly from the tokens
+it lights up most.
+
+</At>
+<At levels="standard deep">
+
 How does a token decide where to shine? Each token's vector is turned into three new vectors, using
 weights learned in training:
 
@@ -30,6 +42,8 @@ directions (think of the nearby words in <ChapterRef to="embeddings" />), the sc
 to keep them from getting too large, then softmax (<ChapterRef to="probability-and-sampling" />) turns them into percentages. Finally each
 token takes a weighted blend of the values.
 
+</At>
+
 Step through it with made-up numbers:
 
 <QKVExplainer />
@@ -37,7 +51,52 @@ Step through it with made-up numbers:
 Notice the blank cells: a token can't look at tokens that come after it. When the model is
 predicting the next word, those words don't exist yet.
 
+<At levels="deep">
+
+### The formula
+
+Written out for every token at once, one attention head computes
+
+$$
+\operatorname{Attention}(Q, K, V) = \operatorname{softmax}\!\left(\frac{Q K^{\top}}{\sqrt{d_k}} + M\right) V
+$$
+
+Each row of $Q$, $K$, and $V$ is one token's query, key, or value. They come from the token vectors
+$X$, one row per token, times three learned weight matrices: $Q = X W_Q$, $K = X W_K$, and
+$V = X W_V$. $Q K^{\top}$ is the grid of scores, every query times every key. $d_k$ is the number
+of values in each key, and $\sqrt{d_k}$ is the fixed number the scores are divided by. $M$ is the
+mask: 0 where a token may look, and $-\infty$ where it would look ahead, which softmax turns into a
+weight of exactly 0. Softmax runs along each row, so each token's weights add up to 1.<Cite id="vaswani2017" />
+
+In GPT-2, each token vector has 768 numbers and each layer has 12 heads, so each head works with
+$d_k = 768 / 12 = 64$ numbers, and the scores are divided by $\sqrt{64} = 8$. The 12 heads' outputs
+are put side by side, back to 768 numbers, and multiplied by one more learned matrix,
+$W_O$.<Cite id="vaswani2017" /> Unlike the toy, GPT-2 also normalizes the token vectors before they
+go in (more in the next chapter).<Cite id="radford2019" />
+
+The grid has a cell for every pair of tokens, so it grows with the square of the text's length.
+With the mask, $n$ tokens need
+
+$$
+\frac{n(n+1)}{2}
+$$
+
+scores in each head: 524,800 for a full window of 1,024 tokens, in each of GPT-2's 144 heads.
+
+</At>
+
 ## Which word came first?
+
+<At levels="simple">
+
+Attention on its own has a blind spot: nothing in a score says where a token sits. "The dog
+chased the cat." and "The cat chased the dog." contain the same words, so attention would blend
+them the same way, and who chased whom would be lost. So GPT-2 adds a second list of numbers to
+each token, a <GlossaryPopover term="position-vector">position vector</GlossaryPopover>, that says
+where it is: first, second, third, and so on, up to 1,024 places.
+
+</At>
+<At levels="standard deep">
 
 Look again at how a score is made: one token's query times another token's key. Nothing in that
 says where either token sits in the text. Take "the dog chased the cat." and "the cat chased the
@@ -54,6 +113,34 @@ There is no vector for place 1,025, which is one reason the window stops there.
 Newer models such as Llama 3 add no position vectors. Instead they turn each query and key by an
 angle that grows with its place in the text, so the score between two tokens also depends on how
 far apart they are.<Cite id="su2024" /><Cite id="grattafiori2024" />
+
+</At>
+<At levels="deep">
+
+In symbols, GPT-2's first layer starts each token from
+
+$$
+x_i = e_{t_i} + p_i
+$$
+
+where $i$ is the token's place in the text, $t_i$ is its token ID, $e_{t_i}$ is that token's row in
+the 50,257 × 768 table of token vectors, and $p_i$ is row $i$ of the 1,024 × 768 table of position
+vectors.
+
+Rotary position embedding, the method Llama 3 uses, works on the queries and keys instead. It
+splits each one into pairs of numbers and turns pair $j$ of the token in place $m$ by the angle
+$m\,\theta_j$, with
+
+$$
+\theta_j = b^{-2j/d}
+$$
+
+where $d$ is the length of the query and $b$ is a fixed base. When the query in place $m$ meets the
+key in place $n$, the two turns partly cancel, and the score depends on the places only through the
+distance between them, $m - n$.<Cite id="su2024" /> The original paper used $b = 10{,}000$; Llama 3
+raised it to 500,000 to handle longer texts.<Cite id="grattafiori2024" />
+
+</At>
 
 ## Real attention in GPT-2
 
@@ -74,11 +161,32 @@ Some patterns are surprisingly readable:
   the trophy sentence. That isn't a mistake in the viewer: "big" and "small" come after "it", and a
   word can only look back. The model has to sort out "it" later, at the words after the clue.
 
+<At levels="simple">
+
+GPT-2 isn't very good at that last kind of puzzle. The patterns you can read are a few bright
+spots in a mostly murky picture.
+
+</At>
+<At levels="standard deep">
+
 GPT-2 isn't very good at that last kind of puzzle. Even the largest GPT-2 answered 70.70% of
 Winograd questions correctly, where guessing gets 50%.<Cite id="radford2019" /> The patterns you can
 read are a few bright spots in a mostly murky picture.
 
+</At>
+
 ## Many heads, many layers
+
+<At levels="simple">
+
+One set of queries, keys, and values is called an <GlossaryPopover term="attention-head">attention head</GlossaryPopover>.
+GPT-2 runs 12 heads side by side in each of its 12 layers, each free to look for something
+different. Switch heads in the viewer: many don't have a job you can name, and many put most of
+their attention on the very first word, a resting spot for when there's nothing useful to
+find.<Cite id="xiao2024" />
+
+</At>
+<At levels="standard deep">
 
 One set of queries, keys, and values is called an <GlossaryPopover term="attention-head">attention head</GlossaryPopover>. Each layer of GPT-2 runs
 12 heads side by side, each with its own weights, so each can look for something different. With
@@ -89,6 +197,8 @@ also see lots of heads putting most of their attention on the very first word. I
 from the fourth word on, that happens more than half the time. Researchers think it's a resting
 spot: softmax always has to share out 100%, so a head with nothing useful to find parks its
 attention there.<Cite id="xiao2024" />
+
+</At>
 
 <RecapCard>
 
@@ -101,6 +211,11 @@ attention there.<Cite id="xiao2024" />
 - GPT-2 has 12 heads in each of its 12 layers. A few have clear jobs, like finding the name that
   comes next; most are harder to read.
 
+<At levels="deep">
+
+- One head computes $\operatorname{softmax}(Q K^{\top} / \sqrt{d_k} + M)\,V$. In GPT-2, $d_k = 64$.
+
+</At>
 </RecapCard>
 
 **Next question:** attention moves information between tokens. How does it fit into a whole model?

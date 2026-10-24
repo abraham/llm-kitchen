@@ -41,6 +41,15 @@ GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
 | 12 heads per layer, 12 layers, 144 heads; numbered from 0                                                                     | `canonical.json`, checked against the model config                                     |
 | Heads often put most attention on the first word: more than half the time from the 4th word on                                | Test (61–72% across the recorded sentences)                                            |
 | Researchers think the first token acts as a resting spot ("attention sink")                                                   | Cite `xiao2024`                                                                        |
+| Simple: restates Standard in plainer words, with no new claims                                                                | Reviewed against the Standard text                                                     |
+| In depth: softmax(QKᵀ/√d_k + M)V, with −∞ in the mask for later tokens; each row sums to 1                                    | Cite `vaswani2017` (eq. 1, §3.2.3); test (`attend`)                                    |
+| In depth: the heads' outputs are put side by side and multiplied by W_O                                                       | Cite `vaswani2017` (§3.2.2)                                                            |
+| In depth: GPT-2's d_k = 768 / 12 = 64, so scores are divided by 8; 144 heads                                                  | `canonical.json`; test                                                                 |
+| In depth: GPT-2 normalizes the token vectors before attention                                                                 | Cite `radford2019` (§2.3)                                                              |
+| In depth: n(n+1)/2 scores per head; 524,800 for 1,024 tokens                                                                  | Test (toy `attend`, arithmetic)                                                        |
+| In depth: x_i = e_{t_i} + p_i, from the 50,257 × 768 and 1,024 × 768 tables                                                   | GPT-2's config; test (parameter count)                                                 |
+| In depth: rotary angle mθ_j with θ_j = b^(−2j/d); scores depend only on m − n                                                 | Cite `su2024` (§3.4); test (rotation identity)                                         |
+| In depth: RoFormer used b = 10,000; Llama 3 raised it to 500,000                                                              | Cite `su2024`, `grattafiori2024` (§3.2)                                                |
 
 ## Ch 10. The transformer block
 

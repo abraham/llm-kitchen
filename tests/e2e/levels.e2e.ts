@@ -153,11 +153,56 @@ test('recap cards and the quiz show and score the current level', async ({ page 
 });
 
 test('a chapter without passages for a level says so at that level', async ({ page }) => {
-	await gotoHydrated(page, '/tokens');
+	await gotoHydrated(page, '/embeddings');
 	const notes = page.getByText(/This chapter has no .* passages yet/).filter({ visible: true });
 	await expect(notes).toHaveCount(0);
 	await control(page).selectOption('deep');
 	await expect(notes).toHaveText([
 		'This chapter has no In depth passages yet, so it reads like Standard.'
 	]);
+});
+
+test('the pilot chapters read differently at each level, with equations only In depth', async ({
+	page
+}) => {
+	// A phrase only each level's passages use.
+	const PHRASES: Record<string, Record<string, string>> = {
+		'/tokens': {
+			simple: 'cuts up your text',
+			standard: 'splits your text',
+			deep: 'vocabulary, counted'
+		},
+		'/attention': {
+			simple: 'what it has to offer)',
+			standard: 'turned into three new vectors',
+			deep: 'Written out for every token at once'
+		},
+		'/the-agent-loop': {
+			simple: 'So there are two loops',
+			standard: 'popularized by the ReAct',
+			deep: 'What the loop costs'
+		}
+	};
+	for (const [path, phrases] of Object.entries(PHRASES)) {
+		await gotoHydrated(page, path);
+		for (const level of ['simple', 'standard', 'deep']) {
+			await control(page).selectOption(level);
+			await expect(page.getByText(phrases[level]).first(), `${path} ${level}`).toBeVisible();
+			const others = Object.entries(phrases).filter(
+				([l]) => l !== level && !(level === 'deep' && l === 'standard')
+			);
+			for (const [other, phrase] of others) {
+				await expect(
+					page.getByText(phrase).first(),
+					`${path} ${level} hides ${other}`
+				).toBeHidden();
+			}
+			await expect(page.locator('math:visible').first()).toBeVisible({
+				visible: level === 'deep'
+			});
+			await expect(
+				page.getByText(/This chapter has no .* passages yet/).filter({ visible: true })
+			).toHaveCount(0);
+		}
+	}
 });

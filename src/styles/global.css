@@ -155,6 +155,13 @@ input[type='range'] {
 	);
 }
 
+/* Equations, converted from TeX at build time (scripts/mdsvex-math.ts). Wide ones scroll rather
+   than widen the page. */
+math[display='block'] {
+	margin-block: var(--space-4);
+	overflow-x: auto;
+}
+
 .visually-hidden {
 	position: absolute;
 	width: 1px;
