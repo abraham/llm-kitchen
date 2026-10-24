@@ -2,7 +2,8 @@
 
 Plan for letting each visitor read the site at one of three levels of detail, chosen in the app
 bar; [roadmap.md](roadmap.md) points here. When a phase lands, its part moves into the spec it
-belongs to and leaves this file. Phase 1, the machinery, is built and described in
+belongs to and leaves this file. Phases 1 and 2 (the machinery, and per-level glossary
+definitions, recap points, and quiz questions) are built and described in
 [architecture.md](architecture.md#explanation-levels) and [design.md](design.md); the control
 stays hidden until a chapter has passages for another level.
 
@@ -74,15 +75,6 @@ Formally, the embedding is a lookup into a matrix $W_E \in \mathbb{R}^{50257 \ti
   description describe the chapter as Standard presents it, whatever level the sharer reads at.
   `scripts/build-og.ts` and `PageMeta` don't change.
 
-## Glossary, recap, and quiz
-
-- **Glossary:** each term may add a `simple` definition (shorter, no jargon) and a `deep` one (the
-  precise version). `GlossaryPopover` shows the one for the current level, falling back to the
-  standard definition.
-- **Recap cards:** may take per-level points; most chapters keep one recap.
-- **Quiz:** each question may be tagged with the levels it suits. The quiz shows the ones for the
-  current level.
-
 ## Writing rules
 
 Added to [principles.md](principles.md) when the first chapter ships:
@@ -120,7 +112,8 @@ One pull request per phase; each passes every check in [quality.md](quality.md).
 1. **Machinery (built).** `At`, the level store and shared helper, the inline script and CSS, the
    app bar control (hidden until a chapter lists a level), per-level citations and sources,
    coverage export, note, and test, and the e2e tests on a test-only fixture page.
-2. **Glossary, recap, quiz.** Per-level definitions, recap points, and quiz tags, with fallbacks.
+2. **Glossary, recap, quiz (built).** Per-level definitions, recap points, and quiz tags, with
+   fallbacks.
 3. **Pilot content.** Simple and In depth passages for three chapters that span the site: one early
    ([Tokens](chapters/tokens.md)), one core ([Attention](chapters/attention.md)), and one harness
    chapter ([The agent loop](chapters/the-agent-loop.md)). MathML conversion lands here. The

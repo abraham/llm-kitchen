@@ -214,8 +214,11 @@ lives in `src/lib/data/`.
 ## Glossary
 
 - Terms live in `src/lib/glossary.ts`, each with a definition and the slug of the chapter that
-  introduces it.
-- `GlossaryPopover` shows the definition on a term's first use and links to its chapter.
+  introduces it. A term may add a `simple` definition (shorter, no jargon) and a `deep` one (the
+  precise version).
+- `GlossaryPopover` shows the definition on a term's first use and links to its chapter. A term
+  with per-level definitions renders each, tagged like an `At` passage, so the current level's
+  shows; a level without its own shows the standard one.
 - A test checks that each term's chapter mentions the term.
 
 ## Citations
@@ -251,18 +254,26 @@ and remaining phases are in [levels.md](levels.md).
   `stores/root-choice.ts` (a data attribute on `<html>` plus `localStorage`, nothing for the
   default). The level is never in the URL. The app bar control is described in
   [design.md](design.md).
+- **Recap cards and the quiz:** a recap card takes per-level points as `At` passages inside it;
+  most chapters keep one recap. A quiz question may list the `levels` it suits (every level when
+  it lists none). The quiz renders every question, tagged the same way, and only the current
+  level's must be answered, count toward the score, and suggest chapters to revisit. The
+  per-level glossary definitions are under [Glossary](#glossary).
 - **Coverage:** a chapter's `chapter.ts` exports `levels`, the levels that read differently from
   Standard (a passage shows at the level but not at Standard, or the other way round); none means
-  `[]`. A test in `chapters.test.ts` checks it against the `At` blocks in `chapter.svx`. At a level
+  `[]`. A test in `chapters.test.ts` checks it against the `At` blocks in `chapter.svx`, and the
+  quiz's against its tagged questions. At a level
   the chapter doesn't cover, `ChapterLayout` says so under the heading ("This chapter has no In
   depth passages yet, so it reads like Standard").
 - **Hidden until there's content:** `chapters/config.ts` sets `LEVEL_CHOICE` once any chapter
   lists a level. Until then the app bar has no control and chapters have no coverage notes.
-- **Tests:** the end-to-end build sets `VITE_FIXTURES`, which turns the control on and adds
-  `/fixtures/levels` (`tests/e2e/fixtures/levels.svx`), a page with passages, inline swaps, and
-  citations at each level. `tests/e2e/levels.e2e.ts` checks switching, saving, applying before
-  hydration, keeping the reader in place, citations, axe at each level, and the coverage note; a
-  unit test renders the same page on the server. Other builds leave the fixtures out.
+- **Tests:** the end-to-end build sets `VITE_FIXTURES`, which turns the control on and adds the
+  pages in `tests/e2e/fixtures`: `/fixtures/levels` (passages, inline swaps, and citations at each
+  level) and `/fixtures/recap-and-quiz` (per-level recap points and quiz questions).
+  `tests/e2e/levels.e2e.ts` checks switching, saving, applying before hydration, keeping the
+  reader in place, citations, the recap and the quiz's scoring at each level, axe at each level,
+  and the coverage note; unit tests render the same pages, and per-level glossary definitions, on
+  the server. Other builds leave the fixtures out.
 
 ## Tests
 

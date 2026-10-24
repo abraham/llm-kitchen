@@ -1,16 +1,28 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { chapter } from '#lib/curriculum/index.ts';
-	import { QUESTIONS } from './data.ts';
+	import { levelsAttribute } from '#lib/levels.ts';
+	import { level } from '#lib/stores/level.svelte.ts';
+	import { QUESTIONS, type QuizQuestion } from './data.ts';
 
-	let picks = $state<(number | null)[]>(QUESTIONS.map(() => null));
+	let { questions = QUESTIONS }: { questions?: readonly QuizQuestion[] } = $props();
+
+	const blank = () => untrack(() => questions.map(() => null));
+	let picks = $state<(number | null)[]>(blank());
 	let checked = $state(false);
-	const score = $derived(picks.filter((p, i) => p === QUESTIONS[i].answer).length);
+	// Every question is in the HTML; global.css shows the current level's, and only those count.
+	const asked = $derived(
+		questions
+			.map((item, i) => ({ item, i }))
+			.filter(({ item }) => !item.levels || item.levels.includes(level.current))
+	);
+	const score = $derived(asked.filter(({ item, i }) => picks[i] === item.answer).length);
 	const revisit = $derived(
 		[
 			...new Set(
-				QUESTIONS.filter((item, i) => picks[i] !== item.answer).flatMap((item) => item.chapters)
+				asked.filter(({ item, i }) => picks[i] !== item.answer).flatMap(({ item }) => item.chapters)
 			)
 		].sort((a, b) => chapter(a).number - chapter(b).number)
 	);
@@ -21,13 +33,13 @@
 	title="Quick check"
 	source={{ kind: 'computed' }}
 	onreset={() => {
-		picks = QUESTIONS.map(() => null);
+		picks = blank();
 		checked = false;
 	}}
 >
 	<ol class="questions">
-		{#each QUESTIONS as item, i (i)}
-			<li>
+		{#each questions as item, i (i)}
+			<li data-levels={levelsAttribute(item.levels)}>
 				<fieldset>
 					<legend>{item.q}</legend>
 					{#each item.options as option, j (j)}
@@ -64,12 +76,12 @@
 		<div class="actions">
 			<button
 				type="button"
-				disabled={checked || picks.includes(null)}
+				disabled={checked || asked.some(({ i }) => picks[i] === null)}
 				onclick={() => (checked = true)}
 			>
 				Check my answers
 			</button>
-			{#if checked}<span role="status">{score} of {QUESTIONS.length} right.</span>{/if}
+			{#if checked}<span role="status">{score} of {asked.length} right.</span>{/if}
 		</div>
 		{#if checked && revisit.length > 0}
 			<div class="revisit">

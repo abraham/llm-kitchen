@@ -2,8 +2,9 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { gotoHydrated } from './helpers.ts';
 
-// tests/e2e/fixtures/levels.svx, built with VITE_FIXTURES.
+// Test-only pages in tests/e2e/fixtures, built with VITE_FIXTURES.
 const FIXTURE = '/fixtures/levels';
+const RECAP_AND_QUIZ = '/fixtures/recap-and-quiz';
 
 const control = (page: Page) => page.getByRole('banner').getByLabel('Explanations');
 const top = (page: Page, text: string) =>
@@ -98,13 +99,56 @@ test('switching keeps the reader in place', async ({ page }) => {
 });
 
 test('each level has no axe violations', async ({ page }) => {
-	await gotoHydrated(page, FIXTURE);
-	for (const level of ['simple', 'standard', 'deep']) {
+	for (const path of [FIXTURE, RECAP_AND_QUIZ]) {
+		await gotoHydrated(page, path);
+		for (const level of ['simple', 'standard', 'deep']) {
+			await control(page).selectOption(level);
+			const results = await new AxeBuilder({ page })
+				.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+				.analyze();
+			expect(results.violations.map((v) => `${path} ${level} ${v.id}: ${v.help}`)).toEqual([]);
+		}
+	}
+});
+
+test('recap cards and the quiz show and score the current level', async ({ page }) => {
+	const quiz = page.getByRole('region', { name: 'Quick check' });
+	const points = page.getByRole('region', { name: 'Recap' }).getByRole('listitem');
+	const asked = quiz.locator('legend:visible');
+	const answers: Record<string, string[]> = {
+		standard: ['Shared right'],
+		simple: ['Shared right', 'Simple wrong'],
+		deep: ['Shared wrong', 'Deep right']
+	};
+	const expected: Record<string, [string[], string[], string, number]> = {
+		standard: [['Shared point.'], ['Shared question?'], '1 of 1 right.', 0],
+		simple: [
+			['Shared point.', 'Simple point.'],
+			['Shared question?', 'Simple question?'],
+			'1 of 2 right.',
+			1
+		],
+		deep: [
+			['Shared point.', 'Deep point.'],
+			['Shared question?', 'Deep question?'],
+			'1 of 2 right.',
+			1
+		]
+	};
+	for (const level of ['standard', 'simple', 'deep']) {
+		await gotoHydrated(page, RECAP_AND_QUIZ);
 		await control(page).selectOption(level);
-		const results = await new AxeBuilder({ page })
-			.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-			.analyze();
-		expect(results.violations.map((v) => `${level} ${v.id}: ${v.help}`)).toEqual([]);
+		const [recap, questions, score, misses] = expected[level];
+		await expect(points.filter({ visible: true })).toHaveText(recap);
+		await expect(asked).toHaveText(questions);
+		const check = quiz.getByRole('button', { name: 'Check my answers' });
+		for (const answer of answers[level]) {
+			await expect(check).toBeDisabled();
+			await quiz.getByLabel(answer, { exact: true }).check();
+		}
+		await check.click();
+		await expect(quiz.getByRole('status')).toHaveText(score);
+		await expect(quiz.locator('.revisit').getByRole('link')).toHaveCount(misses);
 	}
 });
 

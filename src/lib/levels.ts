@@ -29,6 +29,36 @@ export function parseLevels(raw: string): Level[] {
 	return LEVELS.filter((l) => words.includes(l));
 }
 
+/** A `data-levels` value for content shown at `levels`; none when it shows at every level. */
+export function levelsAttribute(levels: readonly Level[] | undefined): string | undefined {
+	return levels && levels.length < LEVELS.length ? levels.join(' ') : undefined;
+}
+
+/**
+ * The levels that read differently from Standard, given the levels each passage shows at: a
+ * passage shows at the level but not at Standard, or the other way round.
+ */
+export function differingLevels(passages: readonly (readonly Level[])[]): ExtraLevel[] {
+	return (['simple', 'deep'] as const).filter((level) =>
+		passages.some((p) => p.includes(level) !== p.includes('standard'))
+	);
+}
+
+/** Standard's value and any per-level variants, grouped by the levels that show the same one. */
+export function byLevel<T>(
+	standard: T,
+	variants: Partial<Record<ExtraLevel, T>>
+): { levels: Level[]; value: T }[] {
+	const groups: { levels: Level[]; value: T }[] = [];
+	for (const level of LEVELS) {
+		const value = (level !== 'standard' && variants[level]) || standard;
+		const group = groups.find((g) => g.value === value);
+		if (group) group.levels.push(level);
+		else groups.push({ levels: [level], value });
+	}
+	return groups;
+}
+
 const KEY = Symbol('levels');
 
 /** The levels the enclosing passage shows at (all of them outside a passage). */

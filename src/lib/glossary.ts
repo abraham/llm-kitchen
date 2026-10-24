@@ -3,6 +3,10 @@ import type { Slug } from '#lib/curriculum/index.ts';
 export interface GlossaryEntry {
 	term: string;
 	definition: string;
+	/** Shorter and without jargon, for Simple; `definition` when absent. */
+	simple?: string;
+	/** The precise version, for In depth; `definition` when absent. */
+	deep?: string;
 	/** The chapter that introduces the term. */
 	chapter: Slug;
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { Citations, sourceAnchor } from './citations.svelte.ts';
-import { parseLevel, parseLevels } from './levels.ts';
+import { byLevel, differingLevels, levelsAttribute, parseLevel, parseLevels } from './levels.ts';
 
 describe('parseLevel', () => {
 	it('keeps simple and deep, and ignores anything else in storage', () => {
@@ -22,6 +22,42 @@ describe('parseLevels', () => {
 		for (const raw of ['', '  ', 'easy', 'simple expert']) {
 			expect(() => parseLevels(raw), raw).toThrow(/needs one or more of/);
 		}
+	});
+});
+
+describe('levelsAttribute', () => {
+	it('names the levels, or nothing for content shown at every level', () => {
+		expect(levelsAttribute(['simple', 'deep'])).toBe('simple deep');
+		expect(levelsAttribute(['simple', 'standard', 'deep'])).toBeUndefined();
+		expect(levelsAttribute(undefined)).toBeUndefined();
+	});
+});
+
+describe('differingLevels', () => {
+	it('counts a level where a passage shows at it but not at Standard, or the other way round', () => {
+		expect(differingLevels([])).toEqual([]);
+		expect(differingLevels([['simple', 'standard', 'deep']])).toEqual([]);
+		expect(differingLevels([['deep']])).toEqual(['deep']);
+		expect(differingLevels([['standard', 'deep']])).toEqual(['simple']);
+		expect(differingLevels([['simple'], ['standard', 'deep'], ['deep']])).toEqual([
+			'simple',
+			'deep'
+		]);
+	});
+});
+
+describe('byLevel', () => {
+	it("groups levels that share a value, with Standard's filling in", () => {
+		expect(byLevel('std', {})).toEqual([{ levels: ['simple', 'standard', 'deep'], value: 'std' }]);
+		expect(byLevel('std', { simple: 'easy' })).toEqual([
+			{ levels: ['simple'], value: 'easy' },
+			{ levels: ['standard', 'deep'], value: 'std' }
+		]);
+		expect(byLevel('std', { simple: 'easy', deep: 'precise' }).map((g) => g.levels)).toEqual([
+			['simple'],
+			['standard'],
+			['deep']
+		]);
 	});
 });
 
