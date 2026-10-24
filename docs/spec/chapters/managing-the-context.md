@@ -25,3 +25,5 @@ MiniLM map (`static/data/embeddings/`).
   model can read far more.
 - Failures are kept as real examples: after dropping the oldest turns, the model made up "Old Mother
   Hubbard".
+- [Levels](../levels.md): Simple keeps the three strategies and their outcomes. In depth shows the
+  cosine scores behind retrieval and the size of the summary.

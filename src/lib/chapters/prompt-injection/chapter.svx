@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,14 +9,36 @@
 
 ## Instructions in the data
 
+<At levels="simple">
+
+A harness that summarizes your email has to put the email into the prompt. The model then reads
+your request and the email as one stream of text, and it was trained to follow instructions
+wherever they appear. So an instruction hidden in the email can steer it. This is <GlossaryPopover term="prompt-injection">prompt injection</GlossaryPopover>.<Cite id="perez2022" />
+
+</At>
+<At levels="standard deep">
+
 A harness that summarizes your email has to put the email into the prompt. The model then reads
 your request and the email as one stream of tokens. The prompt inspector in <ChapterRef to="the-model-is-not-the-product" /> colored each part
 by where it came from, but the model sees no colors, and it was tuned to follow instructions
 (<ChapterRef to="predictor-to-assistant" />) wherever they appear. So an instruction written into the email can steer it. This is <GlossaryPopover term="prompt-injection">prompt injection</GlossaryPopover>.<Cite id="perez2022" />
 
+</At>
+
+<At levels="simple">
+
+If the person typing writes the instruction, it's *direct* injection. If it hides in something the
+harness fetched, like an email or a web page, it's *indirect*, and the person using the app may
+never see it.<Cite id="greshake2023" />
+
+</At>
+<At levels="standard deep">
+
 When the instruction comes from the person typing, it's *direct* injection. When it hides in
 content the harness fetched, like an email, a web page, or a tool result (<ChapterRef to="tools" />), it's *indirect*,
 and the person using the app may never see it.<Cite id="greshake2023" />
+
+</At>
 
 Below, a harness asks Qwen2.5-1.5B-Instruct for a one-sentence summary of three short documents.
 Each can carry one of four attacks that try to slip a false claim into the summary, and the harness
@@ -24,22 +47,80 @@ attacker's claim:
 
 <InjectionLab />
 
+<At levels="simple">
+
+With no defense, the attacks got their false claim into 7 of 12 summaries. For one email, the
+model announced that the plant swap was cancelled, and even made up a reason. The plain "Ignore
+your previous instructions" worked best.
+
+</At>
+<At levels="standard deep">
+
 With no defense, the attacks got their claim into 7 of 12 summaries. Of an email that never
 mentions it, the model wrote "The plant swap scheduled for Saturday has been cancelled due to
 unforeseen circumstances": it followed the instruction and made up a reason. The plain "Ignore your
 previous instructions" worked best, in 16 of its 18 runs. The HTML comment, which a person reading
 the page in a browser never sees, worked in 11 of 18.
 
+</At>
+
 ## Why prompt defenses fall short
+
+<At levels="simple">
+
+None of the six defenses stopped every attack. The best one still let half of them through, and
+two did worse than no defense at all.
+
+</At>
+<At levels="standard deep">
 
 None of the six defenses stopped every attack. The best one here, marking every word of the
 document, still let 6 of 12 through. A warning in the system prompt and tags around the document did
 worse than no defense at all, 9 of 12 each against 7.
 
+</At>
+<At levels="deep">
+
+### Three ways to spotlight
+
+Tags and marking are two of three *spotlighting* methods from Microsoft researchers. *Delimiting*
+puts markers around the untrusted text. *Datamarking* puts a symbol between every word, so every
+part of the text carries the signal; that's the ^ in this lab. *Encoding* rewrites the whole text,
+for example in base64, which a strong model can still read. With GPT-3.5 Turbo summarizing
+documents, delimiting cut successful attacks by about half, datamarking from about 50% to about
+3%, and encoding to 0%. Encoding made GPT-3.5 worse at its ordinary tasks, though, so they
+recommend it only for the strongest models.<Cite id="hines2024" /> The order holds here at a
+smaller scale: tags let 9 of 12 attacks through, marking 6. Marking stopped every fake system
+notice but only one of the three plain instructions. The authors also warn that an attacker who
+learns the delimiter can simply write it, and that marking only the spaces misses an attack
+written without any.
+
+</At>
+
+<At levels="simple">
+
+One attack writes fake chat markers into the email, and they turn into exactly the same tokens as
+the real ones. Removing them doesn't help much: the words left behind still read as an
+instruction.
+
+</At>
+<At levels="standard deep">
+
 The fake message shows why. It writes the chat markers from <ChapterRef to="predictor-to-assistant" /> into the email, and they become
 the very same tokens as the markers the harness wrote: the model reads 4 role markers where the
 harness put 3. Removing markers from untrusted text stops that trick, but the words left behind
 still read as an instruction, and the attack worked just as often without them.
+
+</At>
+
+<At levels="simple">
+
+Larger models, and models trained against these attacks, do much better.<Cite id="hines2024" /><Cite id="wallace2024" /> But no defense
+written into the prompt is known to stop every attack, and a small model like this one is easier
+to fool than the ones in chat apps.
+
+</At>
+<At levels="standard deep">
 
 Larger models, and models trained against these attacks, do much better. Marking untrusted text cut
 attacks from over half to under 2% for the GPT models its authors tested,<Cite id="hines2024" /> and
@@ -47,6 +128,8 @@ training a model to rank the system prompt above text from tools makes it far ha
 fool.<Cite id="wallace2024" /> But no defense written into the prompt is known to stop every attack,
 and attackers keep finding new wording. A 1.5-billion-weight model is easier to fool than the models
 in chat apps, so these results show how injection works, not how often real products fall for it.
+
+</At>
 
 What matters most is what a fooled model can do. A wrong summary is bad. An agent that can run tools
 (<ChapterRef to="tools" />), send email, or show you a link that carries your data to someone else's server is worse.
@@ -59,6 +142,12 @@ What matters most is what a fooled model can do. A wrong summary is bad. An agen
   looks.
 - Defenses written into the prompt can lower the odds, but none stops every attack.
 
+<At levels="deep">
+
+- Spotlighting marks untrusted text by delimiting, datamarking, or encoding; marking beat tags here
+  and in the paper.
+
+</At>
 </RecapCard>
 
 **Next question:** if the model can be fooled, what stops a fooled agent from doing real damage?

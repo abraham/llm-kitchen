@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,16 +9,35 @@
 
 ## What does the model actually see?
 
+<At levels="simple">
+
+So far you've seen the model and the text it reads. But in a chat app, you only write a small part
+of that text. Apps wrap the model in ordinary code, the <GlossaryPopover term="harness">harness</GlossaryPopover>,
+which decides what the model reads and what to do with what it writes.
+
+</At>
+<At levels="standard deep">
+
 Everything so far has been about the model and the text you give it. But in a chat app you only
 write a small part of that text. Chat apps and coding agents wrap the model in ordinary
 code, the <GlossaryPopover term="harness">harness</GlossaryPopover>, which decides what text the
 model gets and what to do with what it writes.
+
+</At>
 
 To see it, we recorded a real conversation with a small chat model, Qwen2.5-1.5B-Instruct, inside
 a simple harness built for this site.<Cite id="qwen2024" /> You typed one short line. Peel back
 the layers to see what the model actually read:
 
 <PromptInspector />
+
+<At levels="simple">
+
+Your 31-character message became a 400-token prompt. The harness wrote most of it: instructions
+for the model, descriptions of its tools, the earlier messages, and markers around each turn.
+
+</At>
+<At levels="standard deep">
 
 Your 31-character message became a 400-token prompt. Most of it was written by the harness:
 
@@ -27,16 +47,52 @@ Your 31-character message became a 400-token prompt. Most of it was written by t
 - the earlier turns of the conversation, and
 - the chat markers from <ChapterRef to="predictor-to-assistant" /> around every turn.
 
+</At>
+
+<At levels="simple">
+
+The model doesn't remember anything between calls. It seems to remember the conversation only
+because the harness sends all of it again every time.
+
+</At>
+<At levels="standard deep">
+
 The model has no memory between calls. It seems to remember the conversation only because the
 harness sends the whole thing again every time. Here it also asked to look up a rhyme first, so the
 harness called it a second time with the result added, and the prompt grew to 493 tokens.
 
+</At>
+<At levels="deep">
+
+### Where the 400 tokens go
+
+Counted with Qwen's tokenizer, the three tool descriptions alone take 295 of the 400 tokens, about
+three quarters. The app's instructions take 53, the earlier exchange 22, and your message 8; the
+chat markers and line breaks make up the rest. Each description is a small JSON schema, the tool's
+name, what it does, and its inputs, and Qwen's chat template wraps them in `<tools>` tags with a
+paragraph on how to call them. So every tool a harness offers costs tokens on every call, used or
+not. The second call added 93 tokens: the model's own tool call, written back as its turn, and the
+search result, wrapped in `<tool_response>` tags in a new user turn.
+
+</At>
+
 ## The model is one part
+
+<At levels="simple">
+
+The reply you see is the harness's work too: it reads what the model wrote, runs any tools it
+asked for, and shows you only the answer. The same model can feel very different inside a
+different harness. The next four chapters look at its jobs one by one.
+
+</At>
+<At levels="standard deep">
 
 The reply you see is also the harness's work: it reads what the model wrote, spots tool calls,
 runs them, and shows you only the final answer. The same model can feel very different depending
 on the harness around it: its instructions, its tools, and the rules it enforces. The next four
 chapters look at each job in turn.
+
+</At>
 
 <RecapCard>
 
@@ -44,6 +100,12 @@ chapters look at each job in turn.
 - The harness builds the prompt: system prompt, tool descriptions, earlier turns, and chat markers.
 - The model has no memory; the harness re-sends the conversation on every call.
 
+<At levels="deep">
+
+- Three tool descriptions were three quarters of this prompt: every tool costs tokens on every
+  call.
+
+</At>
 </RecapCard>
 
 **Next question:** the prompt listed "tools". How can a model that only writes text use a

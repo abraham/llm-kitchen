@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,10 +9,21 @@
 
 ## The prompt keeps growing
 
+<At levels="simple">
+
+Every tool result and every reply is added to the prompt, and the model re-reads all of it on
+every call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover>.
+Long prompts are also slower and cost more. So the harness has to choose what the model sees.
+
+</At>
+<At levels="standard deep">
+
 Every tool result and every reply is added to the prompt, and the model re-reads all of it on every
 call. But a model can only read so much at once: its <GlossaryPopover term="context-window">context window</GlossaryPopover> (<ChapterRef to="the-context-problem" />). Long before that
 limit, long prompts also get slower and more expensive. So the harness has to choose what the model
 sees.
+
+</At>
 
 Below, the agent from <ChapterRef to="the-agent-loop" /> has done the same task for all six rhymes. Then you ask about the first
 one. To make the problem visible we set a small budget of 1,500 tokens; the model itself can read
@@ -20,6 +32,18 @@ far more. Pick what the harness does when the conversation doesn't fit:
 <ContextBudget />
 
 ## Three ways to make room
+
+<At levels="simple">
+
+- **Drop the oldest.** Simple, but here the first task was the one you asked about. Without it,
+  the model made up an answer.
+- **Summarize.** The harness asks the model to shrink old turns into a short note. The note kept
+  "30 words", so the answer was right, but summaries can lose details that turn out to matter.
+- **Retrieve.** The harness stores old turns outside the prompt and puts back the ones closest in
+  meaning to the question.<Cite id="lewis2020" /> The cat task came back, and the answer was right.
+
+</At>
+<At levels="standard deep">
 
 - **Drop the oldest.** Simple, and often fine. But here the first task was the one you asked about.
   With it gone, the model made up an answer: a rhyme called "Old Mother Hubbard" with 18 words.
@@ -30,6 +54,24 @@ far more. Pick what the harness does when the conversation doesn't fit:
   comes in, finds the ones most similar in meaning, using embeddings like the map in <ChapterRef to="embeddings" />, and puts
   them back.<Cite id="lewis2020" /> The cat task was the closest match to the question, so it came
   back and the model answered correctly.
+
+</At>
+<At levels="deep">
+
+### Picking by similarity
+
+The harness turned the question and each stored task into 384 numbers with MiniLM, the embedding
+model from <ChapterRef to="embeddings" />, and scored each task by the cosine of the angle between
+its vector $v$ and the question's vector $u$:
+
+$$\cos\theta = \frac{u \cdot v}{\lVert u \rVert \, \lVert v \rVert}$$
+
+The cat task scored 0.67 and the other five 0.53 to 0.60, so it came first. None scored low,
+because every task shares "nursery rhyme" and "count its words": close in meaning isn't always the
+same as useful. The summary was cheaper still, shrinking the 221-token cat task to a 29-token note,
+but it only worked because the note happened to keep the number you later asked about.
+
+</At>
 
 This is <GlossaryPopover term="retrieval">retrieval</GlossaryPopover>, the same idea behind
 assistants that search your documents: they don't read everything, they look up what seems
@@ -42,6 +84,12 @@ model and put back into the prompt later.
 - When it fills up, the harness drops, summarizes, or retrieves text.
 - Whatever is left out is simply gone for the model, and it may fill the gap by making things up.
 
+<At levels="deep">
+
+- Retrieval ranks stored text by the cosine similarity of embeddings; close in meaning isn't
+  always useful.
+
+</At>
 </RecapCard>
 
 **Next question:** every call re-sends the whole conversation, and the model reads all of it again.

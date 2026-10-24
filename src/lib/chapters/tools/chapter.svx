@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,16 +9,48 @@
 
 ## Arithmetic, one token at a time
 
+<At levels="simple">
+
+Ask a model to multiply two big numbers and it writes the answer the only way it can: one
+likely-looking token after another (<ChapterRef to="quirks-and-limits" />). Often that goes wrong. Now give it a
+calculator:
+
+</At>
+<At levels="standard deep">
+
 Ask a model to multiply two four-digit numbers and it writes the answer the only way it can: one
 likely-looking token after another (<ChapterRef to="quirks-and-limits" />). Sometimes that works. Often it doesn't. Now give it a
 calculator:
+
+</At>
 
 <ToolsDemo />
 
 Without tools, the model wrote out a long multiplication and got 7,050,952. The right answer is
 7,006,652. With a calculator, it got it right, because it never did the arithmetic at all.
 
+<At levels="deep">
+
+### Where the long multiplication went wrong
+
+The model laid out the method correctly: multiply 1234 by each digit of 5678, shift, and add. Only
+the last of its four rows was right. It wrote 98,072 for 1234 × 8 (really 9,872), 61,700 for
+1234 × 70 (really 86,380), and 617,000 for 1234 × 600 (really 740,400); only 6,170,000 for
+1234 × 5000 was right. Its rows don't even add up to its own answer: they make 6,946,772, not
+7,050,952. Each number is a run of likely-looking tokens, and nothing checks that the steps agree.
+
+</At>
+
 ## A tool call is just text
+
+<At levels="simple">
+
+The model can't press buttons or run programs. A <GlossaryPopover term="tool-call">tool call</GlossaryPopover> is just text the model writes in a
+fixed format. The harness spots that text, runs the tool itself, adds the result to the
+conversation, and calls the model again.
+
+</At>
+<At levels="standard deep">
 
 The model can't press buttons or run programs. A <GlossaryPopover term="tool-call">tool call</GlossaryPopover> is text the model writes in an agreed
 format, like the answer line in <ChapterRef to="steps-and-structure" />, but for the harness to act on. Models can be trained to write calls like this at the right moments.<Cite id="schick2023" />
@@ -27,16 +60,52 @@ Then:
 2. It reads out the tool's name and arguments, and runs the tool itself.
 3. It adds the result to the conversation and calls the model again.
 
+</At>
+
 Every model family has its own format. Qwen writes a small block of JSON between `<tool_call>` tags.
 On this site, calls are shown in a simpler made-up form, like
 `<call calculator>1234 * 5678</call>`, so they're easy to read.
+
+<At levels="deep">
+
+### How a model learns to call tools
+
+Toolformer showed one way to teach this without people labeling examples. A model was shown a few
+demonstrations of each tool, then wrote candidate calls into ordinary text; the calls were run, and
+a call was kept only if its result made the following tokens easier to predict. Fine-tuning on the
+kept examples taught the model when a call helps.<Cite id="schick2023" /> Qwen2.5 was tuned for
+tool use, and its vocabulary reserves two control tokens for it: `<tool_call>` and `</tool_call>`
+are each a single token.<Cite id="qwen2024" /> Between them, the model here wrote
+`{"name": "calculator", "arguments": {"expression": "1234 * 5678"}}`.
+
+</At>
+
+<At levels="simple">
+
+The tools in these chapters are toys that run in your browser, like a calculator and a pretend
+file list. Real assistants use the same pattern for web search, running code, and sending email,
+which is why the harness has to be careful about which tools it runs.
+
+</At>
+<At levels="standard deep">
 
 The tools in these chapters are toys that run in your browser: a calculator, a search over the six
 nursery rhymes from <ChapterRef to="predicting-by-counting" />, a word counter, a fake web page, and a pretend file list. Real assistants
 use the same pattern for web search, code execution, sending email, and more, which is exactly why
 the harness has to be careful about which tools it runs.
 
+</At>
+
 ## One plug for many tools
+
+<At levels="simple">
+
+At first, every app connected every tool its own way. The <GlossaryPopover term="mcp">Model Context Protocol (MCP)</GlossaryPopover>,
+released by Anthropic in November 2024, gives tools a shared plug.<Cite id="anthropic-mcp" /> A program
+called an MCP server offers some tools, and any harness that speaks MCP can use them.<Cite id="mcp-spec" />
+
+</At>
+<At levels="standard deep">
 
 At first, every app wired up every tool its own way. The <GlossaryPopover term="mcp">Model Context Protocol (MCP)</GlossaryPopover>,
 which Anthropic released as an open standard in November 2024, gives tools a shared plug.<Cite id="anthropic-mcp" />
@@ -45,9 +114,24 @@ model, and the inputs it takes, such as a `get_weather` tool that needs a `locat
 that speaks MCP can ask a server for its list of tools, describe them in the prompt, and pass the
 model's calls on to the server to run.<Cite id="mcp-spec" />
 
+</At>
+
 The model never sees MCP. It still reads tool descriptions and writes tool calls in its own
 format; the harness translates in both directions. Connecting a server means its descriptions and
 results end up in the prompt, so it has to be trusted like any other tool.
+
+<At levels="deep">
+
+### MCP on the wire
+
+MCP messages are JSON-RPC 2.0: small JSON objects with a method name and parameters. A harness sends
+`tools/list` and gets back each tool's `name`, `description`, and `inputSchema`, a JSON Schema for
+its inputs. To run one, it sends `tools/call` with the tool's name and arguments, such as a
+`location` of New York, and gets back a list of content, usually text, which it puts into the
+prompt as the tool result. A server can also tell the harness when its list of tools
+changes.<Cite id="mcp-spec" />
+
+</At>
 
 <RecapCard>
 
@@ -57,6 +141,12 @@ results end up in the prompt, so it has to be trusted like any other tool.
 - MCP is a shared way for a harness to find tools offered by other programs and call them; the
   model still just writes text.
 
+<At levels="deep">
+
+- Qwen marks a call with reserved tokens; MCP carries `tools/list` and `tools/call` between the
+  harness and a server.
+
+</At>
 </RecapCard>
 
 **Next question:** one tool call helps. What if a task needs several, one after another?

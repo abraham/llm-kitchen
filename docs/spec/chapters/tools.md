@@ -31,3 +31,6 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/math-no-tools.json`,
   [Asking for steps and structure](steps-and-structure.md).
 - MCP is described, not demonstrated: the toy tools are local functions, and the chapter says the
   model never sees the protocol. The spec is cited with an accessed date because it changes.
+- [Levels](../levels.md): Simple keeps the calculator result and the harness's three steps in one
+  sentence. In depth checks the model's long multiplication row by row, explains how Toolformer
+  learned to call tools and Qwen's reserved tokens, and shows MCP's two messages.

@@ -24,3 +24,5 @@ with the fake file system tool.
   followed; a plain "ignore your instructions" note didn't make it delete anything in testing.
   [Prompt injection](prompt-injection.md) explains why the fake message works.
 - The file system is a toy in the browser; nothing real is ever deleted.
+- [Levels](../levels.md): Simple keeps the four guardrails. In depth shows how the page fakes the
+  end of the tool result, and what the allowlist run did against a guardrail written as code.

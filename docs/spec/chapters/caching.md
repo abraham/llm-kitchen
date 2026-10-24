@@ -35,3 +35,6 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
   long, and the view shows tokens processed rather than time to first token.
 - One-pass checking of many tokens refers back to [Guessing ahead](speculative-decoding.md).
 - Live timing in the browser is on the [roadmap](../roadmap.md).
+- [Levels](../levels.md): Simple keeps the measured times and the exact-start rule. In depth counts
+  the token passes against the measured times, works out Qwen's cache with grouped-query attention,
+  and prices the appending session.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -9,9 +10,30 @@
 
 ## Doing the same work twice
 
+<At levels="simple">
+
+The agent in <ChapterRef to="the-agent-loop" /> re-sent the whole conversation on every call, and the model read it all again.
+Even within one reply, it re-reads everything before each new token (<ChapterRef to="generating-text" />). Does it really redo
+all that work every time?
+
+</At>
+<At levels="standard deep">
+
 The agent in <ChapterRef to="the-agent-loop" /> re-sent the whole conversation on every call: 301 tokens, then 394, then 483.
 Inside each call, the token loop from <ChapterRef to="generating-text" /> does the same: to pick each new token, the model reads
 everything before it again. Does it really redo all that work every time?
+
+</At>
+
+<At levels="simple">
+
+It doesn't have to. In attention (<ChapterRef to="attention" />), each token makes a key and a value that depend only on the
+text before it, so they never change once worked out. The model can store them and reuse them:
+this store is the <GlossaryPopover term="kv-cache">KV cache</GlossaryPopover>. Step through GPT-2
+small finishing "The cat sat on the" with the cache off and on:
+
+</At>
+<At levels="standard deep">
 
 It doesn't have to. Remember how attention works (<ChapterRef to="attention" />): every token makes a query, a key, and a
 value. Each token can only look at the tokens before it, so its key and value depend only on the
@@ -20,7 +42,18 @@ and keep them. This store is the <GlossaryPopover term="kv-cache">KV cache</Glos
 it, each new token only computes its own key and value, and its query is matched against the stored
 ones. Step through GPT-2 small finishing "The cat sat on the" with the cache off and on:
 
+</At>
+
 <KVCacheStepper />
+
+<At levels="simple">
+
+Without the cache, each new token took longer than the last, and 500 tokens took 43.2 seconds.
+With it, each took about the same time, about 20 milliseconds, and the run took 10.0 seconds. Both
+runs wrote exactly the same text.
+
+</At>
+<At levels="standard deep">
 
 Without the cache, every step runs the whole text through all 12 blocks again, so each step costs
 a little more than the last. Measured on a laptop, the time per new token grew from 24 to 139
@@ -29,15 +62,66 @@ about 20 milliseconds, and the run took 10.0 seconds. Both runs picked exactly t
 their scores differed by at most 0.01, from rounding when the same sums are added up in a different
 order.
 
+</At>
+<At levels="deep">
+
+### Counting the work
+
+Without the cache, step $t$ (counting from 0) runs all $p + t$ tokens through the model, so $n$ new
+tokens after a $p$-token prompt take
+
+$$\sum_{t=0}^{n-1} (p + t) = n\,p + \frac{n(n-1)}{2}$$
+
+token passes. For the 5-token prompt and 500 tokens here, that's 127,250, against 504 with the
+cache: 252 times as many. Yet the run took only 4.3 times as long. Running one token through the
+model is mostly waiting for its weights to arrive from memory, and many tokens in the same pass
+share that trip, so the extra tokens are cheap.<Cite id="pope2022" /> With the cache, each step
+still compares its query with every stored key, so the time per token crept up a little, from
+about 19 to 20 milliseconds.
+
+</At>
+
 The cache works with the guess-and-check trick from <ChapterRef to="speculative-decoding" /> too: the text before the guesses already
 has its keys and values stored, so the big model's checking pass only computes them for the guesses.
+
+<At levels="simple">
+
+The price is memory: GPT-2 small stores 18,432 numbers for every token, and for large models and
+long prompts the cache runs to gigabytes.<Cite id="pope2022" />
+
+</At>
+<At levels="standard deep">
 
 The price is memory. GPT-2 small stores a key and a value in each of its 12 blocks for every token:
 2 × 12 × 768 = 18,432 numbers per token. For large models and long prompts the cache runs to
 gigabytes, and keeping it small is a big part of serving them efficiently.<Cite id="pope2022" /> Some
 other kinds of models avoid it by keeping a fixed-size memory instead.
 
+</At>
+<At levels="deep">
+
+### The cache for a bigger model
+
+Qwen2.5-1.5B-Instruct, the model in the agent chapters, has 28 blocks, and its attention has 12
+heads of 128 numbers each. A key and a value for every head would be
+2 × 28 × 12 × 128 = 86,016 numbers per token. It stores far fewer, because its 12 heads share 2
+sets of keys and values, an arrangement called grouped-query attention:
+2 × 28 × 2 × 128 = 14,336 numbers, six times fewer.<Cite id="qwen2024" /> At 2 bytes each, that's
+about 29 KB per token, and about 0.94 GB for a full 32,768-token context.
+
+</At>
+
 ## Caching across calls
+
+<At levels="simple">
+
+The cache for one reply is thrown away when the reply is done. But an agent's next call starts
+with the same text as the last, plus a little more. So model providers keep the cache for the start
+of a prompt for a while, and reuse it when a new prompt starts the same way. This is <GlossaryPopover term="prompt-caching">prompt caching</GlossaryPopover>,
+and it makes those tokens much cheaper.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+
+</At>
+<At levels="standard deep">
 
 The KV cache for one reply is thrown away when the reply is done. But an agent's next call starts
 with exactly the same text, plus a little more. So model providers keep the cache for the start of
@@ -46,9 +130,21 @@ token, picks up from there. This is <GlossaryPopover term="prompt-caching">promp
 Providers charge a tenth of the normal price or less for tokens read from the cache, and the reply
 starts sooner, because there is less to work through first.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
 
+</At>
+
+<At levels="simple">
+
+The match has to be exact, from the very first token: change one early word and everything after
+it has to be worked out again. See what that means for the <ChapterRef to="managing-the-context" /> session:
+
+</At>
+<At levels="standard deep">
+
 The match has to be exact, from the very first token. Change one early word and every key and value
 after it is different, because each depends on all the text before it. So the cache only helps up
 to the first difference. See what that means for the <ChapterRef to="managing-the-context" /> session:
+
+</At>
 
 <PromptCacheView />
 
@@ -60,6 +156,14 @@ to the first difference. See what that means for the <ChapterRef to="managing-th
 - **Dropping the oldest task** (<ChapterRef to="managing-the-context" />) sends fewer tokens, 5,776, but costs more than keeping them
   all: every drop changes the text right after the system prompt, so little else matches.
 - **Summarizing** sends the fewest tokens and caches well between summaries, so it costs the least.
+
+<At levels="deep">
+
+With cached tokens at a tenth of the price, a call costs about $\text{new} + 0.1 \times \text{cached}$
+in full-price tokens. Only appending sends 7,656 tokens, 6,100 of them cached, so it costs about
+1,556 + 610 = 2,166: 28% of the uncached price. Putting the time at the top costs all 7,656.
+
+</At>
 
 That is why harnesses keep the parts that don't change at the front, in the same order every time:
 tool definitions, then the system prompt, then the conversation. Anything that changes, like the
@@ -83,6 +187,12 @@ session would be too short, so the view above ignores that limit.
 - Providers keep the cache for the exact start of a prompt, so harnesses put what doesn't change
   first and only ever append.
 
+<At levels="deep">
+
+- Without the cache, $n$ tokens take $np + n(n-1)/2$ passes; sharing keys and values across heads
+  shrinks the cache.
+
+</At>
 </RecapCard>
 
 **Next question:** the harness fills the prompt with text from many places: tool results, web

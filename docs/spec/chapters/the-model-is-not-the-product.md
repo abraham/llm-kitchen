@@ -24,3 +24,5 @@ small Python harness.
   chat model yet (see [roadmap.md](../roadmap.md)).
 - The system prompt itself was introduced in
   [Instructions, roles, and the system prompt](instructions-and-roles.md); this chapter refers back.
+- [Levels](../levels.md): Simple keeps the 31 characters and 400 tokens and drops the list of parts
+  to one sentence. In depth counts where the 400 tokens go and what the second call added.
