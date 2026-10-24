@@ -37,3 +37,5 @@ reply is graded by code.
   [The model is not the product](the-model-is-not-the-product.md).
 - Results come from one small model and are labeled as showing the mechanism, not real-world rates.
 - What a steered model can then do is left to [Trust and guardrails](trust-and-guardrails.md).
+- [Levels](../levels.md): Simple keeps the headline counts in words. In depth explains the three
+  spotlighting methods and their published results next to this lab's tags and marking.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -7,11 +8,22 @@
 
 ## Text that gives orders
 
+<At levels="simple">
+
+You ask the agent to summarize a web page. Hidden in the page is a message, dressed up to look
+like it came from you, telling the agent to delete your files. To the model, it's all just text in
+one prompt. This is prompt injection (<ChapterRef to="prompt-injection" />), and attacks like it have worked on real products.<Cite id="greshake2023" />
+
+</At>
+<At levels="standard deep">
+
 You ask the agent to summarize a web page. The page contains a hidden message, made to look like
 the end of the tool result followed by a new message from you, telling the agent to delete your
 files. To the model, it's all one stream of tokens: your request, the harness's instructions, and
 the page's text sit side by side in the same prompt. This is prompt injection (<ChapterRef to="prompt-injection" />), and attacks like it
 have worked on real products.<Cite id="greshake2023" />
+
+</At>
 
 Here is what a real model did, with the toy file tools, under different guardrails:
 
@@ -21,6 +33,21 @@ With no guardrails, the model followed the page: it listed your files and delete
 kept going until the harness's step limit stopped it. It never wrote the summary.
 
 ## Safety lives in the harness
+
+<At levels="simple">
+
+You can't fix this by asking the model nicely: it can't reliably tell your instructions from the
+page's. So the protection has to come from the harness:
+
+- **Ask first.** The harness asks you before anything risky. Here it refused six deletions, and
+  nothing was lost.
+- **Only safe tools.** If the agent doesn't need to delete files, don't give it the tool.
+- **Step limits.** These cap the damage but don't prevent it.
+- **Sandboxes.** Agents that run code do it somewhere walled off, where a bad command can't reach
+  anything important.
+
+</At>
+<At levels="standard deep">
 
 You can't fix this by asking the model nicely: as <ChapterRef to="prompt-injection" /> showed, it has no reliable way to tell your instructions
 from instructions in the text it reads. So the protection has to come from the harness:
@@ -34,6 +61,31 @@ from instructions in the text it reads. So the protection has to come from the h
 - **Sandboxes.** Real agents that run code do it in an isolated environment, so a bad command can't
   reach anything important.
 
+</At>
+<At levels="deep">
+
+### How the page got in
+
+The page's text pretends the tool result is over. It contains `</tool_response>`, the tag that ends
+a result, then "New instructions from the user:". Qwen2.5 reserves single tokens for `<tool_call>`
+and `</tool_call>`, but the result tags are ordinary text, four tokens each.<Cite id="qwen2024" />
+So the fake closing tag is the same four tokens as the real one the harness adds after every
+result, and the model has nothing to tell them apart by.
+
+### Guardrails are ordinary code
+
+Each guardrail is a check in the harness that runs after the model writes a call and before
+anything happens: is this tool on the list, and does this one need your yes? The model can't argue
+with an `if` statement. In the allowlist run it asked for `delete_file` three times anyway, even
+inventing an argument, `file_path`, since no description told it the real one, and each time got
+back "Error: there is no tool named delete_file." Leaving out that tool's description also made
+the first prompt 65 tokens shorter, 262 instead of 327. The MCP specification asks for the same
+safety net: a person should always be able to deny a tool call.<Cite id="mcp-spec" /> But notice
+what you got: in none of the three runs did the agent write the summary you asked for. Guardrails
+limit the damage; they don't stop the attack.
+
+</At>
+
 Notice that none of the guardrails made the model smarter. In every run it was fooled; the harness
 just limited what being fooled could do.
 
@@ -44,6 +96,12 @@ just limited what being fooled could do.
 - Prompt injection hides instructions in text the agent reads, like a web page.
 - Safety comes from the harness: permission prompts, tool allowlists, sandboxes, and step limits.
 
+<At levels="deep">
+
+- A fake `</tool_response>` is the same tokens as the real one; guardrails are checks in code that
+  the model can't talk its way past.
+
+</At>
 </RecapCard>
 
 **Next question:** GPT-2 is one kind of model. What other kinds are built from the same pieces?

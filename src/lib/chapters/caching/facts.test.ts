@@ -66,4 +66,36 @@ describe('caching', () => {
 		expect(summarize.sent).toBeLessThan(drop.sent);
 		expect(summarize.cost).toBeLessThan(append.cost);
 	});
+
+	it('in depth: 127,250 token passes against 504, yet only 4.3 times the time', () => {
+		const p = kv.promptTokens.length;
+		const n = kv.generated.length;
+		expect(p).toBe(5);
+		expect(positionsProcessed(p, n, false)).toBe(127250);
+		expect(positionsProcessed(p, n, true)).toBe(504);
+		expect(Math.round(127250 / 504)).toBe(252);
+		expect((kv.totalMs.noCache / kv.totalMs.cache).toFixed(1)).toBe('4.3');
+		const early = [...kv.msPerToken.cache.slice(1, 51)].sort((a, b) => a - b)[25];
+		expect(Math.round(early)).toBe(19);
+	});
+
+	it('in depth: grouped-query attention stores 14,336 numbers per token for Qwen2.5-1.5B', () => {
+		const layers = 28;
+		const headSize = 1536 / 12;
+		expect(headSize).toBe(128);
+		expect(2 * layers * 12 * headSize).toBe(86016);
+		const perToken = 2 * layers * 2 * headSize;
+		expect(perToken).toBe(14336);
+		expect(86016 / perToken).toBe(6);
+		expect(Math.round((perToken * 2) / 1000)).toBe(29);
+		expect(((perToken * 2 * 32768) / 1e9).toFixed(2)).toBe('0.94');
+	});
+
+	it('in depth: appending costs 1,556 + 610 = 2,166 full-price tokens, 28%', () => {
+		const append = cacheTotals(cacheCalls(session, 'append'));
+		expect(append.processed).toBe(1556);
+		expect(Math.round(append.cost)).toBe(2166);
+		expect(Math.round((append.cost / append.sent) * 100)).toBe(28);
+		expect(cacheTotals(cacheCalls(session, 'time')).cost).toBe(7656);
+	});
 });
