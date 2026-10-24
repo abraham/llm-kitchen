@@ -25,6 +25,7 @@ MODULES = [
     "injection",
     "encoder",
     "clip",
+    "decisions",
 ]
 
 

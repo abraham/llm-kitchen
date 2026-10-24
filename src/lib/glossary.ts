@@ -260,6 +260,18 @@ export const GLOSSARY = {
 			'A model that makes pictures (or other data) by starting from random noise and removing a little of it at each step.',
 		chapter: 'diffusion'
 	},
+	'reinforcement-learning': {
+		term: 'reinforcement learning',
+		definition:
+			'Learning to act by trial and error: try moves, collect rewards, and do more of what earned them.',
+		chapter: 'decision-models'
+	},
+	'decision-transformer': {
+		term: 'Decision Transformer',
+		definition:
+			'A transformer trained on recorded runs of a task that predicts the next action from the reward still to earn, what it sees, and what it did before.',
+		chapter: 'decision-models'
+	},
 	'reasoning-model': {
 		term: 'reasoning model',
 		definition:

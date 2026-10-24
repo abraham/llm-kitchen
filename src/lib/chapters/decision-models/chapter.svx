@@ -1,0 +1,189 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import DecisionGrid from './DecisionGrid.svelte';
+</script>
+
+## Moves instead of words
+
+<At levels="simple">
+
+An agent acts by writing text: the model writes a tool call, and the harness carries it out
+(<ChapterRef to="the-agent-loop" />). A game player or a robot needs moves, not sentences. Could a model predict the moves
+directly?
+
+The classic way to learn moves is <GlossaryPopover term="reinforcement-learning">reinforcement learning</GlossaryPopover>: try things, collect
+rewards, and do more of what earned them.<Cite id="sutton2018" /> This chapter shows another way, a <GlossaryPopover term="decision-transformer">Decision Transformer</GlossaryPopover>.
+Record lots of games, write each one down as tokens, and
+train a transformer to predict the next move the way GPT-2 predicts the next word (<ChapterRef to="generating-text" />).<Cite id="chen2021decision" />
+
+</At>
+<At levels="standard deep">
+
+In <ChapterRef to="the-agent-loop" />, a language model acts by writing text: it describes a tool call, and the harness
+carries it out. A game player or a robot arm needs moves, many of them, not paragraphs. Could a
+model predict the moves themselves?
+
+The classic answer is <GlossaryPopover term="reinforcement-learning">reinforcement learning</GlossaryPopover>: a player tries moves, collects
+rewards, and does more of what earned them, by trial and error.<Cite id="sutton2018" /> A <GlossaryPopover term="decision-transformer">Decision Transformer</GlossaryPopover>
+takes another route, and never plays while it learns.
+Record many runs of the game by any players, good or bad, and write each run down as a sequence of
+tokens. Then train a transformer to predict the next move, the same way GPT-2 learned to predict the
+next word (<ChapterRef to="learning-from-mistakes" />, <ChapterRef to="generating-text" bare />).<Cite id="chen2021decision" />
+
+</At>
+
+## The game
+
+<At levels="simple">
+
+The game is a 5 by 5 grid. The player starts in the bottom-left corner and wants the flag in the
+top-right corner. Each move costs 1 point, the flag earns 20, and stepping into one of the three
+pits costs 10 more and ends the game. After 16 moves the game ends anyway. The best score is 12:
+the shortest route is 8 moves, and 20 − 8 = 12.
+
+The model learns from 4,000 recorded games. Some players moved at random; others headed for the
+flag but often slipped. Most games went badly, and only 413, about one in ten, scored 12.
+
+</At>
+<At levels="standard deep">
+
+The game is a 5 by 5 grid. The player starts in the bottom-left corner, A1, and wants the flag in
+the top-right corner, E5. Each move costs 1 point, reaching the flag earns 20, and three cells are
+pits: stepping into one costs 10 more and ends the run. After 16 moves the run ends anyway. The
+best possible score is 12: the shortest route takes 8 moves, and 20 − 8 = 12.
+
+The training data is 4,000 recorded runs. A third of them (1,365) come from a player that moves at
+random. The rest (2,635) come from a scripted player that heads for the flag but, on every move, has
+a chance of moving at random instead, set anywhere from 10% to 70% for each run. Most runs went
+badly: 2,272 fell into a pit, and 368 ran out of moves. Of the 1,360 that reached the flag, only
+413, about one run in ten overall, did it in the fewest moves and scored 12.
+
+</At>
+
+## A game as tokens
+
+<At levels="simple">
+
+Each step of a game becomes three tokens: the score still to earn, the cell the player is in, and
+the move it made. A game that scored 12 starts with the tokens 12, A1, →. The model reads the tokens
+so far and predicts the next move.
+
+</At>
+<At levels="standard deep">
+
+Each step of a run becomes three tokens: the score still to earn from here on, the cell the player
+is in, and the move it made. A run that scored 12 starts with the tokens 12, A1, →. GPT-2 reads
+text tokens and predicts the next one; this model reads these tokens and predicts the next move. It
+is a tiny transformer with the same masked attention as GPT-2 (<ChapterRef to="attention" />), so each token sees only the
+ones before it.
+
+</At>
+
+## Ask for a score
+
+Here is the trained model. Choose a score to aim for: the model gets it as its first token, then
+plays one move at a time.
+
+<DecisionGrid />
+
+<At levels="simple">
+
+Aim for 12 and it takes a shortest route to the flag. Aim for 8 and it still gets there, but takes
+the long way and scores exactly 8. Aim for −14 and it walks into a pit on its fourth move. The model
+doesn't try to win: it copies the games that scored what you asked for.
+
+For scores no game reached, it has nothing to copy, and its play is odd. Ask for more than 12 and it
+plays the same 8 moves as for 12: it can't beat the best game it has seen.
+
+</At>
+<At levels="standard deep">
+
+Aim for 12 and it takes a shortest route, 8 moves to the flag. Aim for 8 and it still reaches the
+flag, but in 12 moves, scoring exactly 8: it wanders on purpose, because runs that scored 8 did.
+Every target from 4 to 12 comes out exact. Aim low, at −14, and it walks into a pit on its fourth
+move, scoring −14. The model doesn't want to win. It plays like the runs that scored what you asked
+for.
+
+Two kinds of target fall outside its data. No training run scored from −11 to 3, so for those the
+model has nothing to copy: from −10 to −2 it wanders until its 16 moves run out (−16), and from −1
+to 3 it reaches the flag on its very last move (4). Above 12 is impossible, and there it plays the
+same 8 moves as for 12: the best it has seen, and nothing better.
+
+</At>
+<At levels="deep">
+
+### Inside the toy
+
+Each token becomes a list of 24 numbers. The score still to earn is divided by 20 and multiplied
+into 24 learned numbers; cells and moves each have a row in a learned table, like the word vectors
+in <ChapterRef to="embeddings" />. Every token also gets the row for its step number, so the model can tell how many moves
+have passed. Two transformer blocks (<ChapterRef to="the-transformer-block" />), each with two attention heads, refine the
+vectors, and the vector at each cell token is turned into scores for the four moves. A full 16-move
+run is 48 tokens. The model has 15,772 weights, trained for 4,000 steps of 128 runs each with the
+same cross-entropy as GPT-2, scored on the moves only. The browser runs the same network with the
+recorded weights, and a test checks it makes the same moves as the training script.
+
+### The score still to earn
+
+If $r_t$ is the reward for move $t$, the token before it is what the rest of the run earns,
+
+$$\hat R_t = r_t + r_{t+1} + \dots, \qquad \hat R_{t+1} = \hat R_t - r_t$$
+
+so after each move the game subtracts its reward and passes on what's left.<Cite id="chen2021decision" /> Aim for
+12 and every move costs 1, so the tokens go 12, 13, 14, and so on up to 19 at the eighth move. Then
+the flag pays 20 − 1 = 19, and nothing is left to earn.
+
+### Aiming high from mediocre runs
+
+Most of the training runs were bad, yet aiming for 12 gives a perfect route. Training never said
+which runs were good; the score token did. Asking for 12 picks out what the 413 runs that scored 12
+did in each cell. The same token sets the limit: asking for 20 can't produce a run better than any
+it saw. Many reinforcement-learning methods work differently: they estimate how much reward each
+move leads to and improve by picking the best, so they can, in principle, find routes better than
+any they were shown.<Cite id="sutton2018" />
+
+</At>
+
+## Bigger versions
+
+<At levels="simple">
+
+Bigger Decision Transformers learned to play video games from recorded play, and did as well as or
+better than the best reinforcement-learning methods given the same recordings.<Cite id="chen2021decision" /> A model
+called Gato uses the same weights to play video games, describe pictures, chat, and stack blocks
+with a robot arm.<Cite id="reed2022" />
+
+</At>
+<At levels="standard deep">
+
+Chen and colleagues trained Decision Transformers on recorded Atari games and simulated robots, and
+they matched or beat the best reinforcement-learning methods that learn from recorded data
+alone.<Cite id="chen2021decision" /> Gato went further: one transformer, with the same weights, plays Atari, captions
+images, chats, and stacks blocks with a real robot arm, choosing from its context whether to output
+text, button presses, or joint torques.<Cite id="reed2022" /> Underneath is the idea from this chapter: if
+something can be written as tokens, a transformer can learn to predict it.
+
+</At>
+
+<RecapCard>
+
+- A game can be written as tokens: for each step, the score still to earn, the cell, and the move.
+- A Decision Transformer learns from recorded runs to predict the next move, the way GPT-2 predicts
+  the next word.
+- You choose the score to aim for, and it plays like the runs that scored that. It can't beat the
+  best run it has seen.
+- Reinforcement learning instead learns by trial and error, from rewards.
+
+<At levels="deep">
+
+- After each move the score still to earn drops by that move's reward: aiming for 12, it goes 12,
+  13, … 19, and the flag pays the last 19.
+
+</At>
+</RecapCard>
+
+**Next question:** how do all the pieces fit together?

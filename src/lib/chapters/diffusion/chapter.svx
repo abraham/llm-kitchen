@@ -130,4 +130,5 @@ make one picture;<Cite id="ho2020" /> the toy above uses 50.
 </At>
 </RecapCard>
 
-**Next question:** how do all the pieces fit together?
+**Next question:** an agent picks actions by writing text. Could a model predict the actions
+directly?

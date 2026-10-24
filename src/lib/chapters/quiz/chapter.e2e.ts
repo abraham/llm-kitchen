@@ -19,12 +19,13 @@ test('take the quiz and see what to revisit', async ({ page }) => {
 		'The provider reuses its work on the unchanged start of the prompt',
 		'The model reads the page and your request as one stream of text',
 		'Guardrails in the harness, like asking you first',
-		'Its attention can look at the words after the blank too'
+		'Its attention can look at the words after the blank too',
+		'It plays like the best runs it has seen'
 	]) {
 		await quiz.getByLabel(answer, { exact: true }).check();
 	}
 	await quiz.getByRole('button', { name: 'Check my answers' }).click();
-	await expect(quiz.getByText('13 of 14 right.')).toBeVisible();
+	await expect(quiz.getByText('14 of 15 right.')).toBeVisible();
 	const revisit = quiz.locator('.revisit');
 	await expect(revisit.getByRole('link')).toHaveCount(1);
 	await revisit.getByRole('link', { name: `${label('probability-and-sampling')}:` }).click();

@@ -270,5 +270,17 @@ export const QUESTIONS: QuizQuestion[] = [
 		why: 'Only the MLPs are split into experts, so about 1.7 billion shared weights run for every token.',
 		chapters: ['mixture-of-experts'],
 		levels: ['deep']
+	},
+	{
+		q: 'A Decision Transformer is asked to aim for a higher score than any run it was trained on. What does it do?',
+		options: [
+			'It invents a better route than any it has seen',
+			'It plays like the best runs it has seen',
+			'It refuses to move',
+			'It tries random moves until one scores higher'
+		],
+		answer: 1,
+		why: 'It plays like the runs that scored what you ask for, so it can’t beat the best one it learned from.',
+		chapters: ['decision-models']
 	}
 ];

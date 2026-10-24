@@ -544,6 +544,30 @@
 		"url": "https://arxiv.org/abs/2112.10752"
 	},
 	{
+		"id": "chen2021decision",
+		"authors": ["Lili Chen", "Kevin Lu", "Aravind Rajeswaran", "Kimin Lee"],
+		"title": "Decision Transformer: Reinforcement Learning via Sequence Modeling",
+		"venue": "NeurIPS 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2106.01345"
+	},
+	{
+		"id": "reed2022",
+		"authors": ["Scott Reed", "Konrad Zolna", "Emilio Parisotto", "Sergio Gomez Colmenarejo"],
+		"title": "A Generalist Agent",
+		"venue": "Transactions on Machine Learning Research",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2205.06175"
+	},
+	{
+		"id": "sutton2018",
+		"authors": ["Richard S. Sutton", "Andrew G. Barto"],
+		"title": "Reinforcement Learning: An Introduction (2nd edition)",
+		"venue": "MIT Press",
+		"year": 2018,
+		"url": "https://mitpress.mit.edu/9780262039246/reinforcement-learning/"
+	},
+	{
 		"id": "wei2022",
 		"authors": ["Jason Wei", "Xuezhi Wang", "Dale Schuurmans", "Maarten Bosma"],
 		"title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",

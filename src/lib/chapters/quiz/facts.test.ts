@@ -19,6 +19,6 @@ describe('check yourself', () => {
 			expect(q.why).not.toMatch(/Ch \d/);
 		}
 		const at = (level: Level) => QUESTIONS.filter((q) => !q.levels || q.levels.includes(level));
-		expect([at('simple'), at('standard'), at('deep')].map((qs) => qs.length)).toEqual([14, 14, 18]);
+		expect([at('simple'), at('standard'), at('deep')].map((qs) => qs.length)).toEqual([15, 15, 19]);
 	});
 });

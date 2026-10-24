@@ -119,5 +119,6 @@ export const VARIANTS: { chapter: Slug; changes: string }[] = [
 	{ chapter: 'mixture-of-experts', changes: 'only some of the network runs per token' },
 	{ chapter: 'recurrent-models', changes: 'a fixed-size memory replaces attention' },
 	{ chapter: 'seeing-pictures', changes: 'patches of a picture become tokens' },
-	{ chapter: 'diffusion', changes: 'the whole output is refined from noise' }
+	{ chapter: 'diffusion', changes: 'the whole output is refined from noise' },
+	{ chapter: 'decision-models', changes: 'game moves become the tokens' }
 ];

@@ -2,7 +2,7 @@ import canonical from '../../../models/canonical.json';
 import { type Check, array, integer, nullable, object, string } from './check.ts';
 import { agentRun, contextSession } from './parsers/agent.ts';
 import { embeddingMap, embeddingVectors } from './parsers/embeddings.ts';
-import { clip, fillMask } from './parsers/models.ts';
+import { clip, decisionRecording, fillMask } from './parsers/models.ts';
 import {
 	baseVsInstruct,
 	fewShot,
@@ -89,7 +89,8 @@ export const DATASETS = {
 	'caching/kv-cache': dataset('caching/kv-cache.json', kvCacheRun, 'caching'),
 	'injection/lab': dataset('injection/lab.json', injectionLab, 'injection'),
 	'encoders/fill-mask': dataset('encoders/fill-mask.json', fillMask, 'encoder'),
-	'vision/clip': dataset('vision/clip.json', clip, 'clip')
+	'vision/clip': dataset('vision/clip.json', clip, 'clip'),
+	'decisions/grid': dataset('decisions/grid.json', decisionRecording, 'decisions')
 } as const;
 
 export type DatasetId = keyof typeof DATASETS;
