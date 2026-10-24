@@ -99,6 +99,13 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 The diagram restates earlier chapters; each box links to its chapter. The quiz moved to Ch 38 in
 milestone 20.
 
+- [x] Simple: restates the summary paragraph in plainer words, with no new claims.
+- [x] In depth: GPT-2 in a few lines: h = W_E[x] + W_P[i] (Ch 5, 10); the block update (Ch 10's In
+      depth); softmax(LN_f(h_n) W_Eᵀ / T) (Ch 10's logit lens, Ch 3's temperature); cross-entropy
+      and the gradient step (Ch 7's In depth). Each formula restates its chapter.
+- [x] In depth: each Part VIII model changes one line: the mask (Ch 30), the MLP (Ch 31),
+      attention itself (Ch 32), what a token is (Ch 33), how the output is made (Ch 34).
+
 ## Ch 36. From message to reply
 
 Each stage restates the chapters it links (`src/lib/chapters/end-to-end/data.ts`); the unit test checks that
@@ -123,6 +130,11 @@ existing recordings, labeled in the widget:
       ends each turn with `<|im_end|>`.
 - [x] The closing box's one-line summaries match Ch 30–34 (both-ways attention; part of the network
       per token; fixed-size memory; picture patches as tokens; refined from noise).
+- [x] Simple: restates the intro and the two-loops paragraphs, with no new claims.
+- [x] In depth: call 1 wrote a 21-token tool call and call 2 a 59-token reply (Qwen tokenizer, record
+      environment); the harness stops at `</tool_call>` (`stop_strings` in `record/agent.py`);
+      with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
+      21 + 59 + the end-of-turn token.
 
 ## Ch 37. Picking a model
 
@@ -146,10 +158,14 @@ every name splits into known parts that spell it back.
 | E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")                  |
 | Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names            |
 | `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                            | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts) |
+| Simple: restates Standard in plainer words, with no new claims                                                          | Reviewed against the Standard text                                    |
+| In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                 | Cite `qwen25-model-card`; test (`weightBytes`)                        |
+| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 27 In depth (`qwen2024`, config); test                             |
+| In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
 
 ## Ch 38. Check yourself
 
-Fourteen questions in reading order (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–VIII
+Fourteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–VIII
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
@@ -160,3 +176,10 @@ has at least one. Each answer restates its linked chapter:
       milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 24, 27, 28, 29,
       30). The e2e test answers all fourteen and checks the revisit list.
+- [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
+      prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 27 with no new
+      claims.
+- [x] In depth only: cross-entropy averages −ln p over the real next tokens (Ch 7's In depth);
+      min(1, p/q) and a redraw from max(0, p − q) keep the big model's probabilities (Ch 14's In
+      depth); without a KV cache the work grows with the square of n (Ch 27's In depth); Mixtral
+      shares attention and embeddings, so a token uses more than a quarter (Ch 31's In depth).

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -15,6 +16,25 @@ models, two models distilled from DeepSeek-R1, or the ones this site uses, and c
 what it means:
 
 <NameDecoder />
+
+<At levels="simple">
+
+A few parts come up often:
+
+- **The size** is the number of weights, in billions (<ChapterRef to="scale" />). It tells you roughly how much memory the
+  model needs.
+- **`E` and `A`** mean the model stores more weights than it uses for each token. `E2B` costs about
+  as much per token as a 2.3-billion-weight model, and `26B-A4B` uses under 4 billion of its
+  weights per token (<ChapterRef to="mixture-of-experts" />).<Cite id="gemma4-model-card" />
+- **`it`** means tuned to chat and use tools; without it, the model only continues text (<ChapterRef to="predictor-to-assistant" />).
+- **`assistant`** is a small drafter that speeds up a bigger model (<ChapterRef to="speculative-decoding" />).
+- **`Distill`** names a small model trained on a big model's examples; the size is the small
+  one's.<Cite id="deepseek2025" />
+- **`qat`, `q4_0`, and `w4a16`** are about how many bits each weight uses (<ChapterRef to="quantization" />).<Cite id="gemma4-qat" />
+- **`diffusiongemma`** writes by cleaning up noise, like the picture models in <ChapterRef to="diffusion" />.<Cite id="diffusiongemma-model-card" />
+
+</At>
+<At levels="standard deep">
 
 A few parts are worth a closer look:
 
@@ -38,15 +58,27 @@ A few parts are worth a closer look:
   GGUF file for llama.cpp, a mobile version with some 2-bit layers, and 4-bit weights with 16-bit
   activations for the vLLM serving software.<Cite id="gemma4-qat" /><Cite id="gguf-quant-types" />
   `transformers`, `ct`, and `gguf` only say how the file is packaged.
+
+</At>
 - **`diffusiongemma`** is built on the 26B A4B model but writes by denoising a block of 256 tokens
   at a time instead of one token per pass, a cousin of the picture models
   in <ChapterRef to="diffusion" />.<Cite id="diffusiongemma-model-card" />
+
+<At levels="simple">
+
+Some things are never in the name, like how much text the model can read at once, whether it can
+see pictures or hear audio, and its license. Those are on the model card.<Cite id="gemma4-model-card" />
+
+</At>
+<At levels="standard deep">
 
 Some things are never in the name. The model card lists how much text the model can read at once
 (128K tokens for E2B and E4B, 256K for the larger models), what it can take in (all of them read
 images; only E2B, E4B, and 12B hear audio), whether it has a thinking mode (<ChapterRef to="reasoning-models" />), and its
 license.<Cite id="gemma4-model-card" /> Even the size shown on a model's page can disagree with
 its name: it counts the numbers stored in the files, so the page for `gemma-4-E2B` shows 5B.
+
+</At>
 
 ## Will it fit?
 
@@ -60,6 +92,19 @@ At 4 bits it needs about 15 GB, which is why the QAT versions exist. The small E
 built for phones and laptops.<Cite id="gemma4-model-card" /> The weights are only part of the bill:
 the KV cache from <ChapterRef to="caching" /> grows with every token of context, and the software running the model needs
 memory too.
+
+<At levels="deep">
+
+### A full bill, worked out
+
+Take Qwen2.5-1.5B-Instruct, the model in the agent chapters. It has 1.54 billion weights, stored in
+16 bits: 1.54 × 2 = about 3.1 GB.<Cite id="qwen25-model-card" /> Its KV cache holds 14,336 numbers
+per token (<ChapterRef to="caching" />), also 2 bytes each, so a 4,000-token chat adds about 0.11 GB
+and a full 32,768-token context about 0.94 GB. Rounded to 4 bits, the weights shrink to about
+0.8 GB, but the cache doesn't unless it is rounded too, so with a full context it would be the
+bigger part of the bill.
+
+</At>
 
 ## How to choose
 
@@ -87,6 +132,12 @@ care about.
 - Memory for the weights is about weights × bits ÷ 8, plus the KV cache and the runtime.
 - Narrow by task, inputs, device, speed, context, and license, then test on your own prompts.
 
+<At levels="deep">
+
+- Qwen2.5-1.5B: about 3.1 GB of 16-bit weights, plus about 0.94 GB of KV cache at its full
+  32,768-token context.
+
+</At>
 </RecapCard>
 
 **Next question:** how much of all this stuck?

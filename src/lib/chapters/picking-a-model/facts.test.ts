@@ -54,4 +54,13 @@ describe('picking a model', () => {
 		const moe = MEMORY_MODELS.find((m) => m.name === 'Gemma 4 26B A4B')!;
 		expect([moe.stored, moe.perToken]).toEqual([25.2e9, 3.8e9]);
 	});
+
+	it('in depth: Qwen2.5-1.5B: 3.1 GB of weights, 0.11 GB of cache at 4,000 tokens, 0.94 GB full', () => {
+		expect((weightBytes(1.54e9, 16) / 1e9).toFixed(1)).toBe('3.1');
+		expect((weightBytes(1.54e9, 4) / 1e9).toFixed(1)).toBe('0.8');
+		const kvPerToken = 2 * 28 * 2 * 128 * 2;
+		expect((kvPerToken * 4000) / 1e9).toBeCloseTo(0.11, 2);
+		expect(((kvPerToken * 32768) / 1e9).toFixed(2)).toBe('0.94');
+		expect(kvPerToken * 32768).toBeGreaterThan(weightBytes(1.54e9, 4));
+	});
 });

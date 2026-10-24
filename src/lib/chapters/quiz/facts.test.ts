@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { chapter } from '#lib/curriculum/index.ts';
 import { QUESTIONS } from '#lib/chapters/quiz/data.ts';
+import type { Level } from '#lib/levels.ts';
 
 describe('check yourself', () => {
 	it('asks at least one question from every Part I–VIII', () => {
@@ -16,6 +17,7 @@ describe('check yourself', () => {
 			expect(new Set(q.options).size).toBe(q.options.length);
 			expect(q.why).not.toMatch(/Ch \d/);
 		}
-		expect(QUESTIONS).toHaveLength(14);
+		const at = (level: Level) => QUESTIONS.filter((q) => !q.levels || q.levels.includes(level));
+		expect([at('simple'), at('standard'), at('deep')].map((qs) => qs.length)).toEqual([14, 14, 18]);
 	});
 });

@@ -54,4 +54,12 @@ describe('from message to reply', () => {
 		expect(Math.round(kv.totalMs.cache / 1000)).toBe(10);
 		expect(Math.round(kv.totalMs.noCache / 1000)).toBe(43);
 	});
+
+	it('in depth: with caching the second call reads 93 new tokens: 493 of work instead of 893', () => {
+		const fresh = call2.promptTokens - call1.promptTokens;
+		expect(fresh).toBe(93);
+		expect(call1.promptTokens + fresh).toBe(493);
+		expect(call1.promptTokens + call2.promptTokens).toBe(893);
+		expect(call1.output.endsWith('</tool_call>')).toBe(true);
+	});
 });

@@ -48,7 +48,34 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'Training measures how wrong each prediction is and nudges every weight to be a little less wrong.',
-		chapters: ['learning-from-mistakes']
+		chapters: ['learning-from-mistakes'],
+		levels: ['standard', 'deep']
+	},
+	{
+		q: 'How does a model get good at guessing the next word?',
+		options: [
+			'It practices on lots of text and is nudged a little after each mistake',
+			'Programmers write a rule for every word',
+			'It looks each word up in a dictionary',
+			'It is born knowing the language'
+		],
+		answer: 0,
+		why: 'Training checks each guess against the real next word and adjusts the model to be a little less wrong.',
+		chapters: ['learning-from-mistakes'],
+		levels: ['simple']
+	},
+	{
+		q: 'What does a language model’s training loss, the cross-entropy, measure?',
+		options: [
+			'The average of −ln p over the real next tokens: how surprised the model was',
+			'How many weights changed in the last step',
+			'The distance between two embeddings',
+			'How many tokens the model has read'
+		],
+		answer: 0,
+		why: 'It averages the surprise, −ln p, at each real next token; making the right tokens likelier lowers it.',
+		chapters: ['learning-from-mistakes'],
+		levels: ['deep']
 	},
 	{
 		q: 'How does attention help with “The trophy didn’t fit in the suitcase because it was too big”?',
@@ -99,6 +126,19 @@ export const QUESTIONS: QuizQuestion[] = [
 		chapters: ['speculative-decoding']
 	},
 	{
+		q: 'When the big model samples, how does guess-and-check keep its text exactly as likely as before?',
+		options: [
+			'It keeps a guess with chance min(1, p/q) and redraws a rejected one from what’s left over',
+			'It only accepts guesses the small model was sure of',
+			'It averages the two models’ probabilities',
+			'It lowers the temperature of both models'
+		],
+		answer: 0,
+		why: 'Keeping with chance min(1, p/q) and redrawing from max(0, p − q), rescaled, gives exactly the big model’s probabilities.',
+		chapters: ['speculative-decoding'],
+		levels: ['deep']
+	},
+	{
 		q: 'What does a reasoning model do differently from an ordinary chat model?',
 		options: [
 			'It looks answers up in a database',
@@ -120,7 +160,21 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'In-context learning uses the examples as context; no weights change.',
-		chapters: ['few-shot']
+		chapters: ['few-shot'],
+		levels: ['standard', 'deep']
+	},
+	{
+		q: 'You put four examples in a prompt. Does the model learn anything that lasts?',
+		options: [
+			'No: it uses the examples while it reads this prompt, and the model itself doesn’t change',
+			'Yes: it saves the examples for every future chat',
+			'Yes: it retrains itself on them',
+			'No: models ignore examples'
+		],
+		answer: 0,
+		why: 'The examples only shape this one prompt; nothing in the model is changed.',
+		chapters: ['few-shot'],
+		levels: ['simple']
 	},
 	{
 		q: 'When an assistant uses a calculator, who actually runs it?',
@@ -139,7 +193,34 @@ export const QUESTIONS: QuizQuestion[] = [
 		],
 		answer: 1,
 		why: 'Prompt caching keeps the keys and values for a prompt’s exact start; the model itself remembers nothing.',
-		chapters: ['caching']
+		chapters: ['caching'],
+		levels: ['standard', 'deep']
+	},
+	{
+		q: 'An agent sends its whole conversation again on every call. What keeps that from being as slow and costly as it sounds?',
+		options: [
+			'The provider saves its work on the start of the prompt and reuses it',
+			'The model remembers what it read last time',
+			'The conversation is sent as a picture',
+			'Nothing: every call costs the same as the first'
+		],
+		answer: 0,
+		why: 'Prompt caching reuses the work on a prompt’s unchanged start; the model itself remembers nothing.',
+		chapters: ['caching'],
+		levels: ['simple']
+	},
+	{
+		q: 'Without a KV cache, how does the work for n new tokens grow?',
+		options: [
+			'With the square of n, because every step reruns all the text so far',
+			'In step with n',
+			'It stays the same however many tokens',
+			'It shrinks as the text gets longer'
+		],
+		answer: 0,
+		why: 'Step t reruns all p + t tokens, so n steps take n·p + n(n − 1)/2 token passes.',
+		chapters: ['caching'],
+		levels: ['deep']
 	},
 	{
 		q: 'Why can a hidden line in a web page change what a summarizer writes?',
@@ -176,5 +257,18 @@ export const QUESTIONS: QuizQuestion[] = [
 		answer: 1,
 		why: 'An encoder lets every token see every other token, both before and after.',
 		chapters: ['encoders']
+	},
+	{
+		q: 'Mixtral sends each token to 2 of its 8 experts. Why does a token use 13 of its 47 billion weights, more than a quarter?',
+		options: [
+			'Attention and the embeddings are shared by every token; only the MLPs are split',
+			'The router itself is half the model',
+			'Every expert runs a little for every token',
+			'The quarter is rounded up to be safe'
+		],
+		answer: 0,
+		why: 'Only the MLPs are split into experts, so about 1.7 billion shared weights run for every token.',
+		chapters: ['mixture-of-experts'],
+		levels: ['deep']
 	}
 ];

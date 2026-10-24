@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import WholePicture from './WholePicture.svelte';
@@ -11,6 +12,20 @@ machine plays that game, and what gets built around it. Zoom in and out of the w
 part links back to the chapter that explains it.
 
 <WholePicture />
+
+<At levels="simple">
+
+In short: a language model gives a **probability** for every possible next token (<ChapterRef to="guessing-game" through="probability-and-sampling" />).
+Text is split into **tokens**, each token becomes a list of numbers, and a stack of blocks refines
+those numbers, with **attention** letting each token use the ones before it (<ChapterRef to="text-is-numbers" through="the-transformer-block" />). **Training**
+sets the numbers inside by making the right next tokens more likely (<ChapterRef to="a-neuron" through="learning-from-mistakes" />), and writing is a **loop** of
+predicting and picking (<ChapterRef to="generating-text" />). Tuning makes the model an **assistant** (<ChapterRef to="predictor-to-assistant" />). A prompt is the
+start of a document for the model to continue (<ChapterRef to="prompts-as-documents" through="where-prompts-break" />), and a **harness** around the model adds
+tools, memory, and safety rules (<ChapterRef to="the-model-is-not-the-product" through="trust-and-guardrails" />). Other kinds of models change one piece and
+keep the rest (<ChapterRef to="encoders" through="diffusion" />).
+
+</At>
+<At levels="standard deep">
 
 In one paragraph: a language model gives a **probability** for every possible next token (<ChapterRef to="guessing-game" through="probability-and-sampling" />).
 Text becomes **tokens** (<ChapterRef to="text-is-numbers" />, <ChapterRef to="tokens" bare />), each token becomes a **vector** (<ChapterRef to="embeddings" />), and a stack of
@@ -28,6 +43,35 @@ of models change one piece and keep the rest: encoders read both ways, mixtures 
 of themselves per token, recurrent models keep a fixed memory, vision models read patches, and
 diffusion models paint from noise (<ChapterRef to="encoders" through="diffusion" />).
 
+</At>
+<At levels="deep">
+
+### The whole model in a few lines
+
+The In depth passages add up to all of GPT-2 small. For tokens $x_1, \dots, x_n$, each starts as
+its row of the token table plus its position's row (<ChapterRef to="embeddings" />, <ChapterRef to="the-transformer-block" bare />):
+
+$$h_i = W_E[x_i] + W_P[i]$$
+
+Each of the 12 blocks then updates every vector with attention and an MLP (<ChapterRef to="attention" />, <ChapterRef to="the-transformer-block" bare />):
+
+$$h' = h + \operatorname{Attn}(\operatorname{LN}(h)), \qquad h'' = h' + \operatorname{MLP}(\operatorname{LN}(h'))$$
+
+The last token's final vector is scored against every token in the table and turned into
+probabilities, with temperature $T$ (<ChapterRef to="probability-and-sampling" />):
+
+$$p(\,\cdot \mid x_1, \dots, x_n) = \operatorname{softmax}\big(\operatorname{LN}_f(h_n)\, W_E^{\top} / T\big)$$
+
+Training lowers the cross-entropy by nudging every weight downhill (<ChapterRef to="learning-from-mistakes" />):
+
+$$L = -\frac{1}{N} \sum_{i=1}^{N} \ln p(x_i \mid x_1, \dots, x_{i-1}), \qquad w \leftarrow w - \eta \, \frac{\partial L}{\partial w}$$
+
+Tuning changes the weights, not these lines. Prompts and harnesses change the tokens that go in,
+and what happens to the ones that come out. The models in Part VIII each change one line: the
+attention mask, the MLP, attention itself, what a token is, or how the output is made.
+
+</At>
+
 <RecapCard>
 
 - A language model predicts the next token, nothing more, and does it very well at scale.
@@ -37,6 +81,12 @@ diffusion models paint from noise (<ChapterRef to="encoders" through="diffusion"
   keep the rest of the recipe.
 - A prompt is the start of a document: everything in it shifts the next token, so test it.
 
+<At levels="deep">
+
+- GPT-2 fits in a few lines: embed, 12 blocks of attention and MLP, a softmax over the token table,
+  and cross-entropy for training.
+
+</At>
 </RecapCard>
 
 **Next question:** those are the pieces. In what order do they run when you send a message?

@@ -19,3 +19,6 @@ every numbered Part has at least one question.
 
 - The quiz is its own chapter, last in the Wrap-up, rather than part of [the recap](recap.md).
 - A new chapter that adds a big idea gets a question.
+- [Levels](../levels.md): Simple rewords three questions (training, examples in a prompt, caching)
+  without the terms its chapters drop. In depth adds four questions on In depth passages, and the
+  heading counts them.

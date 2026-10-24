@@ -56,3 +56,5 @@ suffixes change often, so the list is dated and re-checked when the site is revi
   global layers, so a per-token figure from the config couldn't be checked against a published
   number.
 - Sources are the model cards rather than the technical report.
+- [Levels](../levels.md): Simple shortens the list of name parts and what isn't in a name. In
+  depth works out a full memory bill, weights plus KV cache, for Qwen2.5-1.5B-Instruct.
