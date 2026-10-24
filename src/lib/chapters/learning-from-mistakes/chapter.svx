@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -10,14 +11,35 @@
 
 ## Start random, then improve
 
+<At levels="simple">
+
+A new network's weights are random, so its predictions are nonsense. Training fixes that one
+small nudge at a time. Press *Take 1 step* to nudge every number once, or *Train* to watch the
+network learn to follow a wavy line.
+
+</At>
+<At levels="standard deep">
+
 A new network's weights are random numbers, so its predictions are nonsense. Training fixes that
 one small nudge at a time. The network below has 16 neurons and 49 numbers, all listed under it.
 Press *Take 1 step* to see every number nudged once, or *Train* to watch them learn to follow a wavy
 line.
 
+</At>
+
 <CurveFitter />
 
 ## Measuring the mistake
+
+<At levels="simple">
+
+To improve, the network needs a score for how wrong it is, called the <GlossaryPopover term="loss">loss</GlossaryPopover>.
+For a language model, the loss is high when the model gave the word that really came next a tiny
+chance, and low when it gave it a big one. Training means changing the weights so the loss goes
+down.
+
+</At>
+<At levels="standard deep">
 
 To improve, the network needs a score for how wrong it is: the <GlossaryPopover term="loss">loss</GlossaryPopover>. For the curve above, the loss is the average
 squared distance between the line and the dots. For a language model, it's how surprised the model
@@ -25,6 +47,32 @@ was by the word that actually came next: if it gave the right word a high probab
 low; if it gave it a tiny probability, the loss is high.
 
 Training means changing the weights so that the loss goes down.
+
+</At>
+<At levels="deep">
+
+### The loss, written down
+
+The curve fitter's loss is the **mean squared error** over its $N$ dots:
+
+$$
+L = \frac{1}{N} \sum_{i=1}^{N} \left(\hat{y}_i - y_i\right)^2
+$$
+
+where $y_i$ is dot $i$'s height and $\hat{y}_i$ is the line's height at the same place. A language
+model's loss is the **cross-entropy**: the average surprise at each real next token,
+
+$$
+L = -\frac{1}{N} \sum_{i=1}^{N} \ln p(x_i \mid x_1, \dots, x_{i-1})
+$$
+
+where $p(x_i \mid \dots)$ is the chance the model gave the token that really came next. A chance of
+1 costs nothing; a chance near 0 costs a lot. Guessing evenly among $V$ choices gives every one a
+chance of $1/V$, so the loss is $\ln V$: that's the dashed line on the tiny model below. Papers
+often report **perplexity**, $e^L$: a perplexity of 30 means the model is as unsure as if it were
+choosing evenly among 30 tokens.<Cite id="jurafsky-martin-ngrams" />
+
+</At>
 
 ## Rolling downhill
 
@@ -38,13 +86,58 @@ single weight, so the landscape is just a curve:
 Try a large step size: the ball overshoots and bounces around. Try a small one from the start: it
 can settle in a dip that isn't the lowest point. Real training balances these.
 
+<At levels="simple">
+
+A real network has millions of weights, so its landscape has millions of directions. A method
+called **backpropagation** works out which way to nudge every weight at once.<Cite id="rumelhart1986" />
+
+</At>
+<At levels="standard deep">
+
 For a network with millions of weights, the landscape has millions of directions. The trick that
 makes this practical is **backpropagation**: working backwards from the loss through every
 multiply and add, it finds which way to nudge every weight at once.<Cite id="rumelhart1986" /> The
 networks on this page use it, written out by hand, and use a popular recipe for the step size called
 Adam.<Cite id="kingma2015" />
 
+</At>
+<At levels="deep">
+
+### One step, written down
+
+Gradient descent moves each weight $w$ against the slope of the loss:
+
+$$
+w \leftarrow w - \eta \, \frac{\partial L}{\partial w}
+$$
+
+where $\frac{\partial L}{\partial w}$ is how fast the loss changes as $w$ changes (the slope in that
+direction) and $\eta$ is the step size, also called the learning rate. Backpropagation gets every
+slope from the chain rule, working backwards one operation at a time. For a single neuron with
+$y = f(z)$ and $z = \sum_i w_i x_i + b$:
+
+$$
+\frac{\partial L}{\partial w_i} = \frac{\partial L}{\partial y} \, f'(z) \, x_i
+$$
+
+so a weight's slope is the slope arriving from above, times how steep the activation is, times the
+input that weight multiplies.<Cite id="rumelhart1986" /> Adam changes the step: it keeps a running
+average of each weight's slope and of its square, and divides the first by the square root of the
+second, so every weight gets its own step size. The networks here use its usual settings, 0.9 and
+0.999 for how much of each average carries over from one step to the next.<Cite id="kingma2015" />
+
+</At>
+
 ## Now, a tiny language model
+
+<At levels="simple">
+
+The same recipe trains a language model. The one below reads 3 characters and guesses the next,
+using the nursery rhymes from <ChapterRef to="predicting-by-counting" />. It trains entirely in your
+browser.
+
+</At>
+<At levels="standard deep">
 
 The same recipe trains a language model. The one below reads the 3 characters before a gap and
 predicts the next character, using the six nursery rhymes from <ChapterRef to="predicting-by-counting" />. It turns each character into a
@@ -52,15 +145,37 @@ small vector, feeds them through one layer of neurons, and outputs a probability
 character, a scaled-down version of a design from 2003.<Cite id="bengio2003" /> It trains entirely in
 your browser.
 
+</At>
+
 <TinyTrainer />
+
+<At levels="simple">
+
+At first it writes random letters. As it trains, its loss falls, and real words appear, then
+pieces of real phrases.
+
+</At>
+<At levels="standard deep">
 
 At first it writes random letters, and its loss sits on the dashed line: the loss you'd get by
 guessing every character with equal chance. As training goes on, the loss falls and the writing
 starts to look like the rhymes: real words appear, then fragments of real phrases.
 
+</At>
+
+<At levels="simple">
+
+GPT-2 was trained the same way, just much bigger: it learned from millions of web
+pages.<Cite id="radford2019" />
+
+</At>
+<At levels="standard deep">
+
 GPT-2 was trained the same way, just much bigger: it predicted the next token across about 40 GB of
 text from 8 million web pages, nudging all of its 124 million weights to make the right tokens more
 likely.<Cite id="radford2019" />
+
+</At>
 
 <RecapCard>
 
@@ -70,6 +185,12 @@ likely.<Cite id="radford2019" />
 - Gradient descent nudges every weight downhill on the loss; backpropagation works out which way
   that is for every weight at once.
 
+<At levels="deep">
+
+- Each step moves every weight by $-\eta\,\partial L / \partial w$; a language model's loss is the
+  average of $-\ln p$ for the real next tokens.
+
+</At>
 </RecapCard>
 
 **Next question:** our tiny model only sees 3 characters back, and <ChapterRef to="predicting-by-counting" />'s model only saw one word.

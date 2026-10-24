@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -8,13 +9,32 @@
 
 ## The smallest working part
 
+<At levels="simple">
+
+Each token's list of numbers goes through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>.
+Each one is simple enough to work out by hand. Move the sliders and watch the numbers flow.
+
+</At>
+<At levels="standard deep">
+
 The last chapter ended with vectors: lists of numbers for each token. What does the model do with
 them? It feeds them through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>. Each one is simple enough to work out by
 hand. Move the sliders and watch the numbers flow.
 
+</At>
+
 <NeuronPlayground />
 
 ## Multiply, add, squash
+
+<At levels="simple">
+
+A neuron does three things. It multiplies each input by its own <GlossaryPopover term="weight">weight</GlossaryPopover>,
+which says how much that input matters. It adds the results up, plus one extra number called the
+**bias**. Then it squashes the total: a common squash, ReLU, turns anything below 0 into 0.
+
+</At>
+<At levels="standard deep">
 
 A neuron does three things:
 
@@ -32,7 +52,43 @@ The idea is old. Warren McCulloch and Walter Pitts described a mathematical neur
 *perceptron* of 1958 added weights that could be adjusted from examples.<Cite id="rosenblatt1958" />
 Real brain cells are far more complicated; the name stuck anyway.
 
+</At>
+<At levels="deep">
+
+### The neuron as a formula
+
+With inputs $x_1, \dots, x_n$, weights $w_1, \dots, w_n$, bias $b$, and activation function $f$, a
+neuron outputs
+
+$$
+y = f\!\left(\sum_{i=1}^{n} w_i x_i + b\right), \qquad \operatorname{ReLU}(z) = \max(0, z)
+$$
+
+A whole layer is the same thing for every neuron at once: $h = f(W x + b)$, where row $j$ of the
+matrix $W$ holds neuron $j$'s weights and $b$ is now a list of biases. That's why models are run
+as matrix multiplications.
+
+The squash is what makes layers worth stacking. Without it, two layers collapse into one:
+
+$$
+W_2 (W_1 x + b_1) + b_2 = (W_2 W_1)\,x + (W_2 b_1 + b_2)
+$$
+
+which is a single layer with weights $W_2 W_1$ and bias $W_2 b_1 + b_2$: still a straight line,
+or a flat plane, however many layers you stack.
+
+</At>
+
 ## Many neurons make a network
+
+<At levels="simple">
+
+One neuron can only draw one straight edge. Many neurons side by side in a **layer**, feeding
+into a next layer, can draw complicated shapes. Below, three neurons and one output neuron fence
+off a triangle. Turn neurons off to see what fewer can do:
+
+</At>
+<At levels="standard deep">
 
 One neuron can only draw one simple boundary. The power comes from numbers: put many neurons side
 by side in a **layer**, feed their outputs into the next layer, and the network can represent
@@ -43,12 +99,45 @@ fires only on the far side of it. A second layer, here a single output neuron, a
 with negative weights, so it stays above 0 only where none of them fire: inside a triangle. Turn
 neurons off to see what fewer can do. One gives a single straight edge, two a wedge. Try it:
 
+</At>
+
 <LayerPlayground />
+
+<At levels="simple">
+
+GPT-2 small has 3,072 neurons in each of its 12 blocks. Every one of their weights is just a
+number like the ones on your sliders. The question is how they get set.
+
+</At>
+<At levels="standard deep">
 
 GPT-2 small has a layer of 3,072 neurons in each of its 12 blocks, and each of those neurons reads
 all 768 numbers of a token's vector.<Cite id="gpt2-config" /> Its activation function is GELU, a
 smooth cousin of ReLU.<Cite id="hendrycks2016" /> Every one of its weights and biases is just a number
 like the ones on your sliders. The question is how they get set.
+
+</At>
+<At levels="deep">
+
+In each block, GPT-2's neurons form two layers, a part called the MLP:
+
+$$
+\operatorname{MLP}(x) = W_2 \, \operatorname{GELU}(W_1 x + b_1) + b_2
+$$
+
+where $x$ is a token's 768 numbers, $W_1$ (3,072 × 768) and $b_1$ feed the 3,072 neurons, and
+$W_2$ (768 × 3,072) and $b_2$ turn their outputs back into 768 numbers.<Cite id="gpt2-config" />
+That's 4,722,432 weights and biases per block, and 56,669,184 across the 12 blocks: about 46% of
+the whole model. GELU is $\operatorname{GELU}(z) = z\,\Phi(z)$, where $\Phi(z)$ is the chance that
+a standard normal random number is below $z$. GPT-2 uses a faster approximation of it:
+
+$$
+\operatorname{GELU}(z) \approx \tfrac{1}{2} z \left(1 + \tanh\!\left(\sqrt{2/\pi}\,\left(z + 0.044715\,z^3\right)\right)\right)
+$$
+
+which matches the exact curve to within about 0.001 everywhere.<Cite id="hendrycks2016" />
+
+</At>
 
 <RecapCard>
 
@@ -57,6 +146,12 @@ like the ones on your sliders. The question is how they get set.
 - Layers of many neurons, stacked, can represent complicated patterns. GPT-2 small has 3,072 per
   block in its 12 blocks.
 
+<At levels="deep">
+
+- A layer computes $f(W x + b)$, one row of $W$ per neuron; without $f$, stacked layers collapse
+  into one.
+
+</At>
 </RecapCard>
 
 **Next question:** GPT-2 small has about 124 million numbers like these. Nobody set them by hand,

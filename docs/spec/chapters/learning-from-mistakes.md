@@ -22,3 +22,10 @@ weight at once.
 
 Computed in the browser. The MLP, backpropagation, and Adam optimizer are hand-written in
 `src/lib/math/mlp.ts` (no ML library), and the tiny model trains in `workers/trainer.worker.ts`.
+
+## Decisions
+
+- [Levels](../levels.md): Simple keeps the loss, the downhill picture, and backpropagation's job,
+  without the network sizes or the guessing line. In depth gives mean squared error, cross-entropy,
+  and perplexity, the gradient descent step, backpropagation's chain rule for one neuron, and what
+  Adam does with its usual settings.
