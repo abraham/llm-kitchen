@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Cite from '#lib/components/page/Cite.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { SCALE, formatCount, formatPower, type ScaleEntry } from './data.ts';
 
 	const METRICS = {
@@ -15,7 +16,6 @@
 	type Metric = keyof typeof METRICS;
 
 	let metric = $state<Metric>('parameters');
-	const id = $props.id();
 
 	const values = $derived(SCALE.map((e) => e[metric]).filter((v): v is number => v !== undefined));
 	const lo = $derived(Math.floor(Math.log10(Math.min(...values))));
@@ -33,14 +33,12 @@
 	source={{ kind: 'computed' }}
 	onreset={() => (metric = 'parameters')}
 >
-	<fieldset class="metric">
-		<legend class="label">Compare</legend>
-		{#each Object.entries(METRICS) as [key, m] (key)}
-			<label
-				><input type="radio" name="{id}-metric" bind:group={metric} value={key} /> {m.label}</label
-			>
-		{/each}
-	</fieldset>
+	<Choice
+		legend="Compare"
+		layout="inline"
+		options={Object.entries(METRICS).map(([value, m]) => ({ value, label: m.label }))}
+		bind:value={metric}
+	/>
 
 	<table>
 		<caption class="visually-hidden">{METRICS[metric].label} of each model, on a log scale</caption>
@@ -80,22 +78,6 @@
 </WidgetFrame>
 
 <style>
-	.metric {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		float: left;
-		margin-right: var(--space-2);
-	}
-
 	table {
 		width: 100%;
 		border-collapse: collapse;

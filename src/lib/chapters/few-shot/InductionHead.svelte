@@ -2,11 +2,11 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
 	const data = useDataset('prompts/fewshot');
-	const id = $props.id();
 	let task = $state(0);
 	// Lines are shown one per row, so each line's tokens are grouped.
 	function lines(tokens: { text: string }[], attention: number[]) {
@@ -31,15 +31,11 @@
 		{#snippet children(d)}
 			{@const t = d.tasks[task]}
 			{@const peak = Math.max(...t.head.attention)}
-			<fieldset>
-				<legend class="label">Task</legend>
-				{#each d.tasks as option, i (option.name)}
-					<label
-						><input type="radio" name="{id}-task" value={i} bind:group={task} />
-						{option.name}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Task"
+				options={d.tasks.map((t, i) => ({ value: i, label: t.name }))}
+				bind:value={task}
+			/>
 			<div
 				class="lines mono"
 				role="img"
@@ -66,22 +62,6 @@
 </WidgetFrame>
 
 <style>
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.lines {
 		padding: var(--space-2) var(--space-3);
 		background: var(--surface-2);

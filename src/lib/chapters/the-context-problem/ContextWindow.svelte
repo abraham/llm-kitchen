@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { label } from '#lib/curriculum/index.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
@@ -29,11 +30,15 @@
 		size = 3;
 	}}
 >
-	<fieldset class="ending">
-		<legend class="label">The sentence ends with</legend>
-		<label><input type="radio" bind:group={ending} value="big" /> too big</label>
-		<label><input type="radio" bind:group={ending} value="small" /> too small</label>
-	</fieldset>
+	<Choice
+		legend="The sentence ends with"
+		layout="inline"
+		options={[
+			{ value: 'big', label: 'too big' },
+			{ value: 'small', label: 'too small' }
+		] as const}
+		bind:value={ending}
+	/>
 
 	<p class="sentence" aria-label="The sentence, with the last {size} words inside the window">
 		{#each words as word, i (i)}
@@ -79,22 +84,6 @@
 </WidgetFrame>
 
 <style>
-	.ending {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		float: left;
-		margin-right: var(--space-2);
-	}
-
 	.sentence {
 		display: flex;
 		flex-wrap: wrap;

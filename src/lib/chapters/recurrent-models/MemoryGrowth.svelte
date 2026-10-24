@@ -1,13 +1,13 @@
 <script lang="ts">
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { canonical } from '#lib/models/provider.ts';
 
 	/** Attention keeps a key and a value vector for every earlier token, in every block. */
 	const PER_TOKEN = 2 * canonical.layers * canonical.embeddingSize;
 	const RECURRENT = 32;
 	let tokens = $state(10);
-	const id = $props.id();
 	const fmt = (n: number) => n.toLocaleString('en-US');
 	const attention = $derived(tokens * PER_TOKEN);
 	const max = canonical.contextLength * PER_TOKEN;
@@ -18,11 +18,14 @@
 	source={{ kind: 'computed' }}
 	onreset={() => (tokens = 10)}
 >
-	<div class="slider">
-		<label for="{id}-n" class="label"
-			>Tokens read so far <span class="mono" aria-hidden="true">{fmt(tokens)}</span></label
-		>
-		<input id="{id}-n" type="range" min="1" max={canonical.contextLength} bind:value={tokens} />
+	<div class="tokens">
+		<Slider
+			label="Tokens read so far"
+			min={1}
+			max={canonical.contextLength}
+			format={fmt}
+			bind:value={tokens}
+		/>
 	</div>
 	<dl class="bars">
 		<div>
@@ -52,11 +55,8 @@
 </WidgetFrame>
 
 <style>
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.tokens {
 		max-width: 24rem;
-		margin-bottom: var(--space-3);
 	}
 
 	.bars {

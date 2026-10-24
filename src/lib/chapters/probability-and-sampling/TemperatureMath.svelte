@@ -2,13 +2,13 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { softmax } from '#lib/math/sampling.ts';
 
 	import { canonical } from '#lib/models/provider.ts';
 
 	const SHOWN = 6;
-	const id = $props.id();
 	const trace = useDataset('traces/the-cat-sat');
 	let temperature = $state(1);
 
@@ -27,12 +27,16 @@
 			{@const scaled = scores.map((s) => s / temperature)}
 			{@const probs = softmax(scores, temperature)}
 			{@const gap = scores[0] - scores[1]}
-			<div class="slider">
-				<label class="label" for="{id}-t">
-					Temperature <span class="mono" aria-hidden="true">{temperature.toFixed(2)}</span>
-				</label>
-				<input id="{id}-t" type="range" min="0.1" max="2" step="0.05" bind:value={temperature} />
-			</div>
+			<Slider
+				label="Temperature"
+				layout="inline"
+				min={0.1}
+				max={2}
+				step={0.05}
+				format={(v) => v.toFixed(2)}
+				concept="prob"
+				bind:value={temperature}
+			/>
 
 			<table>
 				<caption class="visually-hidden">
@@ -82,19 +86,6 @@
 </WidgetFrame>
 
 <style>
-	.slider {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2) var(--space-4);
-		margin-bottom: var(--space-3);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-prob);
-		min-width: 12rem;
-	}
-
 	table {
 		width: 100%;
 		border-collapse: collapse;

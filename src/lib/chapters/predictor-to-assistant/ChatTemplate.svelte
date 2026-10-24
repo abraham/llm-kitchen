@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import { QWEN_DEFAULT_SYSTEM, chatTemplate, type ChatMessage } from '#lib/math/chat-template.ts';
 
 	const EXAMPLE: ChatMessage[] = [
@@ -38,7 +39,7 @@
 	</div>
 
 	<div class="views">
-		<label class="toggle"><input type="checkbox" bind:checked={raw} /> Show the raw text</label>
+		<Toggle label="Show the raw text" bind:checked={raw} />
 	</div>
 
 	{#if raw}
@@ -74,11 +75,6 @@
 		font: inherit;
 		font-size: 0.95rem;
 		margin-bottom: var(--space-2);
-	}
-
-	.toggle {
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
 	}
 
 	.raw {

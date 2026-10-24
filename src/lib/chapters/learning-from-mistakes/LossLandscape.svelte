@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 
 	// A bumpy one-weight loss: a bowl with a ripple, so big steps can overshoot or get stuck.
 	const loss = (w: number) => 0.5 * (w - 1) ** 2 + 0.4 * Math.sin(3 * w) + 1;
@@ -89,12 +90,16 @@
 	</svg>
 
 	<div class="controls">
-		<div class="slider">
-			<label for="{id}-lr" class="label"
-				>Step size (learning rate) <span class="mono" aria-hidden="true">{lr.toFixed(2)}</span
-				></label
-			>
-			<input id="{id}-lr" type="range" min="0.02" max="1.2" step="0.02" bind:value={lr} />
+		<div class="lr">
+			<Slider
+				label="Step size (learning rate)"
+				min={0.02}
+				max={1.2}
+				step={0.02}
+				format={(v) => v.toFixed(2)}
+				concept="weight"
+				bind:value={lr}
+			/>
 		</div>
 		<button type="button" onclick={() => step()}>Take one step</button>
 		<button type="button" onclick={() => step(20)}>Take 20 steps</button>
@@ -164,20 +169,15 @@
 	}
 
 	.controls {
+		--control-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
 		gap: var(--space-3);
 	}
 
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.lr {
 		min-width: 14rem;
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-weight);
 	}
 
 	.readout {

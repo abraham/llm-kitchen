@@ -2,11 +2,11 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
 
 	const data = useDataset('prompts/system');
-	const id = $props.id();
 	let pick = $state(0);
 </script>
 
@@ -18,14 +18,11 @@
 	<Loading promise={data}>
 		{#snippet children(d)}
 			{@const r = d.replies[pick]}
-			<fieldset>
-				<legend class="label">System prompt</legend>
-				{#each d.replies as option, i (option.name)}
-					<label
-						><input type="radio" name="{id}-sys" value={i} bind:group={pick} /> {option.name}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="System prompt"
+				options={d.replies.map((r, i) => ({ value: i, label: r.name }))}
+				bind:value={pick}
+			/>
 			<p class="label">What the model reads</p>
 			<pre
 				class="template">{#each chatTemplate( [{ role: 'system', content: r.system }, { role: 'user', content: d.question }] ) as part, i (i)}<span
@@ -83,22 +80,6 @@
 </WidgetFrame>
 
 <style>
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.template {
 		margin: var(--space-1) 0 var(--space-3);
 		padding: var(--space-2) var(--space-3);

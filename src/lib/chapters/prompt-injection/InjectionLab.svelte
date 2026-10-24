@@ -2,6 +2,8 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { findRun, promptPieces, tally } from '#lib/harness/injection.ts';
 
@@ -24,7 +26,6 @@
 	let attack = $state('plain');
 	let defense = $state('none');
 	let colored = $state(true);
-	const id = $props.id();
 
 	function reset() {
 		doc = 'email';
@@ -50,40 +51,30 @@
 			</p>
 
 			<div class="pickers">
-				<fieldset>
-					<legend class="label">Document</legend>
-					{#each lab.documents as x (x.id)}
-						<label
-							><input type="radio" name="{id}-d" bind:group={doc} value={x.id} /> {x.title}</label
-						>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Attack hidden in it</legend>
-					{#each lab.attacks as x (x.id)}
-						<label
-							><input type="radio" name="{id}-a" bind:group={attack} value={x.id} />
-							{x.label}</label
-						>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Defense in the prompt</legend>
-					{#each lab.defenses as x (x.id)}
-						<label
-							><input type="radio" name="{id}-f" bind:group={defense} value={x.id} />
-							{x.label}</label
-						>
-					{/each}
-				</fieldset>
+				<Choice
+					legend="Document"
+					layout="stack"
+					options={lab.documents.map((x) => ({ value: x.id, label: x.title }))}
+					bind:value={doc}
+				/>
+				<Choice
+					legend="Attack hidden in it"
+					layout="stack"
+					options={lab.attacks.map((x) => ({ value: x.id, label: x.label }))}
+					bind:value={attack}
+				/>
+				<Choice
+					legend="Defense in the prompt"
+					layout="stack"
+					options={lab.defenses.map((x) => ({ value: x.id, label: x.label }))}
+					bind:value={defense}
+				/>
 			</div>
 			<p class="defense">{DEFENSE_NOTES[defense]}</p>
 
 			<div class="prompt-head">
 				<p class="label">What the model reads</p>
-				<label class="toggle"
-					><input type="checkbox" bind:checked={colored} /> Color by source</label
-				>
+				<Toggle label="Color by source" bind:checked={colored} />
 			</div>
 			<pre
 				class="prompt"
@@ -175,21 +166,7 @@
 		display: grid;
 		gap: var(--space-3);
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	fieldset {
-		border: none;
-		padding: 0;
-		margin: 0;
-		display: grid;
-		align-content: start;
-		gap: var(--space-1);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
+		--control-space: 0;
 	}
 
 	.defense {
@@ -208,11 +185,6 @@
 
 	.prompt-head .label {
 		margin: 0;
-	}
-
-	.toggle {
-		font-family: var(--font-sans);
-		font-size: 0.85rem;
 	}
 
 	.prompt {

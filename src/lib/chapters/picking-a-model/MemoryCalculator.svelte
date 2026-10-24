@@ -1,11 +1,11 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { DEVICES, MEMORY_MODELS } from './data.ts';
 	import { weightBytes } from '#lib/math/quantize.ts';
 
 	const BITS = [16, 8, 4];
 	const DEFAULT = MEMORY_MODELS.findIndex((m) => m.name === 'Gemma 4 31B');
-	const id = $props.id();
 	let model = $state(DEFAULT);
 	let bits = $state(16);
 
@@ -26,20 +26,17 @@
 	}}
 >
 	<div class="controls">
-		<div>
-			<label class="label" for="{id}-model">Model</label>
-			<select id="{id}-model" bind:value={model}>
-				{#each MEMORY_MODELS as mm, i (mm.name)}
-					<option value={i}>{mm.name}</option>
-				{/each}
-			</select>
-		</div>
-		<fieldset>
-			<legend class="label">Bits per weight</legend>
-			{#each BITS as b (b)}
-				<label><input type="radio" name="{id}-bits" value={b} bind:group={bits} /> {b}</label>
-			{/each}
-		</fieldset>
+		<Choice
+			legend="Model"
+			appearance="select"
+			options={MEMORY_MODELS.map((mm, i) => ({ value: i, label: mm.name }))}
+			bind:value={model}
+		/>
+		<Choice
+			legend="Bits per weight"
+			options={BITS.map((b) => ({ value: b, label: String(b) }))}
+			bind:value={bits}
+		/>
 	</div>
 
 	<p class="total">
@@ -83,24 +80,7 @@
 		align-items: end;
 		gap: var(--space-3) var(--space-6);
 		margin-bottom: var(--space-3);
-	}
-
-	.controls > div {
-		display: grid;
-		gap: var(--space-1);
-	}
-
-	fieldset {
-		border: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
+		--control-space: 0;
 	}
 
 	.total {

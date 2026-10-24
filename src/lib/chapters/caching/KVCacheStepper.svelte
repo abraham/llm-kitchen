@@ -3,6 +3,7 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { displayToken } from '#lib/components/primitives/format.ts';
@@ -13,7 +14,6 @@
 	const STEPS = 8;
 	const stepper = new Stepper(STEPS);
 	let cache = $state(false);
-	const id = $props.id();
 	const fmt = (n: number) => n.toLocaleString('en-US');
 	const describe = (i: number) => `Step ${i + 1} of ${STEPS}`;
 
@@ -53,11 +53,14 @@
 			{@const p = d.promptTokens.length}
 			{@const tokens = [...d.promptTokens, ...d.generated.slice(0, STEPS)]}
 			{@const row = stepper.index}
-			<fieldset class="pick">
-				<legend class="label">Key-value cache</legend>
-				<label><input type="radio" name="{id}-c" bind:group={cache} value={false} /> Off</label>
-				<label><input type="radio" name="{id}-c" bind:group={cache} value={true} /> On</label>
-			</fieldset>
+			<Choice
+				legend="Key-value cache"
+				options={[
+					{ value: false, label: 'Off' },
+					{ value: true, label: 'On' }
+				]}
+				bind:value={cache}
+			/>
 
 			<div
 				class="scroll"
@@ -160,21 +163,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
-	}
-
 	.scroll {
 		overflow-x: auto;
 		/* Keeps the visually hidden cell labels inside the scrolling box. */

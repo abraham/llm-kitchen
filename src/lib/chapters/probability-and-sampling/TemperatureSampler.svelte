@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import SamplerWheel from '#lib/components/primitives/SamplerWheel.svelte';
 	import { applyTemperature, sampleIndex, topK } from '#lib/math/sampling.ts';
@@ -9,7 +10,6 @@
 	import { canonical } from '#lib/models/provider.ts';
 
 	const SHOWN = 10;
-	const id = $props.id();
 	const trace = useDataset('traces/the-cat-sat');
 
 	let temperature = $state(1);
@@ -68,34 +68,22 @@
 			{@const probs = dist.map((d) => d.p)}
 
 			<div class="sliders">
-				<div class="slider">
-					<label class="label" for="{id}-temperature">
-						Temperature <span class="mono" aria-hidden="true">{temperature.toFixed(2)}</span>
-					</label>
-					<input
-						id="{id}-temperature"
-						type="range"
-						min="0"
-						max="2"
-						step="0.05"
-						bind:value={temperature}
-						oninput={() => (tally = null)}
-					/>
-				</div>
-				<div class="slider">
-					<label class="label" for="{id}-topk">
-						Top-k <span class="mono" aria-hidden="true">{k}</span>
-					</label>
-					<input
-						id="{id}-topk"
-						type="range"
-						min="1"
-						max={SHOWN}
-						step="1"
-						bind:value={k}
-						oninput={() => (tally = null)}
-					/>
-				</div>
+				<Slider
+					label="Temperature"
+					min={0}
+					max={2}
+					step={0.05}
+					format={(v) => v.toFixed(2)}
+					concept="prob"
+					bind:value={() => temperature, (v) => ((temperature = v), (tally = null))}
+				/>
+				<Slider
+					label="Top-k"
+					min={1}
+					max={SHOWN}
+					concept="prob"
+					bind:value={() => k, (v) => ((k = v), (tally = null))}
+				/>
 			</div>
 			<p class="hint">
 				{#if temperature === 0}
@@ -152,18 +140,10 @@
 
 <style>
 	.sliders {
+		--control-space: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 		gap: var(--space-4);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-prob);
 	}
 
 	.hint {

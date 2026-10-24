@@ -3,6 +3,7 @@
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { Router } from '#lib/math/router.ts';
 
@@ -14,7 +15,6 @@
 	const router = new Router(EXPERTS, canonical.embeddingSize, ROUTER_SEED);
 	let k = $state(2);
 	let picked = $state(1);
-	const id = $props.id();
 </script>
 
 <WidgetFrame
@@ -29,12 +29,11 @@
 		{#snippet children(d)}
 			{@const routes = d.tokenEmbeddings.map((v) => router.route(v, k))}
 			{@const route = routes[picked]}
-			<fieldset class="k">
-				<legend class="label">Experts per token</legend>
-				{#each [1, 2, 4, 8] as n (n)}
-					<label><input type="radio" name="{id}-k" value={n} bind:group={k} /> {n}</label>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Experts per token"
+				options={[1, 2, 4, 8].map((n) => ({ value: n, label: String(n) }))}
+				bind:value={k}
+			/>
 
 			<div class="scroll">
 				<table class="data">
@@ -101,22 +100,6 @@
 </WidgetFrame>
 
 <style>
-	.k {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	.k legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.scroll {
 		/* Positioned, so the visually hidden labels in the table can't widen the page. */
 		position: relative;

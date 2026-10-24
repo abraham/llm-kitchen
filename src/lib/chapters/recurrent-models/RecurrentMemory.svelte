@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
@@ -21,7 +22,6 @@
 	let version = $state(0);
 	let read = $state(8);
 	let frame = 0;
-	const id = $props.id();
 
 	function batch(): number[][] {
 		return Array.from({ length: 16 }, () => {
@@ -83,12 +83,7 @@
 						>{show(c)}</span
 					>{/each}
 			</p>
-			<div class="slider">
-				<label for="{id}-read" class="label"
-					>Characters read <span class="mono" aria-hidden="true">{read}</span></label
-				>
-				<input id="{id}-read" type="range" min="1" max={PHRASE.length - 1} bind:value={read} />
-			</div>
+			<Slider label="Characters read" min={1} max={PHRASE.length - 1} bind:value={read} />
 			<p class="label">Its memory after “{PHRASE.slice(0, read)}”</p>
 			<VectorStrip values={memory.h} cells={HIDDEN} scale={1} label="The model's memory" />
 			<p class="label guess-label">What it expects next</p>
@@ -144,12 +139,6 @@
 	.phrase .next {
 		color: var(--c-token-ink);
 		border-bottom: 2px solid var(--c-token);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: var(--space-3);
 	}
 
 	.guess-label {

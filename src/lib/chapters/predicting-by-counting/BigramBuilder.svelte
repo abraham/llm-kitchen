@@ -1,6 +1,7 @@
 <script lang="ts">
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
@@ -97,21 +98,29 @@
 	{#if stepper.atEnd}
 		<div class="after">
 			<div>
-				<label class="label" for="picked">After the word</label>
-				<select id="picked" bind:value={picked}>
-					{#each starters as w (w)}<option>{w}</option>{/each}
-				</select>
+				<Choice
+					legend="After the word"
+					appearance="select"
+					layout="inline"
+					options={starters.map((w) => ({ value: w, label: w }))}
+					bind:value={picked}
+				/>
 				<ProbBars
 					caption="Probability of each next word after “{picked}”"
 					bars={nextWordProbs(counts, picked).map((o) => ({ label: o.word, p: o.p }))}
 				/>
 			</div>
 			<div>
-				<label class="label" for="start">Generate starting from</label>
-				<select id="start" bind:value={start}>
-					{#each starters as w (w)}<option>{w}</option>{/each}
-				</select>
-				<button type="button" onclick={generate}>Generate</button>
+				<div class="generate">
+					<Choice
+						legend="Generate starting from"
+						appearance="select"
+						layout="inline"
+						options={starters.map((w) => ({ value: w, label: w }))}
+						bind:value={start}
+					/>
+					<button type="button" onclick={generate}>Generate</button>
+				</div>
 				{#if generated.length}
 					<p class="generated" aria-live="polite">
 						{generated.join(' ')}{generated.length < 16 ? ' ■' : ' …'}
@@ -227,9 +236,13 @@
 		margin-top: var(--space-6);
 	}
 
-	select {
-		font-family: var(--font-mono);
-		margin: 0 var(--space-2) var(--space-2);
+	.generate {
+		--control-space: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2) var(--space-4);
+		margin-bottom: var(--space-2);
 	}
 
 	.generated {

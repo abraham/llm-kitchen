@@ -2,10 +2,10 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 
 	const data = useDataset('encoders/fill-mask');
 	let mode = $state<'decoder' | 'encoder'>('decoder');
-	const id = $props.id();
 
 	const CELL = 26;
 	const LABEL = 64;
@@ -18,17 +18,14 @@
 	source={{ kind: 'computed' }}
 	onreset={() => (mode = 'decoder')}
 >
-	<fieldset class="modes">
-		<legend class="label">Attention mask</legend>
-		<label
-			><input type="radio" name="{id}-mode" value="decoder" bind:group={mode} /> GPT-2 (decoder): earlier
-			tokens only</label
-		>
-		<label
-			><input type="radio" name="{id}-mode" value="encoder" bind:group={mode} /> BERT (encoder): every
-			token</label
-		>
-	</fieldset>
+	<Choice
+		legend="Attention mask"
+		options={[
+			{ value: 'decoder', label: 'GPT-2 (decoder): earlier tokens only' },
+			{ value: 'encoder', label: 'BERT (encoder): every token' }
+		] as const}
+		bind:value={mode}
+	/>
 	<Loading promise={data}>
 		{#snippet children(d)}
 			{@const tokens = d.sentences[0].tokens}
@@ -87,22 +84,6 @@
 </WidgetFrame>
 
 <style>
-	.modes {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	.modes legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.grid {
 		display: block;
 		width: 100%;

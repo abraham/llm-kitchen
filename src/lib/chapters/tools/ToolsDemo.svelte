@@ -3,6 +3,7 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
@@ -12,7 +13,6 @@
 	const data = all([useDataset('agent/math-no-tools'), useDataset('agent/math-tools')]);
 	let tools = $state(false);
 	const stepper = new Stepper(4);
-	const id = $props.id();
 
 	const STEPS = [
 		'The model writes a tool call: plain text in the format its tool instructions asked for.',
@@ -36,15 +36,16 @@
 	<Loading promise={data}>
 		{#snippet children([off, on])}
 			{@const correct = calculator('1234 * 5678')}
-			<fieldset class="mode">
-				<legend class="label">“{off.task}”</legend>
-				<label
-					><input type="radio" name="{id}-mode" bind:group={tools} value={false} /> Tools off</label
-				>
-				<label
-					><input type="radio" name="{id}-mode" bind:group={tools} value={true} /> Tools on (a calculator)</label
-				>
-			</fieldset>
+			<p class="task">“{off.task}”</p>
+			<Choice
+				legend="Tools"
+				hideLabel
+				options={[
+					{ value: false, label: 'Tools off' },
+					{ value: true, label: 'Tools on (a calculator)' }
+				]}
+				bind:value={tools}
+			/>
 
 			{#if !tools}
 				{@const guess = lastNumber(off.steps[0].output)}
@@ -91,21 +92,9 @@
 </WidgetFrame>
 
 <style>
-	.mode {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		font-family: var(--font-serif);
+	.task {
 		font-size: 1.05rem;
-		margin-bottom: var(--space-2);
+		margin: 0 0 var(--space-2);
 	}
 
 	.reply,

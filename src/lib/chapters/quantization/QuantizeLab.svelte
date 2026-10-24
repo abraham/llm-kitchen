@@ -2,13 +2,13 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { levels } from '#lib/math/quantize.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
 	const data = useDataset('quantize/precisions');
-	const id = $props.id();
 	let index = $state(0);
 
 	const W = 560;
@@ -31,19 +31,17 @@
 			{@const x = (v: number) => PAD + ((v + max) / (2 * max)) * (W - PAD - 8)}
 			{@const grid = p.kind === 'int' ? levels(p.bits, run.sample.max) : []}
 			{@const same = p.generated.every((t, i) => t.id === full.generated[i].id)}
-			<div class="slider">
-				<label class="label" for="{id}-bits">
-					Bits per number <span class="mono" aria-hidden="true">{p.bits}</span>
-				</label>
-				<input
-					id="{id}-bits"
-					type="range"
-					min="0"
+			<div class="bits">
+				<Slider
+					label="Bits per number"
+					min={0}
 					max={run.precisions.length - 1}
-					step="1"
-					value={run.precisions.length - 1 - index}
-					oninput={(e) => (index = run.precisions.length - 1 - Number(e.currentTarget.value))}
-					aria-valuetext="{p.bits} bits"
+					format={(v) => String(run.precisions[run.precisions.length - 1 - v].bits)}
+					valueText={(v) => `${run.precisions[run.precisions.length - 1 - v].bits} bits`}
+					concept="weight"
+					bind:value={
+						() => run.precisions.length - 1 - index, (v) => (index = run.precisions.length - 1 - v)
+					}
 				/>
 			</div>
 
@@ -123,11 +121,8 @@
 </WidgetFrame>
 
 <style>
-	.slider {
-		display: grid;
-		gap: var(--space-1);
+	.bits {
 		max-width: 24rem;
-		margin-bottom: var(--space-3);
 	}
 
 	.size {

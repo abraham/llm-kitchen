@@ -87,7 +87,8 @@ Every shared component:
   (`'token' | 'vector' | 'weight' | 'attention' | 'prob' | 'loss' | 'harness'`, from
   `ui/concept.ts`) and maps it to `--c-<concept>` tokens. No raw colors in props.
 - **No styling props.** No `class` or `style` props. The parent positions a component through its
-  own wrapper; variants are explicit props (`appearance`, `layout`).
+  own wrapper; variants are explicit props (`appearance`, `layout`). The one hook is
+  `--control-space`, which a container sets to control the spacing after controls.
 - **Tokens only.** Scoped styles use the custom properties in `tokens.css` (`--space-*`,
   `--font-*`, `--c-*`, `--ink*`, `--surface*`, `--rule`, `--radius`). Literal pixels only for
   hairlines.
@@ -123,9 +124,8 @@ global.
 
 ### ui/
 
-**`Choice`** picks one value from a list. It replaces the radio fieldsets (21 widgets), the
-`<select>` pickers (14), and the pick-one `aria-pressed` button rows (EndToEnd, ExpertRouter,
-NameDecoder).
+**`Choice`** picks one value from a list. It replaces the radio fieldsets in 18 widgets and the
+`<select>` pickers in 13.
 
 ```ts
 type Option<T> = { value: T; label: string; disabled?: boolean };
@@ -133,19 +133,29 @@ props: {
 	legend: string;
 	options: readonly Option<T>[];
 	value: T; // $bindable
-	appearance?: 'radios' | 'buttons' | 'select'; // default 'radios'
+	appearance?: 'radios' | 'select'; // default 'radios'
+	layout?: 'wrap' | 'stack' | 'inline'; // default 'wrap'
 	hideLabel?: boolean;
-	option?: Snippet<[Option<T>]>; // custom label content; radios and buttons only
+	option?: Snippet<[Option<T>]>; // custom radio label content
 };
 ```
 
-- `radios` and `buttons` render a `<fieldset>` with a `<legend class="label">` and native radios,
-  so arrow keys move the choice and screen readers announce "1 of 3". `buttons` styles the labels
-  as a segmented row; the inputs stay radios. `select` renders a `<label>` and a `<select>`.
+- `radios` renders a `<fieldset>` with a `<legend class="label">` and native radios sharing one
+  name, so arrow keys move the choice and screen readers announce "1 of 3". `select` renders a
+  `<label>` and a `<select>`.
+- `wrap` puts the name above the options in a row; `stack` puts one option per line; `inline` puts
+  the name beside the options.
 - Use `select` past about six options or when the labels are long; otherwise `radios`.
-- Values are compared with `===`, so any type works (indices, slugs, objects from the data).
+- Values are compared with `===`, so any type works (indices, slugs, booleans).
+- A widget that must react to a change, not just store it, uses a function binding:
+  `bind:value={() => index, choose}`.
 
-**`Slider`** sets a number. It replaces the label, range input, and readout in 13 widgets.
+Not migrated, on purpose: the graded quiz (its options show right and wrong and lock after
+checking); the checkbox groups in LayerPlayground and LiveTokenizer, which pick several; NameDecoder's
+model list, which uses `<optgroup>`; and the pick-one buttons drawn inside figures (EndToEnd's
+pipeline boxes, ExpertRouter's token cells, NameDecoder's name parts).
+
+**`Slider`** sets a number. It replaces the label, range input, and readout in 11 widgets.
 
 ```ts
 props: {
@@ -153,20 +163,28 @@ props: {
 	value: number; // $bindable
 	min: number;
 	max: number;
-	step?: number;
-	format?: (value: number) => string; // readout and aria-valuetext; default String
+	step?: number; // default 1
+	format?: (value: number) => string; // the readout; default String
+	valueText?: (value: number) => string; // aria-valuetext when it differs from the readout
 	concept?: Concept; // sets --accent; default 'token'
 	width?: number; // readout width in ch, reserved so the layout doesn't shift
-	hideLabel?: boolean;
+	layout?: 'stack' | 'inline'; // label above or beside the track; default 'stack'
 };
 ```
 
-- The readout is an `<output>` tied to the input. Its `min-width` is in `ch` with
-  `letter-spacing: normal`, because `ch` ignores inherited letter-spacing.
+- The readout sits in the label, hidden from assistive tech, which hears `aria-valuetext` instead
+  (set whenever `format` is). A reserved `width` is in `ch` with `letter-spacing: normal`, because
+  `ch` ignores the label's letter-spacing.
+- Not migrated: ContextWindow's slider, whose readout sits mid-sentence ("the last 3 words") beside
+  preset buttons, and ResidualStream's, whose label reserves its widest wording.
 
-**`Toggle`** is a labeled checkbox (`label`, `checked` bindable). It replaces 5 widgets'
-`<label class="toggle|check">`. A play/pause control is a button with `aria-pressed`, not a
-`Toggle`.
+**`Toggle`** is a labeled checkbox (`label`, `checked` bindable). It replaces the single checkboxes
+in EmbeddingMap, ChatTemplate, and InjectionLab. A play/pause control is a button with
+`aria-pressed`, not a `Toggle`.
+
+`Choice` and `Slider` end with a bottom margin of `--control-space` (default `--space-3`), so a run
+of them spaces itself like paragraphs. A row or grid of controls that spaces its children with
+`gap` sets `--control-space: 0`.
 
 **`ScrollBox`** is a focusable scrolling region: a `<div role="region">` named by its required
 `label`, with the `scrollable` attachment and an optional `maxHeight`. The scrolling content
@@ -273,7 +291,8 @@ and `DataSourceBadge` keep their APIs.
 
 ## Testing
 
-- Each `ui/` and `primitives/` component has a colocated `*.test.ts` that renders it with `render`
+- Each `ui/` and `primitives/` component is covered by a colocated `*.test.ts` (`controls.test.ts`
+  covers `Choice`, `Slider`, and `Toggle`) that renders it with `render`
   from `svelte/server` in Vitest's Node environment and checks the prerendered markup: accessible
   names, roles, ids tied to labels, the initial value, and no `tabindex` in the server output.
   `Stepper`, `FrameLoop`, `format.ts`, and `roles.ts` have plain unit tests.
@@ -295,8 +314,7 @@ pull request.
 2. **Folders.** Split `layout/` into `frame/` and `page/`, move `scrollable.ts` to `ui/`, add the
    ESLint layers, and update imports in chapters, `.svx` files, and routes (about 280 import lines,
    all mechanical). Update the source layout in [architecture.md](architecture.md).
-3. **Controls.** `Choice`, `Slider`, and `Toggle`, then migrate their widgets. The pick-one button
-   rows become `appearance="buttons"`.
+3. **Controls.** `Choice`, `Slider`, and `Toggle`, then migrate their widgets.
 4. **Containers.** `ScrollBox`, `Status`, and `Compare`, then migrate.
 5. **Prompts.** `roles.ts`, `PromptText`, and `ChatLog`, then migrate. This is the only step with
    intended color changes (see the role table).
@@ -316,7 +334,7 @@ When a step lands, its components move to **Built** below.
 | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`                           | `primitives/`           | Built   |
 | `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built   |
 | Global styles                                                                                                                                  | `global.css`            | Built   |
-| `Choice`, `Slider`, `Toggle`                                                                                                                   | `ui/`                   | Planned |
+| `Choice`, `Slider`, `Toggle`, `concept.ts`                                                                                                     | `ui/`                   | Built   |
 | `ScrollBox`, `Status`, `Compare`                                                                                                               | `ui/`                   | Planned |
 | `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned |
 | `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned |

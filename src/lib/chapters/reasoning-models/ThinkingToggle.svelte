@@ -4,6 +4,7 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 
 	const data = useDataset('reasoning/thinking');
@@ -49,14 +50,13 @@
 		{#snippet children(d)}
 			{@const p = d.puzzles[index]}
 			{@const limit = d.settings.on.max_new_tokens}
-			<div class="pick">
-				<label for="{id}-q" class="label">Puzzle</label>
-				<select id="{id}-q" value={index} onchange={(e) => choose(+e.currentTarget.value)}>
-					{#each d.puzzles as option, i (option.question)}<option value={i}
-							>{option.question}</option
-						>{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Puzzle"
+				appearance="select"
+				layout="inline"
+				options={d.puzzles.map((x, i) => ({ value: i, label: x.question }))}
+				bind:value={() => index, choose}
+			/>
 			<p class="question">
 				{p.question} <span class="expected">(Right answer: {p.expected}.)</span>
 			</p>
@@ -150,13 +150,6 @@
 {/snippet}
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-	}
-
 	.question {
 		font-size: 1.05rem;
 		margin: var(--space-3) 0;

@@ -1,12 +1,12 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { TRIANGLE, triangleNet } from '#lib/math/mlp.ts';
 
 	const START = { x1: 0.5, x2: 1 };
 	let x1 = $state(START.x1);
 	let x2 = $state(START.x2);
 	let on = $state([true, true, true]);
-	const id = $props.id();
 
 	const net = $derived(triangleNet([x1, x2], on));
 	const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
@@ -133,22 +133,8 @@
 	</div>
 
 	<div class="controls">
-		{#each [x1, x2] as x, i (i)}
-			<div class="slider">
-				<label for="{id}-x{i}" class="label"
-					>Input {i + 1} <span class="mono" aria-hidden="true">{fmt(x)}</span></label
-				>
-				<input
-					id="{id}-x{i}"
-					type="range"
-					min="-2"
-					max="2"
-					step="0.05"
-					value={x}
-					oninput={(e) => (i === 0 ? (x1 = +e.currentTarget.value) : (x2 = +e.currentTarget.value))}
-				/>
-			</div>
-		{/each}
+		<Slider label="Input 1" min={-2} max={2} step={0.05} format={fmt} bind:value={x1} />
+		<Slider label="Input 2" min={-2} max={2} step={0.05} format={fmt} bind:value={x2} />
 		<fieldset>
 			<legend class="label">Neurons in the layer</legend>
 			{#each [0, 1, 2] as j (j)}
@@ -289,12 +275,8 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
+		--control-space: 0;
 		margin-top: var(--space-4);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
 	}
 
 	fieldset {

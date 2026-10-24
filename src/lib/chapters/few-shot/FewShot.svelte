@@ -2,10 +2,10 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('prompts/fewshot');
-	const id = $props.id();
 	let task = $state(0);
 	let model = $state<'qwen' | 'gpt2'>('qwen');
 	let shots = $state(4);
@@ -25,30 +25,24 @@
 			{@const t = d.tasks[task]}
 			{@const first = t.tests[0].runs.find((r) => r.shots === shots)!}
 			<div class="controls">
-				<fieldset>
-					<legend class="label">Task</legend>
-					{#each d.tasks as option, i (option.name)}
-						<label
-							><input type="radio" name="{id}-task" value={i} bind:group={task} />
-							{option.name}</label
-						>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Examples in the prompt</legend>
-					{#each d.shots as n (n)}
-						<label><input type="radio" name="{id}-shots" value={n} bind:group={shots} /> {n}</label>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Model</legend>
-					{#each ['qwen', 'gpt2'] as const as m (m)}
-						<label
-							><input type="radio" name="{id}-model" value={m} bind:group={model} />
-							{d.models[m].displayName}</label
-						>
-					{/each}
-				</fieldset>
+				<Choice
+					legend="Task"
+					options={d.tasks.map((t, i) => ({ value: i, label: t.name }))}
+					bind:value={task}
+				/>
+				<Choice
+					legend="Examples in the prompt"
+					options={d.shots.map((n) => ({ value: n, label: String(n) }))}
+					bind:value={shots}
+				/>
+				<Choice
+					legend="Model"
+					options={(['qwen', 'gpt2'] as const).map((m) => ({
+						value: m,
+						label: d.models[m].displayName
+					}))}
+					bind:value={model}
+				/>
 			</div>
 
 			<p class="label">The prompt, for “{t.tests[0].query}”</p>
@@ -92,26 +86,11 @@
 
 <style>
 	.controls {
+		--control-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-3) var(--space-6);
 		margin-bottom: var(--space-3);
-	}
-
-	fieldset {
-		border: 0;
-		margin: 0;
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
 	}
 
 	.prompt {

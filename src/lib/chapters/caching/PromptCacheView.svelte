@@ -3,6 +3,7 @@
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 
 	import {
 		CACHE_BUDGET,
@@ -15,7 +16,6 @@
 
 	const data = useDataset('agent/context');
 	let edit = $state<CacheEdit>('append');
-	const id = $props.id();
 	const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
 </script>
 
@@ -35,12 +35,11 @@
 				matches an earlier prompt exactly, so it can be read from the cache.
 			</p>
 
-			<fieldset class="pick">
-				<legend class="label">What the harness does</legend>
-				{#each Object.entries(CACHE_EDITS) as [key, label] (key)}
-					<label><input type="radio" name="{id}-e" bind:group={edit} value={key} /> {label}</label>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="What the harness does"
+				options={Object.entries(CACHE_EDITS).map(([value, label]) => ({ value, label }))}
+				bind:value={edit}
+			/>
 
 			<ol class="calls" aria-label="Prompts sent, one per call">
 				{#each calls as c, i (i)}
@@ -100,21 +99,6 @@
 <style>
 	.intro {
 		margin-top: 0;
-	}
-
-	.pick {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
 	}
 
 	.calls {

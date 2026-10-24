@@ -1,5 +1,7 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { activate, neuron, type Activation } from '#lib/math/mlp.ts';
 
 	const START = { x1: 1, x2: 0.5, w1: 0.8, w2: -1.2, bias: 0.3, kind: 'relu' as Activation };
@@ -9,7 +11,6 @@
 	let w2 = $state(START.w2);
 	let bias = $state(START.bias);
 	let kind = $state<Activation>(START.kind);
-	const id = $props.id();
 
 	const result = $derived(neuron([x1, x2], [w1, w2], bias, kind));
 	const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
@@ -55,7 +56,7 @@
 			concept: 'weight'
 		},
 		{ key: 'b', label: 'Bias', get: () => bias, set: (v: number) => (bias = v), concept: 'weight' }
-	];
+	] as const;
 </script>
 
 <WidgetFrame title="One neuron" source={{ kind: 'computed' }} onreset={reset}>
@@ -113,27 +114,25 @@
 
 	<div class="sliders">
 		{#each sliders as s (s.key)}
-			<div class="slider" data-concept={s.concept}>
-				<label for="{id}-{s.key}" class="label"
-					>{s.label} <span class="mono" aria-hidden="true">{fmt(s.get())}</span></label
-				>
-				<input
-					id="{id}-{s.key}"
-					type="range"
-					min="-2"
-					max="2"
-					step="0.05"
-					value={s.get()}
-					oninput={(e) => s.set(+e.currentTarget.value)}
-				/>
-			</div>
+			<Slider
+				label={s.label}
+				min={-2}
+				max={2}
+				step={0.05}
+				format={fmt}
+				concept={s.concept}
+				bind:value={s.get, s.set}
+			/>
 		{/each}
-		<div class="slider">
-			<label for="{id}-act" class="label">Activation function</label>
-			<select id="{id}-act" bind:value={kind}>
-				{#each Object.entries(NAMES) as [value, name] (value)}<option {value}>{name}</option>{/each}
-			</select>
-		</div>
+		<Choice
+			legend="Activation function"
+			appearance="select"
+			options={Object.entries(NAMES).map(([value, label]) => ({
+				value: value as Activation,
+				label
+			}))}
+			bind:value={kind}
+		/>
 	</div>
 
 	<p class="math mono" aria-hidden="true">
@@ -250,23 +249,7 @@
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
 		margin-top: var(--space-4);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-weight);
-	}
-
-	[data-concept='token'] input[type='range'] {
-		accent-color: var(--c-token);
-	}
-
-	select {
-		font-size: 0.875rem;
+		--control-space: 0;
 	}
 
 	.math {

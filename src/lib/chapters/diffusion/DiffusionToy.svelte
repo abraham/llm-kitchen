@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { prefersReducedMotion } from 'svelte/motion';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import {
 		Denoiser,
@@ -32,7 +34,6 @@
 	let step = $state(0);
 	let frame = 0;
 	let player: ReturnType<typeof setInterval> | undefined;
-	const id = $props.id();
 
 	const target = $derived.by(() => {
 		const r = seededRandom(9);
@@ -103,12 +104,12 @@
 	}}
 >
 	<div class="controls">
-		<div class="pick">
-			<label for="{id}-shape" class="label">Shape to learn</label>
-			<select id="{id}-shape" bind:value={shape} onchange={() => restart()}>
-				{#each SHAPES as s (s)}<option value={s}>{s}</option>{/each}
-			</select>
-		</div>
+		<Choice
+			legend="Shape to learn"
+			appearance="select"
+			options={SHAPES.map((s) => ({ value: s, label: s }))}
+			bind:value={() => shape, (s) => ((shape = s), restart())}
+		/>
 		<button type="button" onclick={toggle} aria-pressed={running} disabled={done}>
 			{done ? 'Trained' : running ? 'Pause' : steps ? 'Keep training' : 'Train'}
 		</button>
@@ -133,17 +134,14 @@
 				{/each}
 			</svg>
 			{#if frames.length}
-				<div class="slider">
-					<label for="{id}-step" class="label"
-						>Denoising step <span class="mono" aria-hidden="true">{step} of {STEPS}</span></label
-					>
-					<input
-						id="{id}-step"
-						type="range"
-						min="0"
+				<div class="step">
+					<Slider
+						label="Denoising step"
+						min={0}
 						max={STEPS}
-						bind:value={step}
-						oninput={() => clearInterval(player)}
+						format={(v) => `${v} of ${STEPS}`}
+						concept="weight"
+						bind:value={() => step, (v) => ((step = v), clearInterval(player))}
 					/>
 				</div>
 			{/if}
@@ -172,16 +170,12 @@
 
 <style>
 	.controls {
+		--control-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
 		gap: var(--space-3);
 		margin-bottom: var(--space-3);
-	}
-
-	.pick {
-		display: flex;
-		flex-direction: column;
 	}
 
 	.layout {
@@ -209,15 +203,10 @@
 		fill: var(--c-weight);
 	}
 
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.step {
+		--control-space: 0;
 		max-width: 18rem;
 		margin-top: var(--space-2);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-weight);
 	}
 
 	.readout {

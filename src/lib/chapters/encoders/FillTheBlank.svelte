@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 
 	const SHOWN = 5;
@@ -19,14 +20,16 @@
 		{#snippet children(d)}
 			{@const s = d.sentences[index]}
 			{@const [head, tail] = s.sentence.split('[MASK]')}
-			<div class="pick">
-				<label for="{id}-s" class="label">Sentence</label>
-				<select id="{id}-s" bind:value={index}>
-					{#each d.sentences as option, i (option.sentence)}
-						<option value={i}>{option.sentence.replace('[MASK]', '___')}</option>
-					{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Sentence"
+				appearance="select"
+				layout="inline"
+				options={d.sentences.map((x, i) => ({
+					value: i,
+					label: x.sentence.replace('[MASK]', '___')
+				}))}
+				bind:value={index}
+			/>
 			<p class="sentence">
 				{head}<span class="blank"
 					><span aria-hidden="true">___</span><span class="visually-hidden">blank</span></span
@@ -57,13 +60,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-	}
-
 	.sentence {
 		font-size: 1.15rem;
 		margin: var(--space-3) 0;

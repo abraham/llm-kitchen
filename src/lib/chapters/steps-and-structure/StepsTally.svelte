@@ -2,10 +2,10 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
 
 	const data = useDataset('prompts/steps');
-	const id = $props.id();
 	let puzzle = $state(0);
 	let condition = $state(0);
 </script>
@@ -22,22 +22,18 @@
 		{#snippet children(d)}
 			{@const p = d.puzzles[puzzle]}
 			{@const r = p.runs[condition]}
-			<div class="pick">
-				<label for="{id}-q" class="label">Puzzle</label>
-				<select id="{id}-q" bind:value={puzzle}>
-					{#each d.puzzles as option, i (option.question)}<option value={i}
-							>{option.question}</option
-						>{/each}
-				</select>
-			</div>
-			<fieldset>
-				<legend class="label">Added to the question</legend>
-				{#each d.conditions as c, i (c.name)}
-					<label
-						><input type="radio" name="{id}-c" value={i} bind:group={condition} /> {c.name}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Puzzle"
+				appearance="select"
+				layout="inline"
+				options={d.puzzles.map((x, i) => ({ value: i, label: x.question }))}
+				bind:value={puzzle}
+			/>
+			<Choice
+				legend="Added to the question"
+				options={d.conditions.map((c, i) => ({ value: i, label: c.name }))}
+				bind:value={condition}
+			/>
 			<p class="prompt">
 				{p.question}<strong>{d.conditions[condition].suffix}</strong>
 				<span class="expected">(Right answer: {p.expected}.)</span>
@@ -85,30 +81,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-		margin-bottom: var(--space-2);
-	}
-
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-2);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.prompt {
 		margin: var(--space-2) 0;
 	}

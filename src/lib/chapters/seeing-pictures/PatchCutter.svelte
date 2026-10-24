@@ -3,12 +3,13 @@
 	import { asset } from '$app/paths';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
 
 	const data = useDataset('vision/clip');
 	let image = $state(0);
 	let patch = $state(24);
-	const id = $props.id();
 	const src = (file: string) => asset(file as Parameters<typeof asset>[0]);
 	const label = (name: string) => name.replace('-', ' ');
 
@@ -33,13 +34,13 @@
 			{@const img = d.images[image]}
 			{@const g = d.grid}
 			{@const same = img.patches.filter((p) => p.join() === img.patches[patch].join()).length}
-			<div class="pick">
-				<label for="{id}-img" class="label">Picture</label>
-				<select id="{id}-img" bind:value={image}>
-					{#each d.images as option, i (option.name)}<option value={i}>{label(option.name)}</option
-						>{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Picture"
+				appearance="select"
+				layout="inline"
+				options={d.images.map((x, i) => ({ value: i, label: label(x.name) }))}
+				bind:value={image}
+			/>
 			<div class="layout">
 				<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 				<div class="picture" style:--g={g} onclick={(e) => pick(e, g)}>
@@ -56,11 +57,14 @@
 					</div>
 				</div>
 				<div>
-					<div class="slider">
-						<label for="{id}-patch" class="label"
-							>Patch <span class="mono" aria-hidden="true">{patch + 1} of {g * g}</span></label
-						>
-						<input id="{id}-patch" type="range" min="0" max={g * g - 1} bind:value={patch} />
+					<div class="patch">
+						<Slider
+							label="Patch"
+							min={0}
+							max={g * g - 1}
+							format={(v) => `${v + 1} of ${g * g}`}
+							bind:value={patch}
+						/>
 					</div>
 					<p class="label">The patches in reading order, like a sentence of tokens</p>
 					<ol class="row" aria-label="All {g * g} patches in order">
@@ -95,14 +99,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-		margin-bottom: var(--space-3);
-	}
-
 	.layout {
 		display: grid;
 		grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
@@ -146,11 +142,8 @@
 		border: 2.5px solid var(--c-token);
 	}
 
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.patch {
 		max-width: 20rem;
-		margin-bottom: var(--space-3);
 	}
 
 	.row {
