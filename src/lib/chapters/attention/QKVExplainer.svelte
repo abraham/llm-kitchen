@@ -3,15 +3,14 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
-	import { formatPercent } from '#lib/components/primitives/format.ts';
+	import { formatPercent, formatSigned } from '#lib/components/primitives/format.ts';
 	import { TOY_ATTENTION, attend } from '#lib/math/attention.ts';
 
 	const { tokens, queries, keys, values } = TOY_ATTENTION;
 	const result = attend(TOY_ATTENTION);
 	const Q = tokens.length - 1; // "it"
 	const stepper = new Stepper(4);
-	const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
-	const vec = (v: number[]) => `[${v.map(fmt).join(', ')}]`;
+	const vec = (v: number[]) => `[${v.map((x) => formatSigned(x)).join(', ')}]`;
 
 	const STEPS = [
 		'Spotlight: “it” shines a light back on the earlier words (and itself). How brightly each one is lit decides how much of it gets mixed in.',
@@ -64,7 +63,7 @@
 								{s === null
 									? '—'
 									: stepper.index === 1
-										? fmt(s)
+										? formatSigned(s)
 										: formatPercent(result.weights[q][k])}
 							</td>
 						{/each}

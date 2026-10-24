@@ -1,7 +1,9 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { FrameLoop } from '#lib/components/frame/loop.svelte.ts';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import { CurveNet, CurveTrainer } from '#lib/math/mlp.ts';
+	import { formatSigned } from '#lib/components/primitives/format.ts';
 
 	// Points to fit: a wave, which a straight line can't follow.
 	const xs = Array.from({ length: 24 }, (_, i) => -3 + (6 * i) / 23);
@@ -13,12 +15,9 @@
 
 	let trainer = $state.raw(new CurveTrainer(new CurveNet(HIDDEN, 7)));
 	let losses = $state<number[]>([]);
-	let running = $state(false);
-	let frame = 0;
 	let version = $state(0);
 	let before = $state<Params | null>(null);
 
-	const fmt = (v: number) => (v <= -0.005 ? '−' : '') + Math.abs(v).toFixed(2);
 	const cell = (now: number, then: number | undefined) => ({
 		value: now,
 		change: then === undefined ? 0 : now - then
@@ -59,28 +58,18 @@
 		version++;
 	}
 
-	function tick() {
+	const loop = new FrameLoop(() => {
 		train(10);
-		if (trainer.steps >= 3000) running = false;
-		if (running) frame = requestAnimationFrame(tick);
-	}
-
-	function toggle() {
-		running = !running;
-		if (running) frame = requestAnimationFrame(tick);
-		else cancelAnimationFrame(frame);
-	}
+		return trainer.steps < 3000;
+	});
 
 	function reset() {
-		running = false;
-		cancelAnimationFrame(frame);
+		loop.stop();
 		trainer = new CurveTrainer(new CurveNet(HIDDEN, Math.floor(Math.random() * 1e6)));
 		losses = [];
 		before = null;
 		version++;
 	}
-
-	$effect(() => () => cancelAnimationFrame(frame));
 </script>
 
 <WidgetFrame title="Train a tiny network" source={{ kind: 'computed' }} onreset={reset}>
@@ -107,16 +96,16 @@
 		</div>
 	</div>
 	<div class="buttons">
-		<button type="button" onclick={toggle} aria-pressed={running}>
-			{running ? 'Pause' : trainer.steps ? 'Keep training' : 'Train'}
+		<button type="button" onclick={() => loop.toggle()} aria-pressed={loop.running}>
+			{loop.running ? 'Pause' : trainer.steps ? 'Keep training' : 'Train'}
 		</button>
-		<button type="button" onclick={() => train(1)} disabled={running}>Take 1 step</button>
+		<button type="button" onclick={() => train(1)} disabled={loop.running}>Take 1 step</button>
 	</div>
 
-	<p class="status" aria-live={running ? 'off' : 'polite'}>
+	<p class="status" aria-live={loop.running ? 'off' : 'polite'}>
 		{#if before}
-			The last {running ? 'few steps' : 'step'} nudged all {HIDDEN * 3 + 1} numbers below, each by at
-			most
+			The last {loop.running ? 'few steps' : 'step'} nudged all {HIDDEN * 3 + 1} numbers below, each by
+			at most
 			<span class="mono">{params.biggest.toFixed(3)}</span>, in whichever direction makes the error
 			smaller.
 		{:else}
@@ -161,7 +150,7 @@
 </WidgetFrame>
 
 {#snippet number(c: { value: number; change: number })}
-	<span class="mono">{fmt(c.value)}</span><span
+	<span class="mono">{formatSigned(c.value)}</span><span
 		class="arrow"
 		class:up={c.change > 0}
 		class:down={c.change < 0}

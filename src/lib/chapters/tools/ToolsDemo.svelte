@@ -7,6 +7,7 @@
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	import { calculator } from '#lib/harness/tools.ts';
 
@@ -21,7 +22,7 @@
 		'The harness adds the result to the prompt and calls the model again. Now it only has to copy the number.'
 	];
 	const lastNumber = (text: string) => text.match(/\d[\d,]*\d/g)?.at(-1) ?? '?';
-	const n = (s: string) => Number(s.replaceAll(',', '')).toLocaleString('en-US');
+	const n = (s: string) => formatCount(Number(s.replaceAll(',', '')));
 </script>
 
 <WidgetFrame

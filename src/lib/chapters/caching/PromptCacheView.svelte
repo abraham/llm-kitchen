@@ -13,10 +13,10 @@
 		cacheTotals,
 		type CacheEdit
 	} from '#lib/harness/cache.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('agent/context');
 	let edit = $state<CacheEdit>('append');
-	const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
 </script>
 
 <WidgetFrame
@@ -54,11 +54,11 @@
 									class="block {b.kind}"
 									class:cached={start + b.tokens <= c.cached}
 									style:flex-grow={b.tokens}
-									title="{b.label}: {fmt(b.tokens)} tokens"
+									title="{b.label}: {formatCount(b.tokens)} tokens"
 								></span>
 							{/each}
 						</span>
-						<span class="num">{fmt(c.cached)} of {fmt(c.tokens)} cached</span>
+						<span class="num">{formatCount(c.cached)} of {formatCount(c.tokens)} cached</span>
 					</li>
 				{/each}
 			</ol>
@@ -71,26 +71,27 @@
 			<dl class="totals" aria-live="polite">
 				<div>
 					<dt>Tokens sent</dt>
-					<dd>{fmt(totals.sent)}</dd>
+					<dd>{formatCount(totals.sent)}</dd>
 				</div>
 				<div>
 					<dt>Read from the cache</dt>
-					<dd>{fmt(totals.cached)} ({Math.round((totals.cached / totals.sent) * 100)}%)</dd>
+					<dd>{formatCount(totals.cached)} ({Math.round((totals.cached / totals.sent) * 100)}%)</dd>
 				</div>
 				<div>
 					<dt>Processed from scratch</dt>
-					<dd>{fmt(totals.processed)}</dd>
+					<dd>{formatCount(totals.processed)}</dd>
 				</div>
 				<div>
 					<dt>Input cost, in full-price tokens</dt>
-					<dd>{fmt(totals.cost)}</dd>
+					<dd>{formatCount(totals.cost)}</dd>
 				</div>
 			</dl>
 			<p class="note">
 				Simplified: cached tokens are priced at {CACHED_PRICE * 100}% of normal, about what
-				providers charge, and the budget for dropping or summarizing is a small {fmt(CACHE_BUDGET)} tokens
-				so it comes into play. Real providers also charge a little extra to write the cache and only cache
-				prompts above a minimum length.
+				providers charge, and the budget for dropping or summarizing is a small {formatCount(
+					CACHE_BUDGET
+				)} tokens so it comes into play. Real providers also charge a little extra to write the cache
+				and only cache prompts above a minimum length.
 			</p>
 		{/snippet}
 	</Loading>

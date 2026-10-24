@@ -7,6 +7,7 @@
 	import { label } from '#lib/curriculum/index.ts';
 	import type { ContextSession } from '#lib/harness/agent.ts';
 	import { project } from '#lib/math/vectors.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = all([useDataset('agent/context'), useDataset('embeddings/minilm-map')]);
 
@@ -58,9 +59,7 @@
 			<div
 				class="bar"
 				role="img"
-				aria-label="{used.total.toLocaleString('en-US')} of a {s.budget.toLocaleString(
-					'en-US'
-				)}-token budget"
+				aria-label="{formatCount(used.total)} of a {formatCount(s.budget)}-token budget"
 			>
 				<span class="seg base" style:width="{scale(s.baseTokens)}%" title="System prompt and tools"
 				></span>
@@ -84,9 +83,8 @@
 				<span class="budget" style:left="{scale(s.budget)}%"></span>
 			</div>
 			<p class="numbers" class:over={used.total > s.budget}>
-				{used.total.toLocaleString('en-US')} tokens · budget {s.budget.toLocaleString('en-US')} · {STRATEGIES[
-					strategy
-				].note}
+				{formatCount(used.total)} tokens · budget {formatCount(s.budget)} · {STRATEGIES[strategy]
+					.note}
 			</p>
 			<ul class="legend" aria-hidden="true">
 				<li><span class="seg base"></span>system prompt and tools</li>

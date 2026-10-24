@@ -3,6 +3,7 @@
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { activate, neuron, type Activation } from '#lib/math/mlp.ts';
+	import { formatSigned } from '#lib/components/primitives/format.ts';
 
 	const START = { x1: 1, x2: 0.5, w1: 0.8, w2: -1.2, bias: 0.3, kind: 'relu' as Activation };
 	let x1 = $state(START.x1);
@@ -13,7 +14,6 @@
 	let kind = $state<Activation>(START.kind);
 
 	const result = $derived(neuron([x1, x2], [w1, w2], bias, kind));
-	const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
 
 	const NAMES: Record<Activation, string> = {
 		none: 'none (output = sum)',
@@ -65,11 +65,13 @@
 			viewBox="0 0 420 200"
 			class="neuron"
 			role="img"
-			aria-label="Input 1 is {fmt(x1)} times weight {fmt(w1)}, plus input 2 {fmt(
-				x2
-			)} times weight {fmt(w2)}, plus bias {fmt(bias)}, sums to {fmt(
+			aria-label="Input 1 is {formatSigned(x1)} times weight {formatSigned(
+				w1
+			)}, plus input 2 {formatSigned(x2)} times weight {formatSigned(w2)}, plus bias {formatSigned(
+				bias
+			)}, sums to {formatSigned(
 				result.sum
-			)}. After the activation function the output is {fmt(result.output)}."
+			)}. After the activation function the output is {formatSigned(result.output)}."
 		>
 			{#each [{ x: x1, w: w1, y: 50 }, { x: x2, w: w2, y: 150 }] as input, i (i)}
 				<line
@@ -82,17 +84,19 @@
 					style:stroke-width={1 + Math.abs(input.w) * 3}
 				/>
 				<circle cx="40" cy={input.y} r="22" class="input" />
-				<text x="40" y={input.y} class="value">{fmt(input.x)}</text>
-				<text x="135" y={input.y + (i === 0 ? 18 : -10)} class="weight">× {fmt(input.w)}</text>
+				<text x="40" y={input.y} class="value">{formatSigned(input.x)}</text>
+				<text x="135" y={input.y + (i === 0 ? 18 : -10)} class="weight"
+					>× {formatSigned(input.w)}</text
+				>
 			{/each}
-			<text x="230" y="35" class="weight">+ bias {fmt(bias)}</text>
+			<text x="230" y="35" class="weight">+ bias {formatSigned(bias)}</text>
 			<circle cx="230" cy="100" r="34" class="node" />
 			<text x="230" y="92" class="small">sum</text>
-			<text x="230" y="110" class="value">{fmt(result.sum)}</text>
+			<text x="230" y="110" class="value">{formatSigned(result.sum)}</text>
 			<line x1="264" y1="100" x2="318" y2="100" class="out-wire" />
 			<rect x="318" y="78" width="96" height="44" rx="6" class="output" />
 			<text x="366" y="92" class="small">output</text>
-			<text x="366" y="110" class="value">{fmt(result.output)}</text>
+			<text x="366" y="110" class="value">{formatSigned(result.output)}</text>
 		</svg>
 
 		<svg
@@ -119,7 +123,7 @@
 				min={-2}
 				max={2}
 				step={0.05}
-				format={fmt}
+				format={formatSigned}
 				concept={s.concept}
 				bind:value={s.get, s.set}
 			/>
@@ -136,9 +140,11 @@
 	</div>
 
 	<p class="math mono" aria-hidden="true">
-		{fmt(x1)}×{fmt(w1)} + {fmt(x2)}×{fmt(w2)} + {fmt(bias)} = {fmt(result.sum)} → {kind === 'none'
+		{formatSigned(x1)}×{formatSigned(w1)} + {formatSigned(x2)}×{formatSigned(w2)} + {formatSigned(
+			bias
+		)} = {formatSigned(result.sum)} → {kind === 'none'
 			? ''
-			: `${kind}(${fmt(result.sum)}) = `}{fmt(result.output)}
+			: `${kind}(${formatSigned(result.sum)}) = `}{formatSigned(result.output)}
 	</p>
 </WidgetFrame>
 

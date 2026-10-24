@@ -6,13 +6,13 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('reasoning/thinking');
 	let index = $state(0);
 	let shown = $state(0);
 	let timer: ReturnType<typeof setInterval> | undefined;
 	const id = $props.id();
-	const fmt = (n: number) => n.toLocaleString('en-US');
 
 	function stop() {
 		clearInterval(timer);
@@ -72,7 +72,7 @@
 					{@render result(p.on)}
 					<div class="thinking">
 						<p class="label">
-							Scratch work: {fmt(p.on.thinkingTokens)} tokens, hidden from the chat bubble
+							Scratch work: {formatCount(p.on.thinkingTokens)} tokens, hidden from the chat bubble
 						</p>
 						<div class="buttons">
 							<button type="button" onclick={() => watch(p.on.thinking.length)}
@@ -94,7 +94,7 @@
 						{@render bubble(p.on.answer, 'Reply with thinking on')}
 					{:else}
 						<p class="bubble cut">
-							No answer: it was still thinking when it hit the limit of {fmt(limit)} tokens.
+							No answer: it was still thinking when it hit the limit of {formatCount(limit)} tokens.
 						</p>
 					{/if}
 				</section>
@@ -116,7 +116,7 @@
 							<th scope="row">{name}</th>
 							<td>{runs.filter((r) => r.correct).length} of {runs.length}</td>
 							<td
-								>{fmt(
+								>{formatCount(
 									Math.round(
 										runs.reduce((a, r) => a + r.thinkingTokens + r.answerTokens, 0) / runs.length
 									)
@@ -142,7 +142,7 @@
 			<span aria-hidden="true">{run.correct ? '✓' : '✗'}</span>
 			Answered <strong class="mono">{run.final}</strong>{run.correct ? ', right' : ', wrong'}
 		{/if}
-		<span class="tokens">· {fmt(run.thinkingTokens + run.answerTokens)} tokens</span>
+		<span class="tokens">· {formatCount(run.thinkingTokens + run.answerTokens)} tokens</span>
 	</p>
 {/snippet}
 

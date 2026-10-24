@@ -11,7 +11,7 @@
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
-	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
+	import { displayToken, formatCount, formatPercent } from '#lib/components/primitives/format.ts';
 	import type { Slug } from '#lib/curriculum/index.ts';
 	import { STAGES, VARIANTS, type StageGroup } from './data.ts';
 	import { segmentPrompt, type PromptPart } from '#lib/harness/agent.ts';
@@ -36,7 +36,6 @@
 	];
 	const LENS_BLOCKS = [1, 8, canonical.layers];
 
-	const fmt = (n: number) => n.toLocaleString('en-US');
 	const seconds = (ms: number) => `${Math.round(ms / 1000)} seconds`;
 
 	/** Color scale: the 95th-percentile size, so a few huge numbers don't wash out the rest. */
@@ -142,8 +141,9 @@
 					{:else if stage.id === 'prompt'}
 						{@render promptText(segmentPrompt(call1.prompt), 'The text sent to the model')}
 						<p>
-							Your {run.task.length}-character message is now a {fmt(call1.promptTokens)}-token
-							prompt.
+							Your {run.task.length}-character message is now a {formatCount(
+								call1.promptTokens
+							)}-token prompt.
 						</p>
 					{:else if stage.id === 'cache'}
 						<div class="bars" aria-hidden="true">
@@ -168,8 +168,8 @@
 							<span class="swatch new"></span>new work
 						</p>
 						<p>
-							The model is called twice for this message. Call 2 ({fmt(call2.promptTokens)} tokens) starts
-							with all {fmt(call1.promptTokens)} tokens of call 1, so only the last {fmt(
+							The model is called twice for this message. Call 2 ({formatCount(call2.promptTokens)} tokens)
+							starts with all {formatCount(call1.promptTokens)} tokens of call 1, so only the last {formatCount(
 								call2.promptTokens - call1.promptTokens
 							)} need new work. The system prompt and tool descriptions are the same for every message,
 							so even call 1 starts with a familiar prefix.
@@ -185,7 +185,7 @@
 							label="{displayToken(last.text)}: word vector plus position vector"
 						/>
 						<p>
-							The last token, <span class="mono">{displayToken(last.text)}</span>, as {fmt(
+							The last token, <span class="mono">{displayToken(last.text)}</span>, as {formatCount(
 								vectors.dimensions
 							)} numbers (the first few shown).
 						</p>
@@ -209,7 +209,9 @@
 							bars={trace.steps[0].candidates
 								.slice(0, 5)
 								.map((c) => ({ label: displayToken(c.token.text), p: c.prob }))}
-							caption="Top 5 of {fmt(canonical.vocabularySize)} next tokens after “{trace.prompt}”"
+							caption="Top 5 of {formatCount(
+								canonical.vocabularySize
+							)} next tokens after “{trace.prompt}”"
 						/>
 					{:else if stage.id === 'pick'}
 						<p class="chips">
@@ -235,7 +237,7 @@
 							>
 						</p>
 						<p>
-							{end} loops, one token each. Writing {fmt(kv.generated.length)} tokens took
+							{end} loops, one token each. Writing {formatCount(kv.generated.length)} tokens took
 							{seconds(kv.totalMs.cache)} with the KV cache and {seconds(kv.totalMs.noCache)} without
 							it.
 						</p>
@@ -260,9 +262,9 @@
 						</p>
 					{:else if stage.id === 'context'}
 						<p>
-							This conversation is short: call 2 is {fmt(call2.promptTokens)} tokens. A long chat or a
-							busy agent can outgrow the model’s window or the budget, and that is when the harness has
-							to choose what to keep.
+							This conversation is short: call 2 is {formatCount(call2.promptTokens)} tokens. A long chat
+							or a busy agent can outgrow the model’s window or the budget, and that is when the harness
+							has to choose what to keep.
 						</p>
 					{:else if stage.id === 'reply'}
 						<ChatLog

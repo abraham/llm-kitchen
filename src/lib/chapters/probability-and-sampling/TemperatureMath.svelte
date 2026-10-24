@@ -4,7 +4,7 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
-	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
+	import { displayToken, formatPercent, formatSigned } from '#lib/components/primitives/format.ts';
 	import { softmax } from '#lib/math/sampling.ts';
 
 	import { canonical } from '#lib/models/provider.ts';
@@ -12,8 +12,6 @@
 	const SHOWN = 6;
 	const trace = useDataset('traces/the-cat-sat');
 	let temperature = $state(1);
-
-	const fmt = (x: number) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(2);
 </script>
 
 <WidgetFrame
@@ -55,8 +53,8 @@
 					{#each words as w, i (w.token.id)}
 						<tr>
 							<th scope="row" class="mono">{displayToken(w.token.text)}</th>
-							<td class="mono">{fmt(scores[i])}</td>
-							<td class="mono">{fmt(scaled[i])}</td>
+							<td class="mono">{formatSigned(scores[i])}</td>
+							<td class="mono">{formatSigned(scaled[i])}</td>
 							<td class="cell">
 								<span class="prob">
 									<span class="bar"><span style:width="{probs[i] * 100}%"></span></span>

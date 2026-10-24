@@ -265,7 +265,10 @@ its template marker, so color is never the only cue.
   tint, the color InjectionLab already gave pasted documents.
 - Tinted swatches are outlined in their concept color; a swatch that is `off` is plain grey.
 
-`format.ts` gains `formatCount(n)` (`toLocaleString('en-US')`), which 13 widgets call inline.
+`format.ts` also has `formatCount(n)` (rounded, with thousands separators, e.g. `151,936`) and
+`formatSigned(v, digits = 2)` (a real minus sign, and none on a value that rounds to zero, so never
+`−0.00`). They replace the inline `toLocaleString('en-US')` calls and the local `fmt` helpers in 19
+widgets.
 
 ### frame/
 
@@ -285,6 +288,8 @@ class FrameLoop {
 
 - The constructor registers an `$effect` whose teardown stops the loop, so a widget can't leak a
   frame callback after it unmounts and nothing runs during prerendering.
+- A widget's play button reads `loop.running` for its label and `aria-pressed`, and its reset calls
+  `loop.stop()`. Interval timers (DiffusionToy's playback) stay in the widget.
 
 The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, `Scrolly`, `ModelConsent`,
 and `DataSourceBadge` keep their APIs.
@@ -308,7 +313,9 @@ and `DataSourceBadge` keep their APIs.
   `Choice`, `Slider`, and `Toggle`; `containers.test.ts` for `ScrollBox` and `Status`) that renders
   it with `render` from `svelte/server` in Vitest's Node environment and checks the prerendered
   markup: accessible names, roles, ids tied to labels, the initial value, and no `tabindex` in the
-  server output. `Stepper`, `FrameLoop`, `format.ts`, and `roles.ts` have plain unit tests.
+  server output. `Stepper`, `FrameLoop`, `format.ts`, and `roles.ts` have plain unit tests;
+  `FrameLoop`'s unmount cleanup isn't among them, because Vitest's Node environment uses Svelte's
+  server build, where effects don't run.
 - `tests/unit/component-patterns.test.ts` fails when a chapter widget hand-writes something the
   common set provides: `<fieldset`, `<select`, `type="range"`, `type="checkbox"`, `aria-live`,
   `requestAnimationFrame`, or scoped `select`, `input[type='range']`, or `table` rules. Each pattern
@@ -331,7 +338,7 @@ pull request.
 4. **Containers.** `ScrollBox` and `Status`, then migrate.
 5. **Prompts.** `roles.ts`, `PromptText`, `ChatLog`, and `RoleKey`, then migrate. This is the only
    step with intended color changes (see the role table).
-6. **Loops.** `FrameLoop` and `formatCount`, then migrate.
+6. **Loops.** `FrameLoop`, `formatCount`, and `formatSigned`, then migrate.
 7. **Guard.** Add `component-patterns.test.ts` once nothing it checks is left, and list the common
    set in [design.md](design.md)'s shared elements.
 
@@ -350,5 +357,5 @@ When a step lands, its components move to **Built** below.
 | `Choice`, `Slider`, `Toggle`, `concept.ts`                                                                                                     | `ui/`                   | Built   |
 | `ScrollBox`, `Status`                                                                                                                          | `ui/`                   | Built   |
 | `PromptText`, `ChatLog`, `RoleKey`, `roles.ts`                                                                                                 | `primitives/`           | Built   |
-| `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned |
+| `FrameLoop`, `formatCount`, `formatSigned`                                                                                                     | `frame/`, `primitives/` | Built   |
 | `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned |

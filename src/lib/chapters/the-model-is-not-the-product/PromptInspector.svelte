@@ -9,6 +9,7 @@
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { segmentPrompt, type PromptPartKind } from '#lib/harness/agent.ts';
 	import { label } from '#lib/curriculum/index.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('agent/chat');
 
@@ -79,8 +80,8 @@
 					/>
 					<p class="count">
 						{#if stepper.index === 0}{run.task.length} characters{:else if stepper.atEnd}The second
-							call: {step.promptTokens.toLocaleString('en-US')} tokens{:else}The full first call is {step.promptTokens.toLocaleString(
-								'en-US'
+							call: {formatCount(step.promptTokens)} tokens{:else}The full first call is {formatCount(
+								step.promptTokens
 							)} tokens{/if}
 					</p>
 				</div>
