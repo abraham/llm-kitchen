@@ -2,16 +2,17 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import type { ThinkingRun } from '#lib/datasets/parsers/prompts.ts';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('reasoning/thinking');
 	let index = $state(0);
 	let shown = $state(0);
 	let timer: ReturnType<typeof setInterval> | undefined;
 	const id = $props.id();
-	const fmt = (n: number) => n.toLocaleString('en-US');
 
 	function stop() {
 		clearInterval(timer);
@@ -49,14 +50,13 @@
 		{#snippet children(d)}
 			{@const p = d.puzzles[index]}
 			{@const limit = d.settings.on.max_new_tokens}
-			<div class="pick">
-				<label for="{id}-q" class="label">Puzzle</label>
-				<select id="{id}-q" value={index} onchange={(e) => choose(+e.currentTarget.value)}>
-					{#each d.puzzles as option, i (option.question)}<option value={i}
-							>{option.question}</option
-						>{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Puzzle"
+				appearance="select"
+				layout="inline"
+				options={d.puzzles.map((x, i) => ({ value: i, label: x.question }))}
+				bind:value={() => index, choose}
+			/>
 			<p class="question">
 				{p.question} <span class="expected">(Right answer: {p.expected}.)</span>
 			</p>
@@ -72,7 +72,7 @@
 					{@render result(p.on)}
 					<div class="thinking">
 						<p class="label">
-							Scratch work: {fmt(p.on.thinkingTokens)} tokens, hidden from the chat bubble
+							Scratch work: {formatCount(p.on.thinkingTokens)} tokens, hidden from the chat bubble
 						</p>
 						<div class="buttons">
 							<button type="button" onclick={() => watch(p.on.thinking.length)}
@@ -83,21 +83,18 @@
 							>
 						</div>
 						{#if shown > 0}
-							<pre
-								class="scratch"
-								{@attach scrollable}
-								role="region"
-								aria-label="Scratch work">{p.on.thinking.slice(0, shown)}{shown <
-								p.on.thinking.length
-									? '…'
-									: ''}</pre>
+							<ScrollBox label="Scratch work" maxHeight="14rem"
+								><pre class="scratch">{p.on.thinking.slice(0, shown)}{shown < p.on.thinking.length
+										? '…'
+										: ''}</pre></ScrollBox
+							>
 						{/if}
 					</div>
 					{#if p.on.answer}
 						{@render bubble(p.on.answer, 'Reply with thinking on')}
 					{:else}
 						<p class="bubble cut">
-							No answer: it was still thinking when it hit the limit of {fmt(limit)} tokens.
+							No answer: it was still thinking when it hit the limit of {formatCount(limit)} tokens.
 						</p>
 					{/if}
 				</section>
@@ -119,7 +116,7 @@
 							<th scope="row">{name}</th>
 							<td>{runs.filter((r) => r.correct).length} of {runs.length}</td>
 							<td
-								>{fmt(
+								>{formatCount(
 									Math.round(
 										runs.reduce((a, r) => a + r.thinkingTokens + r.answerTokens, 0) / runs.length
 									)
@@ -134,7 +131,7 @@
 </WidgetFrame>
 
 {#snippet bubble(text: string, label: string)}
-	<div class="bubble" {@attach scrollable} role="region" aria-label={label}>{text}</div>
+	<ScrollBox {label} maxHeight="14rem" framed><div class="reply">{text}</div></ScrollBox>
 {/snippet}
 
 {#snippet result(run: ThinkingRun)}
@@ -145,23 +142,11 @@
 			<span aria-hidden="true">{run.correct ? '✓' : '✗'}</span>
 			Answered <strong class="mono">{run.final}</strong>{run.correct ? ', right' : ', wrong'}
 		{/if}
-		<span class="tokens">· {fmt(run.thinkingTokens + run.answerTokens)} tokens</span>
+		<span class="tokens">· {formatCount(run.thinkingTokens + run.answerTokens)} tokens</span>
 	</p>
 {/snippet}
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-	}
-
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
 	.question {
 		font-size: 1.05rem;
 		margin: var(--space-3) 0;
@@ -208,8 +193,11 @@
 		border-radius: var(--radius);
 		font-size: 0.85rem;
 		white-space: pre-wrap;
-		max-height: 14rem;
-		overflow-y: auto;
+	}
+
+	.reply {
+		font-size: 0.85rem;
+		white-space: pre-wrap;
 	}
 
 	.bubble.cut {
@@ -234,8 +222,6 @@
 		margin: var(--space-1) 0 0;
 		font-size: 0.75rem;
 		white-space: pre-wrap;
-		max-height: 14rem;
-		overflow-y: auto;
 		color: var(--ink-muted);
 	}
 

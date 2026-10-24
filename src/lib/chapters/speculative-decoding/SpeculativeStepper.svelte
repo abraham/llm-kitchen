@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { then, useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { writtenAfter, type SpeculativeRecording } from '#lib/math/speculative.ts';
 
 	const data = useDataset('speculative/drafts');
-	const id = $props.id();
 	let choice = $state(0);
 	let stepper = $state(new Stepper(1));
 
@@ -36,18 +36,13 @@
 			{@const round = run.rounds[stepper.index]}
 			{@const before = writtenAfter(run, stepper.index)}
 			{@const after = writtenAfter(run, stepper.index + 1)}
-			<div class="prompt">
-				<label class="label" for="{id}-prompt">Prompt</label>
-				<select
-					id="{id}-prompt"
-					value={choice}
-					onchange={(e) => pick(d, Number(e.currentTarget.value))}
-				>
-					{#each d.runs as r, i (r.prompt)}
-						<option value={i}>{r.prompt}</option>
-					{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Prompt"
+				appearance="select"
+				layout="inline"
+				options={d.runs.map((r, i) => ({ value: i, label: r.prompt }))}
+				bind:value={() => choice, (i) => pick(d, i)}
+			/>
 
 			<p class="text">
 				<span class="prompt-text">{run.prompt}</span>{run.written
@@ -117,19 +112,6 @@
 </WidgetFrame>
 
 <style>
-	.prompt {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-		margin-bottom: var(--space-3);
-	}
-
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
 	.text {
 		white-space: pre-wrap;
 		min-height: 3em;

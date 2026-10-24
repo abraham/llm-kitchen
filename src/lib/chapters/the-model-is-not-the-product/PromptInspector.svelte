@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ChatLog from '#lib/components/primitives/ChatLog.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import RoleKey from '#lib/components/primitives/RoleKey.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { segmentPrompt, type PromptPartKind } from '#lib/harness/agent.ts';
 	import { label } from '#lib/curriculum/index.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('agent/chat');
 
@@ -60,33 +63,30 @@
 			{@const step = stepper.index === LAYERS.length - 1 ? run.steps[1] : run.steps[0]}
 			{@const parts = segmentPrompt(step.prompt)}
 			<div class="layout">
-				<ol class="chat" aria-label="The chat, as the app shows it">
-					{#each run.history as m, i (i)}
-						<li class={m.role}>{m.content}</li>
-					{/each}
-					<li class="user">{run.task}</li>
-					<li class="assistant">{last.thought}</li>
-				</ol>
+				<ChatLog
+					label="The chat, as the app shows it"
+					messages={[
+						...run.history,
+						{ role: 'user', content: run.task },
+						{ role: 'assistant', content: last.thought }
+					]}
+				/>
 				<div class="raw-wrap">
-					<pre
-						class="raw"
-						{@attach scrollable}
-						aria-label="The text sent to the model">{#each parts as p, i (i)}{#if visible.has(p.kind)}<span
-									class={p.kind}>{p.text}</span
-								>{/if}{/each}</pre>
+					<PromptText
+						parts={parts.filter((p) => visible.has(p.kind))}
+						label="The text sent to the model"
+						maxHeight="26rem"
+						emphasis={['message', 'call']}
+					/>
 					<p class="count">
 						{#if stepper.index === 0}{run.task.length} characters{:else if stepper.atEnd}The second
-							call: {step.promptTokens.toLocaleString('en-US')} tokens{:else}The full first call is {step.promptTokens.toLocaleString(
-								'en-US'
+							call: {formatCount(step.promptTokens)} tokens{:else}The full first call is {formatCount(
+								step.promptTokens
 							)} tokens{/if}
 					</p>
 				</div>
 			</div>
-			<ul class="legend" aria-label="Colors">
-				{#each LEGEND as l (l.kind)}
-					<li class:off={!visible.has(l.kind)}><span class="swatch {l.kind}"></span>{l.label}</li>
-				{/each}
-			</ul>
+			<RoleKey roles={LEGEND.map((l) => ({ ...l, off: !visible.has(l.kind) }))} />
 			<p class="explain">{LAYERS[stepper.index].text}</p>
 		{/snippet}
 	</Loading>
@@ -108,114 +108,11 @@
 		}
 	}
 
-	.chat {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: grid;
-		align-content: start;
-		gap: var(--space-2);
-		font-size: 0.9rem;
-	}
-
-	.chat li {
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius);
-		white-space: pre-wrap;
-	}
-
-	.chat .user {
-		justify-self: end;
-		background: var(--c-prob-tint);
-		max-width: 85%;
-	}
-
-	.chat .assistant {
-		background: var(--surface-2);
-		max-width: 95%;
-	}
-
-	.raw {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-size: 0.75rem;
-		line-height: 1.5;
-		padding: var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		margin: 0;
-		max-height: 26rem;
-		overflow: auto;
-	}
-
 	.count {
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		color: var(--ink-muted);
 		margin: var(--space-1) 0 0;
-	}
-
-	.message {
-		color: var(--c-prob-ink);
-		font-weight: 700;
-	}
-
-	.marker {
-		color: var(--c-token-ink);
-	}
-
-	.history {
-		color: var(--ink-muted);
-	}
-
-	.system,
-	.tools,
-	.call {
-		color: var(--c-harness-ink);
-	}
-
-	.tools {
-		font-style: italic;
-	}
-
-	.call {
-		font-weight: 700;
-	}
-
-	.result {
-		color: var(--c-attention-ink);
-	}
-
-	.assistant {
-		color: var(--c-vector-ink);
-	}
-
-	.legend {
-		list-style: none;
-		padding: 0;
-		margin: var(--space-3) 0 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-	}
-
-	.legend li {
-		display: flex;
-		align-items: center;
-		gap: var(--space-1);
-	}
-
-	.legend li.off .swatch {
-		opacity: 0.25;
-	}
-
-	.swatch {
-		width: 0.8rem;
-		height: 0.8rem;
-		border-radius: 2px;
-		background: currentColor;
 	}
 
 	.explain {

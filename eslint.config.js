@@ -13,6 +13,14 @@ const chapterImports = {
 	message: 'Only routes and chapters import chapter code.'
 };
 
+const noFetch = {
+	regex: '^#lib/datasets/(load|use)\\.ts$',
+	allowTypeImports: true,
+	message: 'Only widgets get data; components render what they are given.'
+};
+
+const COMPONENT_FOLDERS = ['ui', 'primitives', 'frame', 'page', 'widgets'];
+
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
 	js.configs.recommended,
@@ -38,23 +46,21 @@ export default defineConfig(
 			}
 		}
 	},
-	// Layers (docs/spec/architecture.md): imports only point down.
-	layer(['src/lib/components/widgets/**'], [chapterImports], 'Shared widgets'),
+	// Layers (docs/spec/architecture.md and components.md): imports only point down.
+	componentLayer('widgets', ['ui', 'primitives', 'frame']),
+	componentLayer('page', ['ui'], [noFetch]),
+	componentLayer('frame', ['ui'], [noFetch]),
+	componentLayer('primitives', ['ui'], [noFetch]),
 	layer(
-		['src/lib/components/primitives/**', 'src/lib/components/layout/**'],
+		['src/lib/components/ui/**'],
 		[
-			chapterImports,
 			{
-				regex: '^#lib/components/widgets/',
-				message: 'Primitives and layout render what they are given.'
-			},
-			{
-				regex: '^#lib/datasets/(load|use)\\.ts$',
+				regex: '^(#lib/(?!components/ui/)|\\.\\./)',
 				allowTypeImports: true,
-				message: 'Primitives and layout never fetch data.'
+				message: 'components/ui/ knows nothing outside itself.'
 			}
 		],
-		'Primitives and layout'
+		'Components: ui'
 	),
 	layer(
 		['src/lib/chapters/*/**'],
@@ -104,4 +110,21 @@ function layer(files, patterns, name) {
 		ignores: ['**/*.test.ts', '**/*.e2e.ts'],
 		rules: { '@typescript-eslint/no-restricted-imports': ['error', { patterns }] }
 	};
+}
+
+/** `components/<folder>/` may import only the component folders in `allowed`. */
+function componentLayer(folder, allowed, patterns = []) {
+	const banned = COMPONENT_FOLDERS.filter((f) => f !== folder && !allowed.includes(f));
+	return layer(
+		[`src/lib/components/${folder}/**`],
+		[
+			chapterImports,
+			{
+				regex: `^#lib/components/(${banned.join('|')})/`,
+				message: `components/${folder}/ imports only ${allowed.map((f) => `${f}/`).join(', ')}.`
+			},
+			...patterns
+		],
+		`Components: ${folder}`
+	);
 }

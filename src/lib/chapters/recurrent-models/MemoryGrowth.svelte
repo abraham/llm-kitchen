@@ -1,14 +1,14 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { canonical } from '#lib/models/provider.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	/** Attention keeps a key and a value vector for every earlier token, in every block. */
 	const PER_TOKEN = 2 * canonical.layers * canonical.embeddingSize;
 	const RECURRENT = 32;
 	let tokens = $state(10);
-	const id = $props.id();
-	const fmt = (n: number) => n.toLocaleString('en-US');
 	const attention = $derived(tokens * PER_TOKEN);
 	const max = canonical.contextLength * PER_TOKEN;
 </script>
@@ -18,25 +18,28 @@
 	source={{ kind: 'computed' }}
 	onreset={() => (tokens = 10)}
 >
-	<div class="slider">
-		<label for="{id}-n" class="label"
-			>Tokens read so far <span class="mono" aria-hidden="true">{fmt(tokens)}</span></label
-		>
-		<input id="{id}-n" type="range" min="1" max={canonical.contextLength} bind:value={tokens} />
+	<div class="tokens">
+		<Slider
+			label="Tokens read so far"
+			min={1}
+			max={canonical.contextLength}
+			format={formatCount}
+			bind:value={tokens}
+		/>
 	</div>
 	<dl class="bars">
 		<div>
 			<dt>{canonical.displayName}, with attention</dt>
 			<dd>
 				<span class="bar attention" style:width="{(attention / max) * 70}%"></span>
-				<span class="mono">{fmt(attention)} numbers</span>
+				<span class="mono">{formatCount(attention)} numbers</span>
 			</dd>
 		</div>
 		<div>
 			<dt>The tiny recurrent model above</dt>
 			<dd>
 				<span class="bar recurrent"></span>
-				<span class="mono">{fmt(RECURRENT)} numbers</span>
+				<span class="mono">{formatCount(RECURRENT)} numbers</span>
 			</dd>
 		</div>
 	</dl>
@@ -44,7 +47,7 @@
 		So that later tokens can look back without redoing the work, {canonical.displayName} keeps a key and
 		a value (<ChapterRef to="attention" />) for every token it has read, in each of its {canonical.layers}
 		blocks: 2 × {canonical.layers}
-		× {canonical.embeddingSize} = {fmt(PER_TOKEN)} numbers per token, up to its limit of {fmt(
+		× {canonical.embeddingSize} = {formatCount(PER_TOKEN)} numbers per token, up to its limit of {formatCount(
 			canonical.contextLength
 		)} tokens. This store is the KV cache (<ChapterRef to="caching" />). The recurrent model keeps
 		only its memory.
@@ -52,15 +55,8 @@
 </WidgetFrame>
 
 <style>
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.tokens {
 		max-width: 24rem;
-		margin-bottom: var(--space-3);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-token);
 	}
 
 	.bars {

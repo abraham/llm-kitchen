@@ -4,7 +4,7 @@ import { gotoHydrated } from '../../../../tests/e2e/helpers.ts';
 test('gradient descent steps downhill', async ({ page }) => {
 	await gotoHydrated(page, '/learning-from-mistakes');
 	const widget = page.getByRole('region', { name: 'Rolling downhill' });
-	const readout = widget.locator('.readout');
+	const readout = widget.getByRole('status');
 	const lossOf = async () => Number((await readout.textContent())!.match(/loss\s+(\d+\.\d+)/)![1]);
 	const before = await lossOf();
 	await widget.getByRole('button', { name: 'Take 20 steps' }).click();
@@ -20,7 +20,7 @@ test('one training step nudges every number of the curve fitter', async ({ page 
 	await expect(curve.getByText(/^step 1 ·/)).toBeVisible();
 	// Adam's first step moves every number by the step size, 0.02.
 	await expect(
-		curve.getByText(/nudged all 49 numbers below, each by at\s+most\s+0\.020/)
+		curve.getByText(/nudged all 49 numbers below, each\s+by\s+at\s+most\s+0\.020/)
 	).toBeVisible();
 	await expect(first.locator('.mono')).not.toHaveText(before!);
 	await expect(curve.locator('.arrow.up, .arrow.down')).toHaveCount(49);

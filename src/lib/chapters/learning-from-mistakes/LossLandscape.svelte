@@ -1,5 +1,7 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 
 	// A bumpy one-weight loss: a bowl with a ripple, so big steps can overshoot or get stuck.
 	const loss = (w: number) => 0.5 * (w - 1) ** 2 + 0.4 * Math.sin(3 * w) + 1;
@@ -89,22 +91,26 @@
 	</svg>
 
 	<div class="controls">
-		<div class="slider">
-			<label for="{id}-lr" class="label"
-				>Step size (learning rate) <span class="mono" aria-hidden="true">{lr.toFixed(2)}</span
-				></label
-			>
-			<input id="{id}-lr" type="range" min="0.02" max="1.2" step="0.02" bind:value={lr} />
+		<div class="lr">
+			<Slider
+				label="Step size (learning rate)"
+				min={0.02}
+				max={1.2}
+				step={0.02}
+				format={(v) => v.toFixed(2)}
+				concept="weight"
+				bind:value={lr}
+			/>
 		</div>
 		<button type="button" onclick={() => step()}>Take one step</button>
 		<button type="button" onclick={() => step(20)}>Take 20 steps</button>
 	</div>
-	<p class="readout" aria-live="polite">
+	<Status>
 		Weight <span class="mono">{w.toFixed(2)}</span>, loss
 		<span class="mono">{loss(w).toFixed(2)}</span>.
 		{#if lr > 0.6}With steps this big, the ball overshoots and can bounce around.{:else if history.length > 20 && Math.abs(slope(w)) < 0.02}The
 			ground is flat here: a low point, though not necessarily the lowest.{/if}
-	</p>
+	</Status>
 	<p class="note">
 		The arrow is the next step: the step size times how steep the ground is, pointing downhill. The
 		dashed circle is where it lands.
@@ -164,25 +170,15 @@
 	}
 
 	.controls {
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
 		gap: var(--space-3);
 	}
 
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.lr {
 		min-width: 14rem;
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-weight);
-	}
-
-	.readout {
-		min-height: 3em;
-		margin: var(--space-3) 0 0;
 	}
 
 	.note {

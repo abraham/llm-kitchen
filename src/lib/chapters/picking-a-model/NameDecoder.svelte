@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { COLLECTIONS, NOT_IN_NAME, decodeName } from './data.ts';
 
 	const DEFAULT = 'google/gemma-4-26B-A4B-it';
@@ -99,11 +99,6 @@
 		align-items: center;
 		gap: var(--space-2);
 		margin-bottom: var(--space-3);
-	}
-
-	select {
-		font: inherit;
-		max-width: 100%;
 	}
 
 	.name {

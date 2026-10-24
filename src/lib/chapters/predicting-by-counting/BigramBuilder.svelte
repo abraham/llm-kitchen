@@ -1,8 +1,9 @@
 <script lang="ts">
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { RHYMES } from '#lib/data/rhymes.ts';
 	import { bigramCounts, generateBigram, nextWordProbs, words } from '#lib/math/bigram.ts';
@@ -78,40 +79,52 @@
 			Counts so far: {seen.length} of {pairs.length} pairs
 			{#if current}· just counted <strong class="mono">{current.from} → {current.to}</strong>{/if}
 		</p>
-		<div class="table" role="region" aria-label="Next-word counts" {@attach scrollable}>
-			{#each rows as [from, followers] (from)}
-				<div class="row" class:active={current?.from === from}>
-					<span class="mono from">{from} →</span>
-					{#each Object.entries(followers) as [to, n] (to)}
-						<span class="follower mono" class:active={current?.from === from && current?.to === to}
-							>{to} <span class="count">×{n}</span></span
-						>
-					{/each}
-				</div>
-			{:else}
-				<p class="empty">Nothing counted yet. Press Next or Play.</p>
-			{/each}
-		</div>
+		<ScrollBox label="Next-word counts" maxHeight="14rem" framed
+			><div class="rows">
+				{#each rows as [from, followers] (from)}
+					<div class="row" class:active={current?.from === from}>
+						<span class="mono from">{from} →</span>
+						{#each Object.entries(followers) as [to, n] (to)}
+							<span
+								class="follower mono"
+								class:active={current?.from === from && current?.to === to}
+								>{to} <span class="count">×{n}</span></span
+							>
+						{/each}
+					</div>
+				{:else}
+					<p class="empty">Nothing counted yet. Press Next or Play.</p>
+				{/each}
+			</div></ScrollBox
+		>
 	</div>
 
 	{#if stepper.atEnd}
 		<div class="after">
 			<div>
-				<label class="label" for="picked">After the word</label>
-				<select id="picked" bind:value={picked}>
-					{#each starters as w (w)}<option>{w}</option>{/each}
-				</select>
+				<Choice
+					legend="After the word"
+					appearance="select"
+					layout="inline"
+					options={starters.map((w) => ({ value: w, label: w }))}
+					bind:value={picked}
+				/>
 				<ProbBars
 					caption="Probability of each next word after “{picked}”"
 					bars={nextWordProbs(counts, picked).map((o) => ({ label: o.word, p: o.p }))}
 				/>
 			</div>
 			<div>
-				<label class="label" for="start">Generate starting from</label>
-				<select id="start" bind:value={start}>
-					{#each starters as w (w)}<option>{w}</option>{/each}
-				</select>
-				<button type="button" onclick={generate}>Generate</button>
+				<div class="generate">
+					<Choice
+						legend="Generate starting from"
+						appearance="select"
+						layout="inline"
+						options={starters.map((w) => ({ value: w, label: w }))}
+						bind:value={start}
+					/>
+					<button type="button" onclick={generate}>Generate</button>
+				</div>
 				{#if generated.length}
 					<p class="generated" aria-live="polite">
 						{generated.join(' ')}{generated.length < 16 ? ' ■' : ' …'}
@@ -180,12 +193,7 @@
 		margin-top: var(--space-4);
 	}
 
-	.table {
-		max-height: 14rem;
-		overflow-y: auto;
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
-		padding: var(--space-2);
+	.rows {
 		font-size: 0.85rem;
 	}
 
@@ -227,10 +235,13 @@
 		margin-top: var(--space-6);
 	}
 
-	select {
-		font: inherit;
-		font-family: var(--font-mono);
-		margin: 0 var(--space-2) var(--space-2);
+	.generate {
+		--block-space: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2) var(--space-4);
+		margin-bottom: var(--space-2);
 	}
 
 	.generated {

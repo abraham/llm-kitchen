@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { all, useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ChatLog from '#lib/components/primitives/ChatLog.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import { roleSwatch } from '#lib/components/primitives/roles.ts';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
-	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
+	import { displayToken, formatCount, formatPercent } from '#lib/components/primitives/format.ts';
 	import type { Slug } from '#lib/curriculum/index.ts';
 	import { STAGES, VARIANTS, type StageGroup } from './data.ts';
 	import { segmentPrompt, type PromptPart } from '#lib/harness/agent.ts';
@@ -34,7 +36,6 @@
 	];
 	const LENS_BLOCKS = [1, 8, canonical.layers];
 
-	const fmt = (n: number) => n.toLocaleString('en-US');
 	const seconds = (ms: number) => `${Math.round(ms / 1000)} seconds`;
 
 	/** Color scale: the 95th-percentile size, so a few huge numbers don't wash out the rest. */
@@ -59,9 +60,7 @@
 {/snippet}
 
 {#snippet promptText(parts: PromptPart[], label: string)}
-	<pre class="raw" {@attach scrollable} aria-label={label}>{#each parts as p, i (i)}<span
-				class={p.kind}>{p.text}</span
-			>{/each}</pre>
+	<PromptText {parts} {label} maxHeight="14rem" emphasis={['message', 'call']} />
 {/snippet}
 
 <WidgetFrame
@@ -135,17 +134,16 @@
 				{/if}
 				<div class="example">
 					{#if stage.id === 'message'}
-						<ol class="chat" aria-label="The chat, as the app shows it">
-							{#each run.history as m, i (i)}
-								<li class={m.role}>{m.content}</li>
-							{/each}
-							<li class="user">{run.task}</li>
-						</ol>
+						<ChatLog
+							label="The chat, as the app shows it"
+							messages={[...run.history, { role: 'user', content: run.task }]}
+						/>
 					{:else if stage.id === 'prompt'}
 						{@render promptText(segmentPrompt(call1.prompt), 'The text sent to the model')}
 						<p>
-							Your {run.task.length}-character message is now a {fmt(call1.promptTokens)}-token
-							prompt.
+							Your {run.task.length}-character message is now a {formatCount(
+								call1.promptTokens
+							)}-token prompt.
 						</p>
 					{:else if stage.id === 'cache'}
 						<div class="bars" aria-hidden="true">
@@ -170,8 +168,8 @@
 							<span class="swatch new"></span>new work
 						</p>
 						<p>
-							The model is called twice for this message. Call 2 ({fmt(call2.promptTokens)} tokens) starts
-							with all {fmt(call1.promptTokens)} tokens of call 1, so only the last {fmt(
+							The model is called twice for this message. Call 2 ({formatCount(call2.promptTokens)} tokens)
+							starts with all {formatCount(call1.promptTokens)} tokens of call 1, so only the last {formatCount(
 								call2.promptTokens - call1.promptTokens
 							)} need new work. The system prompt and tool descriptions are the same for every message,
 							so even call 1 starts with a familiar prefix.
@@ -187,7 +185,7 @@
 							label="{displayToken(last.text)}: word vector plus position vector"
 						/>
 						<p>
-							The last token, <span class="mono">{displayToken(last.text)}</span>, as {fmt(
+							The last token, <span class="mono">{displayToken(last.text)}</span>, as {formatCount(
 								vectors.dimensions
 							)} numbers (the first few shown).
 						</p>
@@ -211,7 +209,9 @@
 							bars={trace.steps[0].candidates
 								.slice(0, 5)
 								.map((c) => ({ label: displayToken(c.token.text), p: c.prob }))}
-							caption="Top 5 of {fmt(canonical.vocabularySize)} next tokens after “{trace.prompt}”"
+							caption="Top 5 of {formatCount(
+								canonical.vocabularySize
+							)} next tokens after “{trace.prompt}”"
 						/>
 					{:else if stage.id === 'pick'}
 						<p class="chips">
@@ -237,7 +237,7 @@
 							>
 						</p>
 						<p>
-							{end} loops, one token each. Writing {fmt(kv.generated.length)} tokens took
+							{end} loops, one token each. Writing {formatCount(kv.generated.length)} tokens took
 							{seconds(kv.totalMs.cache)} with the KV cache and {seconds(kv.totalMs.noCache)} without
 							it.
 						</p>
@@ -256,21 +256,24 @@
 							'What the harness added for call 2'
 						)}
 						<p>
-							<span class="swatch result"></span>Untrusted: the tool result goes into the prompt as
-							plain text. This harness runs every call without asking, which is safe for a search
-							that only reads.
+							<span class="swatch" style={roleSwatch('result')}></span>Untrusted: the tool result
+							goes into the prompt as plain text. This harness runs every call without asking, which
+							is safe for a search that only reads.
 						</p>
 					{:else if stage.id === 'context'}
 						<p>
-							This conversation is short: call 2 is {fmt(call2.promptTokens)} tokens. A long chat or a
-							busy agent can outgrow the model’s window or the budget, and that is when the harness has
-							to choose what to keep.
+							This conversation is short: call 2 is {formatCount(call2.promptTokens)} tokens. A long chat
+							or a busy agent can outgrow the model’s window or the budget, and that is when the harness
+							has to choose what to keep.
 						</p>
 					{:else if stage.id === 'reply'}
-						<ol class="chat" aria-label="The reply, as the app shows it">
-							<li class="user">{run.task}</li>
-							<li class="assistant">{call2.thought}</li>
-						</ol>
+						<ChatLog
+							label="The reply, as the app shows it"
+							messages={[
+								{ role: 'user', content: run.task },
+								{ role: 'assistant', content: call2.thought }
+							]}
+						/>
 					{/if}
 				</div>
 			{/snippet}
@@ -414,54 +417,13 @@
 		min-height: 8rem;
 	}
 
-	.raw {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-size: 0.75rem;
-		max-height: 14rem;
-		overflow-y: auto;
-		padding: var(--space-2);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-	}
-
-	.marker {
-		color: var(--c-token-ink);
-	}
-
-	.history {
-		color: var(--ink-muted);
-	}
-
-	.system,
-	.tools,
-	.call {
-		color: var(--c-harness-ink);
-	}
-
-	.call {
-		font-weight: 700;
-	}
-
-	.message {
-		font-weight: 700;
-	}
-
-	.result {
-		background: var(--c-loss-tint);
-		color: var(--c-loss-ink);
-	}
-
 	.swatch {
 		display: inline-block;
 		width: 0.8em;
 		height: 0.8em;
 		margin-right: var(--space-1);
 		vertical-align: -0.05em;
-	}
-
-	.swatch.result {
-		border: 1px solid var(--c-loss);
+		box-shadow: inset 0 0 0 1px var(--rule);
 	}
 
 	.swatch.new {
@@ -484,31 +446,6 @@
 
 	.key .new {
 		margin-left: var(--space-3);
-	}
-
-	.chat {
-		list-style: none;
-		padding: 0;
-		margin: 0 0 var(--space-2);
-		display: grid;
-		gap: var(--space-2);
-		font-size: 0.9rem;
-	}
-
-	.chat li {
-		padding: var(--space-2) var(--space-3);
-		border-radius: var(--radius);
-		white-space: pre-wrap;
-		max-width: 85%;
-	}
-
-	.chat .user {
-		justify-self: end;
-		background: var(--c-prob-tint);
-	}
-
-	.chat .assistant {
-		background: var(--surface-2);
 	}
 
 	.bars {

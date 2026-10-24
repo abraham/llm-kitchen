@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import type { TrainerRequest, TrainerResponse } from '#lib/workers/trainer.worker.ts';
 	import TrainerWorker from '#lib/workers/trainer.worker.ts?worker';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	let worker: Worker | undefined;
 	let info = $state<Extract<TrainerResponse, { type: 'info' }> | null>(null);
@@ -62,10 +63,8 @@
 			</p>
 			{#if info}
 				<p class="facts">
-					{info.parameters.toLocaleString('en-US')} weights, learning to predict the next of
-					{info.vocabSize - 1} characters from the 3 before it, using {info.examples.toLocaleString(
-						'en-US'
-					)}
+					{formatCount(info.parameters)} weights, learning to predict the next of
+					{info.vocabSize - 1} characters from the 3 before it, using {formatCount(info.examples)}
 					examples from the six rhymes.
 				</p>
 			{/if}

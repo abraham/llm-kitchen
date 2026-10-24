@@ -10,5 +10,5 @@ test('switching the scale metric shows unpublished numbers', async ({ page }) =>
 
 	const chart = page.getByRole('region', { name: 'The scaling curve' });
 	await chart.getByLabel(/Weights:/).fill('11');
-	await expect(chart.locator('.readout')).toContainText('outside the range');
+	await expect(chart.getByRole('status')).toContainText('outside the range');
 });

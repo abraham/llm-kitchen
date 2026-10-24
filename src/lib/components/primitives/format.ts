@@ -18,3 +18,14 @@ export function formatPercent(p: number): string {
 	const rounded = Math.round(p * 10000) / 10000;
 	return `${(rounded * 100).toFixed(rounded < 0.1 ? 1 : 0)}%`;
 }
+
+/** A whole number with thousands separators, e.g. `151,936`. */
+export function formatCount(n: number): string {
+	return Math.round(n).toLocaleString('en-US');
+}
+
+/** A decimal with a real minus sign, and no sign when it rounds to zero, e.g. `−0.42`. */
+export function formatSigned(v: number, digits = 2): string {
+	const abs = Math.abs(v).toFixed(digits);
+	return (v < 0 && Number(abs) !== 0 ? '−' : '') + abs;
+}

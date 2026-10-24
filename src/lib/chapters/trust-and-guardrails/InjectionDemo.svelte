@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { all, then, useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun } from '#lib/harness/agent.ts';
 	import { FakeFiles, INJECTED_PAGE, START_FILES, runTool } from '#lib/harness/tools.ts';
@@ -30,7 +31,6 @@
 	);
 
 	let guard = $state<Guard>('none');
-	const id = $props.id();
 	const split = INJECTED_PAGE.indexOf('</tool_response>');
 
 	function view(runs: Record<string, AgentRun>, g: Guard) {
@@ -66,26 +66,25 @@
 				<pre>{INJECTED_PAGE.slice(0, split)}<mark>{INJECTED_PAGE.slice(split)}</mark></pre>
 			</div>
 
-			<fieldset class="pick">
-				<legend class="label">Guardrail in the harness</legend>
-				{#each Object.entries(GUARDS) as [key, g] (key)}
-					<label
-						><input type="radio" name="{id}-g" bind:group={guard} value={key} /> {g.label}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Guardrail in the harness"
+				options={Object.entries(GUARDS).map(([value, g]) => ({ value, label: g.label }))}
+				bind:value={guard}
+			/>
 
-			<ol class="log" {@attach scrollable} aria-label="What the agent did">
-				{#each v.steps as s, i (i)}
-					<li>
-						{#if s.call}
-							<ToolCallCard call={s.call} result={s.result} blocked={s.blocked} />
-						{:else}
-							<p class="answer"><span class="label">Answer</span> {s.thought}</p>
-						{/if}
-					</li>
-				{/each}
-			</ol>
+			<ScrollBox label="What the agent did" maxHeight="28rem"
+				><ol class="log">
+					{#each v.steps as s, i (i)}
+						<li>
+							{#if s.call}
+								<ToolCallCard call={s.call} result={s.result} blocked={s.blocked} />
+							{:else}
+								<p class="answer"><span class="label">Answer</span> {s.thought}</p>
+							{/if}
+						</li>
+					{/each}
+				</ol></ScrollBox
+			>
 			<p class="stopped">{v.stopped}</p>
 
 			<div class="files" aria-live="polite">
@@ -119,29 +118,12 @@
 		color: var(--c-loss-ink);
 	}
 
-	.pick {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
-	}
-
 	.log {
 		list-style: none;
 		padding: 0;
 		margin: 0;
 		display: grid;
 		gap: var(--space-2);
-		max-height: 28rem;
-		overflow: auto;
 	}
 
 	.answer {

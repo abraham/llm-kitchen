@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import { crossfade } from 'svelte/transition';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';

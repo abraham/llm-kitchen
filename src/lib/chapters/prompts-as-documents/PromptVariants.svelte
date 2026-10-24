@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';
@@ -48,30 +49,20 @@
 			{@const g = d.groups[group]}
 			{@const v = g.variants[variant]}
 			{@const peak = Math.max(...v.attention)}
-			<fieldset class="pick">
-				<legend class="label">Experiment</legend>
-				{#each d.groups as option, i (option.name)}
-					<label
-						><input
-							type="radio"
-							name="{id}-group"
-							value={i}
-							checked={group === i}
-							onchange={() => ((group = i), (variant = 0))}
-						/>
-						{option.name}</label
-					>
-				{/each}
-			</fieldset>
-			<fieldset class="variants">
-				<legend class="label">Prompt</legend>
-				{#each g.variants as option, i (option.text)}
-					<label class:on={variant === i}
-						><input type="radio" name="{id}-variant" value={i} bind:group={variant} />
-						<span class="mono">{show(option.text)}</span></label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Experiment"
+				options={d.groups.map((x, i) => ({ value: i, label: x.name }))}
+				bind:value={() => group, (i) => ((group = i), (variant = 0))}
+			/>
+			<Choice
+				legend="Prompt"
+				layout="stack"
+				options={g.variants.map((v, i) => ({ value: i, label: v.text }))}
+				bind:value={variant}
+			>
+				{#snippet option(o)}<span class="mono" class:on={o.value === variant}>{show(o.label)}</span
+					>{/snippet}
+			</Choice>
 
 			<div class="grid">
 				<div>
@@ -90,7 +81,7 @@
 					/>
 				</div>
 				<div>
-					<table>
+					<table class="data">
 						<caption>Chance of {g.watch.map((w) => `“${w.trim()}”`).join(', ')} next</caption>
 						<thead>
 							<tr>
@@ -153,27 +144,7 @@
 </WidgetFrame>
 
 <style>
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
-	.variants {
-		flex-direction: column;
-	}
-
-	.variants label.on .mono {
+	.on {
 		font-weight: 700;
 	}
 
@@ -199,40 +170,10 @@
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
 		font-size: 0.8rem;
-	}
-
-	caption {
-		text-align: left;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--ink-muted);
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
 	}
 
 	tbody th {
-		font-weight: 400;
 		font-size: 0.75rem;
 		overflow-wrap: anywhere;
 	}

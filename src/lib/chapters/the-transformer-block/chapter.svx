@@ -1,8 +1,8 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Cite from '#lib/components/layout/Cite.svelte';
-	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import BlockBuilder from './BlockBuilder.svelte';
 	import ResidualStream from './ResidualStream.svelte';
 </script>

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import { asset } from '$app/paths';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('vision/clip');
 	let caption = $state(0);
-	const id = $props.id();
 	const src = (file: string) => asset(file as Parameters<typeof asset>[0]);
 	const label = (name: string) => name.replace('-', ' ');
 </script>
@@ -23,13 +23,13 @@
 			{@const ranked = d.images
 				.map((img, i) => ({ img, p: c.probability[i], sim: c.similarity[i] }))
 				.sort((a, b) => b.p - a.p)}
-			<div class="pick">
-				<label for="{id}-cap" class="label">Words</label>
-				<select id="{id}-cap" bind:value={caption}>
-					{#each d.captions as option, i (option.text)}<option value={i}>{option.text}</option
-						>{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Words"
+				appearance="select"
+				layout="inline"
+				options={d.captions.map((x, i) => ({ value: i, label: x.text }))}
+				bind:value={caption}
+			/>
 			<ol class="matches">
 				{#each ranked as r, i (r.img.name)}
 					<li class:best={i === 0}>
@@ -52,18 +52,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-		margin-bottom: var(--space-3);
-	}
-
-	select {
-		font: inherit;
-	}
-
 	.matches {
 		list-style: none;
 		padding: 0;

@@ -54,7 +54,12 @@ Each concept has one color, defined in `src/styles/tokens.css` (`--c-<concept>`,
 Built once in `src/lib/components/primitives/` and reused in every chapter that shows the concept:
 `TokenChip` (a chip with the token ID in small mono text underneath), `VectorStrip` (a row of
 colored cells), `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, and
-`ToolCallCard`. A token chip looks the same everywhere.
+`ToolCallCard`. A token chip looks the same everywhere. Prompts use `PromptText`, `ChatLog`, and
+`RoleKey`, which color each part by who wrote it from one table in `roles.ts`.
+
+Controls and containers come from `src/lib/components/ui/` (`Choice`, `Slider`, `Toggle`,
+`ScrollBox`, `Status`), so a picker or a slider looks and behaves the same in every widget. See
+[components.md](components.md).
 
 Transitions between representations use shared-element morphs (Svelte `crossfade` with shared keys,
 plus `flip` for reordering), for example a token chip becoming a vector strip.

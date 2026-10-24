@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
 
 	const data = useDataset('prompts/system');
-	const id = $props.id();
 	let pick = $state(0);
 </script>
 
@@ -18,30 +19,34 @@
 	<Loading promise={data}>
 		{#snippet children(d)}
 			{@const r = d.replies[pick]}
-			<fieldset>
-				<legend class="label">System prompt</legend>
-				{#each d.replies as option, i (option.name)}
-					<label
-						><input type="radio" name="{id}-sys" value={i} bind:group={pick} /> {option.name}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="System prompt"
+				options={d.replies.map((r, i) => ({ value: i, label: r.name }))}
+				bind:value={pick}
+			/>
 			<p class="label">What the model reads</p>
-			<pre
-				class="template">{#each chatTemplate( [{ role: 'system', content: r.system }, { role: 'user', content: d.question }] ) as part, i (i)}<span
-						class={part.kind}>{part.text}</span
-					>{/each}</pre>
-			<p class="label">Its reply ({r.tokens} tokens)</p>
-			<div
-				class="reply"
-				{@attach scrollable}
-				role="region"
-				aria-label="Reply with the {r.name.toLowerCase()} system prompt"
-			>
-				{r.text}
+			<div class="template">
+				<PromptText
+					parts={chatTemplate([
+						{ role: 'system', content: r.system },
+						{ role: 'user', content: d.question }
+					])}
+					label="What the model reads"
+					maxHeight="none"
+					emphasis={['system']}
+				/>
 			</div>
+			<p class="label">Its reply ({r.tokens} tokens)</p>
+			<ScrollBox
+				label="Reply with the {r.name.toLowerCase()} system prompt"
+				maxHeight="16rem"
+				framed
+				><div class="reply">
+					{r.text}
+				</div></ScrollBox
+			>
 
-			<table>
+			<table class="data">
 				<caption>
 					Does a persona make it better at sums? “{d.persona}” vs. the default system prompt
 				</caption>
@@ -83,94 +88,17 @@
 </WidgetFrame>
 
 <style>
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.template {
 		margin: var(--space-1) 0 var(--space-3);
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		font-size: 0.8rem;
-		white-space: pre-wrap;
-	}
-
-	.template .marker {
-		color: var(--ink-muted);
-	}
-
-	.template .system {
-		background: var(--c-harness-tint);
-		outline: 1.5px solid var(--c-harness);
-		border-radius: 2px;
-		font-weight: 700;
-	}
-
-	.template .user {
-		background: var(--c-token-tint);
-		border-radius: 2px;
 	}
 
 	.reply {
-		margin: var(--space-1) 0 var(--space-4);
-		padding: var(--space-2) var(--space-3);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
 		font-size: 0.9rem;
 		white-space: pre-wrap;
-		max-height: 16rem;
-		overflow-y: auto;
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.85rem;
-	}
-
-	caption {
-		text-align: left;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--ink-muted);
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-	}
-
-	tbody th,
-	tfoot th {
-		font-weight: 400;
+		margin-top: var(--space-4);
 	}
 
 	td.wrong {

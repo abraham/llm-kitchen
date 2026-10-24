@@ -1,15 +1,15 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { TRIANGLE, triangleNet } from '#lib/math/mlp.ts';
+	import { formatSigned } from '#lib/components/primitives/format.ts';
 
 	const START = { x1: 0.5, x2: 1 };
 	let x1 = $state(START.x1);
 	let x2 = $state(START.x2);
 	let on = $state([true, true, true]);
-	const id = $props.id();
 
 	const net = $derived(triangleNet([x1, x2], on));
-	const fmt = (v: number) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
 
 	// Input plane from −2 to 2 on both axes.
 	const S = 200;
@@ -58,9 +58,11 @@
 			viewBox="0 0 360 200"
 			class="network"
 			role="img"
-			aria-label="Inputs {fmt(x1)} and {fmt(x2)} go to three neurons, which output {net.hidden
-				.map((h, i) => (on[i] ? fmt(h.output) : 'nothing (off)'))
-				.join(', ')}. The output neuron gives {fmt(net.out.output)}."
+			aria-label="Inputs {formatSigned(x1)} and {formatSigned(
+				x2
+			)} go to three neurons, which output {net.hidden
+				.map((h, i) => (on[i] ? formatSigned(h.output) : 'nothing (off)'))
+				.join(', ')}. The output neuron gives {formatSigned(net.out.output)}."
 		>
 			{#each HIDDEN_Y as hy, j (j)}
 				{#each [60, 140] as iy, i (i)}
@@ -90,16 +92,18 @@
 			{/each}
 			{#each [x1, x2] as x, i (i)}
 				<circle cx="40" cy={60 + i * 80} r="22" class="input" />
-				<text x="40" y={60 + i * 80} class="value">{fmt(x)}</text>
+				<text x="40" y={60 + i * 80} class="value">{formatSigned(x)}</text>
 			{/each}
 			{#each net.hidden as h, j (j)}
 				<circle cx="180" cy={HIDDEN_Y[j]} r="22" class="node" class:off={!on[j]} />
-				<text x="180" y={HIDDEN_Y[j]} class="value" class:muted={!on[j]}>{fmt(h.output)}</text>
+				<text x="180" y={HIDDEN_Y[j]} class="value" class:muted={!on[j]}
+					>{formatSigned(h.output)}</text
+				>
 				<text x="214" y={HIDDEN_Y[j] - 16} class="small">{j + 1}</text>
 			{/each}
-			<text x="310" y="60" class="weight">× {fmt(TRIANGLE.outWeight)}</text>
+			<text x="310" y="60" class="weight">× {formatSigned(TRIANGLE.outWeight)}</text>
 			<circle cx="310" cy="100" r="24" class="node out" />
-			<text x="310" y="100" class="value">{fmt(net.out.output)}</text>
+			<text x="310" y="100" class="value">{formatSigned(net.out.output)}</text>
 			<text x="310" y="140" class="small">output</text>
 		</svg>
 
@@ -107,9 +111,9 @@
 			viewBox="0 0 {S} {S}"
 			class="plane"
 			role="img"
-			aria-label="The output for every pair of inputs from −2 to 2: shaded where it is above 0. The dot marks inputs {fmt(
+			aria-label="The output for every pair of inputs from −2 to 2: shaded where it is above 0. The dot marks inputs {formatSigned(
 				x1
-			)}, {fmt(x2)}."
+			)}, {formatSigned(x2)}."
 		>
 			{#each cells as c (c.col * N + c.row)}
 				<rect
@@ -133,22 +137,8 @@
 	</div>
 
 	<div class="controls">
-		{#each [x1, x2] as x, i (i)}
-			<div class="slider">
-				<label for="{id}-x{i}" class="label"
-					>Input {i + 1} <span class="mono" aria-hidden="true">{fmt(x)}</span></label
-				>
-				<input
-					id="{id}-x{i}"
-					type="range"
-					min="-2"
-					max="2"
-					step="0.05"
-					value={x}
-					oninput={(e) => (i === 0 ? (x1 = +e.currentTarget.value) : (x2 = +e.currentTarget.value))}
-				/>
-			</div>
-		{/each}
+		<Slider label="Input 1" min={-2} max={2} step={0.05} format={formatSigned} bind:value={x1} />
+		<Slider label="Input 2" min={-2} max={2} step={0.05} format={formatSigned} bind:value={x2} />
 		<fieldset>
 			<legend class="label">Neurons in the layer</legend>
 			{#each [0, 1, 2] as j (j)}
@@ -161,15 +151,17 @@
 		{#each net.hidden as h, j (j)}
 			{@const [a, b] = TRIANGLE.weights[j]}
 			<li class:muted={!on[j]}>
-				{j + 1}: {fmt(x1)}×{fmt(a)} + {fmt(x2)}×{fmt(b)} + {fmt(TRIANGLE.biases[j])} = {fmt(h.sum)}
-				→ relu = {fmt(h.output)}
+				{j + 1}: {formatSigned(x1)}×{formatSigned(a)} + {formatSigned(x2)}×{formatSigned(b)} + {formatSigned(
+					TRIANGLE.biases[j]
+				)} = {formatSigned(h.sum)}
+				→ relu = {formatSigned(h.output)}
 			</li>
 		{/each}
 		<li>
-			output: {fmt(TRIANGLE.outBias)} + {fmt(TRIANGLE.outWeight)}×({net.hidden
+			output: {formatSigned(TRIANGLE.outBias)} + {formatSigned(TRIANGLE.outWeight)}×({net.hidden
 				.filter((_, j) => on[j])
-				.map((h) => fmt(h.output))
-				.join(' + ') || '0'}) = {fmt(net.out.sum)} → relu = {fmt(net.out.output)}
+				.map((h) => formatSigned(h.output))
+				.join(' + ') || '0'}) = {formatSigned(net.out.sum)} → relu = {formatSigned(net.out.output)}
 		</li>
 	</ul>
 	<p class="note">
@@ -289,16 +281,8 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
+		--block-space: 0;
 		margin-top: var(--space-4);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-token);
 	}
 
 	fieldset {

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import type { TraceName } from '#lib/datasets/registry.ts';
-	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
+	import { displayToken, formatCount, formatPercent } from '#lib/components/primitives/format.ts';
 	import { applyTemperature, sampleIndex } from '#lib/math/sampling.ts';
 	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';
 	import { BrowserProvider } from '#lib/models/browser-provider.ts';
@@ -197,7 +197,7 @@
 		<p class="notice" role="status">{notice}</p>
 	{:else if dist}
 		<p class="label">
-			What comes next? Top {SHOWN} of {canonical.vocabularySize.toLocaleString('en-US')}
+			What comes next? Top {SHOWN} of {formatCount(canonical.vocabularySize)}
 			{#if live && temperature !== 1}(reweighted among the top {TOP_K}){/if}
 		</p>
 		<ol class="candidates" class:busy aria-label="Next-token candidates. Pick one to add it.">

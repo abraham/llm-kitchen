@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 
 	const data = useDataset('prompts/steps');
-	const id = $props.id();
 	let puzzle = $state(0);
 	let condition = $state(0);
 </script>
@@ -22,22 +22,18 @@
 		{#snippet children(d)}
 			{@const p = d.puzzles[puzzle]}
 			{@const r = p.runs[condition]}
-			<div class="pick">
-				<label for="{id}-q" class="label">Puzzle</label>
-				<select id="{id}-q" bind:value={puzzle}>
-					{#each d.puzzles as option, i (option.question)}<option value={i}
-							>{option.question}</option
-						>{/each}
-				</select>
-			</div>
-			<fieldset>
-				<legend class="label">Added to the question</legend>
-				{#each d.conditions as c, i (c.name)}
-					<label
-						><input type="radio" name="{id}-c" value={i} bind:group={condition} /> {c.name}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="Puzzle"
+				appearance="select"
+				layout="inline"
+				options={d.puzzles.map((x, i) => ({ value: i, label: x.question }))}
+				bind:value={puzzle}
+			/>
+			<Choice
+				legend="Added to the question"
+				options={d.conditions.map((c, i) => ({ value: i, label: c.name }))}
+				bind:value={condition}
+			/>
 			<p class="prompt">
 				{p.question}<strong>{d.conditions[condition].suffix}</strong>
 				<span class="expected">(Right answer: {p.expected}.)</span>
@@ -50,11 +46,13 @@
 					: 'a person has to read it to find the answer'} ·
 				{r.tokens} tokens
 			</p>
-			<div class="reply" {@attach scrollable} role="region" aria-label="The model's reply">
-				{r.text}
-			</div>
+			<ScrollBox label="The model's reply" maxHeight="16rem" framed
+				><div class="reply">
+					{r.text}
+				</div></ScrollBox
+			>
 
-			<table>
+			<table class="data">
 				<caption>All {d.puzzles.length} puzzles</caption>
 				<thead>
 					<tr>
@@ -85,35 +83,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2);
-		margin-bottom: var(--space-2);
-	}
-
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-2);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	.prompt {
 		margin: var(--space-2) 0;
 	}
@@ -135,51 +104,18 @@
 	}
 
 	.reply {
-		margin: 0 0 var(--space-4);
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface-2);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
 		font-size: 0.85rem;
 		white-space: pre-wrap;
-		max-height: 16rem;
-		overflow-y: auto;
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.85rem;
+		margin-top: var(--space-4);
 	}
 
 	caption {
-		text-align: left;
-		font-family: var(--font-sans);
+		font-size: inherit;
 		font-weight: 600;
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-	}
-
-	tbody th {
-		font-weight: 400;
+		color: inherit;
 	}
 
 	tr.on th,

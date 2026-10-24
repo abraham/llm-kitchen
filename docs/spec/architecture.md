@@ -58,10 +58,12 @@ src/
         data.ts                  hand-written data only this chapter uses, if any
         facts.test.ts            the numbers and claims the prose states
         chapter.e2e.ts           its widgets in a browser
-    components/
+    components/                  see components.md
+      ui/                        generic controls and containers, and the scrollable attachment
       primitives/                shared visual elements (see design.md); props in, events out
+      frame/                     WidgetFrame, DataSourceBadge, Loading, ModelConsent, StepController, Scrolly
+      page/                      chapter shell, ProgressNav, PageMeta, ChapterRef, Cite, GlossaryPopover, ...
       widgets/                   widgets used by two or more chapters
-      layout/                    chapter shell, WidgetFrame, StepController, ChapterRef, Cite, ...
     data/                        hand-written data shared by chapters and logic (the nursery rhymes)
     datasets/
       check.ts                   small typed checks for untrusted JSON
@@ -104,14 +106,16 @@ per folder in `eslint.config.js`; tests are exempt):
    another chapter's.
 3. **Widgets** own interaction state (`$state`, steppers) and compose primitives. They get data
    from a dataset or a `ModelProvider` and computation from `math/` or `harness/`.
-4. **Primitives and layout** render what they're given. They never import chapters, widgets, or the
-   dataset loaders.
+4. **Components** (`ui/`, `primitives/`, `frame/`, `page/`) render what they're given. They never
+   import chapters, widgets, or the dataset loaders; [components.md](components.md#layers) has the
+   rules between them.
 5. **Logic** (`math/`, `harness/`, `curriculum/`, and the dataset checks, parsers, and registry) is
    plain TypeScript: no Svelte, `$app`, UI, worker, or browser-model imports, and no browser
    globals.
 
 A widget used by one chapter lives in that chapter's folder. It moves to `components/widgets/` when
-a second chapter uses it, and back when only one does.
+a second chapter uses it, and back when only one does. How `components/` is organized, and the
+conventions every shared component follows, are in [components.md](components.md).
 
 ## Curriculum and chapter identity
 

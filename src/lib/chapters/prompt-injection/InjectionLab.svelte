@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import PromptText from '#lib/components/primitives/PromptText.svelte';
+	import RoleKey from '#lib/components/primitives/RoleKey.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import { findRun, promptPieces, tally } from '#lib/harness/injection.ts';
 
 	const data = useDataset('injection/lab');
@@ -24,7 +28,6 @@
 	let attack = $state('plain');
 	let defense = $state('none');
 	let colored = $state(true);
-	const id = $props.id();
 
 	function reset() {
 		doc = 'email';
@@ -50,56 +53,50 @@
 			</p>
 
 			<div class="pickers">
-				<fieldset>
-					<legend class="label">Document</legend>
-					{#each lab.documents as x (x.id)}
-						<label
-							><input type="radio" name="{id}-d" bind:group={doc} value={x.id} /> {x.title}</label
-						>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Attack hidden in it</legend>
-					{#each lab.attacks as x (x.id)}
-						<label
-							><input type="radio" name="{id}-a" bind:group={attack} value={x.id} />
-							{x.label}</label
-						>
-					{/each}
-				</fieldset>
-				<fieldset>
-					<legend class="label">Defense in the prompt</legend>
-					{#each lab.defenses as x (x.id)}
-						<label
-							><input type="radio" name="{id}-f" bind:group={defense} value={x.id} />
-							{x.label}</label
-						>
-					{/each}
-				</fieldset>
+				<Choice
+					legend="Document"
+					layout="stack"
+					options={lab.documents.map((x) => ({ value: x.id, label: x.title }))}
+					bind:value={doc}
+				/>
+				<Choice
+					legend="Attack hidden in it"
+					layout="stack"
+					options={lab.attacks.map((x) => ({ value: x.id, label: x.label }))}
+					bind:value={attack}
+				/>
+				<Choice
+					legend="Defense in the prompt"
+					layout="stack"
+					options={lab.defenses.map((x) => ({ value: x.id, label: x.label }))}
+					bind:value={defense}
+				/>
 			</div>
 			<p class="defense">{DEFENSE_NOTES[defense]}</p>
 
 			<div class="prompt-head">
 				<p class="label">What the model reads</p>
-				<label class="toggle"
-					><input type="checkbox" bind:checked={colored} /> Color by source</label
-				>
+				<Toggle label="Color by source" bind:checked={colored} />
 			</div>
-			<pre
-				class="prompt"
-				class:plain={!colored}
-				{@attach scrollable}
-				aria-label="The text sent to the model">{#each promptPieces(run) as p, i (i)}<span
-						class={p.source}
-						class:marker={p.marker}>{p.text}</span
-					>{/each}</pre>
+			<PromptText
+				parts={promptPieces(run).map((p) => ({
+					text: p.text,
+					kind: p.marker ? 'marker' : p.source
+				}))}
+				label="The text sent to the model"
+				maxHeight="22rem"
+				plain={!colored}
+				emphasis={['marker']}
+			/>
 			{#if colored}
-				<ul class="legend" aria-hidden="true">
-					<li><span class="swatch harness"></span>written by the harness</li>
-					<li><span class="swatch document"></span>the document</li>
-					<li><span class="swatch attack"></span>the attack</li>
-					<li><span class="swatch marker"></span>chat markers</li>
-				</ul>
+				<RoleKey
+					roles={[
+						{ kind: 'harness', label: 'written by the harness' },
+						{ kind: 'document', label: 'the document' },
+						{ kind: 'attack', label: 'the attack' },
+						{ kind: 'marker', label: 'chat markers' }
+					]}
+				/>
 			{:else}
 				<p class="note">
 					Without the colors, this is all the model gets: one stream of text, with {run.markerTokens}
@@ -121,12 +118,7 @@
 				</p>
 			</div>
 
-			<div
-				class="scroll"
-				{@attach scrollable}
-				role="region"
-				aria-label="How often each attack worked"
-			>
+			<ScrollBox label="How often each attack worked">
 				<table>
 					<caption
 						>How many of the {lab.documents.length} documents each attack worked on, under each defense</caption
@@ -161,7 +153,7 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
+			</ScrollBox>
 		{/snippet}
 	</Loading>
 </WidgetFrame>
@@ -175,21 +167,7 @@
 		display: grid;
 		gap: var(--space-3);
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-	}
-
-	fieldset {
-		border: none;
-		padding: 0;
-		margin: 0;
-		display: grid;
-		align-content: start;
-		gap: var(--space-1);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
+		--block-space: 0;
 	}
 
 	.defense {
@@ -204,94 +182,11 @@
 		justify-content: space-between;
 		align-items: baseline;
 		gap: var(--space-2);
+		margin-bottom: var(--space-1);
 	}
 
 	.prompt-head .label {
 		margin: 0;
-	}
-
-	.toggle {
-		font-family: var(--font-sans);
-		font-size: 0.85rem;
-	}
-
-	.prompt {
-		white-space: pre-wrap;
-		word-break: break-word;
-		font-size: 0.75rem;
-		line-height: 1.5;
-		padding: var(--space-3);
-		background: var(--surface-2);
-		border-radius: var(--radius);
-		margin: var(--space-1) 0 0;
-		max-height: 22rem;
-		overflow: auto;
-	}
-
-	.prompt .harness {
-		color: var(--c-harness-ink);
-	}
-
-	.prompt .document {
-		color: var(--ink);
-		background: var(--c-vector-tint);
-	}
-
-	.prompt .attack {
-		color: var(--c-loss-ink);
-		background: var(--c-loss-tint);
-	}
-
-	.prompt .marker {
-		color: var(--c-token-ink);
-		font-weight: 700;
-	}
-
-	.prompt.plain span {
-		color: var(--ink);
-		background: none;
-		font-weight: 400;
-	}
-
-	.legend {
-		list-style: none;
-		padding: 0;
-		margin: var(--space-2) 0 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-	}
-
-	.legend li {
-		display: flex;
-		align-items: center;
-		gap: var(--space-1);
-	}
-
-	.swatch {
-		width: 0.8rem;
-		height: 0.8rem;
-		border-radius: 2px;
-	}
-
-	.swatch.harness {
-		background: var(--c-harness);
-	}
-
-	.swatch.document {
-		background: var(--c-vector-tint);
-		box-shadow: inset 0 0 0 1px var(--c-vector);
-	}
-
-	.swatch.attack {
-		background: var(--c-loss-tint);
-		box-shadow: inset 0 0 0 1px var(--c-loss);
-	}
-
-	.swatch.marker {
-		background: var(--c-token);
 	}
 
 	.note {
@@ -320,12 +215,6 @@
 		font-size: 0.85rem;
 		color: var(--ink-muted);
 		margin-top: var(--space-1) !important;
-	}
-
-	.scroll {
-		overflow-x: auto;
-		/* Keeps the visually hidden cell labels inside the scrolling box. */
-		position: relative;
 	}
 
 	table {

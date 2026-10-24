@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { prefersReducedMotion } from 'svelte/motion';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { FrameLoop } from '#lib/components/frame/loop.svelte.ts';
+	import Slider from '#lib/components/ui/Slider.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import {
 		Denoiser,
@@ -27,35 +30,24 @@
 	let trainer = $state.raw(new DiffusionTrainer(new Denoiser(32, seededRandom(1))));
 	let losses = $state<number[]>([]);
 	let steps = $state(0);
-	let running = $state(false);
 	let frames = $state<Point[][]>([]);
 	let step = $state(0);
-	let frame = 0;
 	let player: ReturnType<typeof setInterval> | undefined;
-	const id = $props.id();
 
 	const target = $derived.by(() => {
 		const r = seededRandom(9);
 		return Array.from({ length: 300 }, () => shapePoint(shape, r));
 	});
 
-	function tick() {
+	const loop = new FrameLoop(() => {
 		let loss = 0;
 		for (let i = 0; i < 20; i++) loss = trainer.step(shape, random);
 		losses = [...losses, loss];
 		steps = trainer.steps;
-		if (steps >= MAX_STEPS) {
-			running = false;
-			paint();
-		}
-		if (running) frame = requestAnimationFrame(tick);
-	}
-
-	function toggle() {
-		running = !running;
-		if (running) frame = requestAnimationFrame(tick);
-		else cancelAnimationFrame(frame);
-	}
+		if (steps < MAX_STEPS) return true;
+		paint();
+		return false;
+	});
 
 	function paint() {
 		clearInterval(player);
@@ -72,8 +64,7 @@
 	}
 
 	function restart(seed = Math.floor(Math.random() * 1e6)) {
-		running = false;
-		cancelAnimationFrame(frame);
+		loop.stop();
 		clearInterval(player);
 		random = seededRandom(seed);
 		trainer = new DiffusionTrainer(new Denoiser(32, seededRandom(seed)));
@@ -83,10 +74,7 @@
 		step = 0;
 	}
 
-	$effect(() => () => {
-		cancelAnimationFrame(frame);
-		clearInterval(player);
-	});
+	$effect(() => () => clearInterval(player));
 
 	const S = 240;
 	const sc = (v: number) => S / 2 + (v / 2.6) * (S / 2);
@@ -103,16 +91,16 @@
 	}}
 >
 	<div class="controls">
-		<div class="pick">
-			<label for="{id}-shape" class="label">Shape to learn</label>
-			<select id="{id}-shape" bind:value={shape} onchange={() => restart()}>
-				{#each SHAPES as s (s)}<option value={s}>{s}</option>{/each}
-			</select>
-		</div>
-		<button type="button" onclick={toggle} aria-pressed={running} disabled={done}>
-			{done ? 'Trained' : running ? 'Pause' : steps ? 'Keep training' : 'Train'}
+		<Choice
+			legend="Shape to learn"
+			appearance="select"
+			options={SHAPES.map((s) => ({ value: s, label: s }))}
+			bind:value={() => shape, (s) => ((shape = s), restart())}
+		/>
+		<button type="button" onclick={() => loop.toggle()} aria-pressed={loop.running} disabled={done}>
+			{done ? 'Trained' : loop.running ? 'Pause' : steps ? 'Keep training' : 'Train'}
 		</button>
-		<button type="button" onclick={paint} disabled={running}>Paint 400 points</button>
+		<button type="button" onclick={paint} disabled={loop.running}>Paint 400 points</button>
 	</div>
 
 	<div class="layout">
@@ -133,17 +121,14 @@
 				{/each}
 			</svg>
 			{#if frames.length}
-				<div class="slider">
-					<label for="{id}-step" class="label"
-						>Denoising step <span class="mono" aria-hidden="true">{step} of {STEPS}</span></label
-					>
-					<input
-						id="{id}-step"
-						type="range"
-						min="0"
+				<div class="step">
+					<Slider
+						label="Denoising step"
+						min={0}
 						max={STEPS}
-						bind:value={step}
-						oninput={() => clearInterval(player)}
+						format={(v) => `${v} of ${STEPS}`}
+						concept="weight"
+						bind:value={() => step, (v) => ((step = v), clearInterval(player))}
 					/>
 				</div>
 			{/if}
@@ -172,20 +157,12 @@
 
 <style>
 	.controls {
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
 		gap: var(--space-3);
 		margin-bottom: var(--space-3);
-	}
-
-	.pick {
-		display: flex;
-		flex-direction: column;
-	}
-
-	select {
-		font: inherit;
 	}
 
 	.layout {
@@ -213,15 +190,10 @@
 		fill: var(--c-weight);
 	}
 
-	.slider {
-		display: flex;
-		flex-direction: column;
+	.step {
+		--block-space: 0;
 		max-width: 18rem;
 		margin-top: var(--space-2);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-weight);
 	}
 
 	.readout {

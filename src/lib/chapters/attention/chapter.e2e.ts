@@ -11,7 +11,7 @@ test('attention steps and the GPT-2 viewer', async ({ page }) => {
 	await expect(qkv.getByText('new “it”')).toBeVisible();
 
 	const viewer = page.getByRole('region', { name: 'Who looks at whom' });
-	const readout = viewer.locator('.readout');
+	const readout = viewer.getByRole('status');
 	await expect(readout).toContainText('Layer 9, head 9');
 	await expect(readout).toContainText('Mary');
 	await viewer.getByLabel('Sentence').selectOption('attn-mary-lamb');

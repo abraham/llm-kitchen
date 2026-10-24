@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { CURRICULUM, PARTS, label } from '#lib/curriculum/index.ts';
-	import PageMeta from '#lib/components/layout/PageMeta.svelte';
+	import PageMeta from '#lib/components/page/PageMeta.svelte';
 	import { MENU_IMAGE, SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE } from '#lib/site.ts';
 
 	const parts = PARTS.map((part) => ({

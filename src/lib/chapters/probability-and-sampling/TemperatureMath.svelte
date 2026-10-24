@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
+	import { displayToken, formatPercent, formatSigned } from '#lib/components/primitives/format.ts';
 	import { softmax } from '#lib/math/sampling.ts';
 
 	import { canonical } from '#lib/models/provider.ts';
 
 	const SHOWN = 6;
-	const id = $props.id();
 	const trace = useDataset('traces/the-cat-sat');
 	let temperature = $state(1);
-
-	const fmt = (x: number) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(2);
 </script>
 
 <WidgetFrame
@@ -27,12 +26,16 @@
 			{@const scaled = scores.map((s) => s / temperature)}
 			{@const probs = softmax(scores, temperature)}
 			{@const gap = scores[0] - scores[1]}
-			<div class="slider">
-				<label class="label" for="{id}-t">
-					Temperature <span class="mono" aria-hidden="true">{temperature.toFixed(2)}</span>
-				</label>
-				<input id="{id}-t" type="range" min="0.1" max="2" step="0.05" bind:value={temperature} />
-			</div>
+			<Slider
+				label="Temperature"
+				layout="inline"
+				min={0.1}
+				max={2}
+				step={0.05}
+				format={(v) => v.toFixed(2)}
+				concept="prob"
+				bind:value={temperature}
+			/>
 
 			<table>
 				<caption class="visually-hidden">
@@ -50,8 +53,8 @@
 					{#each words as w, i (w.token.id)}
 						<tr>
 							<th scope="row" class="mono">{displayToken(w.token.text)}</th>
-							<td class="mono">{fmt(scores[i])}</td>
-							<td class="mono">{fmt(scaled[i])}</td>
+							<td class="mono">{formatSigned(scores[i])}</td>
+							<td class="mono">{formatSigned(scaled[i])}</td>
 							<td class="cell">
 								<span class="prob">
 									<span class="bar"><span style:width="{probs[i] * 100}%"></span></span>
@@ -63,13 +66,13 @@
 				</tbody>
 			</table>
 
-			<p class="readout" aria-live="polite">
+			<Status>
 				The top two scores are {gap.toFixed(2)} apart. Divided by {temperature.toFixed(2)}, the gap
 				becomes {(gap / temperature).toFixed(2)}, so
 				<span class="mono">{displayToken(words[0].token.text)}</span> is
 				<strong>{Math.exp(gap / temperature).toFixed(2)}×</strong> as likely as
 				<span class="mono">{displayToken(words[1].token.text)}</span>.
-			</p>
+			</Status>
 			<p class="note">
 				Each divided score <i>s</i> becomes <i>e<sup>s</sup></i>, and those are shared out to add up
 				to 100%. A small temperature stretches the gaps, so the top word pulls ahead; a large one
@@ -82,19 +85,6 @@
 </WidgetFrame>
 
 <style>
-	.slider {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2) var(--space-4);
-		margin-bottom: var(--space-3);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-prob);
-		min-width: 12rem;
-	}
-
 	table {
 		width: 100%;
 		border-collapse: collapse;
@@ -154,11 +144,6 @@
 	.pct {
 		width: 3.5rem;
 		text-align: right;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 
 	.note {

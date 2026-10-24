@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 
 	const data = useDataset('prompts/fragile');
-	const id = $props.id();
 	let tab = $state<'order' | 'format' | 'position'>('order');
 	const TABS = [
 		['order', 'Example order'],
@@ -23,12 +23,11 @@
 	source={{ kind: 'recorded', model: 'GPT-2 small and Qwen2.5-1.5B-Instruct' }}
 	onreset={() => (tab = 'order')}
 >
-	<fieldset>
-		<legend class="label">Change</legend>
-		{#each TABS as [value, name] (value)}
-			<label><input type="radio" name="{id}-tab" {value} bind:group={tab} /> {name}</label>
-		{/each}
-	</fieldset>
+	<Choice
+		legend="Change"
+		options={TABS.map(([value, label]) => ({ value, label }))}
+		bind:value={tab}
+	/>
 	<Loading promise={data}>
 		{#snippet children(d)}
 			{@const s = d.sentiment}
@@ -134,22 +133,6 @@
 </WidgetFrame>
 
 <style>
-	fieldset {
-		border: 0;
-		margin: 0 0 var(--space-3);
-		padding: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-1) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		width: 100%;
-		padding: 0;
-	}
-
 	table {
 		width: 100%;
 		border-collapse: collapse;

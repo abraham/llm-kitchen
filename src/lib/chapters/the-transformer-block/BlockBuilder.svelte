@@ -1,20 +1,20 @@
 <script lang="ts">
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { parameterBreakdown } from '#lib/math/transformer.ts';
 	import { label } from '#lib/curriculum/index.ts';
 	import { canonical } from '#lib/models/provider.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const p = parameterBreakdown(canonical);
 	const stepper = new Stepper(6);
 	const s = $derived(stepper.index);
-	const n = (x: number) => x.toLocaleString('en-US');
 
 	const STEPS = [
 		`Start: each token becomes its word vector (${label('embeddings')}) plus a position vector (${label('attention')}). This running list of ${canonical.embeddingSize} numbers per token is the stream.`,
 		`Attention: each token looks back at earlier tokens (${label('attention')}) and adds what it finds to its stream. The stream itself passes straight through.`,
-		`MLP: each token’s vector goes through a layer of ${n(canonical.mlpSize)} neurons (${label('a-neuron')}), and the result is added to the stream too.`,
+		`MLP: each token’s vector goes through a layer of ${formatCount(canonical.mlpSize)} neurons (${label('a-neuron')}), and the result is added to the stream too.`,
 		'Layer norm: before attention and before the MLP, the numbers are rescaled to a steady size so training stays stable.',
 		`Stack: that block is repeated ${canonical.layers} times. Same design, different weights in each.`,
 		`Out: a final layer norm, then a score for every token in the vocabulary, then softmax (${label('probability-and-sampling')}) gives next-token probabilities.`
@@ -67,7 +67,9 @@
 				<path d="M90 225 H200 V232" class="branch" />
 				<rect x="160" y="232" width="140" height={s >= 3 ? 46 : 34} rx="6" class="box mlp" />
 				{#if s >= 3}<text x="230" y="248" class="small">layer norm</text>{/if}
-				<text x="230" y={s >= 3 ? 268 : 254} class="label">MLP ({n(canonical.mlpSize)})</text>
+				<text x="230" y={s >= 3 ? 268 : 254} class="label"
+					>MLP ({formatCount(canonical.mlpSize)})</text
+				>
 				<path d="M230 {s >= 3 ? 278 : 266} V288 H102" class="branch" />
 				<circle cx="90" cy="288" r="11" class="add" />
 				<text x="90" y="293" class="plus">+</text>
@@ -78,16 +80,18 @@
 			{#if s >= 5}
 				<rect x="20" y="360" width="300" height="44" rx="6" class="box out" />
 				<text x="170" y="378" class="label">layer norm → vocabulary scores</text>
-				<text x="170" y="395" class="small">{n(canonical.vocabularySize)} scores → softmax</text>
+				<text x="170" y="395" class="small"
+					>{formatCount(canonical.vocabularySize)} scores → softmax</text
+				>
 				<line x1="170" y1="404" x2="170" y2="424" class="branch" />
 				<text x="170" y="446" class="label">next-token probabilities</text>
 			{/if}
 		</svg>
 		<dl class="count">
 			<dt>Parameters so far</dt>
-			<dd class="mono">{n(total)}</dd>
+			<dd class="mono">{formatCount(total)}</dd>
 			{#if s >= 5}<dd class="small-print">
-					= {canonical.displayName}’s {n(canonical.parameters)}
+					= {canonical.displayName}’s {formatCount(canonical.parameters)}
 				</dd>{/if}
 		</dl>
 	</div>

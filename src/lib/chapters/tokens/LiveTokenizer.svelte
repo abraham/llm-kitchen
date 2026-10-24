@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import { TOKENIZERS, tokenize, type TokenizerName } from '#lib/models/tokenizers.ts';
 

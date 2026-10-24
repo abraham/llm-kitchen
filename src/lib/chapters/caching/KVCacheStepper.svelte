@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
-	import { displayToken } from '#lib/components/primitives/format.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
+	import { displayToken, formatCount } from '#lib/components/primitives/format.ts';
 	import { positionsProcessed } from '#lib/harness/cache.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
@@ -13,8 +15,6 @@
 	const STEPS = 8;
 	const stepper = new Stepper(STEPS);
 	let cache = $state(false);
-	const id = $props.id();
-	const fmt = (n: number) => n.toLocaleString('en-US');
 	const describe = (i: number) => `Step ${i + 1} of ${STEPS}`;
 
 	/** What happens to position `col` on step `row`: run through the model, reused, or not there yet. */
@@ -53,18 +53,16 @@
 			{@const p = d.promptTokens.length}
 			{@const tokens = [...d.promptTokens, ...d.generated.slice(0, STEPS)]}
 			{@const row = stepper.index}
-			<fieldset class="pick">
-				<legend class="label">Key-value cache</legend>
-				<label><input type="radio" name="{id}-c" bind:group={cache} value={false} /> Off</label>
-				<label><input type="radio" name="{id}-c" bind:group={cache} value={true} /> On</label>
-			</fieldset>
+			<Choice
+				legend="Key-value cache"
+				options={[
+					{ value: false, label: 'Off' },
+					{ value: true, label: 'On' }
+				]}
+				bind:value={cache}
+			/>
 
-			<div
-				class="scroll"
-				{@attach scrollable}
-				role="region"
-				aria-label="Which tokens each step runs"
-			>
+			<ScrollBox label="Which tokens each step runs">
 				<table>
 					<caption class="visually-hidden"
 						>For each step, which tokens go through the model and which are reused from the cache</caption
@@ -97,19 +95,19 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
+			</ScrollBox>
 			<ul class="legend" aria-hidden="true">
 				<li><span class="run">●</span> run through all {canonical.layers} blocks</li>
 				<li><span class="reused">○</span> keys and values reused from the cache</li>
 			</ul>
 
-			<p class="readout" aria-live="polite">
+			<Status lines={3}>
 				Step {row + 1} picks <strong class="mono">{displayToken(d.generated[row].text)}</strong>. So
-				far the model has run <strong>{fmt(positionsProcessed(p, row + 1, cache))}</strong> token
-				positions with the cache {cache ? 'on' : 'off'}, against {fmt(
+				far the model has run <strong>{formatCount(positionsProcessed(p, row + 1, cache))}</strong>
+				token positions with the cache {cache ? 'on' : 'off'}, against {formatCount(
 					positionsProcessed(p, row + 1, !cache)
 				)} with it {cache ? 'off' : 'on'}. Either way it picks the same tokens.
-			</p>
+			</Status>
 
 			{@const max = Math.max(...d.msPerToken.noCache)}
 			{@const off = line(d.msPerToken.noCache, max)}
@@ -160,27 +158,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
-	}
-
-	.scroll {
-		overflow-x: auto;
-		/* Keeps the visually hidden cell labels inside the scrolling box. */
-		position: relative;
-	}
-
 	table {
 		border-collapse: collapse;
 		font-size: 0.8rem;
@@ -235,11 +212,6 @@
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		color: var(--ink-muted);
-	}
-
-	.readout {
-		min-height: 4.5em;
-		margin: var(--space-3) 0;
 	}
 
 	figure {

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import WholePicture from './WholePicture.svelte';
 </script>
 

@@ -1,5 +1,7 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 	import { formatCount, kaplanLoss } from './data.ts';
 	import { GPT2_FAMILY, nonEmbeddingParameters } from '#lib/math/transformer.ts';
@@ -27,7 +29,6 @@
 
 	const START = 6;
 	let exponent = $state(START);
-	const id = $props.id();
 	const n = $derived(10 ** exponent);
 	const loss = $derived(kaplanLoss(n));
 	const ticks = Array.from({ length: X1 - X0 + 1 }, (_, i) => X0 + i);
@@ -89,19 +90,26 @@
 		<circle cx={sx(n)} cy={sy(loss)} r="6" class="you" />
 	</svg>
 
-	<div class="slider">
-		<label for="{id}-n" class="label"
-			>Weights: <span class="mono value" style:min-width="{widest}ch">{formatCount(n)}</span></label
-		>
-		<input id="{id}-n" type="range" min={X0} max={X1} step="0.05" bind:value={exponent} />
+	<div class="weights">
+		<Slider
+			label="Weights:"
+			layout="inline"
+			min={X0}
+			max={X1}
+			step={0.05}
+			format={(e) => formatCount(10 ** e)}
+			concept="loss"
+			width={widest}
+			bind:value={exponent}
+		/>
 	</div>
-	<p class="readout" aria-live="polite">
+	<Status>
 		Predicted loss: <strong class="mono">{loss.toFixed(2)}</strong>. On average, the right next
 		token gets a probability of about <strong>{formatPercent(Math.exp(-loss))}</strong>.
 		{#if n < FIT_MIN || n > FIT_MAX}
 			<em>This size is outside the range the formula was fitted on (dashed), so it's a guess.</em>
 		{/if}
-	</p>
+	</Status>
 	<p class="note">
 		Formula from Kaplan et al. (2020), for models trained on plenty of text. Dots mark the four
 		GPT-2 sizes on the formula's line, not their measured results.
@@ -161,28 +169,8 @@
 		fill: var(--c-loss);
 	}
 
-	.slider {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2) var(--space-4);
+	.weights {
 		margin-top: var(--space-2);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-loss);
-		min-width: 14rem;
-	}
-
-	.value {
-		display: inline-block;
-		/* The label's tracking would make each character wider than 1ch. */
-		letter-spacing: normal;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 
 	.note {

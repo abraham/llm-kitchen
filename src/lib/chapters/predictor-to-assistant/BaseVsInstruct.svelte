@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import type { BaseVsInstruct, Column } from '#lib/datasets/parsers/prompts.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 
 	const data = useDataset('chat/base-vs-instruct');
 	let index = $state(0);
-	const id = $props.id();
 
 	const columns = (d: BaseVsInstruct): { key: Column; title: string; detail: string }[] => [
 		{ key: 'gpt2', title: d.models.gpt2.displayName, detail: 'base model, 2019' },
@@ -27,12 +27,13 @@
 >
 	<Loading promise={data}>
 		{#snippet children(d)}
-			<div class="pick">
-				<label for="{id}-prompt" class="label">Prompt</label>
-				<select id="{id}-prompt" bind:value={index}>
-					{#each d.prompts as p, i (p.prompt)}<option value={i}>{p.prompt}</option>{/each}
-				</select>
-			</div>
+			<Choice
+				legend="Prompt"
+				appearance="select"
+				layout="inline"
+				options={d.prompts.map((p, i) => ({ value: i, label: p.prompt }))}
+				bind:value={index}
+			/>
 			<div class="grid">
 				{#each columns(d) as c (c.key)}
 					{@const out = d.prompts[index][c.key]}
@@ -57,19 +58,6 @@
 </WidgetFrame>
 
 <style>
-	.pick {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-2) var(--space-3);
-		margin-bottom: var(--space-3);
-	}
-
-	select {
-		font: inherit;
-		font-size: 0.9rem;
-	}
-
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));

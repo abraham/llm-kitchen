@@ -12,7 +12,7 @@ test('the block builder adds up to GPT-2 small, and the logit lens reads each bl
 	const stream = page.getByRole('region', { name: 'Watch the guess form' });
 	const slider = stream.getByLabel(/Read the stream/);
 	await slider.fill('3');
-	await expect(stream.locator('.readout')).toContainText('·same');
+	await expect(stream.getByRole('status')).toContainText('·same');
 	await slider.fill('12');
-	await expect(stream.locator('.readout')).toContainText('·floor');
+	await expect(stream.getByRole('status')).toContainText('·floor');
 });

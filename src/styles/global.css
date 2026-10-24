@@ -99,6 +99,60 @@ button[aria-disabled='true'] {
 	opacity: 0.5;
 }
 
+select {
+	font: inherit;
+	max-width: 100%;
+}
+
+input[type='range'] {
+	accent-color: var(--accent, var(--c-token));
+}
+
+/* Tables of results: opt in with class="data". Zero specificity, so a widget's own rules win. */
+:where(table.data) {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.85rem;
+}
+
+:where(table.data > caption) {
+	text-align: left;
+	font-family: var(--font-sans);
+	font-size: 0.8rem;
+	color: var(--ink-muted);
+	margin-bottom: var(--space-1);
+}
+
+:where(table.data) :where(th, td) {
+	padding: 2px var(--space-2);
+	border-bottom: 1px solid var(--rule);
+	text-align: left;
+}
+
+:where(table.data) :where(thead th) {
+	font-family: var(--font-sans);
+	font-size: 0.7rem;
+	color: var(--ink-muted);
+}
+
+:where(table.data) :where(tbody th) {
+	font-weight: 400;
+}
+
+:where(table.data) :where(td, th.num) {
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Shade a cell by --p (0–1) in --heat. */
+:where(table.data) :where(td.heat) {
+	background: color-mix(
+		in oklch,
+		var(--heat, var(--c-prob-tint)) calc(var(--p, 0) * 100%),
+		transparent
+	);
+}
+
 .visually-hidden {
 	position: absolute;
 	width: 1px;

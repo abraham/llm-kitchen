@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Loading from '#lib/components/layout/Loading.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
 	import { useDatasets } from '#lib/datasets/use.ts';
 	import type { TraceName } from '#lib/datasets/registry.ts';
 	import GenerationStepper from './GenerationStepper.svelte';

@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { all, useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { label } from '#lib/curriculum/index.ts';
 	import type { ContextSession } from '#lib/harness/agent.ts';
 	import { project } from '#lib/math/vectors.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const data = all([useDataset('agent/context'), useDataset('embeddings/minilm-map')]);
 
@@ -23,7 +25,6 @@
 	} as const;
 	type Key = keyof typeof STRATEGIES;
 	let strategy = $state<Key>('all');
-	const id = $props.id();
 
 	function sizes(s: ContextSession, key: Key) {
 		const st = s.strategies[key];
@@ -49,21 +50,16 @@
 				you ask: <strong>“{s.question}”</strong>
 			</p>
 
-			<fieldset class="pick">
-				<legend class="label">When the conversation doesn’t fit</legend>
-				{#each Object.entries(STRATEGIES) as [key, v] (key)}
-					<label
-						><input type="radio" name="{id}-s" bind:group={strategy} value={key} /> {v.label}</label
-					>
-				{/each}
-			</fieldset>
+			<Choice
+				legend="When the conversation doesn’t fit"
+				options={Object.entries(STRATEGIES).map(([value, v]) => ({ value, label: v.label }))}
+				bind:value={strategy}
+			/>
 
 			<div
 				class="bar"
 				role="img"
-				aria-label="{used.total.toLocaleString('en-US')} of a {s.budget.toLocaleString(
-					'en-US'
-				)}-token budget"
+				aria-label="{formatCount(used.total)} of a {formatCount(s.budget)}-token budget"
 			>
 				<span class="seg base" style:width="{scale(s.baseTokens)}%" title="System prompt and tools"
 				></span>
@@ -87,9 +83,8 @@
 				<span class="budget" style:left="{scale(s.budget)}%"></span>
 			</div>
 			<p class="numbers" class:over={used.total > s.budget}>
-				{used.total.toLocaleString('en-US')} tokens · budget {s.budget.toLocaleString('en-US')} · {STRATEGIES[
-					strategy
-				].note}
+				{formatCount(used.total)} tokens · budget {formatCount(s.budget)} · {STRATEGIES[strategy]
+					.note}
 			</p>
 			<ul class="legend" aria-hidden="true">
 				<li><span class="seg base"></span>system prompt and tools</li>
@@ -161,21 +156,6 @@
 <style>
 	.intro {
 		margin-top: 0;
-	}
-
-	.pick {
-		border: none;
-		padding: 0;
-		margin: 0 0 var(--space-3);
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	legend {
-		margin-bottom: var(--space-1);
 	}
 
 	.bar {

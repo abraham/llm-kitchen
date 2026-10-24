@@ -1,11 +1,14 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { FrameLoop } from '#lib/components/frame/loop.svelte.ts';
+	import Slider from '#lib/components/ui/Slider.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
 	import { RHYMES } from '#lib/data/rhymes.ts';
 	import { CharRNN, RNNTrainer } from '#lib/math/rnn.ts';
 	import { seededRandom } from '#lib/math/sampling.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	const HIDDEN = 32;
 	const MAX_STEPS = 1500;
@@ -17,11 +20,8 @@
 	let random = seededRandom(1);
 	let trainer = $state.raw(new RNNTrainer(new CharRNN(vocab.length, HIDDEN, 1)));
 	let losses = $state<number[]>([]);
-	let running = $state(false);
 	let version = $state(0);
 	let read = $state(8);
-	let frame = 0;
-	const id = $props.id();
 
 	function batch(): number[][] {
 		return Array.from({ length: 16 }, () => {
@@ -31,24 +31,16 @@
 		});
 	}
 
-	function tick() {
+	const loop = new FrameLoop(() => {
 		let loss = 0;
 		for (let i = 0; i < 5; i++) loss = trainer.step(batch());
 		losses = [...losses, loss];
 		version++;
-		if (trainer.steps >= MAX_STEPS) running = false;
-		if (running) frame = requestAnimationFrame(tick);
-	}
-
-	function toggle() {
-		running = !running;
-		if (running) frame = requestAnimationFrame(tick);
-		else cancelAnimationFrame(frame);
-	}
+		return trainer.steps < MAX_STEPS;
+	});
 
 	function reset() {
-		running = false;
-		cancelAnimationFrame(frame);
+		loop.stop();
 		const seed = Math.floor(Math.random() * 1e6);
 		random = seededRandom(seed);
 		trainer = new RNNTrainer(new CharRNN(vocab.length, HIDDEN, seed));
@@ -56,8 +48,6 @@
 		read = 8;
 		version++;
 	}
-
-	$effect(() => () => cancelAnimationFrame(frame));
 
 	const steps = $derived.by(() => (void version, trainer.steps));
 
@@ -83,12 +73,7 @@
 						>{show(c)}</span
 					>{/each}
 			</p>
-			<div class="slider">
-				<label for="{id}-read" class="label"
-					>Characters read <span class="mono" aria-hidden="true">{read}</span></label
-				>
-				<input id="{id}-read" type="range" min="1" max={PHRASE.length - 1} bind:value={read} />
-			</div>
+			<Slider label="Characters read" min={1} max={PHRASE.length - 1} bind:value={read} />
 			<p class="label">Its memory after “{PHRASE.slice(0, read)}”</p>
 			<VectorStrip values={memory.h} cells={HIDDEN} scale={1} label="The model's memory" />
 			<p class="label guess-label">What it expects next</p>
@@ -108,13 +93,18 @@
 				step {steps}{losses.length ? ` · loss ${losses.at(-1)!.toFixed(2)}` : ''}
 			</p>
 			<p class="facts">
-				{trainer.model.parameterCount.toLocaleString('en-US')} weights. However much it has read, its
-				memory is the same {HIDDEN} numbers.
+				{formatCount(trainer.model.parameterCount)} weights. However much it has read, its memory is the
+				same {HIDDEN} numbers.
 			</p>
 		</div>
 	</div>
-	<button type="button" onclick={toggle} aria-pressed={running} disabled={steps >= MAX_STEPS}>
-		{steps >= MAX_STEPS ? 'Finished' : running ? 'Pause' : steps ? 'Keep training' : 'Train'}
+	<button
+		type="button"
+		onclick={() => loop.toggle()}
+		aria-pressed={loop.running}
+		disabled={steps >= MAX_STEPS}
+	>
+		{steps >= MAX_STEPS ? 'Finished' : loop.running ? 'Pause' : steps ? 'Keep training' : 'Train'}
 	</button>
 </WidgetFrame>
 
@@ -144,16 +134,6 @@
 	.phrase .next {
 		color: var(--c-token-ink);
 		border-bottom: 2px solid var(--c-token);
-	}
-
-	.slider {
-		display: flex;
-		flex-direction: column;
-		margin-bottom: var(--space-3);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-token);
 	}
 
 	.guess-label {

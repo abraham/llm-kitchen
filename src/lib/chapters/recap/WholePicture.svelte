@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import type { Slug } from '#lib/curriculum/index.ts';
 	import { canonical } from '#lib/models/provider.ts';
 

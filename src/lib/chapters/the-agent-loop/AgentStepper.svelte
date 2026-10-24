@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { then, useDatasets } from '#lib/datasets/use.ts';
 	import { label } from '#lib/curriculum/index.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun, AgentStep } from '#lib/harness/agent.ts';
 	import type { AgentRunName } from '#lib/datasets/registry.ts';
+	import { formatCount } from '#lib/components/primitives/format.ts';
 
 	let {
 		run: name = 'agent-cat',
@@ -29,7 +30,7 @@
 				? `The harness refuses to run ${e.step.call!.name} and tells the model so.`
 				: `The harness runs ${e.step.call!.name} and adds the result to the conversation.`;
 		}
-		const lead = `Model call ${e.n} of at most ${run.maxSteps}, reading ${e.step.promptTokens.toLocaleString('en-US')} tokens.`;
+		const lead = `Model call ${e.n} of at most ${run.maxSteps}, reading ${formatCount(e.step.promptTokens)} tokens.`;
 		return e.step.call
 			? `${lead} It writes a tool call, then stops.`
 			: `${lead} No tool call this time, so this is the answer and the loop ends.`;
@@ -87,9 +88,7 @@
 				{#each all.slice(0, stepper.index + 1) as e, i (i)}
 					<li class={e.kind} class:latest={i === stepper.index}>
 						{#if e.kind === 'model'}
-							<span class="who"
-								>Model · {e.step.promptTokens.toLocaleString('en-US')} tokens in</span
-							>
+							<span class="who">Model · {formatCount(e.step.promptTokens)} tokens in</span>
 							{#if e.step.thought}<p class="thought">{e.step.thought}</p>{/if}
 							{#if e.step.call}<p class="mono small">
 									{e.step.output.slice(e.step.output.indexOf('<tool_call>'))}

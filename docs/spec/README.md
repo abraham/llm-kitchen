@@ -10,6 +10,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [chapters/](chapters/)                   | One file per chapter, named by slug: its hook, widgets, key idea, data, and design decisions   |
 | [design.md](design.md)                   | Look and layout, concept colors and shapes, shared elements, motion, and branding              |
 | [architecture.md](architecture.md)       | Tech stack, source layout, routing, navigation, glossary, and citations                        |
+| [components.md](components.md)           | Shared component folders, import rules, conventions, and the common set                        |
 | [models-and-data.md](models-and-data.md) | Recorded data and live models: tiers, the canonical model, recording scripts, and safety rules |
 | [quality.md](quality.md)                 | Checks, tests, accessibility, and performance budgets                                          |
 | [deployment.md](deployment.md)           | Hosting, deploys, preview channels, headers, and caching                                       |

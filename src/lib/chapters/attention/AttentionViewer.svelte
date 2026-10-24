@@ -1,18 +1,20 @@
 <script lang="ts">
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import Choice, { type Option } from '#lib/components/ui/Choice.svelte';
 	import AttentionLines from '#lib/components/primitives/AttentionLines.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { useDatasets } from '#lib/datasets/use.ts';
 	import type { TraceName } from '#lib/datasets/registry.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
-	type Choice = number | 'avg';
+	type Which = number | 'avg';
 	interface Prompt {
 		name: TraceName;
 		label: string;
-		layer: Choice;
-		head: Choice;
+		layer: Which;
+		head: Which;
 		/** The token that starts selected; defaults to the last one. */
 		focus?: string;
 	}
@@ -49,10 +51,9 @@
 	];
 
 	let prompt = $state(PROMPTS[0]);
-	let layer = $state<Choice>(PROMPTS[0].layer);
-	let head = $state<Choice>(PROMPTS[0].head);
+	let layer = $state<Which>(PROMPTS[0].layer);
+	let head = $state<Which>(PROMPTS[0].head);
 	let query = $state<number | null>(null);
-	const id = $props.id();
 
 	const datasets = useDatasets();
 	const trace = $derived(datasets(`traces/${prompt.name}`));
@@ -79,6 +80,10 @@
 
 	const layers = Array.from({ length: canonical.layers }, (_, i) => i);
 	const heads = Array.from({ length: canonical.heads }, (_, i) => i);
+	const averageOr = (xs: number[]): Option<Which>[] => [
+		{ value: 'avg', label: 'all (average)' },
+		...xs.map((x) => ({ value: x, label: String(x) }))
+	];
 </script>
 
 <WidgetFrame
@@ -87,26 +92,16 @@
 	onreset={() => choose(PROMPTS[0].name)}
 >
 	<div class="controls">
-		<div class="field wide">
-			<label class="label" for="{id}-prompt">Sentence</label>
-			<select id="{id}-prompt" value={prompt.name} onchange={(e) => choose(e.currentTarget.value)}>
-				{#each PROMPTS as p (p.name)}<option value={p.name}>{p.label}</option>{/each}
-			</select>
+		<div class="wide">
+			<Choice
+				legend="Sentence"
+				appearance="select"
+				options={PROMPTS.map((p) => ({ value: p.name, label: p.label }))}
+				bind:value={() => prompt.name, choose}
+			/>
 		</div>
-		<div class="field">
-			<label class="label" for="{id}-layer">Layer</label>
-			<select id="{id}-layer" bind:value={layer}>
-				<option value="avg">all (average)</option>
-				{#each layers as l (l)}<option value={l}>{l}</option>{/each}
-			</select>
-		</div>
-		<div class="field">
-			<label class="label" for="{id}-head">Head</label>
-			<select id="{id}-head" bind:value={head}>
-				<option value="avg">all (average)</option>
-				{#each heads as h (h)}<option value={h}>{h}</option>{/each}
-			</select>
-		</div>
+		<Choice legend="Layer" appearance="select" options={averageOr(layers)} bind:value={layer} />
+		<Choice legend="Head" appearance="select" options={averageOr(heads)} bind:value={head} />
 	</div>
 
 	<Loading promise={trace}>
@@ -123,7 +118,7 @@
 			<div class="stage">
 				<AttentionLines {tokens} {weights} query={q} onselect={(i) => (query = i)} />
 			</div>
-			<p class="readout" aria-live="polite">
+			<Status>
 				{#if layer === 'avg' || head === 'avg'}Averaged over {layer === 'avg'
 						? 'all layers'
 						: `layer ${layer}`}{head === 'avg' ? ', all heads' : `, head ${head}`}:{:else}Layer {layer},
@@ -131,7 +126,7 @@
 				“{displayToken(tokens[q])}” looks most at
 				{#each top as x, i (x.k)}<strong class="mono">{displayToken(tokens[x.k])}</strong>
 					({formatPercent(x.w)}){i < top.length - 1 ? ', ' : '.'}{/each}
-			</p>
+			</Status>
 			<p class="note">
 				Click a word on the right to see what it looks at. A word can only look back at itself and
 				earlier words. Layers and heads are numbered from 0, as in research papers.
@@ -146,31 +141,16 @@
 		flex-wrap: wrap;
 		gap: var(--space-3);
 		margin-bottom: var(--space-4);
+		--block-space: 0;
 	}
 
-	.field {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.field.wide {
+	.wide {
 		flex: 1;
 		min-width: 16rem;
 	}
 
-	select {
-		font: inherit;
-		font-size: 0.9rem;
-		max-width: 100%;
-	}
-
 	.stage {
 		overflow-x: auto;
-	}
-
-	.readout {
-		min-height: 3em;
-		margin: var(--space-3) 0 0;
 	}
 
 	.note {

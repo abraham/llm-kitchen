@@ -1,5 +1,6 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { codePointLabel, encodeText, hexByte } from '#lib/math/encoding.ts';
 
 	const START = 'The cat sat on the';
@@ -23,11 +24,15 @@
 			<span class="label">Type anything</span>
 			<input bind:value={text} maxlength="60" autocomplete="off" spellcheck="false" />
 		</label>
-		<fieldset>
-			<legend class="label">Show</legend>
-			<label><input type="radio" bind:group={view} value="codepoint" /> Unicode number</label>
-			<label><input type="radio" bind:group={view} value="bytes" /> UTF-8 bytes</label>
-		</fieldset>
+		<Choice
+			legend="Show"
+			layout="inline"
+			options={[
+				{ value: 'codepoint', label: 'Unicode number' },
+				{ value: 'bytes', label: 'UTF-8 bytes' }
+			] as const}
+			bind:value={view}
+		/>
 	</div>
 
 	<ol class="flaps" aria-label="Characters and their numbers">
@@ -64,6 +69,7 @@
 
 <style>
 	.controls {
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-4);
@@ -86,21 +92,6 @@
 		border-radius: var(--radius);
 		background: var(--page);
 		color: var(--ink);
-	}
-
-	fieldset {
-		border: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		gap: var(--space-3);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-	}
-
-	legend {
-		float: left;
-		margin-right: var(--space-2);
 	}
 
 	.flaps {

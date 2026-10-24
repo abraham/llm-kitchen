@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { loadDataset } from '#lib/datasets/load.ts';
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Toggle from '#lib/components/ui/Toggle.svelte';
+	import Choice from '#lib/components/ui/Choice.svelte';
 	import { nearest, project } from '#lib/math/vectors.ts';
 	import { MINILM, browserModel } from '#lib/models/browser-model.svelte.ts';
 	import { BrowserProvider } from '#lib/models/browser-provider.ts';
@@ -179,17 +181,17 @@
 			)}
 
 			<div class="controls">
-				<label class="label" for="{id}-word">Word</label>
-				<select id="{id}-word" bind:value={selected}>
-					{#each all
+				<Choice
+					legend="Word"
+					appearance="select"
+					layout="inline"
+					options={all
 						.map((w) => w.word)
-						.toSorted((a, b) => a.localeCompare(b)) as word (word)}<option value={word}
-							>{word}</option
-						>{/each}
-				</select>
-				<label class="check">
-					<input type="checkbox" bind:checked={showAnalogy} /> Show king − man + woman
-				</label>
+						.toSorted((a, b) => a.localeCompare(b))
+						.map((word) => ({ value: word, label: word }))}
+					bind:value={selected}
+				/>
+				<Toggle label="Show king − man + woman" bind:checked={showAnalogy} />
 			</div>
 
 			<svg
@@ -327,6 +329,7 @@
 
 <style>
 	.controls {
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -334,7 +337,6 @@
 		margin-bottom: var(--space-2);
 	}
 
-	select,
 	input:not([type]) {
 		font: inherit;
 		font-family: var(--font-mono);
@@ -343,11 +345,6 @@
 		color: var(--ink);
 		border: 1px solid var(--rule);
 		border-radius: var(--radius);
-	}
-
-	.check {
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
 	}
 
 	.map {
