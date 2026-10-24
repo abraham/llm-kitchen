@@ -45,14 +45,17 @@
 	<a class="brand" href={resolve('/')}>{SITE_NAME}</a>
 	<div class="tools">
 		{#if levelChoice}
-			<Choice
-				legend="Explanations"
-				hideLabel
-				layout="inline"
-				appearance="select"
-				options={LEVEL_OPTIONS}
-				bind:value={() => level.current, choose}
-			/>
+			<div class="level">
+				<Choice
+					legend="Explanations"
+					hideLabel
+					layout="inline"
+					appearance="select"
+					options={LEVEL_OPTIONS}
+					bind:value={() => level.current, choose}
+				/>
+				<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+			</div>
 		{/if}
 		<button
 			type="button"
@@ -105,6 +108,38 @@
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
+	}
+
+	.level {
+		position: relative;
+	}
+
+	/* The native arrow ignores the theme, so it's replaced by .chevron, drawn in the ink color. */
+	.level :global(select) {
+		appearance: none;
+		height: 2.25rem;
+		padding: 0 calc(var(--space-2) + 1.25rem) 0 var(--space-3);
+		border: 1px solid var(--rule);
+		border-radius: var(--radius);
+		background: var(--surface);
+		color: var(--ink);
+		font-family: var(--font-sans);
+		font-size: 0.875rem;
+		cursor: pointer;
+	}
+
+	.level :global(select:hover) {
+		background: var(--surface-2);
+	}
+
+	.chevron {
+		position: absolute;
+		right: var(--space-2);
+		top: 50%;
+		width: 1rem;
+		height: 1rem;
+		translate: 0 -50%;
+		pointer-events: none;
 	}
 
 	.theme {
