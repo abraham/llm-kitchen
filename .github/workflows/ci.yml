@@ -67,7 +67,10 @@ jobs:
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       # No --with-deps: the runner image already has Chrome's libraries, and apt mirrors can take minutes.
       - run: npx playwright install chromium
+      # Adds the test-only pages in tests/e2e/fixtures.
       - run: npm run build
+        env:
+          VITE_FIXTURES: '1'
       - run: npm run test:e2e -- --shard=${{ matrix.shard }}/3
       - if: failure()
         uses: actions/upload-artifact@v7.0.2

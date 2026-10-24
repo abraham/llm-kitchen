@@ -32,7 +32,7 @@ src/lib/components/
 | `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`; the `scrollable` attachment; the `Concept` type                                                                              |
 | `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`, `RoleKey`; `format.ts`, `roles.ts` |
 | `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `Scrolly`, `FrameLoop` (`loop.svelte.ts`)                 |
-| `page/`       | `AppBar`, `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`                          |
+| `page/`       | `AppBar`, `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`, `At`                    |
 | `widgets/`    | `GlassBoxGenerator`                                                                                                                                                               |
 
 Where a new component goes:

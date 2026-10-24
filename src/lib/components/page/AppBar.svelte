@@ -1,7 +1,17 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { LEVEL_NAMES, LEVELS, type Level } from '#lib/levels.ts';
 	import { SITE_NAME } from '#lib/site.ts';
+	import { level } from '#lib/stores/level.svelte.ts';
 	import { theme, type ThemeChoice } from '#lib/stores/theme.svelte.ts';
+	import Choice from '../ui/Choice.svelte';
+
+	let {
+		levelChoice = false
+	}: {
+		/** Whether to show the explanation level control (hidden until a chapter has another level). */
+		levelChoice?: boolean;
+	} = $props();
 
 	const NAMES: Record<ThemeChoice, string> = {
 		auto: 'Auto (matches your system)',
@@ -9,32 +19,63 @@
 		dark: 'Dark'
 	};
 
+	const LEVEL_OPTIONS = LEVELS.map((value) => ({ value, label: LEVEL_NAMES[value] }));
+
 	$effect(() => theme.load());
+	$effect(() => level.load());
+
+	/**
+	 * Switches level without moving the reader: the block at the top of the content keeps its place,
+	 * or, if the new level hides it, the shared block before it does (so its replacement shows there).
+	 */
+	function choose(next: Level) {
+		const top = document.querySelector('.app-bar')?.getBoundingClientRect().bottom ?? 0;
+		const blocks = [...(document.getElementById('content')?.children ?? [])];
+		const i = blocks.findIndex((el) => el.getBoundingClientRect().bottom > top);
+		const anchors = [blocks[i], blocks.slice(0, i).findLast((el) => !el.matches('[data-levels]'))]
+			.filter((el) => el !== undefined)
+			.map((el) => ({ el, before: el.getBoundingClientRect().top }));
+		level.set(next);
+		const anchor = anchors.find(({ el }) => el.getClientRects().length > 0);
+		if (anchor) scrollBy(0, anchor.el.getBoundingClientRect().top - anchor.before);
+	}
 </script>
 
 <header class="app-bar">
 	<a class="brand" href={resolve('/')}>{SITE_NAME}</a>
-	<button
-		type="button"
-		class="theme"
-		aria-label="Theme: {NAMES[theme.choice]}"
-		title="Theme: {NAMES[theme.choice]}"
-		onclick={() => theme.next()}
-	>
-		<svg class="auto" viewBox="0 0 24 24" aria-hidden="true">
-			<circle cx="12" cy="12" r="8" />
-			<path class="half" d="M12 4a8 8 0 0 1 0 16z" />
-		</svg>
-		<svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
-			<circle cx="12" cy="12" r="4" />
-			<path
-				d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+	<div class="tools">
+		{#if levelChoice}
+			<Choice
+				legend="Explanations"
+				hideLabel
+				layout="inline"
+				appearance="select"
+				options={LEVEL_OPTIONS}
+				bind:value={() => level.current, choose}
 			/>
-		</svg>
-		<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
-			<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
-		</svg>
-	</button>
+		{/if}
+		<button
+			type="button"
+			class="theme"
+			aria-label="Theme: {NAMES[theme.choice]}"
+			title="Theme: {NAMES[theme.choice]}"
+			onclick={() => theme.next()}
+		>
+			<svg class="auto" viewBox="0 0 24 24" aria-hidden="true">
+				<circle cx="12" cy="12" r="8" />
+				<path class="half" d="M12 4a8 8 0 0 1 0 16z" />
+			</svg>
+			<svg class="sun" viewBox="0 0 24 24" aria-hidden="true">
+				<circle cx="12" cy="12" r="4" />
+				<path
+					d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+				/>
+			</svg>
+			<svg class="moon" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+			</svg>
+		</button>
+	</div>
 </header>
 
 <style>
@@ -57,6 +98,13 @@
 		font-weight: 700;
 		color: var(--ink);
 		text-decoration: none;
+	}
+
+	.tools {
+		--block-space: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 
 	.theme {

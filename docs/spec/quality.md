@@ -26,6 +26,8 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
   [security.md](security.md)).
 - **Build and Playwright**, split across 3 parallel jobs with Playwright's `--shard`, each uploading
   its report on failure. Tests are independent (`fullyParallel`), so a shard can take any of them.
+  The build sets `VITE_FIXTURES` to add the test-only pages in `tests/e2e/fixtures`; a local
+  `playwright test` builds the same way.
 - **Lighthouse**, split across 4 parallel jobs the same way, each uploading its failing pages'
   Lighthouse reports. Within a job, pages still run one at a time.
 - **`ci-success`** `needs` every other job and runs with `if: always()`. It fails if any of them
@@ -52,7 +54,8 @@ down never blocks a merge; a failure shows up as a failed run.
   derived chapter numbers (`curriculum`); chapter markup (`chapter-markup`); social images and
   descriptions (`branding`); the hosting config (`hosting`); and color contrast (`tokens`).
 - **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, the menu and
-  a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), page metadata
+  a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), explanation levels on
+  a fixture page (`levels`), page metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
   caching), and on every page (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded;

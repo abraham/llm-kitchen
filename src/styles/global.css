@@ -178,7 +178,8 @@ input[type='range'] {
 	padding-inline: var(--space-4);
 }
 
-.prose > .breakout {
+.prose > .breakout,
+.prose > [data-levels] > .breakout {
 	--breakout-width: min(var(--wide), 100cqi - 2 * var(--space-4));
 	width: var(--breakout-width);
 	margin-inline: calc((100% - var(--breakout-width)) / 2);
@@ -189,4 +190,12 @@ input[type='range'] {
 	font-size: 0.8125rem;
 	letter-spacing: 0.02em;
 	color: var(--ink-muted);
+}
+
+/* Passages for some explanation levels (page/At): only the current level's show. Without a
+   data-level on <html>, the level is Standard. */
+:root:not([data-level]) [data-levels]:not([data-levels~='standard']),
+:root[data-level='simple'] [data-levels]:not([data-levels~='simple']),
+:root[data-level='deep'] [data-levels]:not([data-levels~='deep']) {
+	display: none;
 }

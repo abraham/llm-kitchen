@@ -1,0 +1,48 @@
+<script module>
+	export const title = 'Explanation levels fixture';
+	export const levels = ['simple', 'deep'];
+</script>
+
+<script>
+	import At from '#lib/components/page/At.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+</script>
+
+<div class="spacer"></div>
+
+Shared opening paragraph, cited at every level.<Cite id="shannon1948" />
+
+<At levels="simple">
+
+Simple passage: the short version.<Cite id="radford2019" />
+
+</At>
+<At levels="standard deep">
+
+Standard passage: the full version.<Cite id="shannon1951" />
+
+It runs to a second paragraph.
+
+</At>
+
+Shared paragraph with a <At levels="simple" inline>plain</At><At levels="standard deep" inline>precise</At> word in it.
+
+<At levels="deep">
+
+Deep passage: the details.<Cite id="gpt2-model-card" />
+
+A second paragraph of details.
+
+A third paragraph of details.
+
+</At>
+
+Shared closing paragraph.<Cite id="shannon1951" />
+
+<div class="spacer"></div>
+
+<style>
+	.spacer {
+		height: 80vh;
+	}
+</style>
