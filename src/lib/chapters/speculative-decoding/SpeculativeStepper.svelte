@@ -125,11 +125,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
 	.text {
 		white-space: pre-wrap;
 		min-height: 3em;

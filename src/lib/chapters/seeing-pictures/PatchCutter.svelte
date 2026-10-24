@@ -103,10 +103,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	select {
-		font: inherit;
-	}
-
 	.layout {
 		display: grid;
 		grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
@@ -155,10 +151,6 @@
 		flex-direction: column;
 		max-width: 20rem;
 		margin-bottom: var(--space-3);
-	}
-
-	input[type='range'] {
-		accent-color: var(--c-token);
 	}
 
 	.row {

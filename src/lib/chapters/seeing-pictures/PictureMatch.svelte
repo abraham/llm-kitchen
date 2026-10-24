@@ -60,10 +60,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	select {
-		font: inherit;
-	}
-
 	.matches {
 		list-style: none;
 		padding: 0;

@@ -37,7 +37,7 @@
 			</fieldset>
 
 			<div class="scroll">
-				<table>
+				<table class="data">
 					<caption class="visually-hidden">
 						The router's score for each expert, for each token of “{d.prompt}”. Chosen experts are
 						marked.
@@ -63,7 +63,7 @@
 								</th>
 								{#each routes[i].probs as p, e (e)}
 									{@const on = routes[i].chosen.includes(e)}
-									<td class:on style:--p={p}>
+									<td class="heat" class:on style:--p={p}>
 										<span class="mono">{formatPercent(p)}</span>{#if on}<span class="tick"
 												><span aria-hidden="true"> ✓</span><span class="visually-hidden">
 													(chosen)</span
@@ -124,37 +124,25 @@
 	}
 
 	table {
-		border-collapse: collapse;
+		--heat: var(--c-weight-tint);
 		font-size: 0.8rem;
-		width: 100%;
 	}
 
 	th,
 	td {
 		padding: 2px var(--space-1);
-		border-bottom: 1px solid var(--rule);
 		white-space: nowrap;
 	}
 
 	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
 		font-weight: 600;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
 	}
 
 	tbody th {
-		text-align: left;
+		font-weight: 700;
 	}
 
 	td {
-		background: color-mix(in oklch, var(--c-weight-tint) calc(var(--p) * 100%), transparent);
 		color: var(--ink-muted);
 	}
 

@@ -54,7 +54,7 @@
 			<p class="label">The prompt, for “{t.tests[0].query}”</p>
 			<pre class="prompt">{first.text}<span class="gap" aria-hidden="true"> ___</span></pre>
 
-			<table>
+			<table class="data">
 				<caption>
 					Chance that {d.models[model].displayName} answers right, by number of examples
 				</caption>
@@ -74,7 +74,9 @@
 							<th scope="row" class="mono">{test.query}</th>
 							<td class="mono answer">{test.answer}</td>
 							{#each test.runs as r (r.shots)}
-								<td class:on={r.shots === shots} style:--p={r[model]}>{formatPercent(r[model])}</td>
+								<td class="heat" class:on={r.shots === shots} style:--p={r[model]}
+									>{formatPercent(r[model])}</td
+								>
 							{/each}
 						</tr>
 					{/each}
@@ -125,46 +127,9 @@
 		color: var(--c-token-ink);
 	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.85rem;
-	}
-
-	caption {
-		text-align: left;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--ink-muted);
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-	}
-
 	td.answer {
 		text-align: left;
 		color: var(--ink-muted);
-	}
-
-	td {
-		background: color-mix(in oklch, var(--c-prob-tint) calc(var(--p, 0) * 100%), transparent);
 	}
 
 	th.on,

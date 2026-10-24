@@ -90,7 +90,7 @@
 					/>
 				</div>
 				<div>
-					<table>
+					<table class="data">
 						<caption>Chance of {g.watch.map((w) => `“${w.trim()}”`).join(', ')} next</caption>
 						<thead>
 							<tr>
@@ -199,40 +199,10 @@
 	}
 
 	table {
-		width: 100%;
-		border-collapse: collapse;
 		font-size: 0.8rem;
-	}
-
-	caption {
-		text-align: left;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--ink-muted);
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
 	}
 
 	tbody th {
-		font-weight: 400;
 		font-size: 0.75rem;
 		overflow-wrap: anywhere;
 	}

@@ -90,10 +90,6 @@
 		gap: var(--space-1);
 	}
 
-	select {
-		font: inherit;
-	}
-
 	fieldset {
 		border: none;
 		padding: 0;

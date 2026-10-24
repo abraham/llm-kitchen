@@ -152,10 +152,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	input[type='range'] {
-		accent-color: var(--c-token);
-	}
-
 	.guess-label {
 		margin-top: var(--space-3);
 	}

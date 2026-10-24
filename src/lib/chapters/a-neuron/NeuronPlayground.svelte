@@ -266,7 +266,6 @@
 	}
 
 	select {
-		font: inherit;
 		font-size: 0.875rem;
 	}
 

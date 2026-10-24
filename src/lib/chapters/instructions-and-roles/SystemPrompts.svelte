@@ -41,7 +41,7 @@
 				{r.text}
 			</div>
 
-			<table>
+			<table class="data">
 				<caption>
 					Does a persona make it better at sums? “{d.persona}” vs. the default system prompt
 				</caption>
@@ -133,44 +133,6 @@
 		white-space: pre-wrap;
 		max-height: 16rem;
 		overflow-y: auto;
-	}
-
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.85rem;
-	}
-
-	caption {
-		text-align: left;
-		font-family: var(--font-sans);
-		font-size: 0.8rem;
-		color: var(--ink-muted);
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-	}
-
-	tbody th,
-	tfoot th {
-		font-weight: 400;
 	}
 
 	td.wrong {

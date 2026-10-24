@@ -128,7 +128,6 @@
 	}
 
 	input[type='range'] {
-		accent-color: var(--c-token);
 		min-width: 12rem;
 	}
 

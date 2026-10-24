@@ -101,11 +101,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
 	.name {
 		display: flex;
 		flex-wrap: wrap;

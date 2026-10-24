@@ -64,11 +64,6 @@
 		gap: var(--space-2);
 	}
 
-	select {
-		font: inherit;
-		max-width: 100%;
-	}
-
 	.sentence {
 		font-size: 1.15rem;
 		margin: var(--space-3) 0;

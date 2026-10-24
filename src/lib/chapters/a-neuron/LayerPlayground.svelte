@@ -297,10 +297,6 @@
 		flex-direction: column;
 	}
 
-	input[type='range'] {
-		accent-color: var(--c-token);
-	}
-
 	fieldset {
 		border: 0;
 		margin: 0;

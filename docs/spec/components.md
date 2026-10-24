@@ -103,13 +103,18 @@ Every shared component:
 A component exists to share markup and wiring. When the shared part is one or two declarations on a
 native element, it goes in `global.css`, and widgets drop their copies:
 
-| Rule                            | Declarations                                                                | Replaces scoped copies in |
-| ------------------------------- | --------------------------------------------------------------------------- | ------------------------- |
-| `select`                        | `font: inherit; max-width: 100%`                                            | 13 widgets                |
-| `input[type='range']`           | `accent-color: var(--accent, var(--c-token))`                               | 12 widgets                |
-| `button[aria-pressed='true']`   | the pressed look, in `--c-prob`                                             | 3 widgets                 |
-| `table.data` and its `th`, `td` | collapsed borders, `0.85rem`, `tabular-nums` and right-aligned numeric `td` | 13 widgets                |
-| `table.data td.heat`            | background mixed from `--c-prob-tint` by `--p` (0–1)                        | the heat-map tables       |
+| Rule                  | Declarations                                                        | Replaces scoped copies in |
+| --------------------- | ------------------------------------------------------------------- | ------------------------- |
+| `select`              | `font: inherit; max-width: 100%`                                    | 13 widgets                |
+| `input[type='range']` | `accent-color: var(--accent, var(--c-token))`                       | 5 widgets                 |
+| `table.data`          | width, collapsed borders, caption, header cells, right-aligned `td` | 5 widgets                 |
+| `table.data td.heat`  | background mixed from `--heat` (default `--c-prob-tint`) by `--p`   | FewShot, ExpertRouter     |
+
+- The `table.data` rules sit inside `:where()`, so they have no specificity and any scoped rule in a
+  widget overrides them. Tables whose cells are centered grids or prose (KVCacheStepper,
+  InjectionLab, ScaleExplorer, FragileLab, and others) keep their own rules.
+- Buttons with `aria-pressed` keep their scoped looks: each one that has one also restyles the
+  button's border and background, which a global rule can't beat without `!important`.
 
 The existing `.label`, `.mono`, `.visually-hidden`, `.prose`, `.breakout`, and `button` rules stay
 global.
@@ -287,7 +292,6 @@ local visual tests; any screenshot that changes is reviewed and its baseline upd
 pull request.
 
 1. **Global styles.** Add the rules in [Global styles](#global-styles) and delete the scoped copies.
-   No visible change.
 2. **Folders.** Split `layout/` into `frame/` and `page/`, move `scrollable.ts` to `ui/`, add the
    ESLint layers, and update imports in chapters, `.svx` files, and routes (about 280 import lines,
    all mechanical). Update the source layout in [architecture.md](architecture.md).
@@ -311,7 +315,7 @@ When a step lands, its components move to **Built** below.
 | `scrollable`                                                                                                                                   | `layout/` → `ui/`       | Built; move planned |
 | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`                           | `primitives/`           | Built               |
 | `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built               |
-| Global styles                                                                                                                                  | `global.css`            | Planned             |
+| Global styles                                                                                                                                  | `global.css`            | Built               |
 | `Choice`, `Slider`, `Toggle`                                                                                                                   | `ui/`                   | Planned             |
 | `ScrollBox`, `Status`, `Compare`                                                                                                               | `ui/`                   | Planned             |
 | `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned             |

@@ -228,7 +228,6 @@
 	}
 
 	select {
-		font: inherit;
 		font-family: var(--font-mono);
 		margin: 0 var(--space-2) var(--space-2);
 	}

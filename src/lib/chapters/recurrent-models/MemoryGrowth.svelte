@@ -59,10 +59,6 @@
 		margin-bottom: var(--space-3);
 	}
 
-	input[type='range'] {
-		accent-color: var(--c-token);
-	}
-
 	.bars {
 		margin: 0;
 		display: grid;

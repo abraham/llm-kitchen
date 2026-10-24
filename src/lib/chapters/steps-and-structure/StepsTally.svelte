@@ -54,7 +54,7 @@
 				{r.text}
 			</div>
 
-			<table>
+			<table class="data">
 				<caption>All {d.puzzles.length} puzzles</caption>
 				<thead>
 					<tr>
@@ -91,11 +91,6 @@
 		align-items: center;
 		gap: var(--space-2);
 		margin-bottom: var(--space-2);
-	}
-
-	select {
-		font: inherit;
-		max-width: 100%;
 	}
 
 	fieldset {
@@ -146,40 +141,10 @@
 		overflow-y: auto;
 	}
 
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		font-size: 0.85rem;
-	}
-
 	caption {
-		text-align: left;
-		font-family: var(--font-sans);
+		font-size: inherit;
 		font-weight: 600;
-		margin-bottom: var(--space-1);
-	}
-
-	th,
-	td {
-		padding: 2px var(--space-2);
-		border-bottom: 1px solid var(--rule);
-		text-align: left;
-	}
-
-	thead th {
-		font-family: var(--font-sans);
-		font-size: 0.7rem;
-		color: var(--ink-muted);
-	}
-
-	th.num,
-	td {
-		text-align: right;
-		font-variant-numeric: tabular-nums;
-	}
-
-	tbody th {
-		font-weight: 400;
+		color: inherit;
 	}
 
 	tr.on th,

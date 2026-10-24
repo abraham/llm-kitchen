@@ -184,10 +184,6 @@
 		flex-direction: column;
 	}
 
-	select {
-		font: inherit;
-	}
-
 	.layout {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));

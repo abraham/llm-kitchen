@@ -159,9 +159,7 @@
 	}
 
 	select {
-		font: inherit;
 		font-size: 0.9rem;
-		max-width: 100%;
 	}
 
 	.stage {
