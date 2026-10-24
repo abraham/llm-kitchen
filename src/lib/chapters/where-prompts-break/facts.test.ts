@@ -28,4 +28,24 @@ describe('where prompts break', () => {
 			expect(m.position).toBeLessThan(positions.at(-1)!);
 		}
 	});
+
+	it('in depth: every 4-of-8 order ends with a positive example', () => {
+		const { examples, orders } = d.sentiment;
+		const endsWith = (o: { order: number[] }) => examples[o.order.at(-1)!][1];
+		const worst = orders.filter((o) => o.correct === 4);
+		expect(worst).toHaveLength(5);
+		for (const o of worst) expect(endsWith(o)).toBe('positive');
+		const negative = orders.filter((o) => endsWith(o) === 'negative');
+		expect(negative).toHaveLength(12);
+		for (const o of negative) expect(o.correct).toBeGreaterThanOrEqual(6);
+	});
+
+	it('in depth: the misses were confident; 76 of 80 other answers were over 99%', () => {
+		const points = d.position.runs.flatMap((r) => r.points);
+		const misses = points.filter((pt) => pt.p < 0.5);
+		for (const m of misses) expect(m.p).toBeLessThan(0.02);
+		const rest = points.filter((pt) => pt.p >= 0.5);
+		expect(rest).toHaveLength(80);
+		expect(rest.filter((pt) => pt.p > 0.99)).toHaveLength(76);
+	});
 });

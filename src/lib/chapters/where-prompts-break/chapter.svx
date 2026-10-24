@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -7,32 +8,95 @@
 
 ## Changes that shouldn't matter
 
+<At levels="simple">
+
+Back in <ChapterRef to="quirks-and-limits" />, small changes in wording changed an answer. Real
+prompts have many choices like that: which examples, in what order, laid out how, and where the
+important part goes. None of them should matter. Here are three, each changed on its own:
+
+</At>
+<At levels="standard deep">
+
 Back in <ChapterRef to="quirks-and-limits" />, small changes in wording changed an answer. Prompts for real tasks have many
 such choices: which examples, in what order, laid out how, and where the important part goes. None
 of them should matter to the meaning. Here are three, each changed on its own:
 
+</At>
+
 <FragileLab />
 
 ## Order
+
+<At levels="simple">
+
+Shuffling the same four examples changed how many of eight reviews GPT-2 small labeled right: from
+all 8 to just 4, no better than a coin. Much larger models do this too, and an order that works
+for one model may not work for another.<Cite id="lu2022" />
+
+</At>
+<At levels="standard deep">
 
 Shuffling the same four examples changed how many of the eight reviews GPT-2 small labeled right
 from 8 of 8 to 4 of 8, which is no better than a coin. Researchers found the same effect in much
 larger models: some orders do nearly as well as a fully trained classifier and others are no better
 than random guessing, and a good order for one model doesn't carry over to another.<Cite id="lu2022" />
 
+</At>
+<At levels="deep">
+
+### Why order matters
+
+The orders that went badly have something in common. All five that scored 4 of 8 ended with a
+positive example, and all twelve that ended with a negative one scored 6 or more. Models tend to
+favor labels that appear near the end of the prompt, and labels that were common in their
+training text. One fix, *contextual calibration*, measures that lean directly: give the prompt a
+test input with no content, like "N/A", see how far the answer tilts away from even, and correct
+every real answer by the same adjustment. It raised GPT-3 and GPT-2's average accuracy by up to
+30 points and made the choice of prompt matter less.<Cite id="zhao2021" />
+
+</At>
+
 ## Layout
+
+<At levels="simple">
+
+Writing the examples as "Review: … Sentiment: …" got 7 of 8 right; an arrow between review and
+label got 4. Formatting alone makes big differences in larger models too.<Cite id="sclar2024" />
+
+</At>
+<At levels="standard deep">
 
 Writing the same examples as "Review: … Sentiment: …" got 7 of 8 right; an arrow between review and
 label got 4. A study of open models found differences of up to 76 percentage points from formatting
 alone, and the gap didn't go away with bigger models, more examples, or instruction
 tuning.<Cite id="sclar2024" />
 
+</At>
+
 ## Position
+
+<At levels="simple">
+
+With 30 lines of locker numbers, Qwen2.5-1.5B-Instruct almost always found the right one when it
+was the first or last line. Every miss came with it somewhere in the middle. Studies of large
+models found the same thing.<Cite id="liu2024" />
+
+</At>
+<At levels="standard deep">
 
 With 30 lines of locker numbers, Qwen2.5-1.5B-Instruct found the right one almost every time when
 it was the first or last line. All of its 8 misses came with the line somewhere in the middle.
 Large studies show the same U shape: models use information at the start and end of a long prompt
 better than information in the middle.<Cite id="liu2024" />
+
+</At>
+<At levels="deep">
+
+When Qwen missed, it missed completely. In all 8 misses, the right number got under a 2% chance,
+while 76 of the other 80 answers got over 99%. The model wasn't unsure about those lines; it put
+nearly all its probability on some other answer.
+
+</At>
 
 ## What to do about it
 
@@ -47,6 +111,12 @@ start or the end.
 - These effects show up in large models too, and differ from model to model.
 - Test several versions of a prompt on real examples instead of trusting one wording.
 
+<At levels="deep">
+
+- Labels near the end of the prompt pull answers toward them; calibration measures the pull with a
+  content-free input.
+
+</At>
 </RecapCard>
 
 **Next question:** so far you've written the whole prompt yourself. In a chat app, code you never

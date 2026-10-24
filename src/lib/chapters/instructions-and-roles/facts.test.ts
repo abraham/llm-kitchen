@@ -28,4 +28,14 @@ describe('system prompts', () => {
 		expect(d.math.filter((m) => m.default.correct)).toHaveLength(5);
 		expect(d.math.filter((m) => m.persona.correct)).toHaveLength(3);
 	});
+
+	it('in depth: with no system prompt, the template fills in Qwen’s default', () => {
+		const text = chatTemplate([{ role: 'user', content: d.question }])
+			.map((p) => p.text)
+			.join('');
+		expect(text).toBe(d.replies[0].prompt);
+		expect(text).toContain(
+			'<|im_start|>system\nYou are Qwen, created by Alibaba Cloud. You are a helpful assistant.<|im_end|>'
+		);
+	});
 });

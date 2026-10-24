@@ -25,3 +25,6 @@ greedy.
   [The model is not the product](the-model-is-not-the-product.md) refers back to it.
 - The template view is its own widget, with the system prompt highlighted, rather than the prompt
   inspector, which comes later.
+- [Levels](../levels.md): Simple keeps the three results in words. In depth shows where the system
+  prompt sits in the template, Qwen's default when none is given, and training an instruction
+  hierarchy against prompt injection.
