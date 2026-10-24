@@ -1,4 +1,6 @@
 <script>
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -17,15 +19,66 @@ it below, and see how your guess compares with a real <GlossaryPopover term="llm
 
 ## A machine that plays the guessing game
 
+<At levels="simple">
+
+In 1951, Claude Shannon played this game with people, one letter at a time, to measure how
+predictable English is. Very, it turned out.<Cite id="shannon1951" />
+
+</At>
+<At levels="standard deep">
+
 In 1951, Claude Shannon ran an experiment that looks a lot like this one. He showed people the
 start of a passage and asked them to guess the next letter, again and again, and used how well they
 did to measure how predictable written English is. The answer: very.<Cite id="shannon1951" />
+
+</At>
+
+<At levels="simple">
+
+The model above, GPT-2 small, plays the same game. It doesn't commit to one answer: it gives
+every possible next word a chance, and spreads its bets across *floor*, *bed*, *couch*, and many
+more.
+
+</At>
+<At levels="standard deep">
 
 A large language model plays the same game. The model above is GPT-2 small, which OpenAI released
 in 2019.<Cite id="radford2019" /><Cite id="gpt2-model-card" /> It read the words *The cat sat on
 the* and gave every possible continuation a chance. Notice that it doesn't commit to one answer.
 It spreads its bets: *floor*, *bed*, and *couch* are all likely, and no single option gets even
 one chance in ten.
+
+</At>
+<At levels="deep">
+
+### Chances, written down
+
+The game has an exact form. Write a text as tokens $x_1, x_2, \dots, x_n$: the chunks GPT-2
+really reads, which <ChapterRef to="tokens" /> explains. For each place $i$, the model gives the
+chance of token $x_i$ given every token before it, written $P(x_i \mid x_1, \dots, x_{i-1})$. The
+chance of a whole text is those chances multiplied together:
+
+$$
+P(x_1, \dots, x_n) = \prod_{i=1}^{n} P(x_i \mid x_1, \dots, x_{i-1})
+$$
+
+where $\prod$ means multiplying, for every place $i$ from 1 to $n$.<Cite id="radford2019" /> The product
+shrinks fast. After *The cat sat on the*, *floor* gets 7.6%, and a comma after *floor* gets 26%, so
+the model's favorite two-token continuation has a chance of only about 2%.
+
+Spreading its bets is normal. Here the 50 likeliest next tokens add up to only about 64%; the other
+50,207 share the rest. Shannon measured that spread as **entropy**, in bits:
+
+$$
+H = -\sum_{i} p_i \log_2 p_i
+$$
+
+where $p_i$ is the chance of outcome $i$. One bit is one fair yes-or-no question; a choice between
+eight equally likely outcomes is 3 bits.<Cite id="shannon1948" /> From his guessing experiments,
+Shannon estimated that printed English carries about one bit per letter, given the 100 letters
+before it.<Cite id="shannon1951" />
+
+</At>
 
 ## Over and over
 
@@ -43,6 +96,12 @@ how the guessing works, and how much can be built on top of it.
 - It doesn't pick one answer. It gives every possible continuation a probability.
 - To write more, it adds a pick to the text and predicts again, over and over.
 
+<At levels="deep">
+
+- The chance of a whole text is each token's chance, given the ones before it, multiplied
+  together.
+
+</At>
 </RecapCard>
 
 **Next question:** you used everything you know about English to make your guess. What's the

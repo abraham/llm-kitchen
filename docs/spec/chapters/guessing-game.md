@@ -22,3 +22,6 @@ Recorded GPT-2 small (`the-cat-sat` trace).
 - No "what other people guessed" cloud: there is no real survey data, and made-up crowd data would
   read as fact. The visitor's guess is compared with the model's instead.
 - No live option yet; see [roadmap.md](../roadmap.md).
+- [Levels](../levels.md): Simple shortens Shannon's experiment and the model's spread of bets. In
+  depth writes the game as the chain rule (a text's chance is its tokens' chances multiplied),
+  works it on the recorded run, and introduces entropy with Shannon's estimate for English.

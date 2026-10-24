@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -22,6 +23,18 @@ and rescales them to add up to 100%. The real model chooses from all 50,257 opti
 
 ## Temperature
 
+<At levels="simple">
+
+The simplest way to choose is to always take the most likely word. That gives the same text every
+time, and with big models it tends to be dull and to repeat itself.<Cite id="holtzman2020" />
+
+**Temperature** controls how adventurous the pick is. A low temperature makes the likely words even
+likelier. A high one evens out the chances, so unusual words get picked more often. At 0, the
+model always takes the top word.
+
+</At>
+<At levels="standard deep">
+
 The simplest choice is to always take the most likely word. That's called greedy decoding, and it
 gives the same output every time. With large models, always picking the top word tends to produce
 dull text that can get stuck repeating itself.<Cite id="holtzman2020" />
@@ -30,10 +43,40 @@ dull text that can get stuck repeating itself.<Cite id="holtzman2020" />
 likelier. Above 1, it evens the chances out, so unusual words get picked more often. At 0 it becomes
 greedy: always the top word.
 
+</At>
+
+<At levels="standard deep">
+
 Under the hood, the model gives every word a raw score, and the scores are divided by the
 temperature before they become probabilities. Try it:
 
 <TemperatureMath />
+
+</At>
+<At levels="deep">
+
+### Temperature, written down
+
+Each candidate token $i$ gets a raw score $z_i$, called a logit. Softmax turns the scores into
+probabilities after dividing each one by the temperature $T$:
+
+$$
+p_i = \frac{e^{z_i / T}}{\sum_{j} e^{z_j / T}}
+$$
+
+where $e$ is the constant 2.718… and the sum runs over all 50,257 tokens, so the $p_i$ add up
+to 1. For any two tokens, $p_i / p_j = e^{(z_i - z_j) / T}$: a gap in scores counts for more at a low
+$T$ and for less at a high one. At $T = 1$ the model's own probabilities come out unchanged. As $T$
+gets close to 0, all the probability goes to the top score, which is why 0 means greedy. Adding the
+same number to every score changes nothing; only the gaps matter.
+
+The recorded runs further down divide GPT-2's raw scores by $T$ and draw from all 50,257 tokens;
+the widget's cut to ten is only for the picture. Two other controls cut off the long tail of
+unlikely tokens instead of flattening it: top-k, next, and nucleus sampling, which keeps the
+smallest set of top tokens whose chances add up to at least a threshold $p$. Nucleus sampling keeps
+few tokens when the model is sure and many when it isn't.<Cite id="holtzman2020" />
+
+</At>
 
 ## Top-k
 
@@ -58,6 +101,11 @@ picked and each one makes the next guess harder.
   the top word.
 - Top-k only allows the k most likely words.
 
+<At levels="deep">
+
+- $p_i = e^{z_i / T} / \sum_j e^{z_j / T}$: temperature divides the raw scores before softmax.
+
+</At>
 </RecapCard>
 
 **Next question:** a computer can't read. So how does a model get from letters on a page to something

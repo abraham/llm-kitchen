@@ -24,3 +24,6 @@ Harnesses chapters.
 
 - The rhymes are traditional and in the public domain; their wording varies between sources, which
   the data file notes.
+- [Levels](../levels.md): Simple turns counts into chances without Shannon's history. In depth
+  gives the counting rule as a formula, add-one smoothing for unseen pairs, and why count tables
+  can't scale to a real vocabulary.

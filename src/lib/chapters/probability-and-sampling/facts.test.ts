@@ -40,4 +40,13 @@ describe('probability and sampling', () => {
 		);
 		softmax(scores, 0.7).forEach((p, i) => expect(shifted[i]).toBeCloseTo(p, 12));
 	});
+
+	it('In depth: "at T = 1 the probabilities come out unchanged"; near 0, the top score takes it all', () => {
+		const probs = trace('the-cat-sat')
+			.steps[0].candidates.slice(0, 6)
+			.map((c) => c.prob);
+		const total = probs.reduce((a, b) => a + b, 0);
+		softmax(probs.map(Math.log), 1).forEach((p, i) => expect(p).toBeCloseTo(probs[i] / total, 12));
+		expect(softmax(probs.map(Math.log), 0.001)[0]).toBeCloseTo(1, 6);
+	});
 });

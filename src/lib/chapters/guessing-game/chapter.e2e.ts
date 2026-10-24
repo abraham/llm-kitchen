@@ -14,7 +14,8 @@ test('a guess is compared with the recorded model', async ({ page }) => {
 
 test('citations are numbered and link to the sources list', async ({ page }) => {
 	await gotoHydrated(page, '/guessing-game');
-	const first = page.locator('sup.cite a').first();
+	// The chapter has other levels, so each citation has a link per level; one shows.
+	const first = page.locator('sup.cite a:visible').first();
 	await expect(first).toHaveText('[1]');
 	await first.click();
 	await expect(page.locator('#source-shannon1951')).toBeInViewport();
