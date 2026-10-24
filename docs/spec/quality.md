@@ -4,15 +4,16 @@
 
 Every check is an `npm run` script, so CI and local runs match:
 
-| Script         | Command                                                            | Fails when                                                                          |
-| -------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
-| `format:check` | `prettier --check .`                                               | A file isn't Prettier-formatted (`npm run format` fixes it).                        |
-| `lint`         | `eslint .`                                                         | Any lint error.                                                                     |
-| `check`        | `svelte-kit sync && svelte-check --fail-on-warnings`               | Type errors or Svelte warnings, including a11y warnings.                            |
-| `test`         | `vitest run`                                                       | A unit test fails.                                                                  |
-| `build`        | `node scripts/build-og.ts && vite build`                           | Prerendering fails, e.g. a broken internal link or a chapter that throws.           |
-| `test:e2e`     | `playwright test` (Chromium) against the Firebase Hosting emulator | A page or widget test fails, or an accessibility, layout, budget, or hosting check. |
-| `test:visual`  | `playwright test --config playwright.visual.config.ts`             | Local only: a screenshot differs from its baseline.                                 |
+| Script            | Command                                                            | Fails when                                                                          |
+| ----------------- | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| `format:check`    | `prettier --check .`                                               | A file isn't Prettier-formatted (`npm run format` fixes it).                        |
+| `lint`            | `eslint .`                                                         | Any lint error.                                                                     |
+| `check`           | `svelte-kit sync && svelte-check --fail-on-warnings`               | Type errors or Svelte warnings, including a11y warnings.                            |
+| `test`            | `vitest run`                                                       | A unit test fails.                                                                  |
+| `build`           | `node scripts/build-og.ts && vite build`                           | Prerendering fails, e.g. a broken internal link or a chapter that throws.           |
+| `test:e2e`        | `playwright test` (Chromium) against the Firebase Hosting emulator | A page or widget test fails, or an accessibility, layout, budget, or hosting check. |
+| `test:lighthouse` | `playwright test --config playwright.lighthouse.config.ts`         | A page scores under 95 for Lighthouse performance or accessibility.                 |
+| `test:visual`     | `playwright test --config playwright.visual.config.ts`             | Local only: a screenshot differs from its baseline.                                 |
 
 svelte-check doesn't type-check `.svx` files, so a chapter error may only show up in `build`.
 
@@ -22,6 +23,7 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
 
 - **Format, lint, type check, unit tests** in one fast job.
 - **Build and Playwright** in a second job, which uploads the Playwright report on failure.
+- **Lighthouse** in a third job, which uploads each failing page's Lighthouse report.
 - **`ci-success`** `needs` every other job and runs with `if: always()`. It fails if any of them
   failed, was cancelled, or was skipped. It is the only required check on `main`, so jobs can be
   added, renamed, or split without changing branch protection; new jobs must be added to its
@@ -76,6 +78,7 @@ Chromium only.
 ## Performance
 
 - The JavaScript budget above is enforced in CI.
-- Lighthouse (local, simulated mobile) performance and accessibility are at least 95 on chapter pages
-  without a live model.
+- Lighthouse (simulated mobile) performance and accessibility are at least 95 on every page
+  (`tests/lighthouse/`, against the Firebase Hosting emulator, one page at a time). No page loads a
+  live model without consent, so every page is measured as a visitor first sees it.
 - Model downloads happen only after consent, in a worker.
