@@ -207,6 +207,12 @@ export const GLOSSARY = {
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
 		chapter: 'the-agent-loop'
 	},
+	cascade: {
+		term: 'cascade',
+		definition:
+			'A harness that asks a small, cheap model first and passes the question to a bigger one only when the small model seems unsure.',
+		chapter: 'routing'
+	},
 	'kv-cache': {
 		term: 'KV cache',
 		definition:

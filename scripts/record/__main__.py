@@ -20,6 +20,7 @@ MODULES = [
     "reasoning",
     "prompts",
     "agent",
+    "routing",
     "caching",
     "injection",
     "encoder",

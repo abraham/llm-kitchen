@@ -14,6 +14,7 @@ const ORDER = [
 	['together', 'Putting it together'],
 	['prompting', 'Prompt engineering'],
 	['harnesses', 'Harnesses'],
+	['agents', 'Tools and agents'],
 	['others', 'Other kinds of models'],
 	['wrapup', 'Wrap-up']
 ] as const;
@@ -47,7 +48,7 @@ export function part(key: PartKey): Part {
 	return PARTS.find((p) => p.key === key)!;
 }
 
-/** "Part VIII: Other kinds of models", or just the title for the unnumbered wrap-up. */
+/** "Part IX: Other kinds of models", or just the title for the unnumbered wrap-up. */
 export function partLabel(part: Part, separator = ': '): string {
 	return part.number ? `Part ${part.number}${separator}${part.title}` : part.title;
 }

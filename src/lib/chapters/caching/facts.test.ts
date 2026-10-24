@@ -44,10 +44,10 @@ describe('caching', () => {
 		expect(positionsProcessed(5, 5, true)).toBe(9);
 	});
 
-	it('appending reuses 6,100 of 7,656 tokens (80%); the time at the top reuses none', () => {
+	it('appending reuses 2,342 of 2,975 tokens (79%); the time at the top reuses none', () => {
 		const append = cacheTotals(cacheCalls(session, 'append'));
-		expect([append.sent, append.cached]).toEqual([7656, 6100]);
-		expect(Math.round((append.cached / append.sent) * 100)).toBe(80);
+		expect([append.sent, append.cached]).toEqual([2975, 2342]);
+		expect(Math.round((append.cached / append.sent) * 100)).toBe(79);
 		expect(cacheTotals(cacheCalls(session, 'time')).cached).toBe(0);
 	});
 
@@ -56,12 +56,12 @@ describe('caching', () => {
 		expect(calls.slice(1).filter((c) => c.cached === 0)).toHaveLength(1);
 	});
 
-	it('dropping sends 5,776 tokens but costs more than appending; summarizing costs least', () => {
+	it('dropping sends 2,189 tokens but costs more than appending; summarizing costs least', () => {
 		const totals = (['append', 'drop', 'summarize'] as const).map((e) =>
 			cacheTotals(cacheCalls(session, e))
 		);
 		const [append, drop, summarize] = totals;
-		expect(drop.sent).toBe(5776);
+		expect(drop.sent).toBe(2189);
 		expect(drop.cost).toBeGreaterThan(append.cost);
 		expect(summarize.sent).toBeLessThan(drop.sent);
 		expect(summarize.cost).toBeLessThan(append.cost);
@@ -91,11 +91,12 @@ describe('caching', () => {
 		expect(((perToken * 2 * 32768) / 1e9).toFixed(2)).toBe('0.94');
 	});
 
-	it('in depth: appending costs 1,556 + 610 = 2,166 full-price tokens, 28%', () => {
+	it('in depth: appending costs 633 + 234 = 867 full-price tokens, 29%', () => {
 		const append = cacheTotals(cacheCalls(session, 'append'));
-		expect(append.processed).toBe(1556);
-		expect(Math.round(append.cost)).toBe(2166);
-		expect(Math.round((append.cost / append.sent) * 100)).toBe(28);
-		expect(cacheTotals(cacheCalls(session, 'time')).cost).toBe(7656);
+		expect(append.processed).toBe(633);
+		expect(Math.round(append.cached * 0.1)).toBe(234);
+		expect(Math.round(append.cost)).toBe(867);
+		expect(Math.round((append.cost / append.sent) * 100)).toBe(29);
+		expect(cacheTotals(cacheCalls(session, 'time')).cost).toBe(2975);
 	});
 });

@@ -22,7 +22,7 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/math-no-tools.json`,
 
 ## Decisions
 
-- The Harnesses chapters show tool calls in a simplified, made-up format that is easy to read
+- The Tools and agents chapters show tool calls in a simplified, made-up format that is easy to read
   (`<call name>…</call>`), not a real provider's schema. Qwen's own JSON-in-`<tool_call>` output is
   converted to it, and the chapter says so.
 - The toy tools run in the browser (`src/lib/harness/tools.ts`) and never use `eval` or the

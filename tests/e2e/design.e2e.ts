@@ -55,8 +55,8 @@ test('the side menu opens only the current part until another is clicked', async
 	await expect(openParts).toHaveText(['Part IV: Context']);
 	await expect(rail.getByRole('link', { name: /Tools/ })).toBeHidden();
 
-	await rail.getByText('Part VII: Harnesses').click();
+	await rail.getByText('Part VIII: Tools and agents').click();
 	await rail.getByRole('link', { name: /Tools/ }).click();
 	await expect(page).toHaveURL(/\/tools$/);
-	await expect(openParts).toHaveText(['Part VII: Harnesses']);
+	await expect(openParts).toHaveText(['Part VIII: Tools and agents']);
 });

@@ -30,9 +30,9 @@
 			{@const totals = cacheTotals(calls)}
 			{@const widest = Math.max(...cacheCalls(s, 'append').map((c) => c.tokens))}
 			<p class="intro">
-				The <ChapterRef to="managing-the-context" /> session: the agent does six tasks, then you ask a
-				question. Each row is the prompt the harness sends, drawn to scale. The shaded start of each row
-				matches an earlier prompt exactly, so it can be read from the cache.
+				The <ChapterRef to="managing-the-context" /> session: six turns of chat, then you ask a question.
+				Each row is the prompt the harness sends, drawn to scale. The shaded start of each row matches
+				an earlier prompt exactly, so it can be read from the cache.
 			</p>
 
 			<Choice

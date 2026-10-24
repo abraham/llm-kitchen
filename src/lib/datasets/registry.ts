@@ -12,7 +12,13 @@ import {
 	thinking,
 	wording
 } from './parsers/prompts.ts';
-import { injectionLab, kvCacheRun, quantizeRun, speculativeRecording } from './parsers/runs.ts';
+import {
+	injectionLab,
+	kvCacheRun,
+	quantizeRun,
+	routingRecording,
+	speculativeRecording
+} from './parsers/runs.ts';
 import { tokenVectors, trace } from './parsers/trace.ts';
 
 export interface Dataset<T> {
@@ -71,6 +77,7 @@ export const DATASETS = {
 	'prompts/system': dataset('prompts/system.json', systemPrompts, 'prompts'),
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),
+	'routing/cascade': dataset('routing/cascade.json', routingRecording, 'routing'),
 	'agent/chat': dataset('agent/chat.json', agentRun, 'agent'),
 	'agent/math-no-tools': dataset('agent/math-no-tools.json', agentRun, 'agent'),
 	'agent/math-tools': dataset('agent/math-tools.json', agentRun, 'agent'),

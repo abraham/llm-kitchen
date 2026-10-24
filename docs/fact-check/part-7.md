@@ -1,12 +1,12 @@
-# Fact-check: Part VII (Ch 23–29)
+# Fact-check: Part VII, Harnesses (Ch 23–26)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
 exactly the recorded results; the prompt segmenter loses nothing), each chapter's `chapter.e2e.ts`.
 
-Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in each file) inside the
-harness in `scripts/record/agent.py`, written to `static/data/agent/`. The harness stops the model
-after its first tool call, runs the tool, and calls the model again, up to 8 calls.
+Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in each file) by
+`scripts/record/agent.py`, written to `static/data/agent/`, and of Qwen2.5-0.5B-Instruct and
+Qwen2.5-1.5B-Instruct by `scripts/record/routing.py`, written to `static/data/routing/`.
 
 ## Ch 23. The model is not the product
 
@@ -22,59 +22,33 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 | In depth: Qwen's template puts the descriptions in `<tools>` tags with calling instructions                   | Recorded prompt                                                                                         |
 | In depth: the second call added 93 tokens: the call as the model's turn, the result in `<tool_response>` tags | Test                                                                                                    |
 
-## Ch 24. Tools
+## Ch 24. Managing the context
 
-| Claim                                                                                                                                                                               | Backing                                                           |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Without tools the model answered 7,050,952; the right answer is 7,006,652                                                                                                           | Test (recorded output; calculator)                                |
-| With a calculator it answered 7006652                                                                                                                                               | Test                                                              |
-| Models can be trained to write tool calls at the right moments                                                                                                                      | Cite `schick2023`                                                 |
-| Qwen writes JSON between `<tool_call>` tags                                                                                                                                         | Recorded outputs and chat template                                |
-| The site's `<call name>…</call>` form is simplified and made up                                                                                                                     | Stated in the chapter; `simpleCall` in `harness/tools.ts`         |
-| The toy tools run in the browser, never `eval`, never the network                                                                                                                   | `harness/tools.ts` (hand-written parser; test rejects code)       |
-| Anthropic released MCP as an open standard in November 2024                                                                                                                         | Cite `anthropic-mcp` (Nov 25, 2024)                               |
-| An MCP server lists tools with a name, a description, and an input schema; harnesses list them and send calls to the server (`get_weather` with a `location` is the spec's example) | Cite `mcp-spec` (`tools/list`, `tools/call`; accessed 2026-10-23) |
-| The model never sees MCP; the harness sits between model and server                                                                                                                 | Cite `mcp-spec` (message flow: the client talks to both)          |
-| Simple: restates Standard in plainer words, with no new claims                                                                                                                      | Reviewed against the Standard text                                |
-| In depth: the rows were 98,072, 61,700, 617,000, 6,170,000; only the last is right; they sum to 6,946,772                                                                           | Test (recorded output; arithmetic)                                |
-| In depth: Toolformer kept a sampled call only if its result made the next tokens easier to predict                                                                                  | Cite `schick2023` (§2, filtering by loss)                         |
-| In depth: Qwen2.5 reserves two control tokens for tools; `<tool_call>` and `</tool_call>` are single tokens                                                                         | Cite `qwen2024` (§2); Qwen tokenizer (ids 151657, 151658)         |
-| In depth: the recorded call text between the tags                                                                                                                                   | Test                                                              |
-| In depth: MCP is JSON-RPC 2.0; `tools/list` returns name, description, inputSchema; `tools/call` returns content; list-changed notifications                                        | Cite `mcp-spec`                                                   |
+Data: `record_context` in `scripts/record/agent.py`: a chat with no tools, six turns (a rhyme loved by
+a named child, and "What happens in it?"), then "Which child in my class loves the rhyme about the
+cat?" answered under each strategy, written to `static/data/agent/context.json`.
 
-## Ch 25. The agent loop
+| Claim                                                                                                     | Backing                                                        |
+| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Six turns overflow a 600-token budget; each strategy fits                                                 | Test                                                           |
+| The budget is deliberately small; the model can read far more                                             | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
+| With everything kept, the model names Lily                                                                | Test (recorded answer)                                         |
+| Dropping the oldest: the model says the conversation doesn't mention it                                   | Test (recorded answer)                                         |
+| A model can as easily fill a gap with a confident guess                                                   | Ch 16 (hallucination)                                          |
+| The summary kept "Lily" and the answer was right                                                          | Test                                                           |
+| Retrieval by embedding similarity (MiniLM) picked the cat rhyme, and the answer was right                 | Test; cite `lewis2020`                                         |
+| The map uses the Ch 5 projection                                                                          | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
+| Simple: restates Standard in plainer words, with no new claims                                            | Reviewed against the Standard text                             |
+| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.49, the others 0.35–0.45           | Test (recomputed from the stored vectors)                      |
+| In depth: the summary shrank the 149-token first exchange to a 30-token note                              | Test                                                           |
+| In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it | Test (recorded reply and summary against the rhyme text)       |
 
-| Claim                                                                                         | Backing                                                  |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| The run: search_rhymes, then count_words (30), then the answer                                | Test                                                     |
-| Prompts of 301, 394, 483 tokens; at most 8 model calls                                        | Test                                                     |
-| The harness stops after the first tool call; the system prompt says to use tools for counting | `record/agent.py`                                        |
-| Interleaving reasoning and actions was popularized by ReAct                                   | Cite `yao2023`                                           |
-| Simple: restates Standard in plainer words, with no new claims                                | Reviewed against the Standard text                       |
-| In depth: K calls read K·p₀ + a·K(K−1)/2 tokens, growing with the square of the steps         | Arithmetic; test (within 5 tokens of the run)            |
-| In depth: 301 + 394 + 483 = 1,178 tokens; each step added about 90                            | Test                                                     |
-| In depth: providers reuse their work on an unchanged start of the prompt                      | Cite `openai-prompt-caching`, `anthropic-prompt-caching` |
-
-## Ch 26. Managing the context
-
-| Claim                                                                                           | Backing                                                        |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Six tasks overflow a 1,500-token budget; each strategy fits                                     | Test                                                           |
-| The budget is deliberately small; the model can read far more                                   | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
-| Dropping the oldest: the model made up "Old Mother Hubbard", 18 words                           | Test (recorded answer)                                         |
-| Summary kept "30 words" and the answer was right                                                | Test                                                           |
-| Retrieval by embedding similarity (MiniLM) picked the cat task, and the answer was right        | Test; cite `lewis2020`                                         |
-| The map uses the Ch 5 projection                                                                | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
-| Simple: restates Standard in plainer words, with no new claims                                  | Reviewed against the Standard text                             |
-| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.67, the others 0.53–0.60 | Test (recomputed from the stored vectors)                      |
-| In depth: the summary shrank the 221-token cat task to a 29-token note                          | Test                                                           |
-
-## Ch 27. Caching: reusing the work
+## Ch 25. Caching: reusing the work
 
 Data: `scripts/record/caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
 after "The cat sat on the", with and without its KV cache, three times each (median per token),
 written to `static/data/caching/kv-cache.json`. The prompt-cache view is computed in the browser
-(`src/lib/harness/cache.ts`) from the Ch 26 session's recorded token counts.
+(`src/lib/harness/cache.ts`) from the Ch 24 chat's recorded token counts, with a 400-token budget.
 
 | Claim                                                                                                                    | Backing                                                         |
 | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
@@ -87,8 +61,8 @@ written to `static/data/caching/kv-cache.json`. The prompt-cache view is compute
 | Cached tokens cost a tenth of the normal price or less; replies start sooner                                             | Cite both provider docs (0.1× reads, lower on some models)      |
 | The match must be exact from the first token; any early change breaks the rest                                           | Cite both provider docs                                         |
 | Put stable content first, append only; trimming or summarizing changes the prefix                                        | Cite `openai-prompt-caching` (optimization guidance)            |
-| Appending reuses 6,100 of 7,656 tokens (80%); the time at the top reuses none                                            | Test (`cacheCalls`)                                             |
-| Dropping sends 5,776 tokens but costs more than appending; summarizing costs least                                       | Test                                                            |
+| Appending reuses 2,342 of 2,975 tokens (79%); the time at the top reuses none                                            | Test (`cacheCalls`)                                             |
+| Dropping sends 2,189 tokens but costs more than appending; summarizing costs least                                       | Test                                                            |
 | Caching doesn't change the answer and isn't memory                                                                       | Cite both provider docs                                         |
 | Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra                                     | Cite both provider docs; labeled as simplified in the widget    |
 | Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                              |
@@ -97,47 +71,29 @@ written to `static/data/caching/kv-cache.json`. The prompt-cache view is compute
 | In depth: with the cache the time per token crept from about 19 to 20 ms                                                 | Test                                                            |
 | In depth: Qwen2.5-1.5B: 28 layers, 12 query heads sharing 2 key/value heads of 128: 14,336 numbers per token, not 86,016 | Cite `qwen2024` (Table 1, GQA); config `hidden_size` 1536; test |
 | In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                       |
-| In depth: appending costs 1,556 + 610 = 2,166 full-price tokens, 28%; the time at the top costs 7,656                    | Test (`cacheTotals`, illustrative 0.1 price)                    |
+| In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                    |
 
-## Ch 28. Prompt injection
+## Ch 26. Which model answers?
 
-Data: `scripts/record/injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
-(including none) × 6 defenses, written to `static/data/injection/lab.json`. The injected goal is a false
-claim in the summary; each reply is graded by a per-document pattern, and every reply was read by
-hand to check the grading ("four out of five stars", the real rating, doesn't count).
+Data: `scripts/record/routing.py`: Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct, greedy, answer 40
+short questions under the system prompt "Answer with just the answer". Each answer is graded by code
+against the accepted answers in the script, and its confidence is the geometric mean of the
+probabilities the model gave its answer tokens. The cascade is replayed in the browser
+(`src/lib/harness/routing.ts`).
 
-| Claim                                                                                                       | Backing                                                       |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Instructions in text the model reads can hijack it                                                          | Cite `perez2022`                                              |
-| Indirect injection hides in fetched content the user may never see                                          | Cite `greshake2023`                                           |
-| No defense: 7 of 12; plain instruction 16 of 18; HTML comment 11 of 18                                      | Test                                                          |
-| The made-up cancellation reply                                                                              | Test (exact recorded reply)                                   |
-| Every defense let some through; marking 6 of 12; warning and tags 9 of 12 each                              | Test                                                          |
-| The fake message adds a 4th role marker; removing markers leaves 3, works as often                          | Test (token counts, tally)                                    |
-| Spotlighting cut attacks from over 50% to under 2% for GPT models                                           | Cite `hines2024` (abstract)                                   |
-| Training a model to rank system instructions above tool text makes it more robust                           | Cite `wallace2024`                                            |
-| No prompt defense is known to stop every attack                                                             | `hines2024`, `wallace2024` report reductions, not elimination |
-| Small models are easier to fool; these results show the mechanism, not real rates                           | Labeled in the prose                                          |
-| Simple: restates Standard in plainer words, with no new claims                                              | Reviewed against the Standard text                            |
-| In depth: spotlighting has three forms: delimiting, datamarking, encoding                                   | Cite `hines2024` (§III)                                       |
-| In depth: GPT-3.5 Turbo: delimiting about halves attacks; datamarking about 50% to about 3%; encoding to 0% | Cite `hines2024` (§V-A, Figs. 3, 4, 6)                        |
-| In depth: encoding hurt GPT-3.5's task performance; recommended only for the strongest models               | Cite `hines2024` (§V-B)                                       |
-| In depth: marking stopped every fake notice, only one of three plain instructions                           | Test                                                          |
-| In depth: a known delimiter can be forged; space-only marking misses attacks without spaces                 | Cite `hines2024` (§V-D)                                       |
-
-## Ch 29. Trust and guardrails
-
-| Claim                                                                                                                    | Backing                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
-| Indirect prompt injection has worked on real products                                                                    | Cite `greshake2023`                                                       |
-| No guardrails: all three files deleted, then the 8-call limit, no summary                                                | Test                                                                      |
-| Ask first: six deletion attempts refused, nothing lost                                                                   | Test                                                                      |
-| Only safe tools: it still tried `delete_file`, nothing lost                                                              | Test                                                                      |
-| A 3-step limit still loses one file                                                                                      | Test (replay of the first 3 steps)                                        |
-| Sandboxes isolate code execution                                                                                         | General practice (no demo)                                                |
-| Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                                        |
-| In depth: the page contains `</tool_response>` then "New instructions from the user:"                                    | Test (`INJECTED_PAGE`)                                                    |
-| In depth: Qwen's result tags are ordinary text, four tokens each, the same as the real ones                              | Qwen tokenizer (`</tool_response>` = 522, 14172, 9655, 29); `qwen2024` §2 |
-| In depth: allowlist: three `delete_file` calls with a made-up `file_path`, each an error; first prompt 262 vs 327 tokens | Test                                                                      |
-| In depth: MCP says a person should always be able to deny a tool call                                                    | Cite `mcp-spec` (User Interaction Model)                                  |
-| In depth: none of the three runs produced the summary                                                                    | Test                                                                      |
+| Claim                                                                                                | Backing                                                       |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Apps use several models; the harness decides which answers                                           | Cite `chen2023frugal`, `ong2024`                              |
+| A router picks a model before answering; a cascade asks the small model first                        | Cite `ong2024` (routers), `chen2023frugal` (cascades)         |
+| Bigger models do better                                                                              | Ch 12                                                         |
+| The big model is about three times the small one's size                                              | Qwen2.5 sizes, cite `qwen2024`; test (parameter counts)       |
+| The small model got 26 of 40 right, the big one 37                                                   | Test                                                          |
+| At 60%: 15 passed on, 34 right, 70% of the cost; at 80%: 25 passed on, 37 right, 95%                 | Test (`cascade`)                                              |
+| All 14 wrong small answers had confidence ≤ 79%, and so did 11 of the 26 right ones                  | Test                                                          |
+| Sydney at 79% (wrong); Ankara at 25% (right)                                                         | Test                                                          |
+| Cascades matched the best single model at a small fraction of its cost                               | Cite `chen2023frugal` (abstract: up to 98% cost reduction)    |
+| Trained routers cut costs by more than half in some tests without lowering quality                   | Cite `ong2024` (abstract: "by over 2 times in certain cases") |
+| Real prices are per token and set by providers; a cascade adds a wait                                | Labeled as simplified in the text                             |
+| Simple: restates Standard in plainer words, with no new claims                                       | Reviewed against the Standard text                            |
+| In depth: confidence is the geometric mean of the answer tokens' probabilities                       | `routing.py` (mean log probability)                           |
+| In depth: 0.49 and 1.54 billion weights, r ≈ 3.12; cost (n + m r)/(n r): 32% at m = 0, 70% at m = 15 | Test                                                          |

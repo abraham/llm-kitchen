@@ -18,7 +18,7 @@ back, so its output is locally plausible but wanders.
 Computed in the browser from the rhymes in `src/lib/data/rhymes.ts`. The same rhymes are reused by
 the tiny trainers in [Learning from mistakes](learning-from-mistakes.md) and
 [Remembering without attention](recurrent-models.md), and by the agent's search tool in the
-Harnesses chapters.
+Tools and agents chapters.
 
 ## Decisions
 

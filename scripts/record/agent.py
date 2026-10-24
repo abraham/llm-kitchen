@@ -1,12 +1,12 @@
-"""Record real agent runs for Part VII (tier T0).
+"""Record the Harnesses and Tools and agents chats and agent runs (tier T0).
 
 Usage:
     scripts/.venv/bin/python -m scripts.record agent
 
 Runs Qwen2.5-1.5B-Instruct (greedy, so reruns match) inside a small harness with toy tools that
-mirror src/lib/harness/tools.ts, and writes static/data/agent/<name>.json plus static/data/agent/context.json
-(the `managing-the-context` context-budget session). The harness stops the model after its first tool call, runs
-the tool, appends the result, and calls the model again until it answers without a tool call.
+mirror src/lib/harness/tools.ts, and writes static/data/agent/<name>.json. The harness stops the model after its
+first tool call, runs the tool, appends the result, and calls the model again until it answers without a tool call.
+It also writes static/data/agent/context.json, the `managing-the-context` session: a long chat with no tools.
 """
 
 from __future__ import annotations
@@ -241,12 +241,15 @@ def record_run(h: Harness, name: str, task: str, tools: list[str], *, policy: st
         print("   ", s.get("call") or "", "->", (s.get("result") or s["thought"])[:100].replace("\n", " "))
 
 
-# --- `managing-the-context`: context budget --------------------------------------------------------------------------
+# --- `managing-the-context`: context budget -------------------------------------------------------
 
-CONTEXT_WORDS = ["cat", "lamb", "hill", "wall", "star", "clock"]
-CONTEXT_QUESTION = "How many words were in the rhyme about the cat?"
+# Each rhyme comes with a child who loves it; the final question needs the first one back.
+CONTEXT_CHILDREN = [("cat", "Lily"), ("lamb", "Omar"), ("hill", "Priya"), ("wall", "Sam"), ("star", "Mei"),
+                    ("clock", "Leo")]
+CONTEXT_SYSTEM = "You are a helpful assistant."
+CONTEXT_QUESTION = "Which child in my class loves the rhyme about the cat?"
 ANSWER_SYSTEM = "You are a helpful assistant. Answer using only the conversation so far."
-BUDGET = 1500
+BUDGET = 600
 
 
 def embed(texts: list[str]) -> torch.Tensor:
@@ -259,32 +262,31 @@ def embed(texts: list[str]) -> torch.Tensor:
     return torch.nn.functional.normalize((hidden * mask).sum(1) / mask.sum(1), dim=-1)
 
 
+def context_message(word: str, child: str) -> str:
+    rhyme = next(r for r in RHYMES if word in r["text"].lower())
+    return (
+        f"{child}, one of the children in my class, loves this nursery rhyme:\n\n{rhyme['text']}\n\n"
+        "What happens in it, in one sentence?"
+    )
+
+
 def record_context(h: Harness) -> None:
-    tools = ["search_rhymes", "count_words"]
-    files = Files()
-    system = {"role": "system", "content": SYSTEM}
+    """A long chat with no tools: six rhymes, each loved by a child, then a question about the first."""
+    system = {"role": "system", "content": CONTEXT_SYSTEM}
     messages = [system]
-    turns = []  # one per task: the messages it added
-    for word in CONTEXT_WORDS:
-        task = f"Find which nursery rhyme mentions a {word}, and count its words."
-        before = len(messages)
-        _, messages, _ = h.run(messages + [{"role": "user", "content": task}], tools, files, max_steps=4)
-        turns.append(messages[before:])
+    turns = []  # one per exchange: the user's message and the reply
+    for word, child in CONTEXT_CHILDREN:
+        user = {"role": "user", "content": context_message(word, child)}
+        reply = h.complete(h.prompt([*messages, user], []), max_new_tokens=80).strip()
+        turn = [user, {"role": "assistant", "content": reply}]
+        messages += turn
+        turns.append(turn)
 
     def text_of(turn: list[dict]) -> str:
-        parts = []
-        for m in turn:
-            if m["role"] == "tool":
-                parts.append(f"[{m['name']} result] {m['content']}")
-            elif m.get("tool_calls"):
-                f = m["tool_calls"][0]["function"]
-                parts.append(f"[calls {f['name']}] {json.dumps(f['arguments'], ensure_ascii=False)}")
-            else:
-                parts.append(f"{m['role']}: {m['content']}")
-        return "\n".join(parts)
+        return "\n".join(f"{m['role']}: {m['content']}" for m in turn)
 
     def size(msgs: list[dict]) -> int:
-        return h.tokens(h.prompt(msgs, tools))
+        return h.tokens(h.prompt(msgs, []))
 
     base = size([system])
     turn_sizes = [size([system, *t]) - base for t in turns]
@@ -292,7 +294,6 @@ def record_context(h: Harness) -> None:
     question_size = size([system, question]) - base
 
     def answer(kept: list[list[dict]], note: str | None = None) -> dict:
-        # The final question is answered from the context alone: no tools offered.
         content = ANSWER_SYSTEM + (f"\n\n{note}" if note else "")
         msgs = [{"role": "system", "content": content}] + [m for t in kept for m in t] + [question]
         prompt = h.prompt(msgs, [])
@@ -311,9 +312,9 @@ def record_context(h: Harness) -> None:
     # Summarize: the model condenses the dropped turns into a note.
     summary_prompt = h.prompt(
         [
-            {"role": "system", "content": "You summarize conversations briefly and keep every number."},
-            {"role": "user", "content": "Summarize this conversation in one or two sentences, keeping every rhyme title and number:\n\n"
-             + "\n\n".join(text_of(turns[i]) for i in dropped)},
+            {"role": "system", "content": "You summarize conversations briefly and keep every name."},
+            {"role": "user", "content": "Summarize this conversation in one or two sentences, keeping every "
+             "child's name:\n\n" + "\n\n".join(text_of(turns[i]) for i in dropped)},
         ],
         [],
     )
@@ -329,9 +330,10 @@ def record_context(h: Harness) -> None:
     while base + question_size + h.tokens(retrieved_note) + sum(turn_sizes[i] for i in retrieve_kept) > BUDGET:
         retrieve_kept.pop(0)
 
+    print("    turn sizes", turn_sizes, "base", base, "question", question_size, "kept", keep_recent)
     write("context", {
-        "system": SYSTEM,
-        "tools": [SCHEMAS[t]["function"] for t in tools],
+        "system": CONTEXT_SYSTEM,
+        "tools": [],
         "budget": BUDGET,
         "baseTokens": base,
         "question": CONTEXT_QUESTION,

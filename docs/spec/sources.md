@@ -47,9 +47,10 @@ Each Part cites at least these:
   heads and in-context learning), Kojima et al. 2022 ("Let's think step by step"), Lu et al. 2022
   (example order), Sclar et al. 2024 (formatting sensitivity), and Liu et al. 2024 ("Lost in the
   Middle").
-- **Harnesses:** Schick et al. 2023 (Toolformer), the Model Context Protocol announcement and
-  specification, Yao et al. 2023 (ReAct), Lewis et al. 2020 (RAG),
-  Pope et al. 2022 (KV caching), the providers' prompt caching docs, Perez and Ribeiro 2022 and
+- **Harnesses:** Lewis et al. 2020 (RAG), Pope et al. 2022 (KV caching), the providers' prompt
+  caching docs, Chen et al. 2023 (FrugalGPT, cascades), and Ong et al. 2024 (RouteLLM, routers).
+- **Tools and agents:** Schick et al. 2023 (Toolformer), the Model Context Protocol announcement and
+  specification, Yao et al. 2023 (ReAct), Perez and Ribeiro 2022 and
   Greshake et al. 2023 (prompt injection), and Hines et al. 2024 (spotlighting) and Wallace et al.
   2024 (instruction hierarchy) for the defenses.
 - **Other kinds of models:** Devlin et al. 2019 (BERT), Shazeer et al. 2017 and Jiang et al. 2024

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { all, useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
@@ -13,10 +12,10 @@
 
 	const STRATEGIES = {
 		all: { label: 'Keep everything', note: 'Over budget. A real harness can’t send this.' },
-		dropOldest: { label: 'Drop the oldest', note: 'The first task is cut to make room.' },
+		dropOldest: { label: 'Drop the oldest', note: 'The first exchange is cut to make room.' },
 		summarize: {
 			label: 'Summarize the oldest',
-			note: 'The first task is replaced by a short summary the model wrote.'
+			note: 'The first exchange is replaced by a short summary the model wrote.'
 		},
 		retrieve: {
 			label: 'Retrieve what’s relevant',
@@ -46,8 +45,8 @@
 			{@const used = sizes(s, strategy)}
 			{@const scale = (n: number) => (n / all) * 100}
 			<p class="intro">
-				The agent from <ChapterRef to="the-agent-loop" /> did six tasks in a row, one per rhyme. Then
-				you ask: <strong>“{s.question}”</strong>
+				In a long chat, you shared six nursery rhymes, each loved by a different child in your
+				class, and asked what happens in each. Then you ask: <strong>“{s.question}”</strong>
 			</p>
 
 			<Choice
@@ -61,8 +60,7 @@
 				role="img"
 				aria-label="{formatCount(used.total)} of a {formatCount(s.budget)}-token budget"
 			>
-				<span class="seg base" style:width="{scale(s.baseTokens)}%" title="System prompt and tools"
-				></span>
+				<span class="seg base" style:width="{scale(s.baseTokens)}%" title="System prompt"></span>
 				{#if st.noteTokens}
 					<span
 						class="seg note"
@@ -75,7 +73,7 @@
 						class="seg turn"
 						class:dropped={!st.kept.includes(i)}
 						style:width="{scale(t.tokens)}%"
-						title="Task {i + 1}">{i + 1}</span
+						title="Exchange {i + 1}">{i + 1}</span
 					>
 				{/each}
 				<span class="seg question" style:width="{scale(s.questionTokens)}%" title="Your question"
@@ -87,8 +85,8 @@
 					.note}
 			</p>
 			<ul class="legend" aria-hidden="true">
-				<li><span class="seg base"></span>system prompt and tools</li>
-				<li><span class="seg turn"></span>tasks 1–6</li>
+				<li><span class="seg base"></span>system prompt</li>
+				<li><span class="seg turn"></span>exchanges 1–6</li>
 				<li><span class="seg turn dropped"></span>left out</li>
 				<li><span class="seg note"></span>summary or retrieved text</li>
 				<li><span class="seg question"></span>your question</li>
@@ -114,7 +112,7 @@
 					<svg
 						viewBox="0 0 360 180"
 						role="img"
-						aria-label={`The question and the six tasks on the meaning map from ${label('embeddings')}; task 1 is the closest.`}
+						aria-label={`The question and the six exchanges on the meaning map from ${label('embeddings')}; exchange 1 is the closest.`}
 					>
 						{#each pts as p, i (i)}
 							{@const hit = st.retrieved?.includes(i)}
@@ -134,7 +132,7 @@
 					<ol class="sims">
 						{#each s.turns as t, i (i)}
 							<li class:hit={st.retrieved?.includes(i)}>
-								Task {i + 1}: similarity <span class="mono">{t.similarity.toFixed(2)}</span>
+								Exchange {i + 1}: similarity <span class="mono">{t.similarity.toFixed(2)}</span>
 							</li>
 						{/each}
 					</ol>

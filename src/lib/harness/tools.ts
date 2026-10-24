@@ -1,7 +1,7 @@
 import { RHYMES } from '#lib/data/rhymes.ts';
 
 /**
- * The toy tools for Part VII. They run in the browser and never touch the network or real files.
+ * The toy tools for the Tools and agents chapters. They run in the browser and never touch the network or real files.
  * Keep them in sync with scripts/build-agent-traces.py, which used the same tools for the
  * recorded runs (tests check that both give the same results).
  */

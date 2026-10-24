@@ -725,5 +725,21 @@
 		"year": 2024,
 		"url": "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct",
 		"accessed": "2026-10-24"
+	},
+	{
+		"id": "chen2023frugal",
+		"authors": ["Lingjiao Chen", "Matei Zaharia", "James Zou"],
+		"title": "FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.05176"
+	},
+	{
+		"id": "ong2024",
+		"authors": ["Isaac Ong", "Amjad Almahairi", "Vincent Wu", "Wei-Lin Chiang"],
+		"title": "RouteLLM: Learning to Route LLMs with Preference Data",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2406.18665"
 	}
 ]

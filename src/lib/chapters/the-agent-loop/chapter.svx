@@ -77,8 +77,9 @@ $$
 tokens in all, a total that grows with the square of the number of steps. This run read
 301 + 394 + 483 = 1,178 tokens to give one short answer, and each step added about 90.
 
-Real harnesses lean on the fact that each prompt starts exactly like the last one. Providers can
-reuse the work they did on an unchanged start instead of reading it again, which comes up in <ChapterRef to="caching" />.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+Real harnesses lean on the fact that each prompt starts exactly like the last one: prompt caching
+(<ChapterRef to="caching" />) lets the provider reuse its work on the unchanged start instead of reading it again.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+When the prompt outgrows its budget, the harness drops, summarizes, or retrieves, as in <ChapterRef to="managing-the-context" />.
 
 </At>
 
@@ -97,4 +98,5 @@ reuse the work they did on an unchanged start instead of reading it again, which
 </At>
 </RecapCard>
 
-**Next question:** if the prompt grows with every step, what happens when it gets too big?
+**Next question:** every tool result is text the harness pastes into the prompt: search results, web
+pages, files. What if some of that text gives the model instructions of its own?

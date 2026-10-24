@@ -1,7 +1,7 @@
 /**
  * Traditional nursery rhymes (public domain). Wording varies between printed versions; these
  * are common modern forms. Used by the bigram model (`predicting-by-counting`), the tiny trainer (`learning-from-mistakes`), and the
- * agent demos (Part VII).
+ * agent demos (Tools and agents).
  */
 export const RHYMES = [
 	{

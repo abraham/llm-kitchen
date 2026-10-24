@@ -13,7 +13,7 @@ export interface Stage {
 	chapters: Slug[];
 }
 
-/** One message, in the order the pieces run (checked by a unit test to link every Part I–VII). */
+/** One message, in the order the pieces run (checked by a unit test to link every Part I–VIII). */
 export const STAGES: Stage[] = [
 	{
 		id: 'message',

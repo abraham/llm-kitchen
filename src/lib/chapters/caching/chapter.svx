@@ -12,14 +12,15 @@
 
 <At levels="simple">
 
-The agent in <ChapterRef to="the-agent-loop" /> re-sent the whole conversation on every call, and the model read it all again.
+The chat in <ChapterRef to="managing-the-context" /> re-sent the whole conversation on every call, and the model read it all again.
 Even within one reply, it re-reads everything before each new token (<ChapterRef to="generating-text" />). Does it really redo
 all that work every time?
 
 </At>
 <At levels="standard deep">
 
-The agent in <ChapterRef to="the-agent-loop" /> re-sent the whole conversation on every call: 301 tokens, then 394, then 483.
+The chat in <ChapterRef to="managing-the-context" /> re-sent the whole conversation on every call: 163 tokens after the
+first exchange, and 633 by the time you asked your question.
 Inside each call, the token loop from <ChapterRef to="generating-text" /> does the same: to pick each new token, the model reads
 everything before it again. Does it really redo all that work every time?
 
@@ -102,7 +103,7 @@ other kinds of models avoid it by keeping a fixed-size memory instead.
 
 ### The cache for a bigger model
 
-Qwen2.5-1.5B-Instruct, the model in the agent chapters, has 28 blocks, and its attention has 12
+Qwen2.5-1.5B-Instruct, the model in the Harnesses chapters, has 28 blocks, and its attention has 12
 heads of 128 numbers each. A key and a value for every head would be
 2 × 28 × 12 × 128 = 86,016 numbers per token. It stores far fewer, because its 12 heads share 2
 sets of keys and values, an arrangement called grouped-query attention:
@@ -115,15 +116,15 @@ about 29 KB per token, and about 0.94 GB for a full 32,768-token context.
 
 <At levels="simple">
 
-The cache for one reply is thrown away when the reply is done. But an agent's next call starts
-with the same text as the last, plus a little more. So model providers keep the cache for the start
+The cache for one reply is thrown away when the reply is done. But a chat's next call starts with
+the same text as the last, plus a little more. So model providers keep the cache for the start
 of a prompt for a while, and reuse it when a new prompt starts the same way. This is <GlossaryPopover term="prompt-caching">prompt caching</GlossaryPopover>,
 and it makes those tokens much cheaper.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
 
 </At>
 <At levels="standard deep">
 
-The KV cache for one reply is thrown away when the reply is done. But an agent's next call starts
+The KV cache for one reply is thrown away when the reply is done. But a chat's next call starts
 with exactly the same text, plus a little more. So model providers keep the cache for the start of
 a prompt for a while, from minutes to hours, and a later prompt that starts the same way, token for
 token, picks up from there. This is <GlossaryPopover term="prompt-caching">prompt caching</GlossaryPopover>.
@@ -148,20 +149,20 @@ to the first difference. See what that means for the <ChapterRef to="managing-th
 
 <PromptCacheView />
 
-- **Only appending** reuses 6,100 of the 7,656 tokens sent (80%). Each call only pays full price for
+- **Only appending** reuses 2,342 of the 2,975 tokens sent (79%). Each call only pays full price for
   what's new.
 - **Putting the time at the top** of the system prompt makes every prompt different from its first
   line, so nothing is reused.
 - **Editing the system prompt** throws the cache away once; later calls build a new one.
-- **Dropping the oldest task** (<ChapterRef to="managing-the-context" />) sends fewer tokens, 5,776, but costs more than keeping them
+- **Dropping the oldest turn** (<ChapterRef to="managing-the-context" />) sends fewer tokens, 2,189, but costs more than keeping them
   all: every drop changes the text right after the system prompt, so little else matches.
 - **Summarizing** sends the fewest tokens and caches well between summaries, so it costs the least.
 
 <At levels="deep">
 
 With cached tokens at a tenth of the price, a call costs about $\text{new} + 0.1 \times \text{cached}$
-in full-price tokens. Only appending sends 7,656 tokens, 6,100 of them cached, so it costs about
-1,556 + 610 = 2,166: 28% of the uncached price. Putting the time at the top costs all 7,656.
+in full-price tokens. Only appending sends 2,975 tokens, 2,342 of them cached, so it costs about
+633 + 234 = 867: 29% of the uncached price. Putting the time at the top costs all 2,975.
 
 </At>
 
@@ -195,5 +196,5 @@ session would be too short, so the view above ignores that limit.
 </At>
 </RecapCard>
 
-**Next question:** the harness fills the prompt with text from many places: tool results, web
-pages, files. What if some of that text gives the model instructions of its own?
+**Next question:** so far one model has answered everything. Apps often have several, cheap and
+expensive. Who decides which one answers?

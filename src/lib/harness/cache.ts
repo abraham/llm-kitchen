@@ -48,18 +48,16 @@ export interface CacheCall {
 export const CACHE_EDITS = {
 	append: 'Only append',
 	time: 'Put the time at the top',
-	system: 'Edit the system prompt before task 4',
-	drop: 'Drop the oldest task when over budget',
-	summarize: 'Summarize old tasks when over budget'
+	system: 'Edit the system prompt before turn 4',
+	drop: 'Drop the oldest turn when over budget',
+	summarize: 'Summarize old turns when over budget'
 } as const;
 export type CacheEdit = keyof typeof CACHE_EDITS;
 
 /** Small on purpose, so the `managing-the-context` session goes over it. */
-export const CACHE_BUDGET = 1000;
+export const CACHE_BUDGET = 400;
 /** Price of a token read from the cache, relative to a normal input token (illustrative). */
 export const CACHED_PRICE = 0.1;
-/** Size of the summary note in the `managing-the-context` recording. */
-const SUMMARY_TOKENS = 29;
 
 /** Tokens in the blocks two prompts share from the very start. */
 export function sharedPrefix(a: CacheBlock[], b: CacheBlock[]): number {
@@ -71,20 +69,20 @@ export function sharedPrefix(a: CacheBlock[], b: CacheBlock[]): number {
 }
 
 /**
- * The prompts a harness sends for the `managing-the-context` session (six agent tasks, then a question), after the
+ * The prompts a harness sends for the `managing-the-context` session (six chat turns, then a question), after the
  * given edit. Each call is cached up to the longest start it shares with an earlier call.
  */
 export function cacheCalls(session: ContextSession, edit: CacheEdit): CacheCall[] {
 	const system = (version: string): CacheBlock => ({
 		key: `system:${version}`,
 		kind: 'system',
-		label: 'System prompt and tools',
+		label: 'System prompt',
 		tokens: session.baseTokens
 	});
 	const turn = (i: number): CacheBlock => ({
 		key: `turn:${i}`,
 		kind: 'turn',
-		label: `Task ${i + 1}`,
+		label: `Turn ${i + 1}`,
 		tokens: session.turns[i].tokens
 	});
 	const size = (blocks: CacheBlock[]) => blocks.reduce((a, b) => a + b.tokens, 0);
@@ -114,7 +112,12 @@ export function cacheCalls(session: ContextSession, edit: CacheEdit): CacheCall[
 			while (over() && history.length > 1) history = history.slice(1);
 		} else if (edit === 'summarize' && over()) {
 			history = [
-				{ key: `summary:${i}`, kind: 'summary', label: 'Summary', tokens: SUMMARY_TOKENS },
+				{
+					key: `summary:${i}`,
+					kind: 'summary',
+					label: 'Summary',
+					tokens: session.strategies.summarize.noteTokens ?? 0
+				},
 				last
 			];
 		}

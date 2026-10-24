@@ -12,11 +12,12 @@ describe('from message to reply', () => {
 	const kv = readDataset('caching/kv-cache');
 	const [call1, call2] = run.steps;
 
-	it('links every Part I–VII from a stage, and Part VIII from the closing box', () => {
+	it('links every Part I–VIII from a stage, and Part IX from the closing box', () => {
 		const parts = (chapters: Slug[]) => new Set(chapters.map((s) => chapter(s).part.number));
 		const fromStages = parts(STAGES.flatMap((s) => s.chapters));
-		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']) expect(fromStages).toContain(p);
-		expect([...parts(VARIANTS.map((v) => v.chapter))]).toEqual(['VIII']);
+		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'])
+			expect(fromStages).toContain(p);
+		expect([...parts(VARIANTS.map((v) => v.chapter))]).toEqual(['IX']);
 		expect(VARIANTS.map((v) => v.chapter)).toEqual([
 			'encoders',
 			'mixture-of-experts',
