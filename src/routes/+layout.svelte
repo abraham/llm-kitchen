@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '../styles/global.css';
+	import { page } from '$app/state';
 	import favicon from '#lib/assets/favicon.svg';
+	import AppBar from '#lib/components/page/AppBar.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -14,9 +16,39 @@
 <svelte:head>
 	<link rel="icon" href={favicon} type="image/svg+xml" />
 	<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-	<!-- The --page color from tokens.css, for browser chrome. -->
-	<meta name="theme-color" content="#fbf8f3" media="(prefers-color-scheme: light)" />
-	<meta name="theme-color" content="#1c1a17" media="(prefers-color-scheme: dark)" />
+	<!-- The --page color from tokens.css, for browser chrome; stores/theme.svelte.ts switches `media`. -->
+	<meta
+		name="theme-color"
+		content="#fbf8f3"
+		media="(prefers-color-scheme: light)"
+		data-scheme="light"
+	/>
+	<meta
+		name="theme-color"
+		content="#1c1a17"
+		media="(prefers-color-scheme: dark)"
+		data-scheme="dark"
+	/>
 </svelte:head>
 
+{#if !page.error}
+	<a class="skip" href="#content">Skip to content</a>
+{/if}
+<AppBar />
 {@render children()}
+
+<style>
+	.skip {
+		position: absolute;
+		left: var(--space-4);
+		top: -3rem;
+		z-index: 20;
+		padding: var(--space-2) var(--space-3);
+		background: var(--surface);
+		border: 1px solid var(--rule);
+	}
+
+	.skip:focus {
+		top: var(--space-2);
+	}
+</style>

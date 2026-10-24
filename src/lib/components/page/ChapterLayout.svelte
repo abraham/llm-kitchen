@@ -2,7 +2,6 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
-	import { SITE_NAME } from '#lib/site.ts';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
 	import ProgressNav from './ProgressNav.svelte';
@@ -14,15 +13,12 @@
 </script>
 
 <div class="chapter-layout">
-	<a class="skip" href="#content">Skip to content</a>
-
 	<aside class="rail">
 		<details class="rail-toggle">
 			<summary>Chapters</summary>
 			<ProgressNav current={meta.slug} />
 		</details>
 		<div class="rail-static">
-			<a class="home" href={resolve('/')}>{SITE_NAME}</a>
 			<ProgressNav current={meta.slug} />
 		</div>
 	</aside>
@@ -66,20 +62,6 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.skip {
-		position: absolute;
-		left: var(--space-4);
-		top: -3rem;
-		z-index: 20;
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface);
-		border: 1px solid var(--rule);
-	}
-
-	.skip:focus {
-		top: var(--space-2);
-	}
-
 	.rail {
 		padding: var(--space-3) var(--space-4) 0;
 		font-family: var(--font-sans);
@@ -92,12 +74,6 @@
 	.rail-toggle summary {
 		cursor: pointer;
 		font-size: 0.875rem;
-	}
-
-	.home {
-		font-weight: 700;
-		color: var(--ink);
-		text-decoration: none;
 	}
 
 	main {
@@ -142,8 +118,8 @@
 		.rail-static {
 			display: block;
 			position: sticky;
-			top: 0;
-			max-height: 100vh;
+			top: var(--app-bar-height);
+			max-height: calc(100vh - var(--app-bar-height));
 			overflow-y: auto;
 			padding-block: var(--space-6);
 		}
