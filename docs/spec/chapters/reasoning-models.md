@@ -28,3 +28,6 @@ puzzles, sampled with Qwen's recommended settings for each mode and a fixed seed
   [Asking for steps and structure](steps-and-structure.md).
 - The small model's result is mixed (the same number right both ways, at many times the tokens, with
   some runs hitting the token limit), and the chapter says so.
+- [Levels](../levels.md): Simple keeps scratch work, its cost, and training with rewards, without
+  DeepSeek's numbers. In depth writes GRPO's group advantage and says where Qwen3 puts its scratch
+  work.

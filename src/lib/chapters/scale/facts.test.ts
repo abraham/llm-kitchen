@@ -31,4 +31,23 @@ describe('scale', () => {
 		expect(r1).toBeCloseTo(r2, 10);
 		expect(r1).toBeCloseTo(10 ** -0.076, 10);
 	});
+
+	it('In depth: 6ND for GPT-3 is about 3.15 × 10²³, next to the reported 3.14', () => {
+		const c = 6 * by('GPT-3').parameters * by('GPT-3').trainingTokens!;
+		expect(Math.round(c / 1e21) / 100).toBe(3.15);
+		expect(by('GPT-3').flops).toBeCloseTo(3.14e23, -21);
+	});
+
+	it('In depth: ten times the weights multiplies the loss by about 0.84, "about 16% lower"', () => {
+		expect(Math.round(10 ** -0.076 * 100) / 100).toBe(0.84);
+		expect(Math.round((1 - 10 ** -0.076) * 100)).toBe(16);
+	});
+
+	it('In depth: the Chinchilla fit predicts 1.94 for Chinchilla and 1.99 for Gopher', () => {
+		const fit = (n: number, d: number) => 1.69 + 406.4 / n ** 0.34 + 410.7 / d ** 0.28;
+		const loss = (name: string) =>
+			Math.round(fit(by(name).parameters, by(name).trainingTokens!) * 100) / 100;
+		expect(loss('Chinchilla')).toBe(1.94);
+		expect(loss('Gopher')).toBe(1.99);
+	});
 });

@@ -34,4 +34,25 @@ describe('guessing ahead', () => {
 		for (const r of rec.runs)
 			expect(Math.max(...r.rounds.map((x) => x.kept + 1))).toBeLessThanOrEqual(5);
 	});
+
+	it('In depth: keeping a guess with chance min(1, p/q) and resampling from max(0, p - q) gives exactly p', () => {
+		const p = [0.5, 0.3, 0.15, 0.05];
+		const q = [0.2, 0.5, 0.1, 0.2];
+		const kept = q.map((qx, x) => qx * Math.min(1, p[x] / qx));
+		const rejected = 1 - kept.reduce((a, b) => a + b, 0);
+		const residual = p.map((px, x) => Math.max(0, px - q[x]));
+		const total = residual.reduce((a, b) => a + b, 0);
+		const out = kept.map((k, x) => k + (rejected * residual[x]) / total);
+		out.forEach((o, x) => expect(o).toBeCloseTo(p[x], 12));
+	});
+
+	it('In depth: (1 - 0.8^5) / (1 - 0.8) is about 3.4; the cat run averaged about 4.3', () => {
+		const expected = (alpha: number, k: number) => (1 - alpha ** (k + 1)) / (1 - alpha);
+		expect(Math.round(expected(0.8, 4) * 10) / 10).toBe(3.4);
+		expect(expected(0.999999, 4)).toBeCloseTo(5, 4);
+		const cat = run('The cat sat on the');
+		expect(Math.round((writtenAfter(cat, cat.rounds.length) / cat.rounds.length) * 10) / 10).toBe(
+			4.3
+		);
+	});
 });

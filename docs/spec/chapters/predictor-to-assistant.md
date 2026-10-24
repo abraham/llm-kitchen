@@ -33,3 +33,6 @@ Qwen2.5-0.5B-Instruct, greedy.
 - Fine-tuning, LoRA, and distillation sit here, as more of the same training, because the curriculum
   keeps models that are trained differently with training. They are prose without a widget; the
   LoRA arithmetic uses GPT-2 small's query table and is tested.
+- [Levels](../levels.md): Simple summarizes the template, the base-versus-tuned comparison, and the
+  two tricks in a few sentences. In depth gives the reward model's loss and the third stage's goal,
+  the LoRA formula with its zero start, and distillation's softened loss.

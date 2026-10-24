@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -7,6 +8,16 @@
 </script>
 
 ## One token per pass
+
+<At levels="simple">
+
+A model writes one token per pass, and each pass reads every one of its weights from memory, which
+takes most of the time.<Cite id="leviathan2023" /> But one pass can check many tokens at once: it
+predicts what comes next after every position, and reading a few more tokens costs a big model
+about the same as reading one.
+
+</At>
+<At levels="standard deep">
 
 A model writes one token per pass through all its blocks (<ChapterRef to="generating-text" />), and each pass has to read every
 weight from memory. For a big model, most of the time goes into that reading, not the
@@ -19,7 +30,19 @@ prompt in one go. Reading a
 few more tokens costs a big model about as much as reading one, because the weights are read once
 either way.
 
+</At>
+
 ## Guess, then check
+
+<At levels="simple">
+
+So let a small, fast model guess the next few tokens, and let the big model check them all in one
+pass. It keeps the guesses up to the first one it disagrees with, and puts its own token there.
+This is <GlossaryPopover term="speculative-decoding">speculative decoding</GlossaryPopover>.<Cite id="leviathan2023" /><Cite id="chen2023" />
+Below, GPT-2 small guesses four tokens at a time for GPT-2 medium:
+
+</At>
+<At levels="standard deep">
 
 So let a small, fast model guess. It writes the next few tokens on its own, cheaply. Then the big
 model reads the text plus all the guesses in one pass, and at each position it compares its own top
@@ -29,7 +52,18 @@ is <GlossaryPopover term="speculative-decoding">speculative decoding</GlossaryPo
 Below, GPT-2 small (124 million weights) guesses four tokens at a time for GPT-2 medium (355
 million). Both use the same tokens, which the trick needs:
 
+</At>
+
 <SpeculativeStepper />
+
+<At levels="simple">
+
+Every pass still adds at least one token. For "The cat sat on the", GPT-2 medium wrote 30 tokens in
+7 passes instead of 30. And the text is exactly what the big model would have written alone,
+because it checks every token.
+
+</At>
+<At levels="standard deep">
 
 Every pass of the big model adds at least one token, its own, so it is never slower in passes than
 writing alone. When the guesses are good it adds up to five. For "The cat sat on the", GPT-2 medium
@@ -43,7 +77,45 @@ many passes it takes. When the model samples instead of always picking the top t
 slightly different rule accepts or replaces each guess at random so that every token still comes
 out with exactly the big model's probabilities.<Cite id="leviathan2023" /><Cite id="chen2023" />
 
+</At>
+<At levels="deep">
+
+### The rules, written down
+
+When sampling, the big model's probabilities are $p$ and the drafter's are $q$. A guessed token
+$x$ is kept with chance
+
+$$
+\min\!\left(1, \frac{p(x)}{q(x)}\right)
+$$
+
+and if it's rejected, the replacement is drawn from $\max(0, p - q)$, rescaled to add up to 1.
+Tokens the drafter overrates are sometimes thrown back, tokens it underrates are made up for in
+the replacement, and every token comes out with exactly the chance $p$ gives it.<Cite id="leviathan2023" /><Cite id="chen2023" />
+
+How much this saves depends on how often guesses are kept. If each guess is kept with chance
+$\alpha$, independently, and the drafter guesses $k$ tokens, a pass of the big model adds on
+average
+
+$$
+\frac{1 - \alpha^{k+1}}{1 - \alpha}
+$$
+
+tokens, between 1 and $k + 1$.<Cite id="leviathan2023" /> With $\alpha = 0.8$ and $k = 4$, that's
+about 3.4. The cat run above averaged about 4.3 of a possible 5.
+
+</At>
+
 ## In real models
+
+<At levels="simple">
+
+On real hardware this makes big models write about two to three times faster, with identical
+text.<Cite id="leviathan2023" /><Cite id="chen2023" /> Some model families ship their own small
+guessers, like Google's Gemma 4 models with `-assistant` in the name.<Cite id="gemma4-assistant" />
+
+</At>
+<At levels="standard deep">
 
 On real hardware this makes big models write about two to three times faster with identical
 output.<Cite id="leviathan2023" /><Cite id="chen2023" /> Some model families ship their own small
@@ -51,6 +123,8 @@ drafters. Google's Gemma 4 models have matching drafters named with `-assistant`
 to half a billion weights, and the model card reports up to three times faster
 writing.<Cite id="gemma4-assistant" /> They guess several tokens ahead for their big model, which
 is why the card calls them multi-token prediction drafters.
+
+</At>
 
 <RecapCard>
 
@@ -61,6 +135,12 @@ is why the card calls them multi-token prediction drafters.
 - Real systems report writing about two to three times faster; Gemma 4 ships drafters named
   `-assistant`.
 
+<At levels="deep">
+
+- A guess is kept with chance $\min(1, p/q)$; a pass adds $(1 - \alpha^{k+1}) / (1 - \alpha)$
+  tokens on average.
+
+</At>
 </RecapCard>
 
 **Next question:** bigger, smaller, or faster, a base model is still just continuing text. How does

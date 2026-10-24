@@ -23,3 +23,6 @@ standard estimate of 6 × weights × tokens.
 ## Decisions
 
 - The chart draws the paper's fitted formula, not measured losses, and says so.
+- [Levels](../levels.md): Simple keeps the comparisons in words (GPT-3 over 1,000 times GPT-2,
+  Chinchilla beating a model four times its size). In depth gives the 6ND compute estimate, the
+  Kaplan curve's formula, and the Chinchilla fit with its predictions.

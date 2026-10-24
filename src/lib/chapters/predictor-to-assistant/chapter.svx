@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -10,17 +11,39 @@
 
 ## A chat is still just text
 
+<At levels="simple">
+
+A model trained on web text, a <GlossaryPopover term="base-model">base model</GlossaryPopover>,
+just continues whatever it's given. A chat app writes the whole conversation out as one piece of
+text, with special markers for who's speaking, and lets the model continue it. That format is the <GlossaryPopover term="chat-template">chat template</GlossaryPopover>.
+Here's the real one the Qwen2.5 chat models use:<Cite id="qwen2024" />
+
+</At>
+<At levels="standard deep">
+
 A model trained on web text is a <GlossaryPopover term="base-model">base model</GlossaryPopover>: it continues whatever it's given.
 So how does a chat app get answers out of one? It writes the conversation out as a single piece of
 text, in a fixed format with special marker tokens, and lets the model continue it. That format is
 the <GlossaryPopover term="chat-template">chat template</GlossaryPopover>. Here is the real one used
 by the Qwen2.5 chat models:<Cite id="qwen2024" />
 
+</At>
+
 <ChatTemplate />
+
+<At levels="simple">
+
+The text ends by opening the assistant's turn, so the likeliest continuation is an answer. When
+the model writes the end marker, the app stops and shows the reply.
+
+</At>
+<At levels="standard deep">
 
 The conversation ends with the marker that opens the assistant's turn, so the most likely
 continuation is an answer. When the model writes `<|im_end|>`, the chat app stops the loop
 from <ChapterRef to="generating-text" /> and shows the reply.
+
+</At>
 
 ## Base model or assistant?
 
@@ -28,6 +51,15 @@ Here are the same prompts given to three models: GPT-2; Qwen2.5-0.5B, a small ba
 and Qwen2.5-0.5B-Instruct, the same model after tuning it to be an assistant.
 
 <BaseVsInstruct />
+
+<At levels="simple">
+
+Notice that the base models just continue the text: sometimes they answer, and sometimes they
+write a quiz or repeat themselves. The tuned model answers and stops, but only when it gets its
+chat format.
+
+</At>
+<At levels="standard deep">
 
 A few things to notice:
 
@@ -41,6 +73,8 @@ A few things to notice:
   answers and then keeps going: about checking the answer with Python code, or with a stray line of
   its own template. In its chat format, it answers and stops.
 
+</At>
+
 ## How the tuning works
 
 Turning a base model into an assistant usually takes two more rounds of training, after the long
@@ -48,12 +82,57 @@ first one. Step through them:
 
 <TrainingStages />
 
+<At levels="simple">
+
+A 2022 paper found that people preferred the answers of a small tuned model over those of a
+model more than 100 times bigger that it was built from.<Cite id="ouyang2022" />
+
+</At>
+<At levels="standard deep">
+
 A 2022 paper on InstructGPT describes this recipe. People preferred the answers of a
 1.3-billion-weight tuned model over those of the 175-billion-weight GPT-3 it was built from.<Cite id="ouyang2022" />
 Qwen2.5's tuning used over a million examples in the second stage, followed by several stages of
 the third.<Cite id="qwen2024" />
 
+</At>
+<At levels="deep">
+
+### The three stages, written down
+
+The second stage is the same next-token loss as pretraining, counted only on the example answers.
+The third trains a **reward model** $r$ to score an answer $y$ to a prompt $x$, from pairs where
+people preferred $y_w$ over $y_l$:
+
+$$
+L_{\text{reward}} = -\log \sigma\!\left(r(x, y_w) - r(x, y_l)\right)
+$$
+
+where $\sigma(z) = 1 / (1 + e^{-z})$ turns the gap between the two scores into a chance. The loss
+is small when the preferred answer scores clearly higher. Then the assistant itself is trained to
+earn high scores without drifting far from the tuned model it started as:
+
+$$
+\text{maximize} \quad r(x, y) - \beta \, \log \frac{\pi(y \mid x)}{\pi_{\text{SFT}}(y \mid x)}
+$$
+
+where $\pi$ is the model being trained, $\pi_{\text{SFT}}$ is the model after the second stage, and
+$\beta$ sets how far it may drift. Without that last term, the model learns to please the reward
+model in ways people wouldn't.<Cite id="ouyang2022" />
+
+</At>
+
 ## Tuning for your own job
+
+<At levels="simple">
+
+Tuning is just more training, and it works for any job: <GlossaryPopover term="fine-tuning">fine-tuning</GlossaryPopover>
+a model on your own examples teaches it your task and wording. Two tricks make it cheaper. <GlossaryPopover term="lora">LoRA</GlossaryPopover>
+trains a small add-on instead of changing every weight.<Cite id="hu2022" /> <GlossaryPopover term="distillation">Distillation</GlossaryPopover>
+trains a small model to copy a big one.<Cite id="hinton2015" />
+
+</At>
+<At levels="standard deep">
 
 Tuning is just more training, the same measure-and-nudge loop as in <ChapterRef to="learning-from-mistakes" />, and it works for
 any job, not only chat. <GlossaryPopover term="fine-tuning">Fine-tuning</GlossaryPopover> a model on
@@ -72,6 +151,30 @@ format, and wording. Two tricks make it cheaper:
   teacher's whole list of probabilities (<ChapterRef to="probability-and-sampling" />), not just from which token came next,
   so it also learns which other answers were nearly right.<Cite id="hinton2015" />
 
+</At>
+<At levels="deep">
+
+In symbols, LoRA replaces a frozen table $W$ (here $d \times d$) with
+
+$$
+W' = W + \frac{\alpha}{r} B A
+$$
+
+where $B$ is $d \times r$, $A$ is $r \times d$, $r$ is the small rank (8 above), and $\alpha$ is a
+fixed scale. Only $A$ and $B$ are trained. $B$ starts at all zeros, so training starts from exactly
+the original model.<Cite id="hu2022" />
+
+Distillation softens both models' probabilities with a temperature $T$ above 1, so the near misses
+show, and trains the student's $q^{(T)}$ to match the teacher's $p^{(T)}$:
+
+$$
+L = -T^2 \sum_{i} p_i^{(T)} \log q_i^{(T)}
+$$
+
+where the $T^2$ keeps the slopes at the same size whatever $T$ is.<Cite id="hinton2015" />
+
+</At>
+
 <RecapCard>
 
 - A chat is written out as one text in a chat template, and the model continues it.
@@ -81,6 +184,12 @@ format, and wording. Two tricks make it cheaper:
 - Fine-tuning trains a model further for your own task. LoRA trains a small add-on instead of every
   weight; distillation trains a small model to copy a big one's probabilities.
 
+<At levels="deep">
+
+- Preference tuning trains a reward model with $-\log \sigma(r_w - r_l)$; LoRA adds a trained
+  $BA$ to a frozen $W$.
+
+</At>
 </RecapCard>
 
 **Next question:** even tuned assistants sometimes make things up or trip over simple questions. Why?

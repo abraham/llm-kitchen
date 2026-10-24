@@ -25,3 +25,6 @@ special end token or a length limit.
 
 - The pipeline is a compact strip of stages rather than a full left-to-right replay of every earlier
   visual.
+- [Levels](../levels.md): Simple keeps the loop and the stuck example without the end token's
+  number. In depth writes greedy and sampling as formulas, shows on the recorded branches that
+  greedy isn't the likeliest text, and counts the operations per token, pointing to caching.
