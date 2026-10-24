@@ -3,8 +3,8 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 
@@ -50,7 +50,9 @@
 			{#if !tools}
 				{@const guess = lastNumber(off.steps[0].output)}
 				<p class="label">The model’s reply, written token by token</p>
-				<pre class="reply" {@attach scrollable}>{off.steps[0].output}</pre>
+				<ScrollBox label="The model's reply" maxHeight="16rem" framed
+					><pre class="reply">{off.steps[0].output}</pre></ScrollBox
+				>
 				<p class="verdict" aria-live="polite">
 					Its answer: <strong class="mono wrong">{n(guess)}</strong>. The right answer is
 					<strong class="mono">{n(correct)}</strong>. Every digit was predicted like any other
@@ -97,7 +99,13 @@
 		margin: 0 0 var(--space-2);
 	}
 
-	.reply,
+	.reply {
+		margin: 0;
+		font-size: 0.75rem;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
 	.raw {
 		white-space: pre-wrap;
 		word-break: break-word;

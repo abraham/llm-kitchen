@@ -2,8 +2,8 @@
 	import { all, then, useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun } from '#lib/harness/agent.ts';
 	import { FakeFiles, INJECTED_PAGE, START_FILES, runTool } from '#lib/harness/tools.ts';
@@ -72,17 +72,19 @@
 				bind:value={guard}
 			/>
 
-			<ol class="log" {@attach scrollable} aria-label="What the agent did">
-				{#each v.steps as s, i (i)}
-					<li>
-						{#if s.call}
-							<ToolCallCard call={s.call} result={s.result} blocked={s.blocked} />
-						{:else}
-							<p class="answer"><span class="label">Answer</span> {s.thought}</p>
-						{/if}
-					</li>
-				{/each}
-			</ol>
+			<ScrollBox label="What the agent did" maxHeight="28rem"
+				><ol class="log">
+					{#each v.steps as s, i (i)}
+						<li>
+							{#if s.call}
+								<ToolCallCard call={s.call} result={s.result} blocked={s.blocked} />
+							{:else}
+								<p class="answer"><span class="label">Answer</span> {s.thought}</p>
+							{/if}
+						</li>
+					{/each}
+				</ol></ScrollBox
+			>
 			<p class="stopped">{v.stopped}</p>
 
 			<div class="files" aria-live="polite">
@@ -122,8 +124,6 @@
 		margin: 0;
 		display: grid;
 		gap: var(--space-2);
-		max-height: 28rem;
-		overflow: auto;
 	}
 
 	.answer {

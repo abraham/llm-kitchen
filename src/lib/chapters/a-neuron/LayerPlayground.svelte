@@ -275,7 +275,7 @@
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
-		--control-space: 0;
+		--block-space: 0;
 		margin-top: var(--space-4);
 	}
 

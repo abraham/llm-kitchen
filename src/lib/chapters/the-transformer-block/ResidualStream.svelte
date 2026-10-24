@@ -2,7 +2,8 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
+	import Status from '#lib/components/ui/Status.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 
@@ -48,7 +49,7 @@
 				</label>
 				<input id="{id}-stage" type="range" min="0" max={canonical.layers} bind:value={stage} />
 			</div>
-			<div class="scroll" {@attach scrollable} role="region" aria-label="Stream at each stage">
+			<ScrollBox label="Stream at each stage">
 				<table>
 					<caption class="visually-hidden">Top guesses if the model stopped at each stage</caption>
 					<thead>
@@ -81,12 +82,12 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
-			<p class="readout" aria-live="polite">
+			</ScrollBox>
+			<Status lines={0}>
 				Read {stageName(stage)}, the best guess is
 				<strong class="mono">{displayToken(d.logitLens[stage][0].token.text)}</strong>
 				({formatPercent(d.logitLens[stage][0].prob)}).
-			</p>
+			</Status>
 		{/snippet}
 	</Loading>
 </WidgetFrame>
@@ -165,13 +166,5 @@
 	.guess {
 		display: inline-block;
 		min-width: 9.5em;
-	}
-
-	.scroll {
-		overflow-x: auto;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
 	}
 </style>

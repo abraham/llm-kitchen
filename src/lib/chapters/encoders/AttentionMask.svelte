@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 
 	const data = useDataset('encoders/fill-mask');
@@ -68,7 +69,7 @@
 					{/each}
 				{/each}
 			</svg>
-			<p class="readout" aria-live="polite">
+			<Status>
 				Each row is a token; the shaded cells are the tokens it can look at. The blank can look at <strong
 					>{visible} of {n}</strong
 				>
@@ -78,7 +79,7 @@
 							.filter((t) => /\w/.test(t))
 							.join(' ')}” can't help.`
 					: ', including the words after it.'}
-			</p>
+			</Status>
 		{/snippet}
 	</Loading>
 </WidgetFrame>
@@ -125,10 +126,5 @@
 
 	.cell.on.blank-row {
 		fill: var(--c-attention);
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 </style>

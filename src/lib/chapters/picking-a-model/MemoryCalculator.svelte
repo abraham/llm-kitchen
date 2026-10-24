@@ -80,7 +80,7 @@
 		align-items: end;
 		gap: var(--space-3) var(--space-6);
 		margin-bottom: var(--space-3);
-		--control-space: 0;
+		--block-space: 0;
 	}
 
 	.total {

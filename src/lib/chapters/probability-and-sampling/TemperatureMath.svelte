@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { softmax } from '#lib/math/sampling.ts';
@@ -67,13 +68,13 @@
 				</tbody>
 			</table>
 
-			<p class="readout" aria-live="polite">
+			<Status>
 				The top two scores are {gap.toFixed(2)} apart. Divided by {temperature.toFixed(2)}, the gap
 				becomes {(gap / temperature).toFixed(2)}, so
 				<span class="mono">{displayToken(words[0].token.text)}</span> is
 				<strong>{Math.exp(gap / temperature).toFixed(2)}×</strong> as likely as
 				<span class="mono">{displayToken(words[1].token.text)}</span>.
-			</p>
+			</Status>
 			<p class="note">
 				Each divided score <i>s</i> becomes <i>e<sup>s</sup></i>, and those are shared out to add up
 				to 100%. A small temperature stretches the gaps, so the top word pulls ahead; a large one
@@ -145,11 +146,6 @@
 	.pct {
 		width: 3.5rem;
 		text-align: right;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 
 	.note {

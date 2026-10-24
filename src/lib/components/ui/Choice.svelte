@@ -53,7 +53,7 @@
 <style>
 	.choice {
 		min-width: 0;
-		margin: 0 0 var(--control-space, var(--space-3));
+		margin: 0 0 var(--block-space, var(--space-3));
 		padding: 0;
 		border: 0;
 		display: flex;

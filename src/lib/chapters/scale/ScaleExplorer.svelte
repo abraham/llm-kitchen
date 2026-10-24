@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Cite from '#lib/components/page/Cite.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { SCALE, formatCount, formatPower, type ScaleEntry } from './data.ts';
 
@@ -71,10 +72,10 @@
 			{/each}
 		</tbody>
 	</table>
-	<p class="readout" aria-live="polite">
+	<Status lines={0}>
 		Each step on this scale is 10 times the last. The biggest is about
 		<strong>{formatPower(ratio)}</strong> times the smallest.
-	</p>
+	</Status>
 </WidgetFrame>
 
 <style>
@@ -138,10 +139,6 @@
 	.missing {
 		color: var(--ink-muted);
 		font-style: italic;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
 	}
 
 	/* On phones, let names wrap and put each value under its bar. */

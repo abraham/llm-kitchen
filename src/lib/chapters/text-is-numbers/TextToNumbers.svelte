@@ -69,7 +69,7 @@
 
 <style>
 	.controls {
-		--control-space: 0;
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-4);

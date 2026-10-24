@@ -3,8 +3,9 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { positionsProcessed } from '#lib/harness/cache.ts';
@@ -62,12 +63,7 @@
 				bind:value={cache}
 			/>
 
-			<div
-				class="scroll"
-				{@attach scrollable}
-				role="region"
-				aria-label="Which tokens each step runs"
-			>
+			<ScrollBox label="Which tokens each step runs">
 				<table>
 					<caption class="visually-hidden"
 						>For each step, which tokens go through the model and which are reused from the cache</caption
@@ -100,19 +96,19 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
+			</ScrollBox>
 			<ul class="legend" aria-hidden="true">
 				<li><span class="run">●</span> run through all {canonical.layers} blocks</li>
 				<li><span class="reused">○</span> keys and values reused from the cache</li>
 			</ul>
 
-			<p class="readout" aria-live="polite">
+			<Status lines={3}>
 				Step {row + 1} picks <strong class="mono">{displayToken(d.generated[row].text)}</strong>. So
 				far the model has run <strong>{fmt(positionsProcessed(p, row + 1, cache))}</strong> token
 				positions with the cache {cache ? 'on' : 'off'}, against {fmt(
 					positionsProcessed(p, row + 1, !cache)
 				)} with it {cache ? 'off' : 'on'}. Either way it picks the same tokens.
-			</p>
+			</Status>
 
 			{@const max = Math.max(...d.msPerToken.noCache)}
 			{@const off = line(d.msPerToken.noCache, max)}
@@ -163,12 +159,6 @@
 </WidgetFrame>
 
 <style>
-	.scroll {
-		overflow-x: auto;
-		/* Keeps the visually hidden cell labels inside the scrolling box. */
-		position: relative;
-	}
-
 	table {
 		border-collapse: collapse;
 		font-size: 0.8rem;
@@ -223,11 +213,6 @@
 		font-family: var(--font-sans);
 		font-size: 0.8rem;
 		color: var(--ink-muted);
-	}
-
-	.readout {
-		min-height: 4.5em;
-		margin: var(--space-3) 0;
 	}
 
 	figure {

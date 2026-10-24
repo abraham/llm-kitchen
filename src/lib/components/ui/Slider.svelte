@@ -55,7 +55,7 @@
 
 <style>
 	.slider {
-		margin: 0 0 var(--control-space, var(--space-3));
+		margin: 0 0 var(--block-space, var(--space-3));
 		display: flex;
 		flex-direction: column;
 	}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 	import { formatCount, kaplanLoss } from './data.ts';
@@ -102,13 +103,13 @@
 			bind:value={exponent}
 		/>
 	</div>
-	<p class="readout" aria-live="polite">
+	<Status>
 		Predicted loss: <strong class="mono">{loss.toFixed(2)}</strong>. On average, the right next
 		token gets a probability of about <strong>{formatPercent(Math.exp(-loss))}</strong>.
 		{#if n < FIT_MIN || n > FIT_MAX}
 			<em>This size is outside the range the formula was fitted on (dashed), so it's a guess.</em>
 		{/if}
-	</p>
+	</Status>
 	<p class="note">
 		Formula from Kaplan et al. (2020), for models trained on plenty of text. Dots mark the four
 		GPT-2 sizes on the formula's line, not their measured results.
@@ -170,11 +171,6 @@
 
 	.weights {
 		margin-top: var(--space-2);
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 
 	.note {

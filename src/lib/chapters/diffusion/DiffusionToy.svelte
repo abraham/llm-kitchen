@@ -170,7 +170,7 @@
 
 <style>
 	.controls {
-		--control-space: 0;
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
@@ -204,7 +204,7 @@
 	}
 
 	.step {
-		--control-space: 0;
+		--block-space: 0;
 		max-width: 18rem;
 		margin-top: var(--space-2);
 	}

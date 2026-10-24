@@ -249,7 +249,7 @@
 		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
 		gap: var(--space-3);
 		margin-top: var(--space-4);
-		--control-space: 0;
+		--block-space: 0;
 	}
 
 	.math {

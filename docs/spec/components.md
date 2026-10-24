@@ -30,7 +30,7 @@ src/lib/components/
 
 | Folder        | Contents                                                                                                                                                               |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`, `Compare`; the `scrollable` attachment; the `Concept` type                                                        |
+| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`; the `scrollable` attachment; the `Concept` type                                                                   |
 | `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`; `format.ts`, `roles.ts` |
 | `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `Scrolly`, `FrameLoop` (`loop.svelte.ts`)      |
 | `page/`       | `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`                         |
@@ -88,7 +88,7 @@ Every shared component:
   `ui/concept.ts`) and maps it to `--c-<concept>` tokens. No raw colors in props.
 - **No styling props.** No `class` or `style` props. The parent positions a component through its
   own wrapper; variants are explicit props (`appearance`, `layout`). The one hook is
-  `--control-space`, which a container sets to control the spacing after controls.
+  `--block-space`, which a container sets to control the spacing after controls.
 - **Tokens only.** Scoped styles use the custom properties in `tokens.css` (`--space-*`,
   `--font-*`, `--c-*`, `--ink*`, `--surface*`, `--rule`, `--radius`). Literal pixels only for
   hairlines.
@@ -182,39 +182,37 @@ props: {
 in EmbeddingMap, ChatTemplate, and InjectionLab. A play/pause control is a button with
 `aria-pressed`, not a `Toggle`.
 
-`Choice` and `Slider` end with a bottom margin of `--control-space` (default `--space-3`), so a run
+`Choice` and `Slider` end with a bottom margin of `--block-space` (default `--space-3`), so a run
 of them spaces itself like paragraphs. A row or grid of controls that spaces its children with
-`gap` sets `--control-space: 0`.
+`gap` sets `--block-space: 0`.
 
 **`ScrollBox`** is a focusable scrolling region: a `<div role="region">` named by its required
-`label`, with the `scrollable` attachment and an optional `maxHeight`. The scrolling content
-(`<pre>`, `<ol>`, `<table class="data">`) is its child. It replaces the 11 widgets that pair
-`{@attach scrollable}` with their own overflow styles. `scrollable` stays exported for elements
-that must scroll themselves.
-
-- The attachment adds `tabindex="0"` when the page hydrates, so the prerendered HTML has no
-  `tabindex`. That keeps Svelte's `a11y_no_noninteractive_tabindex` check meaningful everywhere
-  else.
-
-**`Status`** is the line that explains what just happened: a `<p aria-live="polite">` that is
-always rendered, even when empty, so screen readers hear its first change. It replaces the
-`aria-live` lines in 26 widgets. `children` is the text.
-
-**`Compare`** lays out two or more labeled versions side by side and stacks them on narrow screens:
-off and on, base and instruct, before and after.
+`label`, with the `scrollable` attachment. It replaces the scroll containers in 10 widgets, and
+gives ExpertRouter's sideways-scrolling table the focusability it lacked.
 
 ```ts
 props: {
-	items: readonly T[];
-	label: (item: T, index: number) => string; // each column's heading
-	column: Snippet<[T, number]>;
-	min?: string; // narrowest column before stacking; default '16rem'
+	label: string;
+	maxHeight?: string; // without one, it scrolls only sideways, for wide tables
+	framed?: boolean; // a tinted, bordered panel, for a reply or a log
+	children: Snippet;
 };
 ```
 
-- Each column is a `<section aria-labelledby>` with a small heading, in an
-  `auto-fit, minmax(min, 1fr)` grid. It replaces the hand-built grids in BaseVsInstruct,
-  ThinkingToggle, SpeculativeStepper, and CurveFitter.
+- The scrolling content (`<pre>`, `<ol>`, a table, a reply) is its child, so a list keeps its list
+  semantics. Text styles such as `white-space: pre-wrap` belong to that child.
+- It has no outer margin; the widget spaces what comes after it.
+- The attachment adds `tabindex="0"` when the page hydrates, so the prerendered HTML has no
+  `tabindex`. That keeps Svelte's `a11y_no_noninteractive_tabindex` check meaningful everywhere
+  else. `scrollable` stays exported for prompt text that must scroll itself (see `PromptText`).
+
+**`Status`** is the line under a figure that says what it now shows: a `<p role="status">` (a
+polite live region), always rendered so screen readers hear its first change. `lines` (default 2)
+reserves that many lines so the page doesn't jump as the text changes length. It replaces the
+`.readout` lines in 10 widgets; e2e tests find it with `getByRole('status')`.
+
+- Live regions that are lists, tallies, or styled verdicts (ContextWindow's checks, InjectionDemo's
+  files, ToolsDemo's verdict, and others) keep their own markup.
 
 ### primitives/
 
@@ -288,14 +286,17 @@ and `DataSourceBadge` keep their APIs.
   enough.
 - **No card, badge, or stat component.** Each appears once or twice. They move to `ui/` if a second
   chapter needs the same markup.
+- **No side-by-side layout component.** Only BaseVsInstruct and ThinkingToggle set versions side
+  by side, and their columns are differently styled cards; a shared grid would need a styling hook
+  per column to replace a few lines of CSS.
 
 ## Testing
 
-- Each `ui/` and `primitives/` component is covered by a colocated `*.test.ts` (`controls.test.ts`
-  covers `Choice`, `Slider`, and `Toggle`) that renders it with `render`
-  from `svelte/server` in Vitest's Node environment and checks the prerendered markup: accessible
-  names, roles, ids tied to labels, the initial value, and no `tabindex` in the server output.
-  `Stepper`, `FrameLoop`, `format.ts`, and `roles.ts` have plain unit tests.
+- Each `ui/` and `primitives/` component is covered by a colocated test (`controls.test.ts` for
+  `Choice`, `Slider`, and `Toggle`; `containers.test.ts` for `ScrollBox` and `Status`) that renders
+  it with `render` from `svelte/server` in Vitest's Node environment and checks the prerendered
+  markup: accessible names, roles, ids tied to labels, the initial value, and no `tabindex` in the
+  server output. `Stepper`, `FrameLoop`, `format.ts`, and `roles.ts` have plain unit tests.
 - `tests/unit/component-patterns.test.ts` fails when a chapter widget hand-writes something the
   common set provides: `<fieldset`, `<select`, `type="range"`, `type="checkbox"`, `aria-live`,
   `requestAnimationFrame`, or scoped `select`, `input[type='range']`, or `table` rules. Each pattern
@@ -315,7 +316,7 @@ pull request.
    ESLint layers, and update imports in chapters, `.svx` files, and routes (about 280 import lines,
    all mechanical). Update the source layout in [architecture.md](architecture.md).
 3. **Controls.** `Choice`, `Slider`, and `Toggle`, then migrate their widgets.
-4. **Containers.** `ScrollBox`, `Status`, and `Compare`, then migrate.
+4. **Containers.** `ScrollBox` and `Status`, then migrate.
 5. **Prompts.** `roles.ts`, `PromptText`, and `ChatLog`, then migrate. This is the only step with
    intended color changes (see the role table).
 6. **Loops.** `FrameLoop` and `formatCount`, then migrate.
@@ -335,7 +336,7 @@ When a step lands, its components move to **Built** below.
 | `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built   |
 | Global styles                                                                                                                                  | `global.css`            | Built   |
 | `Choice`, `Slider`, `Toggle`, `concept.ts`                                                                                                     | `ui/`                   | Built   |
-| `ScrollBox`, `Status`, `Compare`                                                                                                               | `ui/`                   | Planned |
+| `ScrollBox`, `Status`                                                                                                                          | `ui/`                   | Built   |
 | `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned |
 | `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned |
 | `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned |

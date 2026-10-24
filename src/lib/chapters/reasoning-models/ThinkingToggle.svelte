@@ -4,8 +4,8 @@
 	import { prefersReducedMotion } from 'svelte/motion';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 
 	const data = useDataset('reasoning/thinking');
 	let index = $state(0);
@@ -83,14 +83,11 @@
 							>
 						</div>
 						{#if shown > 0}
-							<pre
-								class="scratch"
-								{@attach scrollable}
-								role="region"
-								aria-label="Scratch work">{p.on.thinking.slice(0, shown)}{shown <
-								p.on.thinking.length
-									? '…'
-									: ''}</pre>
+							<ScrollBox label="Scratch work" maxHeight="14rem"
+								><pre class="scratch">{p.on.thinking.slice(0, shown)}{shown < p.on.thinking.length
+										? '…'
+										: ''}</pre></ScrollBox
+							>
 						{/if}
 					</div>
 					{#if p.on.answer}
@@ -134,7 +131,7 @@
 </WidgetFrame>
 
 {#snippet bubble(text: string, label: string)}
-	<div class="bubble" {@attach scrollable} role="region" aria-label={label}>{text}</div>
+	<ScrollBox {label} maxHeight="14rem" framed><div class="reply">{text}</div></ScrollBox>
 {/snippet}
 
 {#snippet result(run: ThinkingRun)}
@@ -196,8 +193,11 @@
 		border-radius: var(--radius);
 		font-size: 0.85rem;
 		white-space: pre-wrap;
-		max-height: 14rem;
-		overflow-y: auto;
+	}
+
+	.reply {
+		font-size: 0.85rem;
+		white-space: pre-wrap;
 	}
 
 	.bubble.cut {
@@ -222,8 +222,6 @@
 		margin: var(--space-1) 0 0;
 		font-size: 0.75rem;
 		white-space: pre-wrap;
-		max-height: 14rem;
-		overflow-y: auto;
 		color: var(--ink-muted);
 	}
 

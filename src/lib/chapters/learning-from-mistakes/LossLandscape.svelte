@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 
 	// A bumpy one-weight loss: a bowl with a ripple, so big steps can overshoot or get stuck.
@@ -104,12 +105,12 @@
 		<button type="button" onclick={() => step()}>Take one step</button>
 		<button type="button" onclick={() => step(20)}>Take 20 steps</button>
 	</div>
-	<p class="readout" aria-live="polite">
+	<Status>
 		Weight <span class="mono">{w.toFixed(2)}</span>, loss
 		<span class="mono">{loss(w).toFixed(2)}</span>.
 		{#if lr > 0.6}With steps this big, the ball overshoots and can bounce around.{:else if history.length > 20 && Math.abs(slope(w)) < 0.02}The
 			ground is flat here: a low point, though not necessarily the lowest.{/if}
-	</p>
+	</Status>
 	<p class="note">
 		The arrow is the next step: the step size times how steep the ground is, pointing downhill. The
 		dashed circle is where it lands.
@@ -169,7 +170,7 @@
 	}
 
 	.controls {
-		--control-space: 0;
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: end;
@@ -178,11 +179,6 @@
 
 	.lr {
 		min-width: 14rem;
-	}
-
-	.readout {
-		min-height: 3em;
-		margin: var(--space-3) 0 0;
 	}
 
 	.note {

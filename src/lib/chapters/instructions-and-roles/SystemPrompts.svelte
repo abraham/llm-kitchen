@@ -2,8 +2,8 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
 
 	const data = useDataset('prompts/system');
@@ -29,14 +29,14 @@
 						class={part.kind}>{part.text}</span
 					>{/each}</pre>
 			<p class="label">Its reply ({r.tokens} tokens)</p>
-			<div
-				class="reply"
-				{@attach scrollable}
-				role="region"
-				aria-label="Reply with the {r.name.toLowerCase()} system prompt"
+			<ScrollBox
+				label="Reply with the {r.name.toLowerCase()} system prompt"
+				maxHeight="16rem"
+				framed
+				><div class="reply">
+					{r.text}
+				</div></ScrollBox
 			>
-				{r.text}
-			</div>
 
 			<table class="data">
 				<caption>
@@ -106,14 +106,12 @@
 	}
 
 	.reply {
-		margin: var(--space-1) 0 var(--space-4);
-		padding: var(--space-2) var(--space-3);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
 		font-size: 0.9rem;
 		white-space: pre-wrap;
-		max-height: 16rem;
-		overflow-y: auto;
+	}
+
+	table {
+		margin-top: var(--space-4);
 	}
 
 	td.wrong {

@@ -3,6 +3,7 @@
 	import { asset } from '$app/paths';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';
@@ -87,11 +88,11 @@
 						cells={img.patches[patch].length}
 						label="Patch {patch + 1}'s first {img.patches[patch].length} numbers"
 					/>
-					<p class="readout" aria-live="polite">
+					<Status>
 						Each {d.patchSize}×{d.patchSize}-pixel patch becomes a vector of {d.patchDimensions} numbers
 						(the first {img.patches[patch].length} shown).
 						{#if same > 1}This patch looks exactly like {same - 1} others, so they all get the same vector.{/if}
-					</p>
+					</Status>
 				</div>
 			</div>
 		{/snippet}
@@ -164,11 +165,5 @@
 	.row li.here {
 		outline: 2px solid var(--c-token);
 		outline-offset: 1px;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
-		font-size: 0.95rem;
 	}
 </style>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Choice, { type Option } from '#lib/components/ui/Choice.svelte';
 	import AttentionLines from '#lib/components/primitives/AttentionLines.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
@@ -117,7 +118,7 @@
 			<div class="stage">
 				<AttentionLines {tokens} {weights} query={q} onselect={(i) => (query = i)} />
 			</div>
-			<p class="readout" aria-live="polite">
+			<Status>
 				{#if layer === 'avg' || head === 'avg'}Averaged over {layer === 'avg'
 						? 'all layers'
 						: `layer ${layer}`}{head === 'avg' ? ', all heads' : `, head ${head}`}:{:else}Layer {layer},
@@ -125,7 +126,7 @@
 				“{displayToken(tokens[q])}” looks most at
 				{#each top as x, i (x.k)}<strong class="mono">{displayToken(tokens[x.k])}</strong>
 					({formatPercent(x.w)}){i < top.length - 1 ? ', ' : '.'}{/each}
-			</p>
+			</Status>
 			<p class="note">
 				Click a word on the right to see what it looks at. A word can only look back at itself and
 				earlier words. Layers and heads are numbered from 0, as in research papers.
@@ -140,7 +141,7 @@
 		flex-wrap: wrap;
 		gap: var(--space-3);
 		margin-bottom: var(--space-4);
-		--control-space: 0;
+		--block-space: 0;
 	}
 
 	.wide {
@@ -150,11 +151,6 @@
 
 	.stage {
 		overflow-x: auto;
-	}
-
-	.readout {
-		min-height: 3em;
-		margin: var(--space-3) 0 0;
 	}
 
 	.note {

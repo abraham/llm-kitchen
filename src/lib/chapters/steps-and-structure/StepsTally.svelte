@@ -2,8 +2,8 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 
 	const data = useDataset('prompts/steps');
 	let puzzle = $state(0);
@@ -46,9 +46,11 @@
 					: 'a person has to read it to find the answer'} ·
 				{r.tokens} tokens
 			</p>
-			<div class="reply" {@attach scrollable} role="region" aria-label="The model's reply">
-				{r.text}
-			</div>
+			<ScrollBox label="The model's reply" maxHeight="16rem" framed
+				><div class="reply">
+					{r.text}
+				</div></ScrollBox
+			>
 
 			<table class="data">
 				<caption>All {d.puzzles.length} puzzles</caption>
@@ -102,15 +104,12 @@
 	}
 
 	.reply {
-		margin: 0 0 var(--space-4);
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface-2);
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
 		font-size: 0.85rem;
 		white-space: pre-wrap;
-		max-height: 16rem;
-		overflow-y: auto;
+	}
+
+	table {
+		margin-top: var(--space-4);
 	}
 
 	caption {

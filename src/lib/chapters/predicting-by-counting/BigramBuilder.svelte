@@ -1,8 +1,8 @@
 <script lang="ts">
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
-	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { RHYMES } from '#lib/data/rhymes.ts';
@@ -79,20 +79,24 @@
 			Counts so far: {seen.length} of {pairs.length} pairs
 			{#if current}· just counted <strong class="mono">{current.from} → {current.to}</strong>{/if}
 		</p>
-		<div class="table" role="region" aria-label="Next-word counts" {@attach scrollable}>
-			{#each rows as [from, followers] (from)}
-				<div class="row" class:active={current?.from === from}>
-					<span class="mono from">{from} →</span>
-					{#each Object.entries(followers) as [to, n] (to)}
-						<span class="follower mono" class:active={current?.from === from && current?.to === to}
-							>{to} <span class="count">×{n}</span></span
-						>
-					{/each}
-				</div>
-			{:else}
-				<p class="empty">Nothing counted yet. Press Next or Play.</p>
-			{/each}
-		</div>
+		<ScrollBox label="Next-word counts" maxHeight="14rem" framed
+			><div class="rows">
+				{#each rows as [from, followers] (from)}
+					<div class="row" class:active={current?.from === from}>
+						<span class="mono from">{from} →</span>
+						{#each Object.entries(followers) as [to, n] (to)}
+							<span
+								class="follower mono"
+								class:active={current?.from === from && current?.to === to}
+								>{to} <span class="count">×{n}</span></span
+							>
+						{/each}
+					</div>
+				{:else}
+					<p class="empty">Nothing counted yet. Press Next or Play.</p>
+				{/each}
+			</div></ScrollBox
+		>
 	</div>
 
 	{#if stepper.atEnd}
@@ -189,12 +193,7 @@
 		margin-top: var(--space-4);
 	}
 
-	.table {
-		max-height: 14rem;
-		overflow-y: auto;
-		border: 1px solid var(--rule);
-		border-radius: var(--radius);
-		padding: var(--space-2);
+	.rows {
 		font-size: 0.85rem;
 	}
 
@@ -237,7 +236,7 @@
 	}
 
 	.generate {
-		--control-space: 0;
+		--block-space: 0;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;

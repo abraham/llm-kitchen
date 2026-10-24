@@ -4,7 +4,7 @@ import { gotoHydrated } from '../../../../tests/e2e/helpers.ts';
 test('gradient descent steps downhill', async ({ page }) => {
 	await gotoHydrated(page, '/learning-from-mistakes');
 	const widget = page.getByRole('region', { name: 'Rolling downhill' });
-	const readout = widget.locator('.readout');
+	const readout = widget.getByRole('status');
 	const lossOf = async () => Number((await readout.textContent())!.match(/loss\s+(\d+\.\d+)/)![1]);
 	const before = await lossOf();
 	await widget.getByRole('button', { name: 'Take 20 steps' }).click();

@@ -3,6 +3,8 @@
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { Router } from '#lib/math/router.ts';
@@ -35,7 +37,7 @@
 				bind:value={k}
 			/>
 
-			<div class="scroll">
+			<ScrollBox label="The router's score for each expert">
 				<table class="data">
 					<caption class="visually-hidden">
 						The router's score for each expert, for each token of “{d.prompt}”. Chosen experts are
@@ -74,9 +76,9 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
+			</ScrollBox>
 
-			<p class="readout" aria-live="polite">
+			<Status>
 				<span class="mono">{displayToken(d.tokens[picked].text)}</span> goes to expert{route.chosen
 					.length > 1
 					? 's'
@@ -89,7 +91,7 @@
 						.join(' / ')}{/if}. Each token runs through {k} of {EXPERTS} experts, so it uses {Math.round(
 					(k / EXPERTS) * 1000
 				) / 10}% of the experts' weights.
-			</p>
+			</Status>
 			<p class="note">
 				Simplified: this router's weights are random rather than trained, and it reads each token's
 				embedding from <ChapterRef to="embeddings" />. In a real model, the router in every block is
@@ -100,12 +102,6 @@
 </WidgetFrame>
 
 <style>
-	.scroll {
-		/* Positioned, so the visually hidden labels in the table can't widen the page. */
-		position: relative;
-		overflow-x: auto;
-	}
-
 	table {
 		--heat: var(--c-weight-tint);
 		font-size: 0.8rem;
@@ -151,11 +147,6 @@
 	tr.picked .token {
 		outline: 2px solid var(--c-token-ink);
 		font-weight: 700;
-	}
-
-	.readout {
-		margin: var(--space-3) 0 0;
-		min-height: 3em;
 	}
 
 	.note {

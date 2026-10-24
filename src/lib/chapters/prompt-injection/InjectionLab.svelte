@@ -2,6 +2,7 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import { scrollable } from '#lib/components/ui/scrollable.ts';
@@ -112,12 +113,7 @@
 				</p>
 			</div>
 
-			<div
-				class="scroll"
-				{@attach scrollable}
-				role="region"
-				aria-label="How often each attack worked"
-			>
+			<ScrollBox label="How often each attack worked">
 				<table>
 					<caption
 						>How many of the {lab.documents.length} documents each attack worked on, under each defense</caption
@@ -152,7 +148,7 @@
 						{/each}
 					</tbody>
 				</table>
-			</div>
+			</ScrollBox>
 		{/snippet}
 	</Loading>
 </WidgetFrame>
@@ -166,7 +162,7 @@
 		display: grid;
 		gap: var(--space-3);
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		--control-space: 0;
+		--block-space: 0;
 	}
 
 	.defense {
@@ -292,12 +288,6 @@
 		font-size: 0.85rem;
 		color: var(--ink-muted);
 		margin-top: var(--space-1) !important;
-	}
-
-	.scroll {
-		overflow-x: auto;
-		/* Keeps the visually hidden cell labels inside the scrolling box. */
-		position: relative;
 	}
 
 	table {

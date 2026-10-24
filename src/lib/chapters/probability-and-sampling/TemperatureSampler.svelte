@@ -140,7 +140,7 @@
 
 <style>
 	.sliders {
-		--control-space: 0;
+		--block-space: 0;
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
 		gap: var(--space-4);
