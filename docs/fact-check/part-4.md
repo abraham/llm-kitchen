@@ -11,15 +11,19 @@ GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
 
 ## Ch 8. The context problem
 
-| Claim                                                                                         | Backing                                                                                          |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| The trophy/suitcase sentence is a Winograd schema; the challenge tests this kind of reasoning | Cite `levesque2012` (the paper's first example: "The trophy doesn't fit in the brown suitcase…") |
-| The Ch 1 model sees one word; the Ch 7 model sees 3 characters                                | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
-| About 2.5 billion possible token pairs and 127 trillion triples for GPT-2's vocabulary        | Test (50,257² and 50,257³)                                                                       |
-| Most long n-grams never appear in training text                                               | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
-| Neural models share what they learn across similar words                                      | Cite `bengio2003`                                                                                |
-| GPT-2 can look at up to 1,024 tokens                                                          | Cite `radford2019`; `canonical.json`, checked against the model config                           |
-| Llama 3 (2024) can look at up to 128K tokens, more than 100 times GPT-2's                     | Cite `grattafiori2024` (abstract: "context window of up to 128K tokens"); 128,000 / 1,024 = 125  |
+| Claim                                                                                               | Backing                                                                                          |
+| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| The trophy/suitcase sentence is a Winograd schema; the challenge tests this kind of reasoning       | Cite `levesque2012` (the paper's first example: "The trophy doesn't fit in the brown suitcase…") |
+| The Ch 1 model sees one word; the Ch 7 model sees 3 characters                                      | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
+| About 2.5 billion possible token pairs and 127 trillion triples for GPT-2's vocabulary              | Test (50,257² and 50,257³)                                                                       |
+| Most long n-grams never appear in training text                                                     | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
+| Neural models share what they learn across similar words                                            | Cite `bengio2003`                                                                                |
+| GPT-2 can look at up to 1,024 tokens                                                                | Cite `radford2019`; `canonical.json`, checked against the model config                           |
+| Llama 3 (2024) can look at up to 128K tokens, more than 100 times GPT-2's                           | Cite `grattafiori2024` (abstract: "context window of up to 128K tokens"); 128,000 / 1,024 = 125  |
+| Simple: restates Standard in plainer words, with no new claims                                      | Reviewed against the Standard text                                                               |
+| In depth: a window model feeds the last n vectors side by side, each slot with its own columns of W | Cite `bengio2003`                                                                                |
+| In depth: the tiny model has 3 × 8 = 24 inputs to 64 neurons; each extra character adds 512 weights | Test (`CharModel`, trainer config)                                                               |
+| In depth: attention's work grows with the square of the window; 128,000² / 1,024² = 15,625          | Arithmetic, test; the score grid from Ch 9                                                       |
 
 ## Ch 9. Attention
 
@@ -53,16 +57,22 @@ GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
 
 ## Ch 10. The transformer block
 
-| Claim                                                                                  | Backing                                                                    |
-| -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| A transformer stacks blocks of attention and an MLP                                    | Cite `vaswani2017`                                                         |
-| Residual connections add each step's change to the stream; they ease deep training     | Cite `he2016`                                                              |
-| Layer norm rescales the numbers; GPT-2 applies it before each step and once at the end | Cite `ba2016`, `radford2019` §2.3                                          |
-| The block builder's parameter counter totals 124,439,808                               | Test (`parameterBreakdown` equals `canonical.parameters`)                  |
-| About a third of weights are in the token/position tables; almost half in the MLPs     | Test (31.6%; 45.5%)                                                        |
-| The MLP is two thirds of every block; attention is under a quarter of the total        | Test (66.6%; 22.8%)                                                        |
-| The output step reuses the token table (weight tying)                                  | GPT-2 `lm_head` is tied to `wte`; counter matches the official total       |
-| The logit lens reads the stream partway through                                        | Cite `nostalgebraist2020`; `record/traces.py` applies the final layer norm |
-| Blocks 1–7 guess " same"; from block 8 " floor" is top-2, " ground" leads once         | Test                                                                       |
-| Furniture appears (" table", " sofa", " bed"); the end is " floor", " bed", " couch"   | Test; last stage equals the recorded prediction (Ch 0)                     |
-| The last block spreads the bets out                                                    | Test (final top probability lower than after block 11)                     |
+| Claim                                                                                       | Backing                                                                    |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| A transformer stacks blocks of attention and an MLP                                         | Cite `vaswani2017`                                                         |
+| Residual connections add each step's change to the stream; they ease deep training          | Cite `he2016`                                                              |
+| Layer norm rescales the numbers; GPT-2 applies it before each step and once at the end      | Cite `ba2016`, `radford2019` §2.3                                          |
+| The block builder's parameter counter totals 124,439,808                                    | Test (`parameterBreakdown` equals `canonical.parameters`)                  |
+| About a third of weights are in the token/position tables; almost half in the MLPs          | Test (31.6%; 45.5%)                                                        |
+| The MLP is two thirds of every block; attention is under a quarter of the total             | Test (66.6%; 22.8%)                                                        |
+| The output step reuses the token table (weight tying)                                       | GPT-2 `lm_head` is tied to `wte`; counter matches the official total       |
+| The logit lens reads the stream partway through                                             | Cite `nostalgebraist2020`; `record/traces.py` applies the final layer norm |
+| Blocks 1–7 guess " same"; from block 8 " floor" is top-2, " ground" leads once              | Test                                                                       |
+| Furniture appears (" table", " sofa", " bed"); the end is " floor", " bed", " couch"        | Test; last stage equals the recorded prediction (Ch 0)                     |
+| The last block spreads the bets out                                                         | Test (final top probability lower than after block 11)                     |
+| Simple: restates Standard in plainer words, with no new claims                              | Reviewed against the Standard text                                         |
+| In depth: x' = x + Attn(LN(x)), x'' = x' + MLP(LN(x'))                                      | Cite `radford2019` (§2.3, pre-norm)                                        |
+| In depth: LN(x) = γ ⊙ (x − μ)/√(σ² + ε) + β; ε is 0.00001 in GPT-2                          | Cite `ba2016`, `gpt2-config` (`layer_norm_epsilon`)                        |
+| In depth: the original transformer applied the norm after each addition                     | Cite `vaswani2017` (§3.1, LayerNorm(x + Sublayer(x)))                      |
+| In depth: 2,362,368 + 4,722,432 + 3,072 = 7,087,872 per block; the parts sum to 124,439,808 | Test (`parameterBreakdown`)                                                |
+| In depth: the logit lens is softmax(LN_f(x) W_Eᵀ)                                           | Cite `nostalgebraist2020`; `record/traces.py`                              |

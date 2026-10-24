@@ -16,3 +16,10 @@ they are, within a context window (1,024 tokens for GPT-2).
 ## Data
 
 Computed in the browser; the context length comes from `models/canonical.json`.
+
+## Decisions
+
+- [Levels](../levels.md): Simple drops the Winograd history and folds the counting and fixed-window
+  problems into one paragraph. In depth writes the fixed-window layer as a formula (each slot with
+  its own weights, as in the tiny model) and works out how much more attention a 128,000-token window
+  needs than GPT-2's.
