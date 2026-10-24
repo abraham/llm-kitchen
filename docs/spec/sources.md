@@ -15,15 +15,18 @@ its chapters and what backs it. A pull request that adds or changes a claim upda
 - **Model numbers come from the source.** GPT-2 small's sizes come from `models/canonical.json`,
   which `record/traces.py` checks against the model's own config. Any other figure cites its paper or
   model card.
-- **Demos match the prose.** Each chapter's `facts.test.ts` checks the numbers it states
-  (bigram counts, BPE merges, the tokenizer's split of "strawberry", recorded results, and so on).
+- **Demos match the prose.** Each chapter's `facts.test.ts` checks the numbers it states (bigram
+  counts, recorded results, and so on). Facts that come straight from shared logic are tested next
+  to it instead: BPE merges in `math/bpe.test.ts`, the tokenizer's split of "strawberry" in
+  `models/tokenizers.test.ts`, word vectors in `math/vectors.test.ts`, and the tiny networks in
+  `math/mlp.test.ts`. Each Part's claim list names the test behind every number.
 - **Recordings are reproducible.** Scripts decode greedily or with a fixed seed, pin their Python
   packages and model commits, and `python -m scripts.record check <module>` re-records a module and
   compares it with the committed data.
 - **Time-sensitive facts** (model lineups and cards, provider caching and tool-calling rules,
   frontier-model figures) carry accessed dates and are re-checked when the site is reviewed.
 - **Links** are checked weekly in CI (see [quality.md](quality.md)). Some publishers answer bots with
-  202 or 403; `lychee.toml` allows those.
+  202 or 403, and some rate-limit with 429; `lychee.toml` accepts those.
 
 ## Core sources
 
