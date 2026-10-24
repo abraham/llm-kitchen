@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   checks:
-    name: Format, lint, type check, workflow audit, unit tests
+    name: Format, lint, type check, audits, unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -25,6 +25,11 @@ jobs:
         run: pipx run zizmor==1.31.1 --min-severity medium .github/workflows
         env:
           GH_TOKEN: ${{ github.token }}
+      - name: Review new dependencies
+        if: github.event_name == 'pull_request'
+        uses: actions/dependency-review-action@v5.0.0
+        with:
+          fail-on-severity: high
       - uses: actions/setup-node@v7.1.0
         with:
           node-version-file: .nvmrc

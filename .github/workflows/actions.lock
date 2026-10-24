@@ -6,6 +6,7 @@ workflows:
     '.github/workflows/ci.yml':
         - 'actions/cache@v6.1.0'
         - 'actions/checkout@v7.0.1'
+        - 'actions/dependency-review-action@v5.0.0'
         - 'actions/setup-node@v7.1.0'
         - 'actions/upload-artifact@v7.0.2'
     '.github/workflows/firebase-hosting-merge.yml':
@@ -37,6 +38,11 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
+    'actions/dependency-review-action@v5.0.0':
+        ref: 'v5.0.0'
+        commit: 'sha1-a1d282b36b6f3519aa1f3fc636f609c47dddb294'
+        owner_id: 44036562
+        repo_id: 476372928
     'actions/setup-node@v7.1.0':
         ref: 'v7.1.0'
         commit: 'sha1-949feb2413d6458794dcd2491c4babbbce0c15c1'
