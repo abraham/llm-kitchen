@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -16,10 +17,20 @@ What was too big? The trophy. Now change one word:
 
 > The trophy didn't fit in the suitcase because **it** was too *small*.
 
+<At levels="simple">
+
+Now "it" is the suitcase. To work that out, you used "trophy", "suitcase", "fit", and the very
+last word, all at once, without even trying.
+
+</At>
+<At levels="standard deep">
+
 Now "it" is the suitcase. You didn't have to think about it, but to get there you used "trophy",
 "suitcase", "fit", and the very last word, all at once. Sentences like this were collected into a
 test for computers, the Winograd Schema Challenge, precisely because they need this kind of
 whole-sentence understanding.<Cite id="levesque2012" />
+
+</At>
 
 ## Our models so far are short-sighted
 
@@ -33,6 +44,20 @@ The clue word comes last, but the things it is about come much earlier. A model 
 last few words can tell that something was "too big", but not what.
 
 ## Why not just look further back?
+
+<At levels="simple">
+
+The obvious fix is a bigger window. But a counting model needs a place in its table for every
+combination of words, and with longer windows almost all of them never appear in any
+text.<Cite id="jurafsky-martin-ngrams" /> A neural network shares what it learns between similar
+words, but a window of fixed size still has a hard edge: anything just outside it is
+invisible.<Cite id="bengio2003" />
+
+What we want is a model that can look at **anything** earlier in the text, and decide for itself
+which parts matter.
+
+</At>
+<At levels="standard deep">
 
 The obvious fix is a bigger window. For the counting model, each extra word makes the table vastly
 bigger. GPT-2's vocabulary has 50,257 tokens, so there are about 2.5 billion possible pairs of
@@ -50,12 +75,57 @@ problems:
 What we want is a model that can look at **anything** earlier in the text, and decide for itself
 which parts matter for the word it's working on.
 
+</At>
+<At levels="deep">
+
+### The fixed window, written down
+
+A window model in the style of Bengio and colleagues feeds the vectors of the last $n$ tokens into
+its first layer side by side:
+
+$$
+h = f\!\left(W \, [\,e_{t-1};\, e_{t-2};\, \dots;\, e_{t-n}\,] + b\right)
+$$
+
+where $e_{t-k}$ is the vector of the token $k$ places back, the brackets mean "put the lists end
+to end", and each slot gets its own columns of $W$.<Cite id="bengio2003" /> So a pattern learned
+for the word 3 back says nothing about the word 4 back, and a wider window needs more weights. The
+tiny model from <ChapterRef to="learning-from-mistakes" /> is this design: 3 characters of 8
+numbers each make 24 inputs to 64 neurons, and every extra character would add another
+8 × 64 = 512 weights.
+
+</At>
+
 ## The context window
+
+<At levels="simple">
+
+Modern models still have a limit, called the <GlossaryPopover term="context-window">context window</GlossaryPopover>,
+but it's much larger. GPT-2 can look at 1,024 tokens at once, and newer models such as Llama 3 at
+more than 100 times as many.<Cite id="radford2019" /><Cite id="grattafiori2024" />
+
+</At>
+<At levels="standard deep">
 
 Modern models still have a limit, called the <GlossaryPopover term="context-window">context window</GlossaryPopover>, but it is much larger.
 GPT-2 can look at up to 1,024 tokens at once.<Cite id="radford2019" /> Llama 3, from 2024, can look
 at up to 128K (about 128,000), more than 100 times as many.<Cite id="grattafiori2024" />
 Within that window, every token can use any earlier token.
+
+</At>
+<At levels="deep">
+
+A bigger window isn't free. Attention compares every token with every earlier one, so its work
+grows with the square of the window's length (see <ChapterRef to="attention" />):
+
+$$
+\frac{(128{,}000)^2}{(1{,}024)^2} = 125^2 = 15{,}625
+$$
+
+so a full Llama 3 window needs about 15,600 times as many attention scores per head as a full
+GPT-2 window.
+
+</At>
 
 <RecapCard>
 
@@ -65,6 +135,12 @@ Within that window, every token can use any earlier token.
 - Models need a way to pick out the relevant earlier words, wherever they are, within a context
   window (1,024 tokens for GPT-2).
 
+<At levels="deep">
+
+- A fixed window gives each slot its own weights; attention's work grows with the square of the
+  window.
+
+</At>
 </RecapCard>
 
 **Next question:** how can a model look back at everything and decide what's relevant?

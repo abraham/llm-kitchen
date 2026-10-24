@@ -25,3 +25,7 @@ Recorded GPT-2 small per-layer vectors and logit-lens guesses (`static/data/vect
   change sizes are dominated by a few very large numbers in GPT-2's stream, and the last row includes
   the final layer norm, so they would mislead. The vector strips use a 95th-percentile color scale
   for the same reason.
+- [Levels](../levels.md): Simple describes the highway and layer norm in a paragraph and the logit
+  lens in plain words. In depth writes a block and layer norm as formulas (and how GPT-2's order
+  differs from the original transformer's), adds up GPT-2's weights exactly, and gives the logit
+  lens formula.
