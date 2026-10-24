@@ -22,7 +22,8 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request, including forks:
 
 - **Format, lint, type check, audits, unit tests** in one fast job. The audits are zizmor on the
-  workflows and, on pull requests, dependency review (see [security.md](security.md)).
+  workflows and, on pull requests in a public repository, dependency review (see
+  [security.md](security.md)).
 - **Build and Playwright**, split across 3 parallel jobs with Playwright's `--shard`, each uploading
   its report on failure. Tests are independent (`fullyParallel`), so a shard can take any of them.
 - **Lighthouse**, split across 4 parallel jobs the same way, each uploading its failing pages'

@@ -108,9 +108,11 @@ the trust boundary, so it stays limited to maintainers.
 - Dependabot proposes npm and GitHub Actions updates weekly (`.github/dependabot.yml`), once a
   release is 7 days old (`cooldown`), so a hijacked release is usually caught and pulled before it
   reaches the lockfile. Security updates aren't held back.
-- On pull requests, the `checks` job runs `actions/dependency-review-action`, which fails when the
-  pull request adds a dependency (npm or GitHub Actions) with a known vulnerability of high severity
-  or higher.
+- On pull requests in a public repository, the `checks` job runs
+  `actions/dependency-review-action`, which fails when the pull request adds a dependency (npm or
+  GitHub Actions) with a known vulnerability of high severity or higher. While the repository is
+  private the step is skipped, since dependency review needs GitHub Advanced Security there;
+  Dependabot alerts and security updates (both on) cover known vulnerabilities instead.
 
 ### CI and deploys
 
@@ -161,7 +163,8 @@ When an item lands, its description moves into [Rules](#rules) and it leaves thi
   never in CI or with deploy credentials, and are pinned exactly; hashes for PyTorch across
   platforms would be large and churn with every update.
 - **Gating CI on `npm audit`.** Advisories in dev-only tools would block unrelated pull requests;
-  dependency review covers what a pull request adds, and Dependabot alerts cover the rest.
+  dependency review (once public) covers what a pull request adds, and Dependabot alerts cover the
+  rest.
 
 ## Checked by tests
 

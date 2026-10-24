@@ -25,8 +25,9 @@ jobs:
         run: pipx run zizmor==1.31.1 --min-severity medium .github/workflows
         env:
           GH_TOKEN: ${{ github.token }}
+      # Dependency review needs GitHub Advanced Security on a private repository.
       - name: Review new dependencies
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && !github.event.repository.private
         uses: actions/dependency-review-action@v5.0.0
         with:
           fail-on-severity: high
