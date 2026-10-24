@@ -60,9 +60,10 @@ data is registered, checked, and loaded.
 - The worker bundles only ONNX Runtime's asyncify build. Every
   [supported browser](quality.md#browser-support) can run it; the smaller build Transformers.js
   would pick for Safari without WebGPU is only needed before Safari 26.
-- Live models download a pinned Hugging Face commit (`onnxRevision`), so the files, and their size,
-  can't change under the site. `scripts/.venv/bin/python -m scripts.record check live` checks that
-  each commit exists and that its files add up to the stated size.
+- Live models download a pinned Hugging Face commit (`onnxRevision`), and each file must match the
+  SHA-256 its config lists (`onnxFiles`; see [security.md](security.md#models)), so the files, and
+  their size, can't change under the site. `scripts/.venv/bin/python -m scripts.record check live`
+  checks that each commit has those files, with those hashes and the stated total size.
 - The worker uses WebGPU when available and falls back to WASM, and the widget shows load progress.
 - ONNX Runtime's WebAssembly files are bundled with the site (hashed, long-cached) instead of loaded
   from a CDN, so scripts stay `'self'`. Model files download from Hugging Face, the only outside

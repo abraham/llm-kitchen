@@ -6,6 +6,11 @@
 	"onnxRevision": "bf2c7f02e0b826c60d03af341171bde20893da66",
 	"onnxFile": "decoder_model_merged",
 	"onnxMB": 128,
+	"onnxFiles": {
+		"config.json": "c9e2a8cc16fced63fa05e353a330ec236bf52d16f01d27c18ee50f39849a39a5",
+		"generation_config.json": "fa12d604e4ab52705c56eb9394c5d6a451cee884607fc25a8cd3388fc775c2be",
+		"onnx/decoder_model_merged_quantized.onnx": "3633bbcb515767629ce17ff7ac1c3bd337f260a1135fb8c76fd9fe0dab876d19"
+	},
 	"tokenizer": "gpt2",
 	"parameters": 124439808,
 	"layers": 12,

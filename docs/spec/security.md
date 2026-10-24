@@ -28,7 +28,7 @@ this spec in the same pull request. The rules for bring-your-own API keys are in
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | Script injected through a dataset, a citation, or model output | Svelte escapes all text; no raw HTML; datasets are checked; CSP allows only the site's own scripts             |
 | The site framed by another page (clickjacking)                 | `frame-ancestors 'none'`                                                                                       |
-| A model file changed or swapped on Hugging Face                | Downloads pin a commit; [Hardening](#hardening) adds hash checks                                               |
+| A model file changed or swapped on Hugging Face                | Downloads pin a commit, and each file must match its recorded SHA-256                                          |
 | A compromised npm package or GitHub Action                     | Lockfile installs, two runtime dependencies, actions locked to commits, deploy credentials only in deploy jobs |
 | A pull request that tries to deploy or read credentials        | Fork pull requests get no OIDC token; `production` deploys only from `main`                                    |
 | A model given real power by a harness demo                     | Demos expose only in-browser toy tools; no network, file system, or `eval` access                              |
@@ -80,6 +80,14 @@ the trust boundary, so it stays limited to maintainers.
 
 - Model files download only in the inference worker, after consent, from a pinned Hugging Face
   commit (`onnxRevision`), with `env.allowLocalModels = false`.
+- **Model files are checked by hash.** `models/canonical.json` and `models/embedder.json` list each
+  file Transformers.js downloads with its SHA-256 (`onnxFiles`). The worker's `env.fetch`
+  (`workers/verified-fetch.ts`) refuses any other file from Hugging Face, fetches a pinned model at
+  its pinned commit whatever revision is asked for (`pipeline()` reads `config.json` from `main`,
+  ignoring `revision`), and hashes each file as it streams with `@noble/hashes`, so progress still
+  shows. A mismatch errors the download before Transformers.js uses or caches it. Files a browser
+  cached before these checks existed aren't rechecked.
+- `scripts.record check live` downloads each listed file and checks its hash and the total size.
 - ONNX Runtime's JavaScript and WebAssembly are bundled with the site, never loaded from a CDN.
 - Recording scripts load models with `from_pretrained` only: never `trust_remote_code=True`,
   `pickle`, or `torch.load`, so a model repository can't run code on the recording machine. Their
@@ -93,8 +101,9 @@ the trust boundary, so it stays limited to maintainers.
   by Transformers.js, never run by the site), `protobufjs` (a version notice), and `re2` (a native
   module superstatic can do without). The root `prepare` script (`svelte-kit sync`) is skipped too;
   `check`, `build`, and the dev server sync on their own.
-- The site ships two runtime dependencies (`@huggingface/transformers`, `gpt-tokenizer`) plus the
-  Svelte and SvelteKit runtime. A new runtime dependency needs a reason in its pull request.
+- The site ships three runtime dependencies (`@huggingface/transformers`, `gpt-tokenizer`, and
+  `@noble/hashes` for hashing model files as they stream) plus the Svelte and SvelteKit runtime. A
+  new runtime dependency needs a reason in its pull request.
 - Dependabot proposes npm and GitHub Actions updates weekly (`.github/dependabot.yml`), once a
   release is 7 days old (`cooldown`), so a hijacked release is usually caught and pulled before it
   reaches the lockfile. Security updates aren't held back.
@@ -123,19 +132,14 @@ the trust boundary, so it stays limited to maintainers.
 
 Not built yet. Each item says what changes and how it's checked.
 
-1. **Model files checked by hash.** `canonical.json` and `embedder.json` list the SHA-256 of each
-   ONNX file at the pinned commit (Hugging Face reports it for LFS files), the recording `check`
-   script verifies them, and the worker checks each download's hash before loading it, through
-   Transformers.js's fetch hook. If Transformers.js has no usable hook, this item is reduced to the
-   script check and the reason is recorded here.
-2. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
+1. **Saved progress checked.** The progress store keeps only strings from `localStorage` that are
    chapter slugs and ignores anything else.
-3. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
+2. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-4. **Repository settings,** recorded here because no file holds them: secret scanning with push
+3. **Repository settings,** recorded here because no file holds them: secret scanning with push
    protection, Dependabot alerts and security updates, private vulnerability reporting, and a
    ruleset on `main` that requires `ci-success` and blocks force pushes and deletion.
-5. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
+4. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
    [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
    recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
    `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
