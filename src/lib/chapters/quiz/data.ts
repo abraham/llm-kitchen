@@ -1,4 +1,5 @@
 import type { Slug } from '#lib/curriculum/index.ts';
+import type { Level } from '#lib/levels.ts';
 
 export interface QuizQuestion {
 	q: string;
@@ -7,6 +8,8 @@ export interface QuizQuestion {
 	why: string;
 	/** Chapters that explain the answer, linked after it and listed for review when it's missed. */
 	chapters: Slug[];
+	/** The explanation levels it suits; every level when absent. */
+	levels?: readonly Level[];
 }
 
 /** In reading order, with at least one question from every Part (checked by a unit test). */

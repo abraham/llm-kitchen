@@ -1,0 +1,42 @@
+<script module>
+	export const title = 'Recap and quiz levels fixture';
+	export const levels = ['simple', 'deep'];
+</script>
+
+<script>
+	import At from '#lib/components/page/At.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import Quiz from '#lib/chapters/quiz/Quiz.svelte';
+
+	const question = (name, chapter, levels) => ({
+		q: `${name} question?`,
+		options: [`${name} right`, `${name} wrong`],
+		answer: 0,
+		why: `${name} reason.`,
+		chapters: [chapter],
+		levels
+	});
+	const questions = [
+		question('Shared', 'tokens'),
+		question('Simple', 'embeddings', ['simple']),
+		question('Deep', 'attention', ['deep'])
+	];
+</script>
+
+<RecapCard>
+
+- Shared point.
+
+<At levels="simple">
+
+- Simple point.
+
+</At>
+<At levels="deep">
+
+- Deep point.
+
+</At>
+</RecapCard>
+
+<Quiz {questions} />

@@ -1,11 +1,14 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { GLOSSARY, type GlossaryId } from '#lib/glossary.ts';
+	import { GLOSSARY, type GlossaryEntry, type GlossaryId } from '#lib/glossary.ts';
+	import { byLevel, levelsAttribute } from '#lib/levels.ts';
 	import ChapterRef from './ChapterRef.svelte';
 
 	let { term, children }: { term: GlossaryId; children: Snippet } = $props();
 
-	const entry = $derived(GLOSSARY[term]);
+	const entry: GlossaryEntry = $derived(GLOSSARY[term]);
+	// Every level's definition is in the HTML; global.css shows the current one.
+	const definitions = $derived(byLevel(entry.definition, entry));
 	const id = $props.id();
 
 	let open = $state(false);
@@ -38,7 +41,10 @@
 			}
 		}}>{@render children()}</span
 	><span class="popover" {id} role="note" hidden={!open}>
-		<strong>{entry.term}</strong>: {entry.definition}
+		<strong>{entry.term}</strong>:
+		{#each definitions as { levels, value } (value)}<span data-levels={levelsAttribute(levels)}
+				>{value}</span
+			>{/each}
 		<ChapterRef to={entry.chapter} />
 	</span>
 </span>

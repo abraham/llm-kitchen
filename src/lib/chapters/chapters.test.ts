@@ -2,8 +2,9 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CURRICULUM, chapter } from '#lib/curriculum/index.ts';
 import { GLOSSARY } from '#lib/glossary.ts';
-import { parseLevels, type ExtraLevel } from '#lib/levels.ts';
+import { differingLevels, parseLevels, type Level } from '#lib/levels.ts';
 import { chapterFolders, chapterLevels } from './index.ts';
+import { QUESTIONS } from './quiz/data.ts';
 
 const source = (slug: string) =>
 	readFileSync(new URL(`./${slug}/chapter.svx`, import.meta.url), 'utf8');
@@ -25,17 +26,15 @@ describe('chapters', () => {
 
 	it('lists in chapter.ts each level that reads differently from Standard, and only those', () => {
 		for (const slug of chapterFolders()) {
-			// A level differs where a passage shows at it but not at Standard, or the other way round.
-			const differs = new Set<ExtraLevel>();
+			const passages: (readonly Level[])[] = [];
 			for (const [tag] of source(slug).matchAll(/<At\b[^>]*>/g)) {
 				const raw = tag.match(/\slevels="([^"]*)"/)?.[1];
 				expect(raw, `${slug}: ${tag} names its levels`).toBeDefined();
-				const levels = parseLevels(raw!);
-				for (const level of ['simple', 'deep'] as const) {
-					if (levels.includes(level) !== levels.includes('standard')) differs.add(level);
-				}
+				passages.push(parseLevels(raw!));
 			}
-			expect([...chapterLevels(slug)].sort(), slug).toEqual([...differs].sort());
+			// The quiz's tagged questions are passages too.
+			if (slug === 'quiz') passages.push(...QUESTIONS.flatMap((q) => (q.levels ? [q.levels] : [])));
+			expect([...chapterLevels(slug)].sort(), slug).toEqual(differingLevels(passages).sort());
 		}
 	});
 });
