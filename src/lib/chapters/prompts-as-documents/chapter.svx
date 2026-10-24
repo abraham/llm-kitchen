@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,10 +9,22 @@
 
 ## The model never sees a request
 
+<At levels="simple">
+
+When you type into a chat, it feels like asking a question. To the model it's the start of a
+document, and its only job is to guess what comes next (<ChapterRef to="guessing-game" />). Every
+word you write changes those guesses. <GlossaryPopover term="prompt-engineering">Prompt engineering</GlossaryPopover>
+means choosing your words so that the answer you want is the most likely next text.
+
+</At>
+<At levels="standard deep">
+
 When you type into a chat, it feels like asking a question. To the model it is the start of a
 document, and its only job is to guess what comes next (<ChapterRef to="guessing-game" />). The prompt is the context (<ChapterRef to="the-context-problem" />), and
 every word in it pulls the probabilities of the next token one way or another (<ChapterRef to="probability-and-sampling" />). <GlossaryPopover term="prompt-engineering">Prompt engineering</GlossaryPopover>
 is choosing that text so that the answer you want becomes the likely continuation.
+
+</At>
 
 You can watch this happen with GPT-2, which has had no training to follow instructions. Change one
 part of the prompt at a time:
@@ -20,22 +33,83 @@ part of the prompt at a time:
 
 ## Setting the scene
 
+<At levels="simple">
+
+After "The cat sat on the", GPT-2 guesses *floor* about 8% of the time. Start with "It was
+bedtime," and *bed* jumps from 7% to 22%. Put the cat at the beach, and *sand* becomes one of its
+top guesses. The shading shows which earlier words the last one looked at (<ChapterRef to="attention" />).
+
+</At>
+<At levels="standard deep">
+
 "The cat sat on the" ends with *floor* about 8% of the time. Add "It was bedtime," in front, and
 *bed* jumps from about 7% to 22%. Put the cat at the beach, and *sand*, nearly impossible before,
 becomes one of the top guesses. The shading shows why: attention (<ChapterRef to="attention" />) lets the last token pull in
 "kitchen" or "beach" from the start of the sentence.
 
+</At>
+<At levels="deep">
+
+### Where the rest of the attention goes
+
+The shading leaves out the first token, because it would drown out everything else. Averaged over
+GPT-2's 144 heads (12 in each of 12 layers), the last token of "The cat sat on the" puts 63% of its
+attention on "The", and across the eight prompts here the first token takes between 46% and 91%.
+That isn't because "The" matters. A head's attention weights come from a softmax, so they must add
+up to 1, and a head with nothing useful to find still has to put its weight somewhere. Models
+learn to park it on the first token, which every later token can see. Researchers call this an
+*attention sink*, and found that keeping its keys and values is what lets a model that only keeps
+a short window of recent tokens go on working through very long text.<Cite id="xiao2024" /> The
+widget sets the first token aside and rescales the rest to add up to 1.
+
+</At>
+
 ## Making the answer the obvious next text
+
+<At levels="simple">
+
+Ask GPT-2 "What is the capital of France?" and it gives *Paris* only half a percent: its favorite
+next step is a new line. Write "The capital of France is" instead, and *Paris* becomes about six
+times as likely, because now the answer is the obvious next word.
+
+</At>
+<At levels="standard deep">
 
 Asking GPT-2 "What is the capital of France?" gives *Paris* only half a percent; its top guess, at
 34%, is a new line. Writing the prompt as the start of an answer, "The capital of France is", makes
 *Paris* about six times as likely. The "Q: … A:" layout works the same way: after "A:", an answer is
 what comes next.
 
+</At>
+<At levels="deep">
+
+### Conditioning, written down
+
+Written out, the model gives $p(x_{t+1} \mid x_1, \ldots, x_t)$, and a prompt is just the first
+tokens of $x$. The weights stay fixed, so the whole move from 0.54% to 3.2% for " Paris" comes from
+changing those tokens. A number like that counts only one way of writing the answer, though. After
+"Q: What is the capital of France?" and "A:", the top guess is " The", at 23%, far ahead of
+" Paris" at 1.8%: many of those replies would go on to say "The capital of France is Paris". The
+chance that the answer appears at all adds up over every reply that contains it, which no single
+next-token probability shows.
+
+</At>
+
+<At levels="simple">
+
+Chat models were tuned so that a plain question is already followed by an answer (<ChapterRef to="predictor-to-assistant" />), so they
+need less of this coaxing. It still works the same way: your words set up the document, and the
+model continues it.
+
+</At>
+<At levels="standard deep">
+
 Chat models were tuned so that a plain question is already followed by an answer (<ChapterRef to="predictor-to-assistant" />), so they
 need less of this coaxing. The mechanism is the same: your words set up the document, and the model
 continues it. GPT-3 showed how far a large enough model can go on this alone, doing new tasks from a
 description and a few examples in the prompt, with no change to its weights.<Cite id="brown2020" />
+
+</At>
 
 <RecapCard>
 
@@ -43,6 +117,12 @@ description and a few examples in the prompt, with no change to its weights.<Cit
 - Every word shifts the next-token probabilities, through attention to the earlier text.
 - A good prompt makes the answer you want the most likely continuation.
 
+<At levels="deep">
+
+- Most attention parks on the first token, a sink; a next-token probability counts only one way
+  of writing the answer.
+
+</At>
 </RecapCard>
 
 **Next question:** instead of describing a task, could you just show the model a few examples?

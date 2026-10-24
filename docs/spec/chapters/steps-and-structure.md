@@ -24,3 +24,6 @@ Recorded by `scripts/record/prompts.py` (`static/data/prompts/steps.json`): Qwen
   chapter says so.
 - The point that a fixed format makes output usable by programs sets up
   [Tools](tools.md), where a tool call is structured output in an agreed format.
+- [Levels](../levels.md): Simple keeps the 17.7% to 78.7% result and the same-score, different-mistakes
+  finding. In depth adds the fixed computation per token (with the recorded reply lengths), a
+  vote over the three endings as a rough self-consistency, and constrained decoding for formats.

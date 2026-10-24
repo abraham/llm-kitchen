@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,15 +9,49 @@
 
 ## "Let's think step by step"
 
+<At levels="simple">
+
+A model writes one token at a time, and every token it writes becomes part of what it reads next (<ChapterRef to="generating-text" />).
+If it has to answer straight away, it gets no room to work. If it writes its working out first,
+a <GlossaryPopover term="chain-of-thought">chain of thought</GlossaryPopover>, each step can build on
+the last. Reasoning models are trained to do this (<ChapterRef to="reasoning-models" />); with other models, you can ask.
+
+</At>
+<At levels="standard deep">
+
 A model writes one token at a time, and every token it writes becomes context for the next (<ChapterRef to="generating-text" />).
 If it has to give the answer as its very first token, all the working has to happen inside one
 forward pass. If it writes the working out first, a <GlossaryPopover term="chain-of-thought">chain of thought</GlossaryPopover>,
 each step can build on the ones before. Reasoning models are trained to do this (<ChapterRef to="reasoning-models" />); with other
 models, you can ask.
 
+</At>
+<At levels="deep">
+
+### The same work for every token
+
+Each token gets one pass through the network, and the pass is the same size every time: for
+Qwen2.5-1.5B-Instruct, 28 layers and about 3 billion operations, whether the token is "the" or the
+answer to a hard sum.<Cite id="qwen2024" /> Asked for just the answer, it wrote 1 to 4 tokens for
+each puzzle below. Asked to think step by step, it wrote between 66 and 427, and each of those
+passes could read all the working written before it. Writing out steps buys the model more
+computation, spent where the next step can use it.
+
+</At>
+
+<At levels="simple">
+
+Asking works on large models. Adding "Let's think step by step" raised one large model's score on
+a set of arithmetic word problems from 17.7% to 78.7%.<Cite id="kojima2022" />
+
+</At>
+<At levels="standard deep">
+
 Asking works on large models. Showing a few worked examples improved math word problems,<Cite id="wei2022" />
 and simply adding "Let's think step by step" raised one large model's accuracy on a set of arithmetic
 word problems from 17.7% to 78.7%.<Cite id="kojima2022" />
+
+</At>
 
 ## A small model, three ways
 
@@ -24,18 +59,65 @@ Here are the puzzles from <ChapterRef to="reasoning-models" />, put to Qwen2.5-1
 
 <StepsTally />
 
+<At levels="simple">
+
+For this small model, the steps didn't help overall: each way got 4 of the 6 right, but not the
+same 4. Asked for just the answer, it fell for the trap and said the ball costs 10 cents. Thinking
+step by step fixed one puzzle and got another wrong. Small models can copy the form of reasoning
+without getting it right.
+
+</At>
+<At levels="standard deep">
+
 For this small model, the steps didn't raise the score: each way got 4 of the 6 right, but not the
 same 4. Asked for just the answer, it fell for the classic trap and said the ball costs 10 cents.
 Thinking step by step fixed the apples but talked itself into "0.2 minutes" for the widgets. Big
 gains from step-by-step prompting were found in much larger models; small ones can follow the form
 without the reasoning holding up.
 
+</At>
+<At levels="deep">
+
+### Asking more than once
+
+The three endings got different puzzles wrong, and every puzzle was right under at least one of
+them. Taking the answer that most of the three replies agree on would have scored 5 of 6. That's a
+rough version of *self-consistency*: sample several chains of thought for the same prompt and keep
+the most common final answer. On a set of grade-school math problems it raised a large model's
+accuracy by 17.9 points over a single greedy chain. The idea is that a hard problem has many
+paths to its one right answer, while wrong paths tend to end in different places.<Cite id="wang2023" />
+
+</At>
+
 ## Formats are for programs
+
+<At levels="simple">
+
+The last ending asked for the answer on a final line, "Answer: …", so that a program could read
+it. The model did that only once in six tries. So a program reading the replies has to check the
+format, and ask again when it wasn't followed.
+
+</At>
+<At levels="standard deep">
 
 The last ending asked for the answer on a final line, "Answer: …", so that a program could read it.
 The model did that only once in six tries. A program that reads the replies can't assume the
 format was followed: it has to check, and ask again or fall back when it wasn't. Asking for a format
 makes the reply easier to use, not guaranteed.
+
+</At>
+<At levels="deep">
+
+### Making the format certain
+
+When the program runs the model itself, it can do more than ask. At each step, it can set the
+probability of every token that would break the format to zero, rescale the rest, and pick from
+what's left. A format written as a regular expression or a grammar can be turned into an index of
+the allowed tokens at each point in the reply, so this adds little time.<Cite id="willard2023" />
+The format is then guaranteed. The answer inside it isn't: the model still picks among the allowed
+tokens by their probabilities, right or wrong.
+
+</At>
 
 <RecapCard>
 
@@ -43,6 +125,12 @@ makes the reply easier to use, not guaranteed.
 - On a small model the effect was mixed: the same score, with different mistakes.
 - Ask for a fixed format when a program reads the reply, and check that it was followed.
 
+<At levels="deep">
+
+- Each token gets the same fixed computation, so written steps buy more; voting over several
+  replies and limiting the allowed tokens help further.
+
+</At>
 </RecapCard>
 
 **Next question:** if wording matters this much, how much can harmless changes move the answer?

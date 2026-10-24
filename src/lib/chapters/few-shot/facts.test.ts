@@ -36,4 +36,29 @@ describe('few-shot', () => {
 	it('one GPT-2 head looks almost only at the earlier answers', () => {
 		for (const t of d.tasks) expect(t.head.score).toBeGreaterThan(0.9);
 	});
+
+	it('in depth: "zork" is " z" + "ork", and "ork" after " z" is over 99%', () => {
+		const run = task('Made-up labels')
+			.tests.find((t) => t.query === 'horse')!
+			.runs.find((r) => r.shots === 4)!;
+		const z = run.gpt2Top.find((g) => g.text === ' z')!.p;
+		expect(run.gpt2).toBeCloseTo(0.69, 2);
+		expect(run.gpt2 / z).toBeGreaterThan(0.99);
+		const tokens = task('Made-up labels').head.tokens.map((t) => t.text);
+		expect(tokens.slice(1, 4)).toEqual([' ->', ' bl', 'ip']);
+		expect(tokens.slice(6, 9)).toEqual([' ->', ' z', 'ork']);
+	});
+
+	it('in depth: head 5.0 sends 98% to the four answers, from 5% to 35%', () => {
+		const { head } = task('Opposites');
+		expect([head.layer, head.head]).toEqual([5, 0]);
+		const last = head.tokens.length - 1;
+		const answers = head.attention.filter(
+			(_, i) => i > 0 && i < last && head.tokens[i - 1].text === ' ->'
+		);
+		expect(answers).toHaveLength(4);
+		expect(answers.reduce((a, b) => a + b)).toBeCloseTo(0.98, 2);
+		expect(answers[0]).toBeCloseTo(0.05, 2);
+		expect(answers[3]).toBeCloseTo(0.35, 2);
+	});
 });

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -8,25 +9,81 @@
 
 ## Show, don't tell
 
+<At levels="simple">
+
+Write "hot -> cold" and "big -> small" on two lines, then "happy ->", and a model will usually answer
+*sad*. Nobody told it the task was opposites; it worked that out from the examples, without any
+more training. This is <GlossaryPopover term="in-context-learning">in-context learning</GlossaryPopover>,
+and giving a few examples like this is called *few-shot* prompting.<Cite id="brown2020" />
+
+</At>
+<At levels="standard deep">
+
 Write "hot -> cold" and "big -> small" on two lines, then "happy ->", and a model will usually answer
 *sad*. Nobody told it the task was opposites. It worked it out from the examples, during a single
 forward pass, without changing a single weight. This is <GlossaryPopover term="in-context-learning">in-context learning</GlossaryPopover>,
 and giving a few examples like this is called *few-shot* prompting.<Cite id="brown2020" />
+
+</At>
 
 Here it is for two tasks: opposites, and a rule nobody could guess, where fruits are "blip" and
 animals are "zork". Change how many examples the prompt has:
 
 <FewShot />
 
+<At levels="simple">
+
+With no examples, Qwen2.5-1.5B-Instruct gives *sad* about a 1% chance; with four examples, 96%.
+The made-up rule works too, though less reliably.
+
+</At>
+<At levels="standard deep">
+
 With no examples, Qwen2.5-1.5B-Instruct gives *sad* about 1% for "happy ->"; with four, 96%. For the
 made-up rule, the right label goes from almost nothing to between 22% and 78%. Not every word gets
 easier: "light -> dark" became less likely as examples were added.
+
+</At>
+
+<At levels="simple">
+
+The much smaller GPT-2 mostly fails: it repeats the word it was given, or copies the last answer
+it saw. Bigger models are much better at this.<Cite id="brown2020" />
+
+</At>
+<At levels="standard deep">
 
 GPT-2 small mostly fails. For opposites it usually just repeats the word it was given, and for the
 made-up rule it answers "zork" for everything, the label of the last example it saw. In-context
 learning gets much better as models get bigger.<Cite id="brown2020" />
 
+</At>
+<At levels="deep">
+
+### Answers longer than one token
+
+GPT-2 splits the made-up labels in two: "blip" is " bl" + "ip", and "zork" is " z" + "ork". The
+chance of a whole answer is the product of its tokens' chances, each given everything before it:
+
+$$p(\text{zork}) = p(\text{z} \mid \text{prompt}) \times p(\text{ork} \mid \text{prompt}, \text{z})$$
+
+For "horse ->" after four examples, that's 0.69 × over 0.99, about 0.69: once GPT-2 has written
+" z", the "ork" is close to certain. So the whole choice is made at the first token, " z" or
+" bl", and after four examples GPT-2 picks " z" for the fruits too.
+
+</At>
+
 ## How the model copies a pattern
+
+<At levels="simple">
+
+How does the model use the examples? Part of the answer is a kind of attention head that finds
+earlier places where the current token appeared and looks at what came right after it. On "a b …
+a", it looks back at "b". These *induction heads* may do much of the work of learning from
+examples.<Cite id="olsson2022" /> GPT-2 small has one doing exactly this on the prompts above:
+
+</At>
+<At levels="standard deep">
 
 What does the model do with the examples? Part of the answer is a kind of attention head that finds
 earlier places where the current token appeared and looks at whatever came right after it. On "a b …
@@ -34,11 +91,28 @@ a", it looks back at "b". These *induction heads* appear during training at the 
 suddenly get better at learning from their context, and they may be how most in-context learning
 works.<Cite id="olsson2022" /> GPT-2 small has one doing exactly this on the prompts above:
 
+</At>
+
 <InductionHead />
 
 From the final arrow, it looks almost entirely at the earlier answers, the words that followed the
 earlier arrows. The rest of the network can then use what it found to write an answer of the same
 kind.
+
+<At levels="deep">
+
+### Two heads make an induction head
+
+An induction head can't do this alone, because a token's query and key say nothing about which
+token came before it. An earlier head supplies that. A *previous-token head* copies each token's
+predecessor into it, so the position of the answer "cold" also carries a note that it came after
+an arrow. The induction head's query at the final arrow then matches the positions that came after
+arrows, which are the answers, and its values copy those answers forward.<Cite id="olsson2022" />
+That takes two layers of attention, one after the other, so a one-layer model can't form one.
+Head 5.0 in the widget sends 98% of the final arrow's attention to the four answers to the
+opposites, rising from 5% on the first to 35% on the last.
+
+</At>
 
 <RecapCard>
 
@@ -46,6 +120,12 @@ kind.
 - Attention heads that look at "what came after this token last time" help copy the pattern.
 - Bigger models learn from examples much better; small ones often just repeat the last answer.
 
+<At levels="deep">
+
+- A whole answer's chance is the product of its tokens' chances; an induction head relies on an
+  earlier previous-token head.
+
+</At>
 </RecapCard>
 
 **Next question:** chat models come with a system prompt. Does telling the model who to be change

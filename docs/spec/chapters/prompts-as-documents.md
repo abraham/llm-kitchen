@@ -18,3 +18,9 @@ makes the answer you want the most likely continuation.
   guesses for each variant and the last token's attention, averaged over all heads, with the first
   token left out and shown separately.
 - Live (T2): GPT-2 small, after consent.
+
+## Decisions
+
+- [Levels](../levels.md): Simple keeps the numbers that carry the point (_bed_ from 7% to 22%,
+  _Paris_ six times as likely). In depth explains why the first token soaks up attention (a
+  sink, and why the widget leaves it out) and what a next-token probability does and doesn't count.

@@ -23,3 +23,6 @@ order and layout, and Qwen2.5-1.5B-Instruct for a fact's position.
   shows as a handful of misses in the middle rather than a smooth U-shaped curve.
 - The Next question turns to text in the prompt the visitor didn't write, which the Harnesses Part
   answers.
+- [Levels](../levels.md): Simple keeps one number per change. In depth shows that the worst orders
+  all end with a positive example and explains contextual calibration, and notes that the position
+  misses were confident ones.

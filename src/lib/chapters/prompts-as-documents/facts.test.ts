@@ -24,4 +24,21 @@ describe('a prompt is the start of a document', () => {
 		expect(ask.watch[' Paris']).toBeLessThan(0.006);
 		expect(Math.round(start.watch[' Paris'] / ask.watch[' Paris'])).toBe(6);
 	});
+
+	it('in depth: the first token takes 46–91% of the attention; 63% for the cat', () => {
+		const shares = d.groups.flatMap((g) => g.variants).map((v) => v.firstTokenShare);
+		expect(shares).toHaveLength(8);
+		expect(Math.round(Math.min(...shares) * 100)).toBe(46);
+		expect(Math.round(Math.max(...shares) * 100)).toBe(91);
+		expect(variant('The cat sat on the').firstTokenShare).toBeCloseTo(0.63, 2);
+	});
+
+	it('in depth: after "A:", " The" (23%) is far ahead of " Paris" (1.8%)', () => {
+		const qa = variant('Q: What is the capital of France?\nA:');
+		expect(qa.top[0].text).toBe(' The');
+		expect(qa.top[0].p).toBeCloseTo(0.23, 2);
+		expect(qa.watch[' Paris']).toBeCloseTo(0.018, 3);
+		expect(variant('What is the capital of France?').watch[' Paris']).toBeCloseTo(0.0054, 4);
+		expect(variant('The capital of France is').watch[' Paris']).toBeCloseTo(0.032, 3);
+	});
 });

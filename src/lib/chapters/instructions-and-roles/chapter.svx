@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -8,12 +9,24 @@
 
 ## The slot at the top
 
+<At levels="simple">
+
+Chat models have a slot at the top of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
+instructions for the whole chat. In a chat app, its makers write it and you never see it. Chat
+models were trained to follow instructions like these, so they usually do.<Cite id="ouyang2022" />
+But what kind of instructions help?
+
+</At>
+<At levels="standard deep">
+
 The chat template (<ChapterRef to="predictor-to-assistant" />) has a slot ahead of the conversation for a <GlossaryPopover term="system-prompt">system prompt</GlossaryPopover>:
 instructions that apply to the whole chat. In a chat app, its makers write it and you never see
 it; when you use a model directly, you write it yourself. Chat models were tuned on examples of an
 assistant following instructions, and on
 people's ratings of which replies were better.<Cite id="ouyang2022" /> So instructions there tend
 to be followed. But what kind of instructions help?
+
+</At>
 
 Here is Qwen2.5-1.5B-Instruct answering the same question under three system prompts. The
 highlighted part is the only text that changes:
@@ -22,10 +35,29 @@ highlighted part is the only text that changes:
 
 ## Specific beats grand
 
+<At levels="simple">
+
+The specific instructions worked: two short sentences and an everyday example. The persona,
+"a world-famous physicist", made the answer more than twice as long, and no better.
+
+</At>
+<At levels="standard deep">
+
 The specific instructions worked: two short sentences and an everyday example, shorter than the
 default answer. The persona, "a world-famous physicist", made the answer more than twice
 as long and no better: it added claims that are muddled, like most blue light being "scattered away
 from us towards the edges of the sky".
+
+</At>
+
+<At levels="simple">
+
+Telling the model it was "a brilliant mathematician who never makes mistakes" didn't help either:
+it got 3 of 8 sums right, against 5 of 8 without it. A large study of 162 personas found the same:
+on average, personas didn't make answers more accurate.<Cite id="zheng2024" />
+
+</At>
+<At levels="standard deep">
 
 The sums tell the same story. Telling the model it is "a brilliant mathematician who never makes
 mistakes" did not make it one: it got 3 of the 8 right, against 5 of 8 with the default system
@@ -33,10 +65,32 @@ prompt. A large study found the same across 162 personas and 2,410 factual quest
 persona did not improve accuracy on average, and which persona helped on which question was largely
 random.<Cite id="zheng2024" />
 
+</At>
+
 That fits how the model works. A persona changes which documents the text resembles, so it changes
 tone, length, and vocabulary. It doesn't add knowledge or skill the model lacks. Instructions that
 say what you actually want (who the reader is, how long, what format) give the model something it
 can follow.
+
+<At levels="deep">
+
+### One sequence, ranked by training
+
+In the template from <ChapterRef to="predictor-to-assistant" />, the system prompt sits between
+`<|im_start|>system` and `<|im_end|>`, and the user's message follows in the same way. Leave the
+system prompt out and Qwen's template fills one in: "You are Qwen, created by Alibaba Cloud. You
+are a helpful assistant." Either way, the network gets one sequence of tokens. Nothing in its
+layers treats the system part differently; any extra weight it gets was learned in tuning.
+
+That's a weakness when other text in the sequence gives orders. OpenAI researchers argued that
+treating system prompts and untrusted text as equals is one of the main things that lets prompt
+injection work (<ChapterRef to="prompt-injection" />). They trained GPT-3.5 on generated examples
+of an *instruction hierarchy*, with system messages ranked above users' and users' above tool
+outputs, teaching it to ignore lower-ranked instructions that conflict. It became much harder to
+attack, even in ways it hadn't been trained on, while losing little on ordinary
+tasks.<Cite id="wallace2024" />
+
+</At>
 
 <RecapCard>
 
@@ -44,6 +98,12 @@ can follow.
 - Clear, specific instructions about audience, length, and format are followed well.
 - A persona changes style, not ability; "you never make mistakes" doesn't make it so.
 
+<At levels="deep">
+
+- Roles are marked by special tokens in one sequence; any priority for the system prompt comes
+  from tuning.
+
+</At>
 </RecapCard>
 
 **Next question:** what about asking the model to work step by step, or to answer in a fixed format?
