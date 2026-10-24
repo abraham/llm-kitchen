@@ -1,8 +1,7 @@
 # Security
 
-What the site exposes, what it defends against, the rules that keep it that way, and the hardening
-still to do. Rules already specified elsewhere are linked, not repeated. Items under
-[Hardening](#hardening) aren't built yet; [roadmap.md](roadmap.md) points here for them.
+What the site exposes, what it defends against, and the rules that keep it that way. Rules already
+specified elsewhere are linked, not repeated.
 
 ## Attack surface
 
@@ -25,15 +24,16 @@ this spec in the same pull request. The rules for bring-your-own API keys are in
 
 ## Threats
 
-| Threat                                                         | Defense                                                                                                        |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Script injected through a dataset, a citation, or model output | Svelte escapes all text; no raw HTML; datasets are checked; CSP allows only the site's own scripts             |
-| The site framed by another page (clickjacking)                 | `frame-ancestors 'none'`                                                                                       |
-| A model file changed or swapped on Hugging Face                | Downloads pin a commit, and each file must match its recorded SHA-256                                          |
-| A compromised npm package or GitHub Action                     | Lockfile installs, two runtime dependencies, actions locked to commits, deploy credentials only in deploy jobs |
-| A pull request that tries to deploy or read credentials        | Fork pull requests get no OIDC token; `production` deploys only from `main`                                    |
-| A model given real power by a harness demo                     | Demos expose only in-browser toy tools; no network, file system, or `eval` access                              |
-| A downgrade to HTTP                                            | HSTS for two years, including subdomains                                                                       |
+| Threat                                                         | Defense                                                                                                                              |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Script injected through a dataset, a citation, or model output | Svelte escapes all text; no raw HTML; datasets are checked; CSP allows only the site's own scripts                                   |
+| The site framed by another page (clickjacking)                 | `frame-ancestors 'none'`                                                                                                             |
+| A model file changed or swapped on Hugging Face                | Downloads pin a commit, and each file must match its recorded SHA-256                                                                |
+| A compromised npm package or GitHub Action                     | Lockfile installs, no install scripts, three runtime dependencies, actions locked to commits, deploy credentials only in deploy jobs |
+| A pull request that tries to deploy or read credentials        | Fork pull requests get no OIDC token; `production` deploys only from `main`                                                          |
+| A fork pull request that runs code in CI                       | `pull_request` only, with a read-only token and no secrets; first-time contributors need approval to run workflows                   |
+| A model given real power by a harness demo                     | Demos expose only in-browser toy tools; no network, file system, or `eval` access                                                    |
+| A downgrade to HTTP                                            | HSTS for two years, including subdomains                                                                                             |
 
 Anyone with write access to the repository can push a branch whose pull request runs a modified
 workflow with the `preview` environment's credentials, which can deploy to Hosting. Write access is
@@ -108,11 +108,10 @@ the trust boundary, so it stays limited to maintainers.
 - Dependabot proposes npm and GitHub Actions updates weekly (`.github/dependabot.yml`), once a
   release is 7 days old (`cooldown`), so a hijacked release is usually caught and pulled before it
   reaches the lockfile. Security updates aren't held back.
-- On pull requests in a public repository, the `checks` job runs
-  `actions/dependency-review-action`, which fails when the pull request adds a dependency (npm or
-  GitHub Actions) with a known vulnerability of high severity or higher. While the repository is
-  private the step is skipped, since dependency review needs GitHub Advanced Security there;
-  Dependabot alerts and security updates (both on) cover known vulnerabilities instead.
+- On pull requests, the `checks` job runs `actions/dependency-review-action`, which fails when the
+  pull request adds a dependency (npm or GitHub Actions) with a known vulnerability of high severity
+  or higher. The step is skipped while the repository is private, where it would need GitHub
+  Advanced Security.
 
 ### CI and deploys
 
@@ -131,29 +130,45 @@ the trust boundary, so it stays limited to maintainers.
   online audits, and fails on any finding of medium severity or higher. `.github/zizmor.yml` accepts
   tag references, because `actions.lock` locks each tag to a commit.
 
+### Reporting
+
+- `SECURITY.md` asks reporters to use GitHub's private vulnerability reporting, and says what's in
+  scope.
+- The site doesn't link to the repository, so it serves `/.well-known/security.txt` (RFC 9116, from
+  `static/security.txt` through a rewrite in `firebase.json`, since Hosting doesn't deploy dot
+  folders). Its `Contact` is the repository's private advisory form and its `Policy` is
+  `SECURITY.md`. `Expires` stays under a year away; a unit test fails once it's too far out or has
+  passed, as a reminder to move it forward.
+
 ### Repository settings
 
 No file holds these, so they're recorded here; `gh api repos/abraham/llm-kitchen` and its
-`/rulesets`, `/vulnerability-alerts`, and `/automated-security-fixes` endpoints show them.
+`/rulesets`, `/vulnerability-alerts`, `/automated-security-fixes`,
+`/private-vulnerability-reporting`, and `/actions/permissions/fork-pr-contributor-approval`
+endpoints show them.
 
 - The `CI` ruleset on the default branch requires `ci-success` and blocks force pushes and deletion,
   with no bypass.
 - Dependabot alerts and Dependabot security updates are on.
-- The repository is private, so secret scanning, push protection, private vulnerability reporting,
-  and dependency review aren't available without GitHub Advanced Security. If it becomes public, turn
-  on secret scanning with push protection and private vulnerability reporting; dependency review
-  starts running by itself.
+- Write access stays limited to maintainers (see [Threats](#threats)).
 
-## Hardening
+These need a public repository, so they're turned on right after it goes public:
 
-Not built yet. Each item says what changes and how it's checked.
+```sh
+gh api -X PATCH repos/abraham/llm-kitchen \
+  -f 'security_and_analysis[secret_scanning][status]=enabled' \
+  -f 'security_and_analysis[secret_scanning_push_protection][status]=enabled'
+gh api -X PUT repos/abraham/llm-kitchen/private-vulnerability-reporting
+gh api -X PUT repos/abraham/llm-kitchen/actions/permissions/fork-pr-contributor-approval \
+  -f approval_policy=first_time_contributors
+```
 
-1. **A way to report problems.** The repository is private, so a `SECURITY.md` or GitHub's private
-   vulnerability reporting wouldn't reach anyone outside it. The site serves
-   `/.well-known/security.txt` (RFC 9116) with a `Contact` and an `Expires` under a year away, and a
-   test fails once `Expires` has passed. Waiting on a maintainer to choose the contact address.
+- Secret scanning with push protection.
+- Private vulnerability reporting, which `SECURITY.md` and `security.txt` point to.
+- Workflow runs from first-time contributors' fork pull requests wait for a maintainer's approval.
 
-When an item lands, its description moves into [Rules](#rules) and it leaves this list.
+Before it goes public, `gitleaks git` scanned the whole history and found no secrets (its only two
+findings are SHA-256 hashes in `models/embedder.json`).
 
 ## Not done, on purpose
 
@@ -171,20 +186,19 @@ When an item lands, its description moves into [Rules](#rules) and it leaves thi
   never in CI or with deploy credentials, and are pinned exactly; hashes for PyTorch across
   platforms would be large and churn with every update.
 - **Gating CI on `npm audit`.** Advisories in dev-only tools would block unrelated pull requests;
-  dependency review (once public) covers what a pull request adds, and Dependabot alerts cover the
-  rest.
+  dependency review covers what a pull request adds, and Dependabot alerts cover the rest.
 
 ## Checked by tests
 
 - `tests/unit/hosting.test.ts`: the `firebase.json` headers, including `frame-ancestors 'none'`.
 - `tests/e2e/hosting.e2e.ts`: the headers the Hosting emulator actually serves on pages and on the
-  inference worker.
+  inference worker, and `security.txt` at its well-known path.
 - `tests/unit/citations.test.ts`: every reference URL is `https://`.
 - `tests/unit/datasets.test.ts`: every recorded dataset passes its checks.
 - `tests/unit/security.test.ts`: `src/` uses no API under [No raw HTML](#in-the-browser), every
   `target="_blank"` link has `rel="noopener noreferrer"`, recording scripts never use
   `trust_remote_code`, `pickle`, or `torch.load`, no workflow uses `pull_request_target` or
-  `workflow_run`, and every checkout drops its credentials.
+  `workflow_run`, every checkout drops its credentials, and `security.txt` hasn't expired.
 - `src/lib/workers/verified-fetch.test.ts`: model downloads must be listed files with matching
   hashes, at the pinned commit.
 - `src/lib/stores/progress.test.ts`: saved progress keeps only chapter slugs.

@@ -1,0 +1,5 @@
+Contact: https://github.com/abraham/llm-kitchen/security/advisories/new
+Expires: 2027-10-01T00:00:00.000Z
+Policy: https://github.com/abraham/llm-kitchen/blob/main/SECURITY.md
+Preferred-Languages: en
+Canonical: https://llm.kitchen/.well-known/security.txt

@@ -1,5 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { SITE_ORIGIN } from '#lib/site.ts';
 
 const files = (dir: string, ext: RegExp) =>
 	readdirSync(dir, { recursive: true, encoding: 'utf8' })
@@ -46,5 +47,20 @@ describe('security rules (docs/spec/security.md)', () => {
 			const dropped = source.match(/persist-credentials: false/g)?.length ?? 0;
 			expect(dropped, file).toBe(checkouts);
 		}
+	});
+
+	it('says how to report a problem in a security.txt that has not expired', () => {
+		const fields = Object.fromEntries(
+			readFileSync('static/security.txt', 'utf8')
+				.trim()
+				.split('\n')
+				.map((line) => line.split(/: (.*)/s).slice(0, 2))
+		);
+		expect(fields.Contact).toMatch(/^https:\/\//);
+		expect(fields.Canonical).toBe(`${SITE_ORIGIN}/.well-known/security.txt`);
+		// RFC 9116 asks for an expiry under a year away; when this fails, move it forward.
+		const days = (Date.parse(fields.Expires) - Date.now()) / 86_400_000;
+		expect(days).toBeGreaterThan(0);
+		expect(days).toBeLessThanOrEqual(366);
 	});
 });

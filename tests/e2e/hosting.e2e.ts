@@ -51,6 +51,13 @@ test("leaves script-src to each page's own policy, which has its inline scripts'
 	expect(headers['content-security-policy']).not.toContain('script-src');
 });
 
+test('serves security.txt at its well-known path', async ({ request }) => {
+	const response = await request.get('/.well-known/security.txt');
+	expect(response.status()).toBe(200);
+	expect(response.headers()['content-type']).toContain('text/plain');
+	expect(await response.text()).toBe(readFileSync('static/security.txt', 'utf8'));
+});
+
 test('keeps recorded data on the short cache', async ({ request }) => {
 	const response = await request.get('/data/traces/gpt2/attn-the-cat-sat.json');
 	expect(response.status()).toBe(200);
