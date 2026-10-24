@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { TRIANGLE, triangleNet } from '#lib/math/mlp.ts';
 
 	const START = { x1: 0.5, x2: 1 };

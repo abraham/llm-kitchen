@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { DEVICES, MEMORY_MODELS } from './data.ts';
 	import { weightBytes } from '#lib/math/quantize.ts';
 

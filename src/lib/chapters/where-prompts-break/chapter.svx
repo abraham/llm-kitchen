@@ -1,7 +1,7 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Cite from '#lib/components/layout/Cite.svelte';
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import FragileLab from './FragileLab.svelte';
 </script>
 

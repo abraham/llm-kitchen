@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import type { TraceName } from '#lib/datasets/registry.ts';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';

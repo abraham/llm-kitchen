@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 
 	import {
 		CACHE_BUDGET,

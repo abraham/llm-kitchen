@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
 	import { formatCount, kaplanLoss } from './data.ts';
 	import { GPT2_FAMILY, nonEmbeddingParameters } from '#lib/math/transformer.ts';

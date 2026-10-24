@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { activate, neuron, type Activation } from '#lib/math/mlp.ts';
 
 	const START = { x1: 1, x2: 0.5, w1: 0.8, w2: -1.2, bias: 0.3, kind: 'relu' as Activation };

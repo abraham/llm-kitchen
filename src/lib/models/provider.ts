@@ -1,4 +1,4 @@
-import type { DataSource } from '#lib/components/layout/data-source.ts';
+import type { DataSource } from '#lib/components/frame/data-source.ts';
 import canonicalJson from '../../../models/canonical.json';
 
 /** The canonical small model, defined once in `models/canonical.json`. */

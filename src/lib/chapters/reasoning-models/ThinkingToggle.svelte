@@ -2,9 +2,9 @@
 	import { useDataset } from '#lib/datasets/use.ts';
 	import type { ThinkingRun } from '#lib/datasets/parsers/prompts.ts';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
 
 	const data = useDataset('reasoning/thinking');
 	let index = $state(0);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { codePointLabel, encodeText, hexByte } from '#lib/math/encoding.ts';
 
 	const START = 'The cat sat on the';

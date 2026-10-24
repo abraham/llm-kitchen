@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { all, useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';

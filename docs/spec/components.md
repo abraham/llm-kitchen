@@ -259,7 +259,7 @@ class FrameLoop {
   frame callback after it unmounts and nothing runs during prerendering.
 
 The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, `Scrolly`, `ModelConsent`,
-and `DataSourceBadge` keep their APIs and move here from `layout/`.
+and `DataSourceBadge` keep their APIs.
 
 ## Not shared, on purpose
 
@@ -308,16 +308,16 @@ When a step lands, its components move to **Built** below.
 
 ## Status
 
-| Component                                                                                                                                      | Folder                  | Status              |
-| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------------------- |
-| `WidgetFrame`, `StepController`, `Loading`, `Scrolly`, `ModelConsent`, `DataSourceBadge`                                                       | `layout/` → `frame/`    | Built; move planned |
-| `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover` | `layout/` → `page/`     | Built; move planned |
-| `scrollable`                                                                                                                                   | `layout/` → `ui/`       | Built; move planned |
-| `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`                           | `primitives/`           | Built               |
-| `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built               |
-| Global styles                                                                                                                                  | `global.css`            | Built               |
-| `Choice`, `Slider`, `Toggle`                                                                                                                   | `ui/`                   | Planned             |
-| `ScrollBox`, `Status`, `Compare`                                                                                                               | `ui/`                   | Planned             |
-| `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned             |
-| `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned             |
-| `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned             |
+| Component                                                                                                                                      | Folder                  | Status  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- | ------- |
+| `WidgetFrame`, `StepController`, `Loading`, `Scrolly`, `ModelConsent`, `DataSourceBadge`                                                       | `frame/`                | Built   |
+| `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover` | `page/`                 | Built   |
+| `scrollable`                                                                                                                                   | `ui/`                   | Built   |
+| `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`                           | `primitives/`           | Built   |
+| `GlassBoxGenerator`                                                                                                                            | `widgets/`              | Built   |
+| Global styles                                                                                                                                  | `global.css`            | Built   |
+| `Choice`, `Slider`, `Toggle`                                                                                                                   | `ui/`                   | Planned |
+| `ScrollBox`, `Status`, `Compare`                                                                                                               | `ui/`                   | Planned |
+| `PromptText`, `ChatLog`, `roles.ts`                                                                                                            | `primitives/`           | Planned |
+| `FrameLoop`, `formatCount`                                                                                                                     | `frame/`, `primitives/` | Planned |
+| `component-patterns.test.ts`                                                                                                                   | `tests/unit/`           | Planned |

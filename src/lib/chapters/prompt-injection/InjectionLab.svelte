@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import { findRun, promptPieces, tally } from '#lib/harness/injection.ts';
 
 	const data = useDataset('injection/lab');

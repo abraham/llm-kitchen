@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Cite from '#lib/components/layout/Cite.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { SCALE, formatCount, formatPower, type ScaleEntry } from './data.ts';
 
 	const METRICS = {

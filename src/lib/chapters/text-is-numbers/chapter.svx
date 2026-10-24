@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Cite from '#lib/components/layout/Cite.svelte';
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import TextToNumbers from './TextToNumbers.svelte';
 </script>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { canonical } from '#lib/models/provider.ts';
 
 	/** Attention keeps a key and a value vector for every earlier token, in every block. */

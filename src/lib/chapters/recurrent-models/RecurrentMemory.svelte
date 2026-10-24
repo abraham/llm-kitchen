@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import VectorStrip from '#lib/components/primitives/VectorStrip.svelte';

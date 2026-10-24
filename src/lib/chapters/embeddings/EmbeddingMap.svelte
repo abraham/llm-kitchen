@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { loadDataset } from '#lib/datasets/load.ts';
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { nearest, project } from '#lib/math/vectors.ts';
 	import { MINILM, browserModel } from '#lib/models/browser-model.svelte.ts';
 	import { BrowserProvider } from '#lib/models/browser-provider.ts';

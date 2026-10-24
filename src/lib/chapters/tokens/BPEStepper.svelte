@@ -1,7 +1,7 @@
 <script lang="ts">
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { END, SENNRICH_CORPUS, learnBpe } from '#lib/math/bpe.ts';
 
 	const steps = learnBpe(SENNRICH_CORPUS, 10);

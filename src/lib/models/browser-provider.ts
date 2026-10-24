@@ -1,4 +1,4 @@
-import type { DataSource } from '#lib/components/layout/data-source.ts';
+import type { DataSource } from '#lib/components/frame/data-source.ts';
 import { applyTemperature, sampleIndex } from '#lib/math/sampling.ts';
 import type { BrowserModel } from './browser-model.svelte.ts';
 import {

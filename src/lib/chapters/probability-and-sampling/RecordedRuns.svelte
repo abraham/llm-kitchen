@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { canonical } from '#lib/models/provider.ts';
 	import { all, then, useDataset } from '#lib/datasets/use.ts';
 

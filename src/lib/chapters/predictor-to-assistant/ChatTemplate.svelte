@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { QWEN_DEFAULT_SYSTEM, chatTemplate, type ChatMessage } from '#lib/math/chat-template.ts';
 
 	const EXAMPLE: ChatMessage[] = [

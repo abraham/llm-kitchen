@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { then, useDatasets } from '#lib/datasets/use.ts';
 	import { label } from '#lib/curriculum/index.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun, AgentStep } from '#lib/harness/agent.ts';
 	import type { AgentRunName } from '#lib/datasets/registry.ts';

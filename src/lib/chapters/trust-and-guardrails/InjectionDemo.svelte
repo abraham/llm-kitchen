@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { all, then, useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
 	import ToolCallCard from '#lib/components/primitives/ToolCallCard.svelte';
 	import type { AgentRun } from '#lib/harness/agent.ts';
 	import { FakeFiles, INJECTED_PAGE, START_FILES, runTool } from '#lib/harness/tools.ts';

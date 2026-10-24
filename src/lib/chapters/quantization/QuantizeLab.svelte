@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { levels } from '#lib/math/quantize.ts';

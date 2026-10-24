@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import ModelConsent from '#lib/components/layout/ModelConsent.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
 	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';

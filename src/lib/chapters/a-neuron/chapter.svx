@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Cite from '#lib/components/layout/Cite.svelte';
-	import GlossaryPopover from '#lib/components/layout/GlossaryPopover.svelte';
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import LayerPlayground from './LayerPlayground.svelte';
 	import NeuronPlayground from './NeuronPlayground.svelte';
 </script>

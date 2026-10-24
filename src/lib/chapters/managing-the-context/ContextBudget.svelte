@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { all, useDataset } from '#lib/datasets/use.ts';
-	import ChapterRef from '#lib/components/layout/ChapterRef.svelte';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { label } from '#lib/curriculum/index.ts';
 	import type { ContextSession } from '#lib/harness/agent.ts';
 	import { project } from '#lib/math/vectors.ts';

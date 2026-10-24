@@ -1,5 +1,5 @@
 <script lang="ts">
-	import RecapCard from '#lib/components/layout/RecapCard.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import EndToEnd from './EndToEnd.svelte';
 </script>
 

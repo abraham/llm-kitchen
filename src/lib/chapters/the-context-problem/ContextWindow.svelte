@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { label } from '#lib/curriculum/index.ts';
 	import { canonical } from '#lib/models/provider.ts';
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { prefersReducedMotion } from 'svelte/motion';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import {
 		Denoiser,

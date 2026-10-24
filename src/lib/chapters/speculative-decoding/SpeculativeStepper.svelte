@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { then, useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { writtenAfter, type SpeculativeRecording } from '#lib/math/speculative.ts';

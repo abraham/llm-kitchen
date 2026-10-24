@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { segmentPrompt, type PromptPartKind } from '#lib/harness/agent.ts';
 	import { label } from '#lib/curriculum/index.ts';
 

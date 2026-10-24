@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import type { BaseVsInstruct, Column } from '#lib/datasets/parsers/prompts.ts';
-	import Loading from '#lib/components/layout/Loading.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import Loading from '#lib/components/frame/Loading.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 
 	const data = useDataset('chat/base-vs-instruct');
 	let index = $state(0);

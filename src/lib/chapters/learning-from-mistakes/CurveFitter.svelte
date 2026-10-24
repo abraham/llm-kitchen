@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import { CurveNet, CurveTrainer } from '#lib/math/mlp.ts';
 

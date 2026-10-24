@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
 	import type { TrainerRequest, TrainerResponse } from '#lib/workers/trainer.worker.ts';
 	import TrainerWorker from '#lib/workers/trainer.worker.ts?worker';

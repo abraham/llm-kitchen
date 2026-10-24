@@ -1,5 +1,5 @@
 <script lang="ts">
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 
 	// A bumpy one-weight loss: a bowl with a ripple, so big steps can overshoot or get stuck.
 	const loss = (w: number) => 0.5 * (w - 1) ** 2 + 0.4 * Math.sin(3 * w) + 1;

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import StepController from '#lib/components/layout/StepController.svelte';
-	import WidgetFrame from '#lib/components/layout/WidgetFrame.svelte';
-	import { scrollable } from '#lib/components/layout/scrollable.ts';
-	import { Stepper } from '#lib/components/layout/stepper.svelte.ts';
+	import StepController from '#lib/components/frame/StepController.svelte';
+	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import { scrollable } from '#lib/components/ui/scrollable.ts';
+	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { RHYMES } from '#lib/data/rhymes.ts';
 	import { bigramCounts, generateBigram, nextWordProbs, words } from '#lib/math/bigram.ts';

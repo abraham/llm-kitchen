@@ -35,8 +35,8 @@ belongs to and remove it here.
 ## Components
 
 - **The common component set:** shared pickers, sliders, scroll boxes, status lines, prompt text,
-  and frame loops, and splitting `layout/` into `frame/` and `page/`. The design and the order of
-  work are in [components.md](components.md#migration).
+  and frame loops. The design and the order of work are in
+  [components.md](components.md#migration).
 
 ## Content
 
