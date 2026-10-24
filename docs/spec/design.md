@@ -22,9 +22,11 @@
     are saved (`stores/theme.svelte.ts`) and an inline script in `app.html` applies them before the
     page paints; Auto saves nothing. Colors are `light-dark()` pairs in `tokens.css`, and a choice
     sets `color-scheme` on the root and points the browser's `theme-color` at its page color.
-  - Once a chapter has passages for another level, the app bar also has an "Explanations" select
-    (visually hidden label) between the name and the toggle: Simple, Standard, or In depth (see
-    [architecture.md](architecture.md#explanation-levels)). Changing it switches at once and keeps
+  - The app bar also has an "Explanations" select (visually hidden label) between the name and
+    the toggle: Simple, Standard, or In depth (see
+    [architecture.md](architecture.md#explanation-levels)). The options are the plain names, with
+    no descriptions: a native select can't show them, and a chapter at a level it hasn't been
+    written for says so under its heading. Changing it switches at once and keeps
     the block at the top of the content where it was; if the new level hides that block, the shared
     block before it stays put, so the replacement passage appears in the same place.
   - Prose sits in a single ~68ch column (`.prose`). Widgets break out wider, up to ~1100px

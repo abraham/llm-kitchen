@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
@@ -16,15 +17,39 @@ the model answers without asking for a tool. Step through a real run:
 
 <AgentStepper />
 
+<At levels="simple">
+
+So there are two loops. Inside, the model writes each reply one token at a time, as in <ChapterRef to="generating-text" />.
+Around that, the harness keeps calling the model, running tools, and adding results until the model
+is done.
+
+</At>
+<At levels="standard deep">
+
 There are two loops here. Inside each model call is the token loop from <ChapterRef to="generating-text" />: predict, pick,
 append. Around it is the harness loop: call the model, run a tool, add the result, repeat. This
 pattern of interleaving a model's reasoning with actions was popularized by the ReAct
 paper.<Cite id="yao2023" />
 
+</At>
+
 The model never saw the rhyme until the search returned it, and it never counted anything: it
 copied the rhyme into a call to the word counter, then reported the counter's answer, 30 words.
 
 ## The harness makes the rules
+
+<At levels="simple">
+
+This run worked partly because of rules in the harness, not the model:
+
+- It lets the model ask for only one tool at a time.
+- Its instructions tell the model to use a tool for counting instead of guessing.
+- It stops after 8 model calls, so a confused agent can't go on forever.
+
+Each call also re-reads the whole conversation so far, which grows with every step.
+
+</At>
+<At levels="standard deep">
 
 This run worked partly because of choices in the harness, not the model:
 
@@ -36,6 +61,27 @@ This run worked partly because of choices in the harness, not the model:
   forever. Each call also re-reads the whole growing conversation: here 301, then 394, then 483
   tokens.
 
+</At>
+<At levels="deep">
+
+### What the loop costs
+
+Because every call re-reads the whole conversation, the work grows faster than the number of
+steps. If the first prompt is $p_0$ tokens and each step adds about $a$ more, call $k$ (counting
+from 0) reads $p_k = p_0 + k\,a$ tokens, and $K$ calls read
+
+$$
+\sum_{k=0}^{K-1} p_k = K\,p_0 + a\,\frac{K(K-1)}{2}
+$$
+
+tokens in all, a total that grows with the square of the number of steps. This run read
+301 + 394 + 483 = 1,178 tokens to give one short answer, and each step added about 90.
+
+Real harnesses lean on the fact that each prompt starts exactly like the last one. Providers can
+reuse the work they did on an unchanged start instead of reading it again, which comes up in <ChapterRef to="caching" />.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+
+</At>
+
 <RecapCard>
 
 - An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
@@ -43,6 +89,12 @@ This run worked partly because of choices in the harness, not the model:
 - The loop stops when the model answers without a tool call, or when it hits a step limit.
 - Each step re-sends the whole conversation, so the prompt keeps growing.
 
+<At levels="deep">
+
+- $K$ calls read about $K\,p_0 + a\,K(K-1)/2$ tokens in all: the cost grows with the square of the
+  steps.
+
+</At>
 </RecapCard>
 
 **Next question:** if the prompt grows with every step, what happens when it gets too big?

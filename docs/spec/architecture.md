@@ -266,14 +266,22 @@ and remaining phases are in [levels.md](levels.md).
   the chapter doesn't cover, `ChapterLayout` says so under the heading ("This chapter has no In
   depth passages yet, so it reads like Standard").
 - **Hidden until there's content:** `chapters/config.ts` sets `LEVEL_CHOICE` once any chapter
-  lists a level. Until then the app bar has no control and chapters have no coverage notes.
+  lists a level, as Tokens, Attention, and The agent loop do. Without one, the app bar would have
+  no control and chapters no coverage notes.
+- **Equations:** In depth writes TeX between `$…$` (inline) or `$$…$$` (on lines of their own).
+  `scripts/mdsvex-math.ts`, a remark plugin for mdsvex, converts it to MathML with Temml at build
+  time, so pages ship no math JavaScript or fonts and every supported browser renders it; bad TeX
+  fails the build. A literal dollar sign in prose is written `&#36;`. Wide equations scroll inside
+  their line instead of widening the page.
 - **Tests:** the end-to-end build sets `VITE_FIXTURES`, which turns the control on and adds the
   pages in `tests/e2e/fixtures`: `/fixtures/levels` (passages, inline swaps, and citations at each
   level) and `/fixtures/recap-and-quiz` (per-level recap points and quiz questions).
   `tests/e2e/levels.e2e.ts` checks switching, saving, applying before hydration, keeping the
   reader in place, citations, the recap and the quiz's scoring at each level, axe at each level,
   and the coverage note; unit tests render the same pages, and per-level glossary definitions, on
-  the server. Other builds leave the fixtures out.
+  the server. Other builds leave the fixtures out. On real chapters, `levels.e2e.ts` checks each
+  pilot chapter's passages and equations at each level, and `quality.e2e.ts` runs axe and the
+  phone-width check at Simple and In depth on every chapter whose `chapter.ts` lists levels.
 
 ## Tests
 

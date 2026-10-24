@@ -2,10 +2,10 @@
 
 Plan for letting each visitor read the site at one of three levels of detail, chosen in the app
 bar; [roadmap.md](roadmap.md) points here. When a phase lands, its part moves into the spec it
-belongs to and leaves this file. Phases 1 and 2 (the machinery, and per-level glossary
-definitions, recap points, and quiz questions) are built and described in
-[architecture.md](architecture.md#explanation-levels) and [design.md](design.md); the control
-stays hidden until a chapter has passages for another level.
+belongs to and leaves this file. Phases 1 to 3 (the machinery; per-level glossary definitions,
+recap points, and quiz questions; and the pilot chapters with equations) are built and described
+in [architecture.md](architecture.md#explanation-levels), [design.md](design.md), and
+[principles.md](principles.md#writing-for-each-level). Phase 4 remains.
 
 ## Goals
 
@@ -31,16 +31,17 @@ stays hidden until a chapter has passages for another level.
 
 - Labels in the app bar are plain: "Simple", "Standard", and "In depth". The kitchen theme stays
   in the site's words and structure, not in a control whose options have to be understood at a
-  glance. A native select can't show a description under each option; how the control explains
-  the levels is decided in phase 3, when it becomes visible.
+  glance.
 - Without a saved choice, the level is Standard. There's no "auto": nothing in the browser says
   which one a visitor wants.
 
 ## Writing a passage
 
 Shared text stays plain Markdown. Passages that differ by level are wrapped in `page/At` (see
-[architecture.md](architecture.md#explanation-levels)), and the chapter's `chapter.ts` lists the
-levels it covers:
+[architecture.md](architecture.md#explanation-levels)), the chapter's `chapter.ts` lists the
+levels it covers, and the passages follow the
+[writing rules](principles.md#writing-for-each-level). Tokens, Attention, and The agent loop are
+the worked examples. In short:
 
 ```svx
 <At levels="simple">
@@ -75,35 +76,12 @@ Formally, the embedding is a lookup into a matrix $W_E \in \mathbb{R}^{50257 \ti
   description describe the chapter as Standard presents it, whatever level the sharer reads at.
   `scripts/build-og.ts` and `PageMeta` don't change.
 
-## Writing rules
-
-Added to [principles.md](principles.md) when the first chapter ships:
-
-- **Simple:** no notation, no number that isn't the point, at most one analogy per idea, and every
-  term defined on first use. Aim for about half the words of Standard. Never introduce a claim
-  Standard doesn't make.
-- **In depth:** equations follow the picture and the words, never replace them. Each equation
-  names every symbol. Implementation notes say which model or paper they're true for. New sources
-  are cited like any other claim and added to the chapter's fact-check list.
-- **All levels:** the running example stays _"The cat sat on the"_; the chapter's question and the
-  question that leads on stay the same.
-
-## Math in In depth
-
-In depth needs equations, which the site can't show today. Proposed: write TeX in `$…$` and
-`$$…$$`, convert it to MathML at build time (a remark plugin, a new dev dependency), and ship no
-math JavaScript or fonts; every supported browser renders MathML Core. The conversion and the
-first equations ship together in phase 3.
-
 ## Tests
 
-Phase 1's unit and end-to-end tests are in [architecture.md](architecture.md#explanation-levels).
-Still to come:
-
-- **Accessibility:** the axe pass in `quality.e2e.ts` runs at all three levels on the pilot
-  chapters, then on every chapter once each has content.
-- **Facts:** each chapter's `facts.test.ts` checks numbers wherever they appear, at any level.
-- **Performance:** hidden passages add HTML; Lighthouse stays at 95 or above on every page.
+The tests so far are in [architecture.md](architecture.md#explanation-levels). As each chapter
+gets passages, the axe and phone-width checks in `quality.e2e.ts` pick it up from its
+`chapter.ts`, its `facts.test.ts` covers the numbers its passages state, and Lighthouse stays at
+95 or above on every page.
 
 ## Phases
 
@@ -114,10 +92,10 @@ One pull request per phase; each passes every check in [quality.md](quality.md).
    coverage export, note, and test, and the e2e tests on a test-only fixture page.
 2. **Glossary, recap, quiz (built).** Per-level definitions, recap points, and quiz tags, with
    fallbacks.
-3. **Pilot content.** Simple and In depth passages for three chapters that span the site: one early
-   ([Tokens](chapters/tokens.md)), one core ([Attention](chapters/attention.md)), and one harness
-   chapter ([The agent loop](chapters/the-agent-loop.md)). MathML conversion lands here. The
-   control becomes visible.
+3. **Pilot content (built).** Simple and In depth passages for three chapters that span the site:
+   one early ([Tokens](chapters/tokens.md)), one core ([Attention](chapters/attention.md)), and
+   one harness chapter ([The agent loop](chapters/the-agent-loop.md)). MathML conversion, and the
+   control is visible.
 4. **Rollout.** The rest of the chapters, a Part at a time, each with its fact-check updated.
    Widgets get level-specific extras (In depth readouts, Simple hiding advanced controls) only where
    a chapter's passages call for them, through `At` inside the widget.

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -8,11 +9,31 @@
 
 ## Not letters, not words
 
+<At levels="simple">
+
+GPT-2 reads text in chunks called <GlossaryPopover term="token">tokens</GlossaryPopover>. A
+token is often a whole word, and sometimes a piece of one. Each token has a number. Type below to
+see how GPT-2 cuts up your text.
+
+</At>
+<At levels="standard deep">
+
 GPT-2 doesn't read letters one at a time, and it doesn't read whole words either. It reads <GlossaryPopover term="token">tokens</GlossaryPopover>: chunks of text that are often a whole common
 word, sometimes part of a rarer one, and sometimes a single character. Each token has an ID number.
 Type below to see how GPT-2 splits your text.
 
+</At>
+
 <LiveTokenizer />
+
+<At levels="simple">
+
+Common words are usually one token, and the space before a word usually belongs to it. Rarer
+words are cut into pieces you can often recognize, like *token* + *ization*. GPT-2 has a fixed
+list of tokens, and every text is made from them.
+
+</At>
+<At levels="standard deep">
 
 A few things to notice:
 
@@ -21,7 +42,19 @@ A few things to notice:
 - Longer or rarer words are split into pieces you can often recognize, like *token* + *ization*.
 - GPT-2 knows exactly 50,257 different tokens. Every possible text is made of them.<Cite id="radford2019" />
 
+</At>
+
 ## How the pieces are chosen
+
+<At levels="simple">
+
+Why *token* + *ization* and not *tok* + *enization*? The pieces are found automatically, from lots
+of text. Start with single letters. Find the two neighbors that appear together most often, and
+glue them into one new piece. Repeat. This is called **byte pair encoding**. Step through it below
+on a tiny example.
+
+</At>
+<At levels="standard deep">
 
 Why *token* + *ization* and not *tok* + *enization*? The pieces are learned from text by a simple
 method called **byte pair encoding** (BPE), first used for language models by Sennrich and
@@ -31,13 +64,65 @@ the pair of neighbors that appears most often and glue it into a new token.
 Step through it below on the tiny example from their paper. Each merge adds one token to the
 vocabulary, and the text needs fewer tokens to write down.
 
+</At>
+
 <BPEStepper />
+
+<At levels="simple">
+
+GPT-2 did the same with lots of web text. Frequent words ended up as one token; rare words are
+built from a few.
+
+</At>
+<At levels="standard deep">
 
 GPT-2 ran the same process on bytes (the numbers from the last chapter) over a large amount of web
 text, and kept merging until it had 50,257 tokens.<Cite id="radford2019" /> Frequent words end up as
 one token; rare words are built from a few.
 
+</At>
+<At levels="deep">
+
+### GPT-2's vocabulary, counted
+
+GPT-2's tokens are this process written out. It starts from the 256 possible values of a byte, so
+any text at all, in any language or with emoji, can be written down even where no merge
+applies.<Cite id="radford2019" /> On top of those it learned 50,000 merges, and it adds one special
+token, `<|endoftext|>` (number 50,256), that marks the end of a text:<Cite id="gpt2-config" />
+
+$$
+|V| = 256 + 50{,}000 + 1 = 50{,}257
+$$
+
+where $|V|$ is the number of tokens in the vocabulary. Each merge picks the pair of neighboring
+symbols that occurs most often in the training text:
+
+$$
+(a, b) = \operatorname*{arg\,max}_{(x,\,y)} \operatorname{count}(x\,y)
+$$
+
+where $x\,y$ is any symbol $x$ followed directly by a symbol $y$, $\operatorname{count}(x\,y)$ is how
+many times that happens, and the winning pair $(a, b)$ becomes the new token $ab$. GPT-2's first
+merge was *" t"*: a space followed by *t*.
+
+The real tokenizer has rules the toy doesn't. GPT-2 never merges across kinds of characters, such
+as letters and punctuation, except that a space can join what follows it. Without that rule, common
+words would use up tokens on variants like *dog.*, *dog!*, and *dog?*.<Cite id="radford2019" /> And
+to split new text, the tokenizer doesn't count anything: it applies the merges it learned, earliest
+first.<Cite id="sennrich2016" />
+
+</At>
+
 ## Why "strawberry" is tricky
+
+<At levels="simple">
+
+Try *strawberry* in the tokenizer above, with and without a space in front. With a space, as it
+usually appears in a sentence, it's a single token. The model never sees the letters inside it, so
+when asked how many *r*s are in strawberry, it can't just look and count.
+
+</At>
+<At levels="standard deep">
 
 Try typing *strawberry* in the tokenizer above, with and without a space in front.
 
@@ -46,11 +131,24 @@ a sentence, *" strawberry"* is a single token, number 41236. The model never see
 it. Asked how many *r*s are in strawberry, the model can only answer from what it has learned about
 token 41236, not by looking at the letters.
 
+</At>
+
 ## Every model has its own alphabet
+
+<At levels="simple">
+
+Tick *GPT-4* and *GPT-4o* in the tokenizer to compare. Newer models learned bigger lists of
+tokens, so the same text usually takes fewer of them. A token number only makes sense to the model
+it belongs to.
+
+</At>
+<At levels="standard deep">
 
 Tick *GPT-4* and *GPT-4o* in the tokenizer to compare. Newer models learned bigger vocabularies
 (called `cl100k_base` and `o200k_base`), so the same text usually takes fewer
 tokens.<Cite id="tiktoken" /> A token ID only makes sense to the model that uses that tokenizer.
+
+</At>
 
 <RecapCard>
 
@@ -59,6 +157,11 @@ tokens.<Cite id="tiktoken" /> A token ID only makes sense to the model that uses
 - Frequent words become one token; rare words are split into pieces. The model doesn't see letters
   inside a token.
 
+<At levels="deep">
+
+- GPT-2's 50,257 tokens are 256 bytes, 50,000 merges, and one end-of-text token.
+
+</At>
 </RecapCard>
 
 **Next question:** a token ID like 3797 is just a label. How does the model know that *cat* is more

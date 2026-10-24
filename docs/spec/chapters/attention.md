@@ -35,3 +35,7 @@ Recorded GPT-2 small attention for 5 sentences, all 144 heads (`attn-*` traces).
   [Meaning as position](embeddings.md). The chapter says the two kinds of "position" differ. The
   order-blindness example ("the dog chased the cat." and its swap) is prose, checked by a test on
   the toy attention code, not a widget.
+- [Levels](../levels.md): Simple explains queries, keys, and values without the scoring arithmetic,
+  and drops rotary positions and the Winograd score. In depth gives the attention formula with
+  GPT-2's sizes, the quadratic cost of the score grid, GPT-2's position sum, and the rotary angle
+  formula with Llama 3's base.
