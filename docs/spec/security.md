@@ -150,10 +150,6 @@ Not built yet. Each item says what changes and how it's checked.
 
 1. **A way to report problems.** `SECURITY.md` asks reporters to use GitHub's private vulnerability
    reporting, which is turned on for the repository.
-2. **A guard test.** `tests/unit/security.test.ts` fails when `src/` uses any API under
-   [No raw HTML](#in-the-browser), when an external link lacks `rel="noopener noreferrer"`, when a
-   recording script uses `trust_remote_code`, `pickle`, or `torch.load`, when a workflow uses
-   `pull_request_target` or `workflow_run`, or when a checkout keeps its credentials.
 
 When an item lands, its description moves into [Rules](#rules) and it leaves this list.
 
@@ -183,3 +179,10 @@ When an item lands, its description moves into [Rules](#rules) and it leaves thi
   inference worker.
 - `tests/unit/citations.test.ts`: every reference URL is `https://`.
 - `tests/unit/datasets.test.ts`: every recorded dataset passes its checks.
+- `tests/unit/security.test.ts`: `src/` uses no API under [No raw HTML](#in-the-browser), every
+  `target="_blank"` link has `rel="noopener noreferrer"`, recording scripts never use
+  `trust_remote_code`, `pickle`, or `torch.load`, no workflow uses `pull_request_target` or
+  `workflow_run`, and every checkout drops its credentials.
+- `src/lib/workers/verified-fetch.test.ts`: model downloads must be listed files with matching
+  hashes, at the pinned commit.
+- `src/lib/stores/progress.test.ts`: saved progress keeps only chapter slugs.
