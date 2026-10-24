@@ -23,3 +23,5 @@ A hand-drawn diagram; GPT-2 numbers in it come from `models/canonical.json`.
 - The recap shows what the pieces _are_; [From message to reply](end-to-end.md) shows the order they
   run in. The quiz is its own chapter, [Check yourself](quiz.md).
 - A new chapter is added to the recap paragraph and diagram.
+- [Levels](../levels.md): Simple restates the one-paragraph summary in plainer words. In depth
+  puts the earlier In depth formulas together into GPT-2 in a few lines.

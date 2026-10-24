@@ -1,15 +1,28 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import EndToEnd from './EndToEnd.svelte';
 </script>
 
 ## One message
 
+<At levels="simple">
+
+The recap showed what the pieces are. This chapter shows the order they run in, for one real
+message, "Finish this: The cat sat on the", sent to a small assistant with a few tools. Inside the
+model, the steps are shown with GPT-2 small, which runs them in the same order.
+
+</At>
+<At levels="standard deep">
+
 The recap showed what the pieces are. This chapter shows the order they run in, for one real
 message: "Finish this: The cat sat on the", sent to a small assistant with a few tools. The
 harness, the prompt, the tool call, and the reply come from that recorded run. Inside the model,
 each step is shown with GPT-2 small's recorded run on the same last words: the stages run in the
 same order in both models, though the details differ.
+
+</At>
 
 Step through the stages in order, or jump to any box. Each one links to the chapters that explain
 it.
@@ -18,14 +31,48 @@ it.
 
 ## Two loops
 
+<At levels="simple">
+
+Two loops run at once. Inside, the model writes one token at a time until it's done. Outside, the
+harness checks what the model wrote, runs any tool it asked for, adds the result, and calls the
+model again. Here the harness called the model twice: once to search for a nursery rhyme, and once
+to answer.
+
+</At>
+<At levels="standard deep">
+
 Two loops run at once. The inner one is the model's: run once, pick one token, add it, and run
 again, until it writes an end-of-turn token. The outer one is the harness's: read what the model
 wrote, and if it asked for a tool, run it, add the result, and call the model again. Here the outer
 loop ran twice: once to ask for a nursery rhyme search, once to answer with what came back.
 
+</At>
+
+<At levels="simple">
+
+Everything in both loops is plain text in one prompt: your message, the instructions, and the
+tool's result. That's why tool results can't be trusted blindly.
+
+</At>
+<At levels="standard deep">
+
 Everything that passes through both loops is plain text. Your message, the system prompt, the tool's
 result, and the model's scratch work all end up as tokens in one prompt. That is why reusing the
 unchanged start saves so much work, and why a tool result has to be treated as untrusted.
+
+</At>
+<At levels="deep">
+
+### Counting the runs
+
+The first call read the 400-token prompt in one pass, then wrote its 21-token tool call one token
+per run until the harness stopped it at `</tool_call>`. The second call's prompt began with all
+400 tokens of the first, so with prompt caching only the 93 new ones needed reading: 493 tokens of
+work instead of 893 (<ChapterRef to="caching" />). It then wrote its 59-token reply and an
+end-of-turn token, again one run each. That's about 80 runs of the model for one short message, and
+thanks to the KV cache each run worked through just one new token.
+
+</At>
 
 <RecapCard>
 
@@ -34,6 +81,11 @@ unchanged start saves so much work, and why a tool result has to be treated as u
 - Everything the model sees, including tool results, is one stream of tokens in a single prompt.
 - Other kinds of models swap one stage and keep the rest of the order.
 
+<At levels="deep">
+
+- Two calls, about 80 model runs: with caching, the second call read only the 93 new tokens.
+
+</At>
 </RecapCard>
 
 **Next question:** that is how one model works, end to end. With hundreds of models to choose from,

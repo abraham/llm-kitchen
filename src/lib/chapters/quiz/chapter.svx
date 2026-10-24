@@ -1,8 +1,18 @@
 <script lang="ts">
+	import At from '#lib/components/page/At.svelte';
 	import Quiz from './Quiz.svelte';
 </script>
 
+<At levels="simple standard">
+
 ## Fourteen questions
+
+</At>
+<At levels="deep">
+
+## Eighteen questions
+
+</At>
 
 One or more questions from every Part, in reading order. Pick an answer for each, then check them
 all at once. Each answer links to the chapter that explains it, and any you miss are gathered into a

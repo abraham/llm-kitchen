@@ -40,3 +40,5 @@ Other kinds of models swap one stage and keep the rest of the order.
 - It states nothing new: its claims are checked against the chapters it links.
 - A unit test checks that every numbered Part except Other kinds of models is linked from at least
   one stage, and Other kinds of models from the closing box.
+- [Levels](../levels.md): Simple restates the intro and the two loops. In depth counts the
+  run: two calls, about 80 model runs, and 493 tokens of prompt work instead of 893.

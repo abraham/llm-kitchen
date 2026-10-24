@@ -5,7 +5,7 @@ bar; [roadmap.md](roadmap.md) points here. When a phase lands, its part moves in
 belongs to and leaves this file. Phases 1 to 3 (the machinery; per-level glossary definitions,
 recap points, and quiz questions; and the pilot chapters with equations) are built and described
 in [architecture.md](architecture.md#explanation-levels), [design.md](design.md), and
-[principles.md](principles.md#writing-for-each-level). Phase 4 remains.
+[principles.md](principles.md#writing-for-each-level). Phase 4, the rollout, is done too.
 
 ## Goals
 
@@ -98,7 +98,5 @@ One pull request per phase; each passes every check in [quality.md](quality.md).
    control is visible.
 4. **Rollout.** The rest of the chapters, a Part at a time, each with its fact-check updated.
    Widgets get level-specific extras (In depth readouts, Simple hiding advanced controls) only where
-   a chapter's passages call for them, through `At` inside the widget. Done so far: Part I
-   (Prediction), Part II (Representation), Part III (Learning), Part IV (Context), Part V
-   (Putting it together), Part VI (Prompt engineering), Part VII (Harnesses), and Part VIII
-   (Other kinds of models).
+   a chapter's passages call for them, through `At` inside the widget. Done: every Part and
+   the wrap-up, including Simple and In depth quiz questions.
