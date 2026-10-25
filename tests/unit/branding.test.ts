@@ -1,6 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Resvg } from '@resvg/resvg-js';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import {
 	layoutTitle,
@@ -23,6 +24,27 @@ function pngSize(png: Buffer) {
 	expect(png.subarray(1, 4).toString()).toBe('PNG');
 	return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
 }
+
+/** The RGB at (x, y), decoded by drawing the PNG into an SVG of the same size. */
+function pixel(png: Buffer, x: number, y: number) {
+	const { width, height } = pngSize(png);
+	const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"><image width="${width}" height="${height}" href="data:image/png;base64,${png.toString('base64')}"/></svg>`;
+	const rgba = new Resvg(svg).render().pixels;
+	const i = (Math.round(y) * width + Math.round(x)) * 4;
+	return [rgba[i], rgba[i + 1], rgba[i + 2]];
+}
+
+/** Where the mark's pink, white, and green dumplings are, for a mark drawn at (x, y) and `size` px. */
+function dumplings(x: number, y: number, size: number) {
+	// Centers in the favicon's 960-unit viewBox, measured from its top-left corner.
+	return [290, 480, 670].map((c) => [x + (c * size) / 960, y + (c * size) / 960] as const);
+}
+
+const DANGO = [
+	[219, 39, 119],
+	[255, 255, 255],
+	[13, 148, 136]
+];
 
 describe('descriptions', () => {
 	it('every curriculum entry has a description that fits a search result', () => {
@@ -70,6 +92,19 @@ describe('social images', () => {
 			expect(pngSize(renderPage(page, fonts))).toEqual({ width: 1200, height: 630 });
 		}
 		expect(pngSize(renderTouchIcon())).toEqual({ width: 180, height: 180 });
+	});
+
+	it('shows the hanami dango mark on the touch icon, the menu image, and chapter images', () => {
+		const images: [Buffer, ReturnType<typeof dumplings>][] = [
+			[renderTouchIcon(), dumplings(24, 24, 132)],
+			[renderPage(ogPages()[0], fonts), dumplings(1200 / 2 - 90, 70, 180)],
+			[renderPage(ogPages()[1], fonts), dumplings(80, 56, 64)]
+		];
+		for (const [png, centers] of images) {
+			centers.forEach(([x, y], i) => {
+				pixel(png, x, y).forEach((v, k) => expect(v).toBeCloseTo(DANGO[i][k], -1));
+			});
+		}
 	});
 });
 

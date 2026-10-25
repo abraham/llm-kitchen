@@ -107,8 +107,9 @@ has how figures draw and move.
   header link, meta descriptions, and the README. The repo, package, Firebase project, code
   identifiers, and the `llm-kitchen:visited` storage key keep `llm-kitchen`, so saved progress
   survives. The name, tagline, description, and origin live in `src/lib/site.ts`.
-- **Mark:** a bowl holding three ingredients in the token, vector, and attention colors. It is the SVG
-  favicon (`src/lib/assets/favicon.svg`, adapting to dark mode with `prefers-color-scheme` inside the
+- **Mark:** hanami dango, three dumplings on a skewer: pink (the attention color), white, and green
+  (the vector color), in the skewer's ink outline. It is the SVG favicon
+  (`src/lib/assets/favicon.svg`, adapting to dark mode with `prefers-color-scheme` inside the
   SVG), the 180px `apple-touch-icon.png`, and part of every social image. Each color scheme has its
   own `theme-color`.
 - **Page metadata:** every page has `og:title`, `og:description`, `og:type` (`website` for the menu,
