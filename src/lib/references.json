@@ -694,6 +694,32 @@
 		"url": "https://arxiv.org/abs/2304.08485"
 	},
 	{
+		"id": "xie2024osworld",
+		"authors": ["Tianbao Xie", "Danyang Zhang", "Jixuan Chen", "Xiaochuan Li"],
+		"title": "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.07972"
+	},
+	{
+		"id": "anthropic-computer-use",
+		"authors": ["Anthropic"],
+		"title": "Developing a computer use model",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/news/developing-computer-use",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "anthropic-vision",
+		"authors": ["Anthropic"],
+		"title": "Vision",
+		"venue": "Claude API documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "sohl-dickstein2015",
 		"authors": ["Jascha Sohl-Dickstein", "Eric Weiss", "Niru Maheswaranathan", "Surya Ganguli"],
 		"title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",

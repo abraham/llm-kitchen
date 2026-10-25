@@ -283,6 +283,12 @@ export const GLOSSARY = {
 		definition: 'A model that takes in more than one kind of input, such as text and pictures.',
 		chapter: 'seeing-pictures'
 	},
+	'computer-use': {
+		term: 'computer-use agent',
+		definition:
+			'An agent that sees screenshots and acts by clicking and typing, so it can work programs the way a person does.',
+		chapter: 'seeing-pictures'
+	},
 	diffusion: {
 		term: 'diffusion model',
 		definition:

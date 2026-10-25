@@ -69,19 +69,25 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Ch 36. Seeing pictures
 
-| Claim                                                                                                                                                   | Backing                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                         |
-| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data)          |
-| Identical background patches get identical vectors                                                                                                      | Test                                           |
-| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)                  |
-| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                           |
-| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                                 |
-| Simple: restates Standard in plainer words, with no new claims                                                                                          | Reviewed against the Standard text             |
-| In depth: 32 × 32 × 3 = 3,072 numbers per patch, one learned matrix to 768, plus position                                                               | Cite `dosovitskiy2021` (§3.1); test            |
-| In depth: a class token makes 50 vectors; its output stands for the picture; CLIP's shared space has 512 numbers                                        | Cite `dosovitskiy2021`; test (recorded config) |
-| In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                |
-| In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                |
+| Claim                                                                                                                                                   | Backing                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                                                                       |
+| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data)                                                        |
+| Identical background patches get identical vectors                                                                                                      | Test                                                                                         |
+| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)                                                                |
+| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                                                                         |
+| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                                                                               |
+| Simple: restates Standard in plainer words, with no new claims                                                                                          | Reviewed against the Standard text                                                           |
+| In depth: 32 × 32 × 3 = 3,072 numbers per patch, one learned matrix to 768, plus position                                                               | Cite `dosovitskiy2021` (§3.1); test                                                          |
+| In depth: a class token makes 50 vectors; its output stands for the picture; CLIP's shared space has 512 numbers                                        | Cite `dosovitskiy2021`; test (recorded config)                                               |
+| In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                                                              |
+| In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                                                              |
+| Computer-use agent: screenshot in, click/type/key actions out, the next screenshot is the tool result; the example run is made up                       | Cite `anthropic-computer-use`; labeled "made-up"                                             |
+| Anthropic trained its model to count pixels to click, comparing it to counting letters; screenshots are a flipbook that can miss short-lived messages   | Cite `anthropic-computer-use` ("The research process", "The future of computer use")         |
+| OSWorld: 369 tasks in real apps, checked by scripts; people over 72%, best model 12.24%, failing at GUI grounding and operational knowledge             | Cite `xie2024osworld` (abstract)                                                             |
+| Anthropic's first computer-use model scored 14.9% on OSWorld                                                                                            | Cite `anthropic-computer-use`                                                                |
+| Prompt injection through what's on screen is a main risk                                                                                                | Cite `anthropic-computer-use` ("Making computer use safe")                                   |
+| In depth: 28 × 28-pixel patches, ⌈w/28⌉ × ⌈h/28⌉ tokens; 1280 × 800 is 46 × 29 = 1,334; ten screenshots 13,340                                          | Cite `anthropic-vision` ("Resolution and token cost"); test (also checks the docs' examples) |
 
 ## Ch 37. Painting from noise
 

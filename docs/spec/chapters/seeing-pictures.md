@@ -26,6 +26,12 @@ script draws itself, and each picture's image embedding (`vision/clip-images`) f
 - Live with the Small model tier ([downloads.md](../downloads.md#widgets)): only CLIP's text half
   runs in the browser. `PictureMatch` embeds every caption, and the visitor's own, and compares
   them with the recorded image embeddings, a softmax of 100 × similarity as CLIP does.
-- [Levels](../levels.md): Simple keeps patches, the shared space, and multimodal chat. In depth
+- "Agents that use a screen" joins this chapter to [The agent loop](the-agent-loop.md): the
+  screenshot is the tool result, clicks and typing the actions. It is prose with a made-up action
+  list, since none of the site's models was trained
+  to act on a screen; the text gives OSWorld's
+  and Anthropic's measured results and the prompt-injection risk.
+- [Levels](../levels.md): Simple keeps patches, the shared space, multimodal chat, and
+  computer-use agents, without Anthropic's 14.9% or the flipbook. In depth
   counts a patch's numbers and the class token, and shows how CLIP's temperature turns close
-  similarities into clear choices.
+  similarities into clear choices, and works out what a screenshot costs in tokens.

@@ -28,8 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Agents that use a screen.** A model that sees screenshots and clicks, bridging
-  [Seeing pictures](chapters/seeing-pictures.md) and [The agent loop](chapters/the-agent-loop.md).
 - **Attention views.** One attention grid switching between raw scores, masked scores, and
   softmax, and paging through all 144 heads, in [Attention](chapters/attention.md) once it's live.
 - **Expert review:** pending; see [sources.md](sources.md).
