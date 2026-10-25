@@ -101,9 +101,22 @@ Here is GPT-2 continuing the same prompt for 16 more pieces of text, at three te
 
 <RecordedRuns />
 
-At temperature 0 the text is sensible but predictable, and it would be the same every time. At 0.7
-it varies but stays readable. At 1.5 it drifts into nonsense, because unlikely words keep getting
-picked and each one makes the next guess harder.
+At temperature 0 the text is sensible but predictable, and run again on the same computer it comes
+out the same every time. At 0.7 it varies but stays readable. At 1.5 it drifts into nonsense,
+because unlikely words keep getting picked and each one makes the next guess harder.
+
+<At levels="deep">
+
+### Temperature 0 on a busy server
+
+On a hosted model, temperature 0 isn't always repeatable. When researchers asked Qwen3-235B for the
+same 1,000-token answer 1,000 times at temperature 0, they got 80 different answers, all identical
+for the first 102 tokens. The server groups many people's requests into one batch, and the size of
+the batch changes the order in which the model's numbers are added up. With rounding, a different
+order gives slightly different scores, so when two tokens are almost tied, a different one can come
+out on top.<Cite id="he2025nondeterminism" />
+
+</At>
 
 <RecapCard>
 

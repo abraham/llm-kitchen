@@ -79,16 +79,27 @@ repetitive, which is part of why open-ended writing samples instead.<Cite id="ho
 
 <At levels="simple">
 
-Each token is chosen once, and everything after it builds on it. The model doesn't plan ahead or
-go back to fix a word. And every new token means one more full run of the model.
+Each token is chosen once, and everything after it builds on it. The model never goes back to fix a
+word. And every new token means one more full run of the model.
+
+That doesn't mean it can't look ahead. When researchers traced a large model writing a rhyming
+poem, it had already picked likely words to end the next line on before it wrote that
+line.<Cite id="lindsey2025biology" />
 
 </At>
 <At levels="standard deep">
 
-Each token is chosen once, and everything after it is built on top. The model doesn't plan a
-sentence, write a draft, or go back and fix an earlier word. If it picks " bed", it has to make the
-best of " bed". And each new token costs a full run through all 124 million of GPT-2's weights, so
-a 500-token answer means 500 runs.
+Each token is chosen once, and everything after it is built on top. The model doesn't write a draft
+or go back and fix an earlier word. If it picks " bed", it has to make the best of " bed". And each
+new token costs a full run through all 124 million of GPT-2's weights, so a 500-token answer means
+500 runs.
+
+Choosing one token at a time doesn't mean thinking only one token ahead, though. Researchers at
+Anthropic traced Claude 3.5 Haiku writing a rhyming couplet whose first line ended "grab it". Before
+it wrote the first word of the second line, it already held two candidate endings, *rabbit* and
+*habit*. When they switched off *rabbit*, the model wrote a different line, ending "a powerful
+habit".<Cite id="lindsey2025biology" /> The plan lives in the model's numbers; the text still
+comes out one token at a time.
 
 </At>
 <At levels="deep">

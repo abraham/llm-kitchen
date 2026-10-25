@@ -965,5 +965,31 @@
 		"venue": "arXiv",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2406.18665"
+	},
+	{
+		"id": "lindsey2025biology",
+		"authors": ["Jack Lindsey", "Wes Gurnee", "Emmanuel Ameisen", "Joshua Batson"],
+		"title": "On the Biology of a Large Language Model",
+		"venue": "Transformer Circuits Thread",
+		"year": 2025,
+		"url": "https://transformer-circuits.pub/2025/attribution-graphs/biology.html",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "he2025nondeterminism",
+		"authors": ["Horace He", "Thinking Machines Lab"],
+		"title": "Defeating Nondeterminism in LLM Inference",
+		"venue": "Thinking Machines Lab: Connectionism",
+		"year": 2025,
+		"url": "https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "carlini2021",
+		"authors": ["Nicholas Carlini", "Florian Tramèr", "Eric Wallace", "Matthew Jagielski"],
+		"title": "Extracting Training Data from Large Language Models",
+		"venue": "USENIX Security 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2012.07805"
 	}
 ]

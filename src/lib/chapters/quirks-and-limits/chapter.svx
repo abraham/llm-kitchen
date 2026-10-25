@@ -88,6 +88,25 @@ into its prompt.
 
 </At>
 
+## Remembered word for word
+
+<At levels="simple">
+
+A model mostly learns patterns, but it can also repeat some of its training text word for word.
+Researchers got GPT-2 to repeat hundreds of passages exactly, including names and phone numbers
+that had been posted online.<Cite id="carlini2021" />
+
+</At>
+<At levels="standard deep">
+
+A model mostly learns patterns, but it also keeps some text word for word. By prompting GPT-2 and
+sorting through what it wrote, researchers pulled out hundreds of passages it had memorized exactly:
+names, phone numbers, and email addresses that had been posted online, chat logs, and code. Some
+appeared in just one document of its training text, and larger models memorized more.<Cite id="carlini2021" />
+So a model can repeat private or copyrighted text it was trained on, word for word.
+
+</At>
+
 ## Tokens, not letters
 
 Ask a model how many r's are in "strawberry" and it may get it wrong, because it never sees the
@@ -157,6 +176,7 @@ loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
 
 - Models produce likely text, not checked facts, so they can confidently make things up.
 - They know nothing after their training cutoff unless told.
+- They can repeat some of their training text word for word.
 - They read tokens, not letters or digits, which makes spelling and arithmetic hard.
 - Small changes in wording can change the answer, and anything outside the context window is
   forgotten.

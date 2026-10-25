@@ -13,21 +13,22 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 11. Generating text
 
-| Claim                                                                                               | Backing                                                                                       |
-| --------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep."               | Test (recorded trace)                                                                         |
-| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"                       | Test (`the-cat-sat-bed`)                                                                      |
-| Greedy decoding tends to repeat; sampling mostly avoids it                                          | Cite `holtzman2020`                                                                           |
-| Each token costs a full run through all 124 million weights                                         | Model architecture (no caching is shown); `canonical.json`                                    |
-| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                                             | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)                                  |
-| The Small tier is about 419 MB with the runtime                                                     | `tierMB` (`tiers.test.ts`): the four configs' `onnxMB` (128 + 24 + 112 + 128) + 27 MB runtime |
-| The live 8-bit copy's percentages differ from the recorded ones                                     | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                                     |
-| Simple: restates Standard in plainer words, with no new claims                                      | Reviewed against the Standard text                                                            |
-| In depth: greedy takes the arg max; sampling draws from the tempered probabilities                  | Implementations (`sampling.ts`); Ch 2                                                         |
-| In depth: " edge" 4.8%, then " of" 96%: " edge of" about 4.6%, over twice " floor," (2%)            | Test (recorded traces)                                                                        |
-| In depth: beam search finds likelier texts, but the likeliest are often dull and repetitive         | Cite `holtzman2020`                                                                           |
-| In depth: about 2 operations per weight per token: about 250 million per token, 124 billion for 500 | Cite `kaplan2020` (§2.1, C_forward ≈ 2N); test                                                |
-| In depth: real systems keep earlier tokens' keys and values and run only the newest token           | Cite `pope2022`                                                                               |
+| Claim                                                                                                                                                          | Backing                                                                                       |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep."                                                                          | Test (recorded trace)                                                                         |
+| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"                                                                                  | Test (`the-cat-sat-bed`)                                                                      |
+| Greedy decoding tends to repeat; sampling mostly avoids it                                                                                                     | Cite `holtzman2020`                                                                           |
+| Each token costs a full run through all 124 million weights                                                                                                    | Model architecture (no caching is shown); `canonical.json`                                    |
+| Claude 3.5 Haiku held candidate end words (rabbit, habit) before writing a couplet's second line; switching off "rabbit" gave a line ending "a powerful habit" | Cite `lindsey2025biology` (§4, Planning in Poems)                                             |
+| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                                                                                                        | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)                                  |
+| The Small tier is about 419 MB with the runtime                                                                                                                | `tierMB` (`tiers.test.ts`): the four configs' `onnxMB` (128 + 24 + 112 + 128) + 27 MB runtime |
+| The live 8-bit copy's percentages differ from the recorded ones                                                                                                | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                                     |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                 | Reviewed against the Standard text                                                            |
+| In depth: greedy takes the arg max; sampling draws from the tempered probabilities                                                                             | Implementations (`sampling.ts`); Ch 2                                                         |
+| In depth: " edge" 4.8%, then " of" 96%: " edge of" about 4.6%, over twice " floor," (2%)                                                                       | Test (recorded traces)                                                                        |
+| In depth: beam search finds likelier texts, but the likeliest are often dull and repetitive                                                                    | Cite `holtzman2020`                                                                           |
+| In depth: about 2 operations per weight per token: about 250 million per token, 124 billion for 500                                                            | Cite `kaplan2020` (§2.1, C_forward ≈ 2N); test                                                |
+| In depth: real systems keep earlier tokens' keys and values and run only the newest token                                                                      | Cite `pope2022`                                                                               |
 
 ## Ch 12. Scale
 
@@ -127,23 +128,24 @@ The script asserts the result equals GPT-2 medium's own greedy output.
 
 ## Ch 16. Quirks and limits
 
-| Claim                                                                                                    | Backing                                          |
-| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| GPT-2: first person on the moon was "a man named John, who was born in 1829."                            | Test (recorded)                                  |
-| Hallucination is the term for fluent, made-up text                                                       | Cite `ji2023`                                    |
-| InstructGPT made up information about half as often as GPT-3 (21% vs. 41%)                               | Cite `ouyang2022` (§1)                           |
-| WebText excludes links created after Dec 2017                                                            | Cite `radford2019` §2.1                          |
-| Top guesses for the latest iPhone: 6, 5, 7                                                               | Test (recorded)                                  |
-| " strawberry" is one GPT-2 token; "strawberry" is three                                                  | e2e (live tokenizer) and Ch 4 tests              |
-| After "2 + 2 =", " 3" is more likely than " 4"                                                           | Test (recorded: 10.2% vs. 5.5%)                  |
-| "The capital of France is" rambles; the Q/A version says Paris                                           | Test (recorded)                                  |
-| Formatting alone changed accuracy by up to 76 points                                                     | Cite `sclar2024` (abstract, LLaMA-2-13B)         |
-| GPT-2's context window is 1,024 tokens; the live generator keeps only the last 1,024                     | `canonical.json`; implementation                 |
-| Simple: restates Standard in plainer words, with no new claims                                           | Reviewed against the Standard text               |
-| In depth: the loss rewards likely continuations, true or not                                             | Follows from the cross-entropy objective (Ch 7)  |
-| In depth: intrinsic hallucinations contradict the given text; extrinsic ones can't be checked against it | Cite `ji2023`                                    |
-| In depth: GPT-2 splits " 2023" as " 20" + "23" and " 1234567" as " 123" + "45" + "67"                    | Test (browser tokenizer)                         |
-| In depth: GPT-4's tokenizer cuts numbers into groups of up to three from the left                        | Test (browser tokenizer: 202 + 3; 123 + 456 + 7) |
+| Claim                                                                                                                                                                                 | Backing                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| GPT-2: first person on the moon was "a man named John, who was born in 1829."                                                                                                         | Test (recorded)                                  |
+| Hallucination is the term for fluent, made-up text                                                                                                                                    | Cite `ji2023`                                    |
+| InstructGPT made up information about half as often as GPT-3 (21% vs. 41%)                                                                                                            | Cite `ouyang2022` (§1)                           |
+| WebText excludes links created after Dec 2017                                                                                                                                         | Cite `radford2019` §2.1                          |
+| Top guesses for the latest iPhone: 6, 5, 7                                                                                                                                            | Test (recorded)                                  |
+| Hundreds of verbatim passages extracted from GPT-2, including names, phone numbers, and emails posted online, chat logs, and code; some in one document; larger models memorized more | Cite `carlini2021` (abstract)                    |
+| " strawberry" is one GPT-2 token; "strawberry" is three                                                                                                                               | e2e (live tokenizer) and Ch 4 tests              |
+| After "2 + 2 =", " 3" is more likely than " 4"                                                                                                                                        | Test (recorded: 10.2% vs. 5.5%)                  |
+| "The capital of France is" rambles; the Q/A version says Paris                                                                                                                        | Test (recorded)                                  |
+| Formatting alone changed accuracy by up to 76 points                                                                                                                                  | Cite `sclar2024` (abstract, LLaMA-2-13B)         |
+| GPT-2's context window is 1,024 tokens; the live generator keeps only the last 1,024                                                                                                  | `canonical.json`; implementation                 |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                        | Reviewed against the Standard text               |
+| In depth: the loss rewards likely continuations, true or not                                                                                                                          | Follows from the cross-entropy objective (Ch 7)  |
+| In depth: intrinsic hallucinations contradict the given text; extrinsic ones can't be checked against it                                                                              | Cite `ji2023`                                    |
+| In depth: GPT-2 splits " 2023" as " 20" + "23" and " 1234567" as " 123" + "45" + "67"                                                                                                 | Test (browser tokenizer)                         |
+| In depth: GPT-4's tokenizer cuts numbers into groups of up to three from the left                                                                                                     | Test (browser tokenizer: 202 + 3; 123 + 456 + 7) |
 
 ## Ch 17. Thinking before answering
 
