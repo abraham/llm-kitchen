@@ -126,6 +126,53 @@ When the prompt outgrows its budget, the harness drops, summarizes, or retrieves
 
 </At>
 
+## Tools as code
+
+<At levels="simple">
+
+In the run above, the model asked for one tool, waited for the answer, then asked for the next.
+Another way is to let it write a short program that uses the tools, like this made-up one:
+
+```python
+rhyme = search_rhymes("cat")[0]
+print(count_words(rhyme["text"]))
+```
+
+The harness runs the program and gives the model what it printed, so one reply does both steps.
+Agents that write programs like this finish more tasks than ones that ask for one tool at a
+time.<Cite id="wang2024codeact" /> But now the harness runs code the model wrote, so it has to run it
+somewhere safe, cut off from anything that matters.<Cite id="smolagents-secure" />
+
+</At>
+<At levels="standard deep">
+
+The run above wrote one tool call per model call: search, wait for the result, then count. Another
+design lets the model write its actions as a short program in which every tool is a function, like
+this made-up one:
+
+```python
+rhyme = search_rhymes("cat")[0]
+print(count_words(rhyme["text"]))
+```
+
+The harness runs the program and adds whatever it printed to the prompt. One model call now does
+what took two, and a program can loop over results, keep them in variables, and combine tools in
+ways that one call at a time can't. Across 17 models, writing actions as Python code succeeded up
+to 20% more often than writing them as JSON or text in a fixed format.<Cite id="wang2024codeact" />
+
+The catch is that the harness now runs code the model wrote. A plain mistake, or instructions
+planted in a tool result (<ChapterRef to="prompt-injection" />), becomes code that runs. So code
+agents run it in a sandbox: an interpreter that allows only listed imports and stops runaway
+loops, or a separate container or machine with nothing worth harming.<Cite id="smolagents-secure" />
+
+</At>
+<At levels="deep">
+
+When a program fails, the error message comes back as its result, so the model can read it and fix
+the code on its next turn.<Cite id="wang2024codeact" />
+
+</At>
+
 <RecapCard>
 
 - An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
@@ -133,6 +180,8 @@ When the prompt outgrows its budget, the harness drops, summarizes, or retrieves
 - Workflows fix the steps in code; an agent lets the model decide them. Use the simplest that
   works.
 - The loop stops when the model answers without a tool call, or when it hits a step limit.
+- Some agents write their actions as a short program, so one call can do several steps; that code
+  has to run in a sandbox.
 - Each step re-sends the whole conversation, so the prompt keeps growing.
 
 <At levels="deep">

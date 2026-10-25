@@ -389,6 +389,31 @@
 		"url": "https://arxiv.org/abs/2210.03629"
 	},
 	{
+		"id": "wang2024codeact",
+		"authors": [
+			"Xingyao Wang",
+			"Yangyi Chen",
+			"Lifan Yuan",
+			"Yizhe Zhang",
+			"Yunzhu Li",
+			"Hao Peng",
+			"Heng Ji"
+		],
+		"title": "Executable Code Actions Elicit Better LLM Agents",
+		"venue": "ICML 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.01030"
+	},
+	{
+		"id": "smolagents-secure",
+		"authors": ["Hugging Face"],
+		"title": "Secure code execution (smolagents documentation)",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/docs/smolagents/tutorials/secure_code_execution",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "lewis2020",
 		"authors": ["Patrick Lewis", "Ethan Perez", "Aleksandra Piktus", "Fabio Petroni"],
 		"title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",

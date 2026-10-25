@@ -30,20 +30,24 @@ after its first tool call, runs the tool, and calls the model again, up to 8 cal
 
 ## Ch 28. The agent loop
 
-| Claim                                                                                                                    | Backing                                                                 |
-| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
-| The run: search_rhymes, then count_words (30), then the answer                                                           | Test                                                                    |
-| Prompts of 301, 394, 483 tokens; at most 8 model calls                                                                   | Test                                                                    |
-| The harness stops after the first tool call; the system prompt says to use tools for counting                            | `record/agent.py`                                                       |
-| Interleaving reasoning and actions was popularized by ReAct                                                              | Cite `yao2023`                                                          |
-| Workflows fix the path in code; agents let the model direct its own steps                                                | Cite `anthropic-agents` ("What are agents?")                            |
-| A loop suits tasks with unknown steps but costs more, is slower, and compounds errors; use the simplest setup that works | Cite `anthropic-agents` ("When (and when not) to use agents", "Agents") |
-| The router example: Which model answers? passes unsure questions to a bigger model                                       | The routing chapter's cascade                                           |
-| In depth: workflows also include parallel calls and one call checking another's work                                     | Cite `anthropic-agents` (parallelization, evaluator-optimizer)          |
-| Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                                      |
-| In depth: K calls read K·p₀ + a·K(K−1)/2 tokens, growing with the square of the steps                                    | Arithmetic; test (within 5 tokens of the run)                           |
-| In depth: 301 + 394 + 483 = 1,178 tokens; each step added about 90                                                       | Test                                                                    |
-| In depth: providers reuse their work on an unchanged start of the prompt                                                 | Cite `openai-prompt-caching`, `anthropic-prompt-caching`                |
+| Claim                                                                                                                    | Backing                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| The run: search_rhymes, then count_words (30), then the answer                                                           | Test                                                                                |
+| Prompts of 301, 394, 483 tokens; at most 8 model calls                                                                   | Test                                                                                |
+| The harness stops after the first tool call; the system prompt says to use tools for counting                            | `record/agent.py`                                                                   |
+| Interleaving reasoning and actions was popularized by ReAct                                                              | Cite `yao2023`                                                                      |
+| Workflows fix the path in code; agents let the model direct its own steps                                                | Cite `anthropic-agents` ("What are agents?")                                        |
+| A loop suits tasks with unknown steps but costs more, is slower, and compounds errors; use the simplest setup that works | Cite `anthropic-agents` ("When (and when not) to use agents", "Agents")             |
+| The router example: Which model answers? passes unsure questions to a bigger model                                       | The routing chapter's cascade                                                       |
+| In depth: workflows also include parallel calls and one call checking another's work                                     | Cite `anthropic-agents` (parallelization, evaluator-optimizer)                      |
+| Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                                                  |
+| In depth: K calls read K·p₀ + a·K(K−1)/2 tokens, growing with the square of the steps                                    | Arithmetic; test (within 5 tokens of the run)                                       |
+| In depth: 301 + 394 + 483 = 1,178 tokens; each step added about 90                                                       | Test                                                                                |
+| In depth: providers reuse their work on an unchanged start of the prompt                                                 | Cite `openai-prompt-caching`, `anthropic-prompt-caching`                            |
+| Across 17 models, actions written as Python succeeded up to 20% more often than JSON or text actions                     | Cite `wang2024codeact` (abstract)                                                   |
+| Code agents run model-written code in a sandbox: allowed imports only, capped loops, or a separate container             | Cite `smolagents-secure`                                                            |
+| The code example is made up, labeled so in the text                                                                      | Labeled "made-up"                                                                   |
+| In depth: a failed program's error comes back as the result, so the model can fix its code                               | Cite `wang2024codeact` (abstract: revises actions on new observations, self-debugs) |
 
 ## Ch 29. Prompt injection
 

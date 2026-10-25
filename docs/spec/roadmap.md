@@ -28,9 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Tools as code.** The model writes a short program that calls several tools, instead of one
-  JSON call per step. A section in [Tools](chapters/tools.md) or
-  [The agent loop](chapters/the-agent-loop.md).
 - **Several agents.** A manager hands subtasks to specialist agents, each with its own context, so
   the manager's context stays small. A new chapter after [The agent loop](chapters/the-agent-loop.md)
   that builds on [Managing the context](chapters/managing-the-context.md).

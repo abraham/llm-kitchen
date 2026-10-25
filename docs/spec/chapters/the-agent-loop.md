@@ -29,7 +29,11 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
 - "Who decides the next step" places the agent on a range (fixed chain, router, one tool call,
   loop) using Anthropic's split between workflows and agents, and points back to the chapters that
   show each one, rather than adding a widget: the site already has a widget for each kind.
-- [Levels](../levels.md): Simple says the two loops, the range from a fixed recipe to a loop, and
-  the harness's rules in plain words. In depth names more of Anthropic's workflows, works out what
+- "Tools as code" shows a made-up two-line program instead of a recorded run: the recording
+  harness and the toy tools take one JSON call at a time, and running model-written code in the
+  browser would need a sandbox the site doesn't have. The chapter says the code must run in one.
+- [Levels](../levels.md): Simple says the two loops, the range from a fixed recipe to a loop, tools
+  written as code, and the harness's rules in plain words. In depth names more of Anthropic's
+  workflows, says a failed program's error goes back to the model, works out what
   the loop costs (every call re-reads the conversation, so the total grows
   with the square of the steps) and points ahead to caching.
