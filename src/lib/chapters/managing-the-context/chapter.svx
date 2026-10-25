@@ -5,8 +5,6 @@
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import ContextBudget from './ContextBudget.svelte';
-	import SearchCompare from './SearchCompare.svelte';
-	import MemoryNotes from './MemoryNotes.svelte';
 </script>
 
 ## The prompt keeps growing
@@ -84,148 +82,12 @@ assistants that search your documents: they don't read everything, they look up 
 relevant and copy it into the prompt. Memory features work the same way: notes saved outside the
 model and put back into the prompt later.
 
-## Words or meaning
-
-<At levels="simple">
-
-Retrieval above found the cat rhyme by meaning. Search engines have long worked another way: a <GlossaryPopover term="keyword-search">keyword search</GlossaryPopover>
-looks for the question's own words. Each finds things the other misses. Try a few questions about
-the same chat:
-
-</At>
-<At levels="standard deep">
-
-Retrieval above found the cat rhyme by meaning. Search engines have long worked another way: a <GlossaryPopover term="keyword-search">keyword search</GlossaryPopover>
-scores each text by the
-question's own words it contains, after dropping common ones like "the" and "which". The usual
-method, BM25, gives more credit for words that are rare among all the texts and for using them
-more often, and less for long texts.<Cite id="robertson2009" /> It is exact: it finds a name, or
-a code like an error number, that an embedding blurs. Anthropic's example is a search for "Error
-code TS-999", where embeddings may find pages about error codes in general and miss the one about
-TS-999.<Cite id="anthropic-contextual-retrieval" /> But it knows nothing of meaning: "kitty"
-doesn't match "cat". Try a few questions about the same chat:
-
-</At>
-
-<SearchCompare />
-
-<At levels="simple">
-
-Words found Sam, Leo, and the crown, which meaning missed, but found nothing for "kitty", which
-meaning got right. So many systems run both searches and combine the two lists, giving each text
-points for how high it comes in each.<Cite id="cormack2009" /> Here that picked the right exchange
-for 4 of the 5 questions; words alone got 4 and meaning alone 2.
-
-</At>
-<At levels="standard deep">
-
-Words found Sam, Leo, and the crown, which meaning missed: names carry little meaning, and the
-crown pulled meaning toward Humpty Dumpty and the king's men. Meaning found "kitty", a word in no
-exchange. So many systems run both searches and merge the two lists by rank: each text gets points
-for how high it comes in each list, so one near the top of either does well.<Cite id="cormack2009" />
-Anthropic found that adding keyword search to embeddings missed fewer of the right
-passages.<Cite id="anthropic-contextual-retrieval" /> Here the merged list put the right exchange
-first for 4 of the 5 questions, words alone for 4, and meaning alone for 2. It still missed Leo:
-meaning ranked the star rhyme first and words second, which beat Leo's rhyme, first by words but
-only third by meaning.
-
-</At>
-<At levels="deep">
-
-### Scoring words and ranks
-
-For a question with words $q$, BM25 scores a text $D$ as
-
-$$
-\sum_{q} \text{idf}(q)\,\frac{f(q, D)\,(k_1 + 1)}{f(q, D) + k_1\left(1 - b + b\,\frac{|D|}{\text{avgdl}}\right)},
-$$
-
-where $f(q, D)$ counts the word in the text, $|D|$ is the text's length in words, avgdl the
-average length, and $k_1 = 1.2$ and $b = 0.75$ are the usual settings.<Cite id="robertson2009" />
-The count saturates: a word used five times scores less than five times one use. The weight
-$\text{idf}(q) = \ln\!\left(1 + \frac{N - n + 0.5}{n + 0.5}\right)$, for a word in $n$ of the $N$
-texts, is highest for words in only one; the 1 inside the logarithm keeps a word found in every
-text from counting against a match.
-
-Reciprocal rank fusion merges the lists using only ranks, so it needn't compare BM25 scores with
-cosines: each text scores $\sum 1/(k + r)$ over the lists that rank it, at rank $r$, with
-$k = 60$.<Cite id="cormack2009" /> For Leo's question the star rhyme gets
-$1/62 + 1/61 \approx 0.0325$ and Leo's rhyme $1/61 + 1/63 \approx 0.0323$.
-
-</At>
-
-## Remembering between chats
-
-<At levels="simple">
-
-All of this happens inside one chat. A new chat starts with an empty prompt, and the model
-remembers nothing of the last one. Apps with a memory feature save notes outside the model and put
-them into the next chat's prompt.<Cite id="openai-memory" /> Here the harness ends the long chat
-by asking the model to write notes, in two ways:
-
-</At>
-<At levels="standard deep">
-
-All of this happens inside one conversation. A new chat starts with an empty prompt, and the
-model, whose weights don't change as you talk, remembers nothing of the last one. Memory features
-fill the gap the same way the strategies above do: the harness saves notes outside the model and
-puts them into the next chat's prompt. ChatGPT, for example, saves things you ask it to remember
-and details it picks up itself, and later began drawing on past chats too.<Cite id="openai-memory" />
-Here the harness ends the long chat by asking the model to write notes, in two ways:
-
-</At>
-
-<MemoryNotes />
-
-<At levels="simple">
-
-Asked openly, the model wrote only about the last child, Mei, and made up the rest, such as plans
-for an astronomy camp. With those notes, the new chat couldn't answer any question. Asked for each
-child and their rhyme, it did better but mixed up Sam's and Mei's rhymes, so the new chat said Sam
-loves "Twinkle, twinkle" without any doubt. A wrong note is repeated in every chat after, which is
-why apps let you see and delete what they remember.<Cite id="openai-memory" />
-
-</At>
-<At levels="standard deep">
-
-Without notes, the new chat knows nothing and says so. Asked openly for notes about the user, the
-model wrote only about the last child, Mei, and filled the rest with things that never came up:
-an interest in astronomy, books about space, an astronomy camp next summer. With those notes it
-still couldn't answer any of the three questions. Asked for each child and the rhyme they love, it
-got three right but gave Sam the star rhyme, which was Mei's, gave Mei Leo's clock rhyme, and left
-out Humpty Dumpty. The new chat then said Sam loves "Twinkle, twinkle", with no sign of doubt.
-
-So what gets written down matters, and a wrong note is worse than a wrong reply: it is repeated in
-every chat after. That's why apps let you see what is remembered, delete it, turn memory off, or
-chat without it, and try not to save sensitive details, such as health, unless
-asked.<Cite id="openai-memory" /> Some systems go further and let the model decide what to move in
-and out of its prompt as it works, the way a computer moves data between fast memory and
-disk.<Cite id="packer2023memgpt" />
-
-</At>
-<At levels="deep">
-
-### What notes cost
-
-The notes were 193 tokens from the open request and 221 from the specific one, against 616 for
-the whole chat. With the specific notes, the new chat's prompt for Omar's question grew from 25
-tokens to 254. Every later chat pays
-for its notes, so they have to stay short, and notes saved after every chat pile up into the same
-problem this chapter began with. The same three answers apply: drop old notes, summarize them, or
-retrieve only those that match the question.
-
-</At>
-
 <RecapCard>
 
 - The model only knows what's in its prompt, and the prompt has a limit.
 - When it fills up, the harness drops, summarizes, or retrieves text.
 - Whatever is left out is simply gone for the model: it may say it doesn't know, or fill the gap
   with a guess.
-- Keyword search finds exact words such as names; search by meaning finds the same idea in other
-  words. Many systems run both and merge the results.
-- A new chat starts empty. Memory features save notes and put them into later prompts, and a
-  wrong note is repeated in every chat after.
 
 <At levels="deep">
 
@@ -235,5 +97,5 @@ retrieve only those that match the question.
 </At>
 </RecapCard>
 
-**Next question:** every call re-sends the whole conversation, and the model reads all of it again.
-Does it really redo all that work every time?
+**Next question:** retrieval found the cat rhyme by its meaning. Is meaning always the best way to
+search, and what can the harness keep once the chat is over?

@@ -105,8 +105,9 @@ _What does the app add around the model?_
 | --- | ---------------------------- | ------------------------------ | --------- |
 | 23  | The model is not the product | `the-model-is-not-the-product` | 15, 20    |
 | 24  | Managing the context         | `managing-the-context`         | 5, 8, 23  |
-| 25  | Caching: reusing the work    | `caching`                      | 9, 11, 24 |
-| 26  | Which model answers?         | `routing`                      | 2, 12, 23 |
+| 25  | Search and memory            | `search-and-memory`            | 5, 24     |
+| 26  | Caching: reusing the work    | `caching`                      | 9, 11, 24 |
+| 27  | Which model answers?         | `routing`                      | 2, 12, 23 |
 
 ### Part VIII — Tools and agents
 
@@ -114,12 +115,13 @@ _How does a model act, and how do you keep it safe?_
 
 | Ch  | Title                | Slug                   | Builds on  |
 | --- | -------------------- | ---------------------- | ---------- |
-| 27  | Tools                | `tools`                | 21, 23     |
-| 28  | The agent loop       | `the-agent-loop`       | 11, 27     |
-| 29  | Prompt injection     | `prompt-injection`     | 20, 22, 27 |
-| 30  | Trust and guardrails | `trust-and-guardrails` | 28, 29     |
-| 31  | Splitting the work   | `splitting-the-work`   | 24, 28, 30 |
-| 32  | Did it work?         | `testing-agents`       | 27, 28, 30 |
+| 28  | Tools                | `tools`                | 21, 23     |
+| 29  | The agent loop       | `the-agent-loop`       | 11, 28     |
+| 30  | Designing an agent   | `designing-agents`     | 27, 28, 29 |
+| 31  | Prompt injection     | `prompt-injection`     | 20, 22, 28 |
+| 32  | Trust and guardrails | `trust-and-guardrails` | 29, 31     |
+| 33  | Splitting the work   | `splitting-the-work`   | 24, 29, 32 |
+| 34  | Did it work?         | `testing-agents`       | 28, 29, 32 |
 
 ### Part IX — Other kinds of models
 
@@ -127,12 +129,12 @@ _What else is built from the same pieces?_
 
 | Ch  | Title                         | Slug                 | Builds on |
 | --- | ----------------------------- | -------------------- | --------- |
-| 33  | Reading both ways             | `encoders`           | 5, 9      |
-| 34  | Many experts                  | `mixture-of-experts` | 6, 10     |
-| 35  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
-| 36  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
-| 37  | Painting from noise           | `diffusion`          | 7, 11     |
-| 38  | Choosing actions              | `decision-models`    | 7, 11, 28 |
+| 35  | Reading both ways             | `encoders`           | 5, 9      |
+| 36  | Many experts                  | `mixture-of-experts` | 6, 10     |
+| 37  | Remembering without attention | `recurrent-models`   | 7, 8, 26  |
+| 38  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
+| 39  | Painting from noise           | `diffusion`          | 7, 11     |
+| 40  | Choosing actions              | `decision-models`    | 7, 11, 29 |
 
 ### Wrap-up
 
@@ -140,10 +142,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug              | Builds on                  |
 | --- | ------------------------ | ----------------- | -------------------------- |
-| 39  | Recap: the whole picture | `recap`           | —                          |
-| 40  | From message to reply    | `end-to-end`      | —                          |
-| 41  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 34, 36 |
-| 42  | Check yourself           | `quiz`            | —                          |
+| 41  | Recap: the whole picture | `recap`           | —                          |
+| 42  | From message to reply    | `end-to-end`      | —                          |
+| 43  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 26, 36, 38 |
+| 44  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -160,19 +162,23 @@ _How does it all fit together?_ Unnumbered Part.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
   template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
   familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
-  (Ch 27). Prompt injection (Ch 29) then reads as prompting by an attacker.
+  (Ch 28). Prompt injection (Ch 31) then reads as prompting by an attacker.
 - **Harnesses before Tools and agents.** What an app adds around one model call, the prompt it
   builds, how it trims and caches it, and which model gets it, needs only a chat. Tools, the agent
   loop, and the attacks and guardrails that come with them follow as their own Part, because a
   model that acts raises a different question: how do you keep it safe?
+- **Search and memory follows Managing the context.** It answers that chapter's question about
+  retrieval with keyword search and notes kept between chats, which need no tools.
+- **Designing an agent follows the agent loop.** Once the loop is familiar, the chapter compares it
+  with workflows, programs the model writes, and plans made up front.
 - **Splitting the work comes late in Tools and agents.** A lead agent and its helpers need the loop,
   the context limits from Managing the context, and the guardrails, since each helper can be given
   only the tools its part needs.
 - **Did it work? closes Tools and agents.** Testing an agent replays the runs of the earlier
   chapters: the tool calls, the loop, and the guardrails' effect on the user's files.
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
-  they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid, and
-  the agent loop (Ch 28) that decision models replace with predicted moves.
+  they draw on every earlier Part, including the KV cache (Ch 26) that recurrent models avoid, and
+  the agent loop (Ch 29) that decision models replace with predicted moves.
 - **The Wrap-up puts it together.** The recap shows what the pieces are, From message to reply shows
   the order they run in, Picking a model reads real model names with everything taught so far, and
   the quiz comes last.

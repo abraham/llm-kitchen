@@ -83,6 +83,7 @@ const FIGURE_PAGES: [slug: string, show?: string][] = [
 	['quantization'],
 	['where-prompts-break', 'Position in a long prompt'],
 	['managing-the-context', 'Retrieve what’s relevant'],
+	['designing-agents'],
 	['caching'],
 	['routing'],
 	['splitting-the-work'],

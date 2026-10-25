@@ -13,11 +13,6 @@ describe('the agent loop', () => {
 		expect(r.steps.at(-1)!.thought).toContain('30 words');
 	});
 
-	it('deciding what to look up: it searched for just "cat", not the whole task', () => {
-		expect(r.steps[0].call).toEqual({ name: 'search_rhymes', arguments: { query: 'cat' } });
-		expect(r.task).not.toBe('cat');
-	});
-
 	it('prompts of 301, 394, then 483 tokens; at most 8 calls', () => {
 		expect(r.steps.map((s) => s.promptTokens)).toEqual([301, 394, 483]);
 		expect(r.maxSteps).toBe(8);

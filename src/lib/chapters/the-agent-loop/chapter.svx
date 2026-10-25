@@ -36,78 +36,6 @@ paper.<Cite id="yao2023" />
 The model never saw the rhyme until the search returned it, and it never counted anything: it
 copied the rhyme into a call to the word counter, then reported the counter's answer, 30 words.
 
-## Who decides the next step
-
-<At levels="simple">
-
-An agent is one end of a range. Along it, what changes is who picks the next step: code written in
-advance, or the model.
-
-- **A fixed recipe.** Code runs the same steps every time, and the model only writes the text.
-- **A fork.** Code sends each question down one of a few set paths, as <ChapterRef to="routing" />
-  passes a question to a bigger model when the small one isn't sure.
-- **One tool.** The model decides once whether to use a tool, as in <ChapterRef to="tools" />.
-- **A loop.** The model picks every next step and when to stop, as in the run above.
-
-The further along, the more kinds of task it can take on, but the more it costs and the more one
-mistake can lead to another. A good rule is to use the simplest one that does the job.<Cite id="anthropic-agents" />
-
-</At>
-<At levels="standard deep">
-
-An agent is one end of a range, and what changes along it is who decides the next step: code
-written in advance, or the model.
-
-- **A fixed chain.** Code runs set steps in order, such as summarize and then translate. The model
-  only writes text.
-- **A router.** Each request goes down one of a few fixed paths, as <ChapterRef to="routing" />
-  passes a question on to a bigger model when the small one seems unsure.
-- **One tool call.** The model decides whether to call a tool, and with what, once, as in <ChapterRef to="tools" />.
-- **A loop.** The model decides what to do after every result, and how many steps to take, as in
-  the run above.
-
-Anthropic calls systems whose path is fixed in code **workflows**, and keeps "agent" for systems
-where the model directs its own steps.<Cite id="anthropic-agents" /> A loop suits tasks whose steps
-can't be known in advance, but it costs more, takes longer, and lets one wrong step lead to the
-next, so their advice is to use the simplest setup that works.<Cite id="anthropic-agents" />
-
-</At>
-<At levels="deep">
-
-Their list of workflows also includes running several calls at once and combining their answers,
-and having one call check another's work and send it back for changes.<Cite id="anthropic-agents" />
-
-</At>
-
-## Deciding what to look up
-
-<At levels="simple">
-
-In <ChapterRef to="managing-the-context" />, the harness looked things up once, before the model
-answered, using your question as the search. In an agent, search is a tool, so the model decides
-when to search and what for: above, it searched for just "cat". If the results aren't enough, it
-can search again with something it learned from them. Anthropic's research agents start with
-short, broad searches and then narrow down.<Cite id="anthropic-multi-agent" />
-
-</At>
-<At levels="standard deep">
-
-In <ChapterRef to="managing-the-context" />, the harness retrieved once, before the model
-answered, with your question as the search. In an agent, search is a tool like any other, so the
-model decides whether to search at all and writes the search itself: above, it searched for just
-"cat", not the whole task. After reading the results it can search again with something it found,
-such as a name the first result mentioned, or stop. ReAct's agents answered questions this way with
-search and lookup tools over Wikipedia, reasoning between steps about what to look for
-next.<Cite id="yao2023" />
-
-Anthropic contrasts this with retrieval that fetches the most similar passages once: their research
-agents search in several steps and adapt to what they find. Left to themselves, though, agents
-tended to write long, specific searches that found little, so their prompts tell them to start
-short and broad and then narrow down.<Cite id="anthropic-multi-agent" /> Each search also costs a
-model call, and an agent can keep searching for something that isn't there.<Cite id="anthropic-multi-agent" />
-
-</At>
-
 ## The harness makes the rules
 
 <At levels="simple">
@@ -155,130 +83,12 @@ When the prompt outgrows its budget, the harness drops, summarizes, or retrieves
 
 </At>
 
-## Tools as code
-
-<At levels="simple">
-
-In the run above, the model asked for one tool, waited for the answer, then asked for the next.
-Another way is to let it write a short program that uses the tools, like this made-up one:
-
-```python
-rhyme = search_rhymes("cat")[0]
-print(count_words(rhyme["text"]))
-```
-
-The harness runs the program and gives the model what it printed, so one reply does both steps.
-Agents that write programs like this finish more tasks than ones that ask for one tool at a
-time.<Cite id="wang2024codeact" /> But now the harness runs code the model wrote, so it has to run it
-somewhere safe, cut off from anything that matters.<Cite id="smolagents-secure" />
-
-</At>
-<At levels="standard deep">
-
-The run above wrote one tool call per model call: search, wait for the result, then count. Another
-design lets the model write its actions as a short program in which every tool is a function, like
-this made-up one:
-
-```python
-rhyme = search_rhymes("cat")[0]
-print(count_words(rhyme["text"]))
-```
-
-The harness runs the program and adds whatever it printed to the prompt. One model call now does
-what took two, and a program can loop over results, keep them in variables, and combine tools in
-ways that one call at a time can't. Across 17 models, writing actions as Python code succeeded up
-to 20% more often than writing them as JSON or text in a fixed format.<Cite id="wang2024codeact" />
-
-The catch is that the harness now runs code the model wrote. A plain mistake, or instructions
-planted in a tool result (<ChapterRef to="prompt-injection" />), becomes code that runs. So code
-agents run it in a sandbox: an interpreter that allows only listed imports and stops runaway
-loops, or a separate container or machine with nothing worth harming.<Cite id="smolagents-secure" />
-
-</At>
-<At levels="deep">
-
-When a program fails, the error message comes back as its result, so the model can read it and fix
-the code on its next turn.<Cite id="wang2024codeact" />
-
-</At>
-
-## Plan first, or step by step
-
-<At levels="simple">
-
-The agent above decided one step at a time: after each result, it chose what to do next. Another
-way is to have the model write the whole plan first, with every tool call, and then let the harness
-carry it out. A later step refers to an earlier result by a name, like this made-up plan:
-
-```text
-Plan: Find the cat rhyme.
-#E1 = search_rhymes[cat]
-Plan: Count its words.
-#E2 = count_words[text of #E1]
-```
-
-The harness runs the steps in order, then one last model call reads the plan and the results and
-writes the answer. That takes fewer model calls, so it costs less. But the plan can't change its
-mind: if the search found two cat rhymes, or none, the plan goes ahead anyway.<Cite id="xu2023rewoo" />
-Some agents mix the two: Anthropic's research agent plans first, then decides after each round of
-results whether to change course.<Cite id="anthropic-multi-agent" />
-
-</At>
-<At levels="standard deep">
-
-The agent above decided one step at a time: after each result, it chose what to do next. The other
-way is to plan first. One model call writes the whole plan, every tool call included, and the
-harness carries it out without asking the model again. A later step refers to an earlier result by
-a placeholder, as in ReWOO's format; this plan is made up:
-
-```text
-Plan: Find the cat rhyme.
-#E1 = search_rhymes[cat]
-Plan: Count its words.
-#E2 = count_words[text of #E1]
-```
-
-A final call reads the plan and every result and writes the answer. In the terms of
-"Who decides the next step", the model writes its own workflow, then code runs it. Since the model
-isn't called after every result, prompts don't pile up: across six public tests, ReWOO used 64%
-fewer tokens than a ReAct-style loop with the same tools, and was 4.4 points more accurate on
-average.<Cite id="xu2023rewoo" />
-
-The cost is that a plan is written before anything is seen. If the search had found two cat
-rhymes, or none, the plan would carry on regardless. ReWOO's authors found plans that rested on
-wrong guesses, such as expecting a person's age to appear in a search result, and noted that
-exploring an unknown room would need a plan for every possibility.<Cite id="xu2023rewoo" /> So
-many agents mix the two. Anthropic's lead research agent writes a plan and saves it outside the
-prompt, so it survives if the context fills up, and after each round of results decides whether
-to do more or change course.<Cite id="anthropic-multi-agent" />
-
-</At>
-<At levels="deep">
-
-The savings come from the square in "What the loop costs": a loop of $K$ calls re-reads the
-instructions, examples, and every earlier result $K$ times, while a plan reads them about twice,
-once to plan and once to answer. On HotpotQA, a test of questions that need facts from more than
-one Wikipedia article, a ReAct-style agent used 9,795 tokens per question and ReWOO
-1,986.<Cite id="xu2023rewoo" />
-Planning helps even without tools. Asking GPT-3 to "first understand the problem and devise a plan
-to solve the problem", then carry it out, raised its score on grade-school math problems from
-56.4% with "Let's think step by step" (<ChapterRef to="steps-and-structure" />) to
-58.2%.<Cite id="wang2023plansolve" />
-
-</At>
-
 <RecapCard>
 
 - An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
   back in.
-- Workflows fix the steps in code; an agent lets the model decide them. Use the simplest that
-  works.
 - The loop stops when the model answers without a tool call, or when it hits a step limit.
-- Some agents write their actions as a short program, so one call can do several steps; that code
-  has to run in a sandbox.
 - Each step re-sends the whole conversation, so the prompt keeps growing.
-- An agent can also plan every step first and then carry the plan out: fewer model calls, but a
-  plan can't react to what it finds unless it is checked and revised along the way.
 
 <At levels="deep">
 
@@ -288,5 +98,5 @@ to solve the problem", then carry it out, raised its score on grade-school math 
 </At>
 </RecapCard>
 
-**Next question:** every tool result is text the harness pastes into the prompt: search results, web
-pages, files. What if some of that text gives the model instructions of its own?
+**Next question:** here the model chose every step. Is a loop like this always the best way to build
+an agent?
