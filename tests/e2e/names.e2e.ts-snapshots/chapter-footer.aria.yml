@@ -1,0 +1,7 @@
+- paragraph: Up next
+- link "Ch 5. Meaning as position →":
+    - /url: /embeddings
+- paragraph:
+    - text: Spotted a mistake?
+    - link "Edit this chapter on GitHub":
+        - /url: https://github.com/abraham/llm-kitchen/edit/main/src/lib/chapters/tokens/chapter.svx

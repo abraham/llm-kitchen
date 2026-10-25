@@ -1,0 +1,14 @@
+- banner:
+    - link "LLM Kitchen":
+        - /url: /
+    - group "Explanations":
+        - text: ''
+        - radio "Simple"
+        - text: Simple
+        - radio "Standard" [checked]
+        - text: Standard
+        - radio "In depth"
+        - text: In depth
+    - 'link "Models: Recorded"':
+        - /url: /downloads
+    - 'button "Theme: Auto (matches your system)"'

@@ -21,8 +21,8 @@ and uses one main widget to show it.
 - **Try first.** Each chapter has a "try it" widget before the formal explanation.
 - **Fully static.** The site works without a backend. Live models are opt-in extras, never needed to
   follow a lesson (see [models-and-data.md](models-and-data.md)).
-- **Accessible.** Everything is keyboard-navigable, respects `prefers-reduced-motion`, and every
-  animation has a text description and a step-through mode.
+- **Accessible.** Every page meets WCAG 2.2 AA. Everything is keyboard-navigable, respects
+  `prefers-reduced-motion`, and every animation has a text description and a step-through mode.
 - **Accurate and cited.** Every factual claim and number links to a primary source (paper, model
   card, or official docs) or is checked by a test. Deliberate simplifications are labeled as such
   (see [sources.md](sources.md)).
@@ -60,6 +60,7 @@ A chapter can add Simple and In depth passages around its Standard text (see
     from the standard model;
   - read a model's name and tell whether it fits their device.
 - Every chapter works fully offline with recorded data. Live models are opt-in only.
-- Lighthouse performance and accessibility are at least 95 on chapter pages without a live model.
+- Lighthouse performance is at least 95, and accessibility 100, on chapter pages without a live
+  model.
 - Every animation can be stepped through and respects reduced motion.
 - Every chapter has passed its fact-check: claims are cited, tested, or labeled as simplifications.

@@ -3,12 +3,6 @@
 Work that isn't built yet. When something here is built, move its description into the spec it
 belongs to and remove it here.
 
-## Quality
-
-- **More accessibility checks:** ARIA snapshots of the shared chrome, an allowlist of Svelte a11y
-  ignores, and Lighthouse accessibility at 100. The plan is in
-  [accessibility-checks.md](accessibility-checks.md).
-
 ## Live models
 
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention

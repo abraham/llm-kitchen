@@ -1,0 +1,17 @@
+- region "all-MiniLM-L6-v2":
+    - heading "all-MiniLM-L6-v2" [level=3]
+    - paragraph: Turns a sentence into a point.
+    - term: Size
+    - definition: /\d+ MB/
+    - term: Commit
+    - definition: 751bff3
+    - term: Used in
+    - definition:
+        - link "Meaning as position":
+            - /url: /embeddings
+    - status: Not downloaded
+    - paragraph:
+        - link "Original model":
+            - /url: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+        - link "Files used here":
+            - /url: https://huggingface.co/Xenova/all-MiniLM-L6-v2/tree/751bff37182d3f1213fa05d7196b954e230abad9
