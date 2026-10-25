@@ -63,11 +63,11 @@ down never blocks a merge; a failure shows up as a failed run.
     on chapters with passages for those levels;
   - no requests to another origin, so nothing downloads before consent;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
-  - no sideways scrolling at phone width;
+  - no sideways scrolling at phone width, and no SVG text in a figure smaller than 11px there;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
     tokenizer.
-- **Visual (`tests/visual/`):** full-page screenshots, run locally only because baselines differ by
-  operating system.
+- **Visual (`tests/visual/`):** screenshots of pages and of every widget with an SVG figure, on a
+  desktop and a phone, run locally only because baselines differ by operating system.
 
 ## Browser support
 

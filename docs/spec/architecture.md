@@ -26,8 +26,7 @@
 | Components              | **Svelte 5** runes (`$state`, `$derived`, `$effect`)                                                                                 | Small compiled output and fine-grained updates for widgets that change on every slider move.                            |
 | Content                 | **mdsvex** `.svx` chapters                                                                                                           | Markdown prose with Svelte widgets inline.                                                                              |
 | Animation               | `svelte/motion` (`Tween`, `Spring`), `svelte/transition` (`crossfade`, `fade`, `fly`), `svelte/animate` (`flip`)                     | Built in, interruptible, and no animation library to ship.                                                              |
-| Charts and figures      | Hand-written SVG                                                                                                                     | The figures are small; no chart library is needed.                                                                      |
-| Scroll storytelling     | `IntersectionObserver` in `Scrolly`, driving `StepController`                                                                        | Scrolling and Prev/Next move the same steps.                                                                            |
+| Charts and figures      | Hand-written SVG through `Figure`, with scales from `math/scale.ts`                                                                  | The figures are small; no chart library is needed.                                                                      |
 | Tokenizer               | `gpt-tokenizer`                                                                                                                      | Real BPE tokenization in the browser with no model download, in a worker so parsing a vocabulary never blocks the page. |
 | In-browser models       | **Transformers.js** (`@huggingface/transformers`, ONNX on WebGPU or WASM) in a Web Worker                                            | Real logits and embeddings with no server.                                                                              |
 | Styling                 | CSS custom properties in `src/styles/tokens.css`, base styles in `global.css`                                                        | One concept color system (see [design.md](design.md)).                                                                  |
@@ -62,9 +61,9 @@ src/
         facts.test.ts            the numbers and claims the prose states
         chapter.e2e.ts           its widgets in a browser
     components/                  see components.md
-      ui/                        generic controls and containers, and the scrollable attachment
+      ui/                        generic controls and containers, Figure and Axis, and the scrollable and pointer attachments
       primitives/                shared visual elements (see design.md); props in, events out
-      frame/                     WidgetFrame, DataSourceBadge, Loading, ModelConsent, StepController, Scrolly
+      frame/                     WidgetFrame, DataSourceBadge, Loading, ModelConsent, StepController
       page/                      chapter shell, ProgressNav, PageMeta, ChapterRef, Cite, GlossaryPopover, ...
       widgets/                   widgets used by two or more chapters
     data/                        hand-written data shared by chapters and logic (the nursery rhymes)

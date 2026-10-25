@@ -3,15 +3,18 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken } from '#lib/components/primitives/format.ts';
 	import { levels } from '#lib/math/quantize.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
 	const data = useDataset('quantize/precisions');
 	let index = $state(0);
 
-	const W = 560;
+	const MAX_W = 576;
+	let W = $state(MAX_W);
 	const H = 96;
 	const PAD = 8;
 	const ROW = { trained: 28, rounded: 72 };
@@ -28,7 +31,7 @@
 			{@const full = run.precisions[0]}
 			{@const p = run.precisions[index]}
 			{@const max = run.sample.max * 1.05}
-			{@const x = (v: number) => PAD + ((v + max) / (2 * max)) * (W - PAD - 8)}
+			{@const x = scaleLinear([-max, max], [PAD, W - 8])}
 			{@const grid = p.kind === 'int' ? levels(p.bits, run.sample.max) : []}
 			{@const same = p.generated.every((t, i) => t.id === full.generated[i].id)}
 			<div class="bits">
@@ -56,10 +59,11 @@
 					<span><span class="dot trained-dot"></span>as trained (top)</span>
 					<span><span class="dot rounded-dot"></span>{p.label} (bottom)</span>
 				</p>
-				<svg
-					viewBox="0 0 {W} {H}"
-					role="img"
-					aria-label={p.kind === 'int'
+				<Figure
+					max={MAX_W}
+					bind:width={W}
+					height={H}
+					label={p.kind === 'int'
 						? `${run.block} weights before and after rounding: each can only take one of ${grid.length} values`
 						: `${run.block} weights before and after rounding to ${p.bits}-bit floats: they barely move`}
 				>
@@ -71,7 +75,7 @@
 						<circle class="trained" cx={x(v)} cy={ROW.trained} r="3.5" />
 						<circle class="rounded" cx={x(p.row[i])} cy={ROW.rounded} r="3.5" />
 					{/each}
-				</svg>
+				</Figure>
 				<figcaption>
 					{#if p.kind === 'int'}
 						{run.block} of GPT-2's weights. At {p.bits} bits, each group of {run.block} can only take
@@ -148,21 +152,8 @@
 		transition: width var(--duration) var(--ease);
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.bar span {
-			transition: none;
-		}
-	}
-
 	.row {
 		margin: 0 0 var(--space-3);
-	}
-
-	svg {
-		width: 100%;
-		max-width: 36rem;
-		height: auto;
-		display: block;
 	}
 
 	.legend {

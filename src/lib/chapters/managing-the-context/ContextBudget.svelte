@@ -3,8 +3,10 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import { label } from '#lib/curriculum/index.ts';
 	import type { ContextSession } from '#lib/harness/agent.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { project } from '#lib/math/vectors.ts';
 	import { formatCount } from '#lib/components/primitives/format.ts';
 
@@ -100,35 +102,30 @@
 				{@const q = project(s.questionVector, map.pca.mean, map.pca.components)}
 				{@const xs = [...pts.map((p) => p[0]), q[0]]}
 				{@const ys = [...pts.map((p) => p[1]), q[1]]}
-				{@const [x0, x1, y0, y1] = [
-					Math.min(...xs),
-					Math.max(...xs),
-					Math.min(...ys),
-					Math.max(...ys)
-				]}
-				{@const sx = (x: number) => 30 + ((x - x0) / (x1 - x0 || 1)) * 300}
-				{@const sy = (y: number) => 150 - ((y - y0) / (y1 - y0 || 1)) * 120}
+				{@const sx = scaleLinear([Math.min(...xs), Math.max(...xs)], [30, 330])}
+				{@const sy = scaleLinear([Math.min(...ys), Math.max(...ys)], [150, 30])}
 				<div class="retrieval">
-					<svg
-						viewBox="0 0 360 180"
-						role="img"
-						aria-label={`The question and the six exchanges on the meaning map from ${label('embeddings')}; exchange 1 is the closest.`}
-					>
-						{#each pts as p, i (i)}
-							{@const hit = st.retrieved?.includes(i)}
-							{#if hit}<line
-									x1={sx(q[0])}
-									y1={sy(q[1])}
-									x2={sx(p[0])}
-									y2={sy(p[1])}
-									class="link"
-								/>{/if}
-							<circle cx={sx(p[0])} cy={sy(p[1])} r={hit ? 8 : 6} class:hit class="dot" />
-							<text x={sx(p[0])} y={sy(p[1]) - 11} class="lbl">{i + 1}</text>
-						{/each}
-						<rect x={sx(q[0]) - 6} y={sy(q[1]) - 6} width="12" height="12" class="q" />
-						<text x={sx(q[0])} y={sy(q[1]) + 22} class="lbl">question</text>
-					</svg>
+					<div class="map">
+						<Figure
+							viewBox={[360, 180]}
+							label={`The question and the six exchanges on the meaning map from ${label('embeddings')}; exchange 1 is the closest.`}
+						>
+							{#each pts as p, i (i)}
+								{@const hit = st.retrieved?.includes(i)}
+								{#if hit}<line
+										x1={sx(q[0])}
+										y1={sy(q[1])}
+										x2={sx(p[0])}
+										y2={sy(p[1])}
+										class="link"
+									/>{/if}
+								<circle cx={sx(p[0])} cy={sy(p[1])} r={hit ? 8 : 6} class:hit class="dot" />
+								<text x={sx(p[0])} y={sy(p[1]) - 11} class="lbl">{i + 1}</text>
+							{/each}
+							<rect x={sx(q[0]) - 6} y={sy(q[1]) - 6} width="12" height="12" class="q" />
+							<text x={sx(q[0])} y={sy(q[1]) + 22} class="lbl">question</text>
+						</Figure>
+					</div>
 					<ol class="sims">
 						{#each s.turns as t, i (i)}
 							<li class:hit={st.retrieved?.includes(i)}>
@@ -269,11 +266,9 @@
 		align-items: center;
 	}
 
-	svg {
+	.map {
 		width: 100%;
 		max-width: 360px;
-		height: auto;
-		font-family: var(--font-sans);
 	}
 
 	.dot {
@@ -297,7 +292,7 @@
 	}
 
 	.lbl {
-		font-size: 11px;
+		font-size: max(11px, var(--min-text));
 		fill: var(--ink);
 		text-anchor: middle;
 	}

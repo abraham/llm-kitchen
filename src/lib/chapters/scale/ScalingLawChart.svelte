@@ -1,12 +1,17 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Axis from '#lib/components/ui/Axis.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
+	import FigureData from '#lib/components/ui/FigureData.svelte';
 	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
+	import { scaleLinear, scaleLog } from '#lib/math/scale.ts';
 	import { formatCount, kaplanLoss } from './data.ts';
 	import { GPT2_FAMILY, nonEmbeddingParameters } from '#lib/math/transformer.ts';
 
-	const W = 560;
+	const MAX_W = 560;
+	let W = $state(MAX_W);
 	const H = 300;
 	const PAD = { left: 52, right: 16, top: 16, bottom: 44 };
 	const X0 = 3;
@@ -16,9 +21,8 @@
 	const Y0 = 1.25;
 	const Y1 = 7;
 
-	const sx = (n: number) =>
-		PAD.left + ((Math.log10(n) - X0) / (X1 - X0)) * (W - PAD.left - PAD.right);
-	const sy = (l: number) => PAD.top + ((Y1 - l) / (Y1 - Y0)) * (H - PAD.top - PAD.bottom);
+	const sx = $derived(scaleLog([10 ** X0, 10 ** X1], [PAD.left, W - PAD.right]));
+	const sy = scaleLinear([Y0, Y1], [H - PAD.bottom, PAD.top]);
 	const path = (from: number, to: number) => {
 		const pts: string[] = [];
 		for (let e = Math.log10(from); e <= Math.log10(to) + 1e-9; e += 0.05) {
@@ -26,12 +30,13 @@
 		}
 		return `M${pts.join('L')}`;
 	};
+	const superscript = (n: number) =>
+		`10${String(Math.round(Math.log10(n))).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}`;
 
 	const START = 6;
 	let exponent = $state(START);
 	const n = $derived(10 ** exponent);
 	const loss = $derived(kaplanLoss(n));
-	const ticks = Array.from({ length: X1 - X0 + 1 }, (_, i) => X0 + i);
 	const lossTicks = [2, 3, 4, 5, 6, 7];
 	// The label reserves room for its longest value, so the slider after it stays put.
 	const widest = Math.max(
@@ -47,30 +52,31 @@
 	source={{ kind: 'computed' }}
 	onreset={() => (exponent = START)}
 >
-	<svg
-		viewBox="0 0 {W} {H}"
-		role="img"
-		aria-label="Predicted loss falls along a smooth curve as the number of weights grows from a thousand to a trillion."
+	<Figure
+		max={MAX_W}
+		bind:width={W}
+		height={H}
+		label="Predicted loss falls along a smooth curve as the number of weights grows from a thousand to a trillion."
 	>
-		{#each ticks as t (t)}
-			<line x1={sx(10 ** t)} x2={sx(10 ** t)} y1={PAD.top} y2={H - PAD.bottom} class="grid" />
-			<text x={sx(10 ** t)} y={H - PAD.bottom + 16} class="tick"
-				>10{String(t).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}</text
-			>
-		{/each}
-		{#each lossTicks as l (l)}
-			<line x1={PAD.left} x2={W - PAD.right} y1={sy(l)} y2={sy(l)} class="grid" />
-			<text x={PAD.left - 8} y={sy(l) + 4} class="tick y">{l}</text>
-		{/each}
-		<text x={(PAD.left + W - PAD.right) / 2} y={H - 6} class="axis"
-			>Weights, not counting the token tables (log scale)</text
-		>
-		<text
-			x={14}
-			y={(PAD.top + H - PAD.bottom) / 2}
-			class="axis"
-			transform="rotate(-90 14 {(PAD.top + H - PAD.bottom) / 2})">Loss</text
-		>
+		<Axis
+			scale={sx}
+			side="bottom"
+			at={H - PAD.bottom}
+			grid={PAD.top}
+			count={Math.floor((W - PAD.left - PAD.right) / 36)}
+			format={superscript}
+			label="Weights, not counting the token tables (log scale)"
+			labelAt={H - 6}
+		/>
+		<Axis
+			scale={sy}
+			side="left"
+			at={PAD.left}
+			grid={W - PAD.right}
+			ticks={lossTicks}
+			label="Loss"
+			labelAt={14}
+		/>
 
 		<path d={path(10 ** X0, FIT_MIN)} class="curve extrapolated" />
 		<path d={path(FIT_MIN, FIT_MAX)} class="curve" />
@@ -88,7 +94,25 @@
 
 		<line x1={sx(n)} x2={sx(n)} y1={PAD.top} y2={H - PAD.bottom} class="cursor" />
 		<circle cx={sx(n)} cy={sy(loss)} r="6" class="you" />
-	</svg>
+	</Figure>
+	<FigureData>
+		<table class="data">
+			<caption>Predicted loss for the four GPT-2 sizes</caption>
+			<thead>
+				<tr><th scope="col">Model</th><th scope="col">Weights</th><th scope="col">Loss</th></tr>
+			</thead>
+			<tbody>
+				{#each GPT2_FAMILY as m (m.name)}
+					{@const ne = nonEmbeddingParameters(m)}
+					<tr>
+						<th scope="row">{m.name}</th>
+						<td>{formatCount(ne)}</td>
+						<td>{kaplanLoss(ne).toFixed(2)}</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</FigureData>
 
 	<div class="weights">
 		<Slider
@@ -117,29 +141,9 @@
 </WidgetFrame>
 
 <style>
-	svg {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-sans);
-	}
-
-	.grid {
-		stroke: var(--rule);
-	}
-
 	.tick {
 		font-size: 11px;
 		fill: var(--ink-muted);
-		text-anchor: middle;
-	}
-
-	.tick.y {
-		text-anchor: end;
-	}
-
-	.axis {
-		font-size: 12px;
-		fill: var(--ink);
 		text-anchor: middle;
 	}
 

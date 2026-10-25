@@ -1,7 +1,10 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
+	import { pointer } from '#lib/components/ui/pointer.ts';
 	import { TRIANGLE, triangleNet } from '#lib/math/mlp.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { formatSigned } from '#lib/components/primitives/format.ts';
 
 	const START = { x1: 0.5, x2: 1 };
@@ -14,8 +17,8 @@
 	// Input plane from −2 to 2 on both axes.
 	const S = 200;
 	const N = 40;
-	const sx = (x: number) => ((x + 2) / 4) * S;
-	const sy = (y: number) => ((2 - y) / 4) * S;
+	const sx = scaleLinear([-2, 2], [0, S]);
+	const sy = scaleLinear([-2, 2], [S, 0]);
 	const cells = $derived(
 		Array.from({ length: N * N }, (_, i) => {
 			const [col, row] = [i % N, Math.floor(i / N)];
@@ -37,12 +40,11 @@
 		};
 	});
 
-	function pick(e: MouseEvent & { currentTarget: SVGRectElement }) {
-		const r = e.currentTarget.getBoundingClientRect();
-		const snap = (v: number) => Math.round(Math.min(2, Math.max(-2, v)) * 20) / 20;
-		x1 = snap(-2 + ((e.clientX - r.left) / r.width) * 4);
-		x2 = snap(2 - ((e.clientY - r.top) / r.height) * 4);
-	}
+	const snap = (v: number) => Math.round(Math.min(2, Math.max(-2, v)) * 20) / 20;
+	const pick = pointer((fx, fy) => {
+		x1 = snap(sx.invert(fx * S));
+		x2 = snap(sy.invert(fy * S));
+	});
 
 	function reset() {
 		({ x1, x2 } = START);
@@ -54,11 +56,9 @@
 
 <WidgetFrame title="A layer of neurons" source={{ kind: 'computed' }} onreset={reset}>
 	<div class="layout">
-		<svg
-			viewBox="0 0 360 200"
-			class="network"
-			role="img"
-			aria-label="Inputs {formatSigned(x1)} and {formatSigned(
+		<Figure
+			viewBox={[360, 200]}
+			label="Inputs {formatSigned(x1)} and {formatSigned(
 				x2
 			)} go to three neurons, which output {net.hidden
 				.map((h, i) => (on[i] ? formatSigned(h.output) : 'nothing (off)'))
@@ -105,35 +105,35 @@
 			<circle cx="310" cy="100" r="24" class="node out" />
 			<text x="310" y="100" class="value">{formatSigned(net.out.output)}</text>
 			<text x="310" y="140" class="small">output</text>
-		</svg>
+		</Figure>
 
-		<svg
-			viewBox="0 0 {S} {S}"
-			class="plane"
-			role="img"
-			aria-label="The output for every pair of inputs from −2 to 2: shaded where it is above 0. The dot marks inputs {formatSigned(
-				x1
-			)}, {formatSigned(x2)}."
-		>
-			{#each cells as c (c.col * N + c.row)}
-				<rect
-					x={(c.col * S) / N}
-					y={(c.row * S) / N}
-					width={S / N + 0.5}
-					height={S / N + 0.5}
-					class="cell"
-					style:opacity={c.value}
-				/>
-			{/each}
-			{#each edges as e, j (j)}
-				{#if on[j]}
-					<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="edge" />
-					<text x={e.labelX} y={e.labelY} class="small">{j + 1}</text>
-				{/if}
-			{/each}
-			<circle cx={sx(x1)} cy={sy(x2)} r="6" class="marker" />
-			<rect width={S} height={S} class="hit" role="presentation" onclick={pick} />
-		</svg>
+		<div class="plane">
+			<Figure
+				viewBox={[S, S]}
+				label="The output for every pair of inputs from −2 to 2: shaded where it is above 0. The dot marks inputs {formatSigned(
+					x1
+				)}, {formatSigned(x2)}."
+			>
+				{#each cells as c (c.col * N + c.row)}
+					<rect
+						x={(c.col * S) / N}
+						y={(c.row * S) / N}
+						width={S / N + 0.5}
+						height={S / N + 0.5}
+						class="cell"
+						style:opacity={c.value}
+					/>
+				{/each}
+				{#each edges as e, j (j)}
+					{#if on[j]}
+						<line x1={e.x1} y1={e.y1} x2={e.x2} y2={e.y2} class="edge" />
+						<text x={e.labelX} y={e.labelY} class="small">{j + 1}</text>
+					{/if}
+				{/each}
+				<circle cx={sx(x1)} cy={sy(x2)} r="6" class="marker" />
+				<rect width={S} height={S} class="hit" role="presentation" {@attach pick} />
+			</Figure>
+		</div>
 	</div>
 
 	<div class="controls">
@@ -165,9 +165,9 @@
 		</li>
 	</ul>
 	<p class="note">
-		Click the square or move the sliders to change the inputs. The square's shading shows the output
-		for every pair of inputs from −2 to 2, and the dashed lines are where each neuron starts to
-		fire.
+		Click or drag in the square, or move the sliders, to change the inputs. The square's shading
+		shows the output for every pair of inputs from −2 to 2, and the dashed lines are where each
+		neuron starts to fire.
 	</p>
 </WidgetFrame>
 
@@ -185,13 +185,8 @@
 		}
 	}
 
-	svg {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-mono);
-	}
-
 	.plane {
+		width: 100%;
 		max-width: 16rem;
 		justify-self: center;
 		background: var(--surface-2);
@@ -202,21 +197,22 @@
 		text-anchor: middle;
 		dominant-baseline: middle;
 		fill: var(--ink);
+		font-family: var(--font-mono);
 	}
 
 	.value {
-		font-size: 14px;
+		font-size: max(14px, var(--min-text));
 		font-weight: 600;
 	}
 
 	.small {
-		font-size: 11px;
+		font-size: max(11px, var(--min-text));
 		fill: var(--ink-muted);
 		font-family: var(--font-sans);
 	}
 
 	.weight {
-		font-size: 12px;
+		font-size: max(12px, var(--min-text));
 		fill: var(--c-weight-ink);
 	}
 
@@ -275,6 +271,7 @@
 	.hit {
 		fill: transparent;
 		cursor: crosshair;
+		touch-action: none;
 	}
 
 	.controls {

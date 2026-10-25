@@ -1,5 +1,6 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { activate, neuron, type Activation } from '#lib/math/mlp.ts';
@@ -61,11 +62,9 @@
 
 <WidgetFrame title="One neuron" source={{ kind: 'computed' }} onreset={reset}>
 	<div class="layout">
-		<svg
-			viewBox="0 0 420 200"
-			class="neuron"
-			role="img"
-			aria-label="Input 1 is {formatSigned(x1)} times weight {formatSigned(
+		<Figure
+			viewBox={[420, 200]}
+			label="Input 1 is {formatSigned(x1)} times weight {formatSigned(
 				w1
 			)}, plus input 2 {formatSigned(x2)} times weight {formatSigned(w2)}, plus bias {formatSigned(
 				bias
@@ -97,14 +96,9 @@
 			<rect x="318" y="78" width="96" height="44" rx="6" class="output" />
 			<text x="366" y="92" class="small">output</text>
 			<text x="366" y="110" class="value">{formatSigned(result.output)}</text>
-		</svg>
+		</Figure>
 
-		<svg
-			viewBox="0 0 {PW} {PH}"
-			class="plot"
-			role="img"
-			aria-label="Activation function {NAMES[kind]}"
-		>
+		<Figure viewBox={[PW, PH]} label="Activation function {NAMES[kind]}">
 			<line x1="0" y1={py(0)} x2={PW} y2={py(0)} class="axis" />
 			<line x1={px(0)} y1="0" x2={px(0)} y2={PH} class="axis" />
 			<path d={curve} class="curve" />
@@ -113,7 +107,7 @@
 			{/if}
 			<text x="4" y="12" class="small left">output</text>
 			<text x={PW - 4} y={py(0) - 4} class="small right">sum</text>
-		</svg>
+		</Figure>
 	</div>
 
 	<div class="sliders">
@@ -162,25 +156,20 @@
 		}
 	}
 
-	svg {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-mono);
-	}
-
 	text {
 		text-anchor: middle;
 		dominant-baseline: middle;
 		fill: var(--ink);
+		font-family: var(--font-mono);
 	}
 
 	.value {
-		font-size: 15px;
+		font-size: max(15px, var(--min-text));
 		font-weight: 600;
 	}
 
 	.small {
-		font-size: 11px;
+		font-size: max(11px, var(--min-text));
 		fill: var(--ink-muted);
 		font-family: var(--font-sans);
 	}
@@ -194,7 +183,7 @@
 	}
 
 	.weight {
-		font-size: 12px;
+		font-size: max(12px, var(--min-text));
 		fill: var(--c-weight-ink);
 	}
 
@@ -228,10 +217,6 @@
 	.output {
 		fill: var(--surface-2);
 		stroke: var(--rule);
-	}
-
-	.plot {
-		overflow: hidden;
 	}
 
 	.axis {

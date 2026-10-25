@@ -1,7 +1,9 @@
 <script lang="ts">
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import Status from '#lib/components/ui/Status.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
+	import { scaleLinear } from '#lib/math/scale.ts';
 
 	// A bumpy one-weight loss: a bowl with a ripple, so big steps can overshoot or get stuck.
 	const loss = (w: number) => 0.5 * (w - 1) ** 2 + 0.4 * Math.sin(3 * w) + 1;
@@ -13,14 +15,17 @@
 	let history = $state<number[]>([START]);
 	const id = $props.id();
 
-	const W = 520;
-	const H = 220;
-	const sx = (x: number) => ((x + 3) / 7) * W;
-	const sy = (y: number) => H - 14 - (y / 9) * (H - 28);
-	const curve = Array.from({ length: 141 }, (_, i) => {
-		const x = -3 + i / 20;
-		return `${i ? 'L' : 'M'} ${sx(x)} ${sy(loss(x))}`;
-	}).join(' ');
+	const MAX_W = 640;
+	let W = $state(MAX_W);
+	const H = 240;
+	const sx = $derived(scaleLinear([-3, 4], [0, W]));
+	const sy = scaleLinear([0, 9], [H - 14, 14]);
+	const curve = $derived(
+		Array.from({ length: 141 }, (_, i) => {
+			const x = -3 + i / 20;
+			return `${i ? 'L' : 'M'} ${sx(x)} ${sy(loss(x))}`;
+		}).join(' ')
+	);
 
 	function step(n = 1) {
 		let next = w;
@@ -44,13 +49,13 @@
 </script>
 
 <WidgetFrame title="Rolling downhill" source={{ kind: 'computed' }} onreset={reset}>
-	<svg
-		viewBox="0 0 {W} {H}"
-		class="landscape"
-		role="img"
-		aria-label="A loss curve with a ball at weight {w.toFixed(2)}, where the loss is {loss(
-			w
-		).toFixed(2)}. The slope there is {slope(w).toFixed(
+	<Figure
+		max={MAX_W}
+		bind:width={W}
+		height={H}
+		label="A loss curve with a ball at weight {w.toFixed(2)}, where the loss is {loss(w).toFixed(
+			2
+		)}. The slope there is {slope(w).toFixed(
 			2
 		)}, so the next step moves the weight to {next.toFixed(2)}."
 	>
@@ -88,7 +93,7 @@
 		<circle cx={sx(w)} cy={sy(loss(w)) - 7} r="8" class="ball" />
 		<text x="6" y="14" class="axis-label">loss (how wrong)</text>
 		<text x={W - 6} y={H - 2} class="axis-label end">one weight →</text>
-	</svg>
+	</Figure>
 
 	<div class="controls">
 		<div class="lr">
@@ -118,12 +123,6 @@
 </WidgetFrame>
 
 <style>
-	.landscape {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-sans);
-	}
-
 	.curve {
 		fill: none;
 		stroke: var(--c-loss);

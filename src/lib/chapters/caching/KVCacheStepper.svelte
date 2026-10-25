@@ -6,9 +6,13 @@
 	import Status from '#lib/components/ui/Status.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Axis from '#lib/components/ui/Axis.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
+	import FigureData from '#lib/components/ui/FigureData.svelte';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
 	import { displayToken, formatCount } from '#lib/components/primitives/format.ts';
 	import { positionsProcessed } from '#lib/harness/cache.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
 	const data = useDataset('caching/kv-cache');
@@ -25,15 +29,17 @@
 	}
 
 	// Chart of the measured time per new token.
-	const W = 560;
+	const MAX_W = 560;
+	let W = $state(MAX_W);
 	const H = 200;
 	const PAD = { left: 44, right: 120, top: 12, bottom: 36 };
 	function line(ms: number[], max: number) {
-		const x = (i: number) => PAD.left + (i / (ms.length - 1)) * (W - PAD.left - PAD.right);
-		const y = (v: number) => H - PAD.bottom - (v / max) * (H - PAD.top - PAD.bottom);
+		const x = scaleLinear([0, ms.length - 1], [PAD.left, W - PAD.right]);
+		const y = scaleLinear([0, max], [H - PAD.bottom, PAD.top]);
 		return {
 			points: ms.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' '),
 			end: { x: x(ms.length - 1), y: y(ms.at(-1)!) },
+			x,
 			y
 		};
 	}
@@ -113,22 +119,26 @@
 			{@const off = line(d.msPerToken.noCache, max)}
 			{@const on = line(d.msPerToken.cache, max)}
 			<figure>
-				<svg
-					viewBox="0 0 {W} {H}"
-					role="img"
-					aria-label="Measured time for each of {d.generated
+				<Figure
+					max={MAX_W}
+					bind:width={W}
+					height={H}
+					label="Measured time for each of {d.generated
 						.length} new tokens. Without the cache it grows from {Math.round(
 						d.msPerToken.noCache[0]
 					)} to {Math.round(
 						d.msPerToken.noCache.at(-1)!
 					)} milliseconds; with the cache it stays near {Math.round(d.msPerToken.cache.at(-1)!)}."
 				>
-					{#each [0, 50, 100] as v (v)}
-						{#if v <= max}
-							<line x1={PAD.left} x2={W - PAD.right} y1={off.y(v)} y2={off.y(v)} class="grid" />
-							<text x={PAD.left - 6} y={off.y(v) + 4} class="tick y">{v}</text>
-						{/if}
-					{/each}
+					<Axis
+						scale={off.y}
+						side="left"
+						at={PAD.left}
+						grid={W - PAD.right}
+						ticks={[0, 50, 100].filter((v) => v <= max)}
+						label="ms per token"
+						labelAt={12}
+					/>
 					<polyline points={off.points} class="off" />
 					<polyline points={on.points} class="on" />
 					<text x={off.end.x + 6} y={off.end.y + 4} class="name">without the cache</text>
@@ -136,19 +146,34 @@
 					<text x={(PAD.left + W - PAD.right) / 2} y={H - 6} class="axis"
 						>New token 1 to {d.generated.length}</text
 					>
-					<text
-						x={12}
-						y={(PAD.top + H - PAD.bottom) / 2}
-						class="axis"
-						transform="rotate(-90 12 {(PAD.top + H - PAD.bottom) / 2})">ms per token</text
-					>
-				</svg>
+				</Figure>
 				<figcaption>
 					Measured: {d.generated.length} new tokens took {(d.totalMs.noCache / 1000).toFixed(1)} s without
 					the cache and {(d.totalMs.cache / 1000).toFixed(1)} s with it ({d.device}). Both runs
 					picked the same tokens.
 				</figcaption>
 			</figure>
+			<FigureData>
+				<table class="data">
+					<caption>Milliseconds for each new token</caption>
+					<thead>
+						<tr>
+							<th scope="col">New token</th><th scope="col">Without the cache</th><th scope="col"
+								>With the cache</th
+							>
+						</tr>
+					</thead>
+					<tbody>
+						{#each d.msPerToken.noCache as ms, i (i)}
+							<tr>
+								<th scope="row">{i + 1}</th>
+								<td>{Math.round(ms)}</td>
+								<td>{Math.round(d.msPerToken.cache[i])}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</FigureData>
 		{/snippet}
 	</Loading>
 
@@ -216,25 +241,6 @@
 
 	figure {
 		margin: 0;
-	}
-
-	svg {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-sans);
-	}
-
-	.grid {
-		stroke: var(--rule);
-	}
-
-	.tick {
-		font-size: 11px;
-		fill: var(--ink-muted);
-	}
-
-	.tick.y {
-		text-anchor: end;
 	}
 
 	.axis {

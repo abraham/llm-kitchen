@@ -2,7 +2,9 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { FrameLoop } from '#lib/components/frame/loop.svelte.ts';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import { CurveNet, CurveTrainer } from '#lib/math/mlp.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { formatSigned } from '#lib/components/primitives/format.ts';
 
 	// Points to fit: a wave, which a straight line can't follow.
@@ -36,10 +38,10 @@
 		return { neurons, outBias, biggest };
 	});
 
-	const W = 420;
+	let W = $state(420);
 	const H = 220;
-	const sx = (x: number) => ((x + 3.2) / 6.4) * W;
-	const sy = (y: number) => H / 2 - y * (H / 2 / 1.8);
+	const sx = $derived(scaleLinear([-3.2, 3.2], [0, W]));
+	const sy = scaleLinear([-1.8, 1.8], [H, 0]);
 
 	const line = $derived.by(() => {
 		void version;
@@ -74,11 +76,10 @@
 
 <WidgetFrame title="Train a tiny network" source={{ kind: 'computed' }} onreset={reset}>
 	<div class="layout">
-		<svg
-			viewBox="0 0 {W} {H}"
-			class="fit"
-			role="img"
-			aria-label="Dots to fit and the network's current curve. After {trainer.steps} training steps the loss is {losses
+		<Figure
+			bind:width={W}
+			height={H}
+			label="Dots to fit and the network's current curve. After {trainer.steps} training steps the loss is {losses
 				.at(-1)
 				?.toFixed(3) ?? 'not measured yet'}."
 		>
@@ -87,7 +88,7 @@
 			{#each xs as x, i (i)}
 				<circle cx={sx(x)} cy={sy(ys[i])} r="4" class="target" />
 			{/each}
-		</svg>
+		</Figure>
 		<div>
 			<LossCurve values={losses} label="Error" />
 			<p class="readout mono">
@@ -165,11 +166,6 @@
 		gap: var(--space-4);
 		align-items: center;
 		margin-bottom: var(--space-3);
-	}
-
-	.fit {
-		width: 100%;
-		height: auto;
 	}
 
 	.axis {

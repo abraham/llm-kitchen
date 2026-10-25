@@ -42,3 +42,55 @@ test.describe('phone', () => {
 		);
 	});
 });
+
+/** Chapters with SVG figures: every such widget, on a desktop and a phone. Some figures show
+ * only after picking an option, named here. */
+const FIGURE_PAGES: [slug: string, show?: string][] = [
+	['guessing-game'],
+	['probability-and-sampling'],
+	['embeddings'],
+	['a-neuron'],
+	['learning-from-mistakes'],
+	['attention'],
+	['the-transformer-block'],
+	['scale'],
+	['quantization'],
+	['where-prompts-break', 'Position in a long prompt'],
+	['managing-the-context', 'Retrieve what’s relevant'],
+	['caching'],
+	['routing'],
+	['encoders'],
+	['recurrent-models'],
+	['diffusion'],
+	['decision-models']
+];
+
+for (const [device, use] of [
+	['desktop', {}],
+	['phone', { viewport: { width: 375, height: 740 }, isMobile: true, hasTouch: true }]
+] as const) {
+	test.describe(`figures on a ${device}`, () => {
+		test.use(use);
+		for (const [slug, show] of FIGURE_PAGES) {
+			test(`/${slug}`, async ({ page }) => {
+				await gotoHydrated(page, `/${slug}`);
+				await expect(page.getByText(/Loading/)).toHaveCount(0);
+				if (show) await page.getByRole('radio', { name: show }).check();
+				await page.evaluate(() => document.fonts.ready);
+				const widgets = page.locator('section.widget').filter({ has: page.locator('svg') });
+				const count = await widgets.count();
+				expect(count).toBeGreaterThan(0);
+				for (let i = 0; i < count; i++) {
+					// TinyTrainer starts from random weights, so its first sample and loss vary.
+					if (await widgets.nth(i).locator('.samples').count()) {
+						await widgets
+							.nth(i)
+							.locator('.samples .text, .readout')
+							.evaluateAll((els) => els.forEach((el) => (el.textContent = 'varies')));
+					}
+					await expect(widgets.nth(i)).toHaveScreenshot(`figure-${slug}-${i}-${device}.png`);
+				}
+			});
+		}
+	});
+}

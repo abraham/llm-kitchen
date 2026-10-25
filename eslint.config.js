@@ -72,6 +72,26 @@ export default defineConfig(
 		],
 		'Chapters'
 	),
+	// Core rule, so it doesn't replace the layers' @typescript-eslint/no-restricted-imports options.
+	{
+		name: 'motion/one-path',
+		files: ['src/**'],
+		ignores: ['src/lib/stores/motion-prefs.svelte.ts'],
+		rules: {
+			'no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: 'svelte/motion',
+							importNames: ['prefersReducedMotion'],
+							message: 'Read reduced motion through `motion` in #lib/stores/motion-prefs.svelte.ts.'
+						}
+					]
+				}
+			]
+		}
+	},
 	{
 		files: [
 			'src/lib/math/**',

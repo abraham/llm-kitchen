@@ -6,6 +6,8 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
+	import { scaleLinear } from '#lib/math/scale.ts';
 	import { nearest, project } from '#lib/math/vectors.ts';
 	import { MINILM, browserModel } from '#lib/models/browser-model.svelte.ts';
 	import { BrowserProvider } from '#lib/models/browser-provider.ts';
@@ -25,18 +27,20 @@
 	>([]);
 	let liveError = $state('');
 
-	const W = 640;
-	const H = 420;
+	const MAX_W = 880;
+	let W = $state(MAX_W);
+	const H = 440;
 	const PAD = 40;
 
 	function scales(d: EmbeddingMapData) {
 		const xs = d.words.map((w) => w.x);
 		const ys = d.words.map((w) => w.y);
-		const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+		const x = scaleLinear([Math.min(...xs), Math.max(...xs)], [PAD, W - PAD]);
+		const y = scaleLinear([Math.min(...ys), Math.max(...ys)], [H - PAD, PAD]);
 		const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 		return {
-			sx: (x: number) => clamp(PAD + ((x - x0) / (x1 - x0)) * (W - 2 * PAD), 8, W - 8),
-			sy: (y: number) => clamp(H - PAD - ((y - y0) / (y1 - y0)) * (H - 2 * PAD), 8, H - 8)
+			sx: (v: number) => clamp(x(v), 8, W - 8),
+			sy: (v: number) => clamp(y(v), 8, H - 8)
 		};
 	}
 
@@ -175,7 +179,7 @@
 			{@const labels = placeLabels(
 				all,
 				important,
-				(word) => (word === current.word ? 13 : important.has(word) ? 12 : 9),
+				(word) => (word === current.word ? 13 : important.has(word) ? 12 : 11),
 				sx,
 				sy
 			)}
@@ -194,78 +198,80 @@
 				<Toggle label="Show king − man + woman" bind:checked={showAnalogy} />
 			</div>
 
-			<svg
-				viewBox="0 0 {W} {H}"
-				class="map"
-				role="img"
-				aria-label="Words placed by meaning. {current.word} is selected; its nearest neighbors are {current.neighbors
-					.map((n) => n.word)
-					.join(', ')}."
-			>
-				<defs>
-					<marker
-						id="{id}-arrow"
-						viewBox="0 0 10 10"
-						refX="9"
-						refY="5"
-						markerWidth="7"
-						markerHeight="7"
-						orient="auto-start-reverse"
-					>
-						<path d="M 0 0 L 10 5 L 0 10 z" class="arrowhead" />
-					</marker>
-				</defs>
-				{#each current.neighbors as n (n.word)}
-					{@const p = pos(n.word)}
-					<line
-						x1={sx(current.x)}
-						y1={sy(current.y)}
-						x2={sx(p.x)}
-						y2={sy(p.y)}
-						class="link"
-						style:stroke-width={1 + n.similarity * 3}
-					/>
-				{/each}
-				{#if showAnalogy}
-					<line
-						x1={sx(m.x)}
-						y1={sy(m.y)}
-						x2={sx(wo.x)}
-						y2={sy(wo.y)}
-						class="arrow"
-						marker-end="url(#{id}-arrow)"
-					/>
-					<line
-						x1={sx(k.x)}
-						y1={sy(k.y)}
-						x2={sx(result.x)}
-						y2={sy(result.y)}
-						class="arrow"
-						marker-end="url(#{id}-arrow)"
-					/>
-				{/if}
-				{#each all as w (w.word)}
-					<g
-						class="point"
-						class:selected={w.word === current.word}
-						class:neighbor={current.neighbors.some((n) => n.word === w.word)}
-						class:analogy={showAnalogy && ['king', 'man', 'woman', result.word].includes(w.word)}
-						class:yours={w.group === 'yours'}
-						onclick={() => (selected = w.word)}
-						role="presentation"
-					>
-						<title>{w.word}</title>
-						<circle cx={sx(w.x)} cy={sy(w.y)} r={w.word === current.word ? 6 : 4} />
-						{#if labels[w.word]}
-							{@const l = labels[w.word]}
-							{#if l.leader}
-								<line class="leader" x1={sx(w.x)} y1={sy(w.y)} x2={l.leader.x} y2={l.leader.y} />
+			<div class="map">
+				<Figure
+					max={MAX_W}
+					bind:width={W}
+					height={H}
+					label="Words placed by meaning. {current.word} is selected; its nearest neighbors are {current.neighbors
+						.map((n) => n.word)
+						.join(', ')}."
+				>
+					<defs>
+						<marker
+							id="{id}-arrow"
+							viewBox="0 0 10 10"
+							refX="9"
+							refY="5"
+							markerWidth="7"
+							markerHeight="7"
+							orient="auto-start-reverse"
+						>
+							<path d="M 0 0 L 10 5 L 0 10 z" class="arrowhead" />
+						</marker>
+					</defs>
+					{#each current.neighbors as n (n.word)}
+						{@const p = pos(n.word)}
+						<line
+							x1={sx(current.x)}
+							y1={sy(current.y)}
+							x2={sx(p.x)}
+							y2={sy(p.y)}
+							class="link"
+							style:stroke-width={1 + n.similarity * 3}
+						/>
+					{/each}
+					{#if showAnalogy}
+						<line
+							x1={sx(m.x)}
+							y1={sy(m.y)}
+							x2={sx(wo.x)}
+							y2={sy(wo.y)}
+							class="arrow"
+							marker-end="url(#{id}-arrow)"
+						/>
+						<line
+							x1={sx(k.x)}
+							y1={sy(k.y)}
+							x2={sx(result.x)}
+							y2={sy(result.y)}
+							class="arrow"
+							marker-end="url(#{id}-arrow)"
+						/>
+					{/if}
+					{#each all as w (w.word)}
+						<g
+							class="point"
+							class:selected={w.word === current.word}
+							class:neighbor={current.neighbors.some((n) => n.word === w.word)}
+							class:analogy={showAnalogy && ['king', 'man', 'woman', result.word].includes(w.word)}
+							class:yours={w.group === 'yours'}
+							onclick={() => (selected = w.word)}
+							role="presentation"
+						>
+							<title>{w.word}</title>
+							<circle cx={sx(w.x)} cy={sy(w.y)} r={w.word === current.word ? 6 : 4} />
+							{#if labels[w.word]}
+								{@const l = labels[w.word]}
+								{#if l.leader}
+									<line class="leader" x1={sx(w.x)} y1={sy(w.y)} x2={l.leader.x} y2={l.leader.y} />
+								{/if}
+								<text x={l.x} y={l.y} text-anchor={l.anchor}>{w.word}</text>
 							{/if}
-							<text x={l.x} y={l.y} text-anchor={l.anchor}>{w.word}</text>
-						{/if}
-					</g>
-				{/each}
-			</svg>
+						</g>
+					{/each}
+				</Figure>
+			</div>
 
 			<div class="panel">
 				<p>
@@ -348,9 +354,6 @@
 	}
 
 	.map {
-		width: 100%;
-		height: auto;
-		font-family: var(--font-sans);
 		font-size: 11px;
 		background: var(--surface-2);
 		border-radius: var(--radius);
@@ -372,8 +375,8 @@
 
 	.point text {
 		fill: var(--ink-muted);
-		font-size: 9px;
-		opacity: 0.6;
+		font-size: 11px;
+		opacity: 0.7;
 	}
 
 	.point:hover text,

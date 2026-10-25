@@ -4,6 +4,7 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Status from '#lib/components/ui/Status.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 
 	const data = useDataset('encoders/fill-mask');
 	let mode = $state<'decoder' | 'encoder'>('decoder');
@@ -33,42 +34,42 @@
 			{@const blank = tokens.indexOf('[MASK]')}
 			{@const n = tokens.length}
 			{@const visible = tokens.filter((_, j) => sees(blank, j)).length}
-			<svg
-				viewBox="0 0 {LABEL + n * CELL + 4} {LABEL + n * CELL + 4}"
-				class="grid"
-				role="img"
-				aria-label="A grid of {n} by {n} tokens. Each row is a token; shaded cells are the tokens it can look at. {mode ===
-				'decoder'
-					? 'Only cells on or below the diagonal are shaded: each token sees itself and earlier tokens.'
-					: 'Every cell is shaded: each token sees the whole sentence.'}"
-			>
-				{#each tokens as t, j (j)}
-					<text
-						x={LABEL + j * CELL + CELL / 2}
-						y={LABEL - 6}
-						class="col"
-						class:hl={j === blank}
-						transform="rotate(-50 {LABEL + j * CELL + CELL / 2} {LABEL - 6})">{show(t)}</text
-					>
-					<text x={LABEL - 6} y={LABEL + j * CELL + CELL / 2} class="row" class:hl={j === blank}
-						>{show(t)}</text
-					>
-				{/each}
-				{#each Array.from({ length: n }, (_, i) => i) as row (row)}
-					{#each Array.from({ length: n }, (_, i) => i) as col (col)}
-						<rect
-							x={LABEL + col * CELL + 1}
-							y={LABEL + row * CELL + 1}
-							width={CELL - 2}
-							height={CELL - 2}
-							rx="3"
-							class="cell"
-							class:on={sees(row, col)}
-							class:blank-row={row === blank}
-						/>
+			<div class="grid">
+				<Figure
+					viewBox={[LABEL + n * CELL + 4, LABEL + n * CELL + 4]}
+					label="A grid of {n} by {n} tokens. Each row is a token; shaded cells are the tokens it can look at. {mode ===
+					'decoder'
+						? 'Only cells on or below the diagonal are shaded: each token sees itself and earlier tokens.'
+						: 'Every cell is shaded: each token sees the whole sentence.'}"
+				>
+					{#each tokens as t, j (j)}
+						<text
+							x={LABEL + j * CELL + CELL / 2}
+							y={LABEL - 6}
+							class="col"
+							class:hl={j === blank}
+							transform="rotate(-50 {LABEL + j * CELL + CELL / 2} {LABEL - 6})">{show(t)}</text
+						>
+						<text x={LABEL - 6} y={LABEL + j * CELL + CELL / 2} class="row" class:hl={j === blank}
+							>{show(t)}</text
+						>
 					{/each}
-				{/each}
-			</svg>
+					{#each Array.from({ length: n }, (_, i) => i) as row (row)}
+						{#each Array.from({ length: n }, (_, i) => i) as col (col)}
+							<rect
+								x={LABEL + col * CELL + 1}
+								y={LABEL + row * CELL + 1}
+								width={CELL - 2}
+								height={CELL - 2}
+								rx="3"
+								class="cell"
+								class:on={sees(row, col)}
+								class:blank-row={row === blank}
+							/>
+						{/each}
+					{/each}
+				</Figure>
+			</div>
 			<Status>
 				Each row is a token; the shaded cells are the tokens it can look at. The blank can look at <strong
 					>{visible} of {n}</strong
@@ -86,16 +87,13 @@
 
 <style>
 	.grid {
-		display: block;
-		width: 100%;
 		max-width: 26rem;
-		height: auto;
 		margin: 0 auto;
-		font-family: var(--font-mono);
 	}
 
 	text {
-		font-size: 11px;
+		font-family: var(--font-mono);
+		font-size: max(11px, var(--min-text));
 		fill: var(--ink-muted);
 		dominant-baseline: middle;
 	}

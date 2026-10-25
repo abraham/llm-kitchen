@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { prefersReducedMotion } from 'svelte/motion';
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { formatCount } from '#lib/components/primitives/format.ts';
+	import Axis from '#lib/components/ui/Axis.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import { play, type DecisionRun, type GridWorld } from '#lib/math/decision.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
+	import { motion } from '#lib/stores/motion-prefs.svelte.ts';
 
 	const DEFAULT = 12;
 	const MIN = -26;
@@ -33,7 +36,7 @@
 	function playAll(run: DecisionRun) {
 		stop();
 		if (shown >= run.steps.length) shown = 0;
-		if (prefersReducedMotion.current) {
+		if (motion.reduced) {
 			shown = run.steps.length;
 			return;
 		}
@@ -59,9 +62,12 @@
 	const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${-n}` : '0');
 	const num = (n: number) => (n < 0 ? `−${-n}` : String(n));
 
-	const H_W = 300;
-	const H_H = 56;
-	const hx = (v: number) => 6 + ((v - MIN) / (MAX - MIN)) * (H_W - 12);
+	const H_MAX = 384;
+	let H_W = $state(H_MAX);
+	const H_H = 64;
+	/** Where the histogram's axis runs; its tick labels sit below. */
+	const BASE = H_H - 18;
+	const hx = $derived(scaleLinear([MIN, MAX], [16, H_W - 16]));
 </script>
 
 <WidgetFrame title="Aim for a score" source={{ kind: 'computed' }} onreset={() => aim(DEFAULT)}>
@@ -87,28 +93,26 @@
 			/>
 
 			<figure class="hist">
-				<svg
-					viewBox="0 0 {H_W} {H_H}"
-					role="img"
-					aria-label="How many of the {rec.training
-						.runs} training runs scored each total, from {num(MIN)} to 12. {seen} scored {num(
-						target
-					)}."
+				<Figure
+					max={H_MAX}
+					bind:width={H_W}
+					height={H_H}
+					label="How many of the {rec.training.runs} training runs scored each total, from {num(
+						MIN
+					)} to 12. {seen} scored {num(target)}."
 				>
 					{#each Object.entries(counts) as [score, n] (score)}
 						<rect
 							class:on={Number(score) === target}
 							x={hx(Number(score)) - 2.5}
-							y={H_H - 14 - (n / most) * (H_H - 18)}
+							y={BASE - (n / most) * (BASE - 4)}
 							width="5"
-							height={(n / most) * (H_H - 18)}
+							height={(n / most) * (BASE - 4)}
 						/>
 					{/each}
-					<line class="aim" x1={hx(target)} x2={hx(target)} y1="0" y2={H_H - 12} />
-					{#each [MIN, -10, 0, 12, MAX] as tick (tick)}
-						<text x={hx(tick)} y={H_H - 1}>{num(tick)}</text>
-					{/each}
-				</svg>
+					<line class="aim" x1={hx(target)} x2={hx(target)} y1="0" y2={BASE + 2} />
+					<Axis scale={hx} side="bottom" at={BASE} ticks={[MIN, -10, 0, 12, MAX]} format={num} />
+				</Figure>
 				<figcaption>
 					<span class="mono">{formatCount(seen)}</span> of {formatCount(rec.training.runs)} training runs
 					scored {num(target)}.
@@ -116,46 +120,46 @@
 			</figure>
 
 			<div class="layout">
-				<svg
-					class="grid"
-					viewBox="0 0 {w.size * CELL} {w.size * CELL}"
-					role="img"
-					aria-label="A {w.size} by {w.size} grid. Start at {name(w, w.start)}, goal at {name(
-						w,
-						w.goal
-					)}, pits at {w.pits.map((p) => name(w, p)).join(', ')}. The player is at {name(
-						w,
-						here
-					)} after {shown} moves."
-				>
-					{#each Array.from({ length: w.size * w.size }, (_, i) => i) as i (i)}
-						{@const [r, c] = rc(w, i)}
-						<rect
-							x={c * CELL + 1}
-							y={r * CELL + 1}
-							width={CELL - 2}
-							height={CELL - 2}
-							rx="4"
-							class={i === w.goal ? 'goal' : w.pits.includes(i) ? 'pit' : 'floor'}
+				<div class="grid">
+					<Figure
+						viewBox={[w.size * CELL, w.size * CELL]}
+						label="A {w.size} by {w.size} grid. Start at {name(w, w.start)}, goal at {name(
+							w,
+							w.goal
+						)}, pits at {w.pits.map((p) => name(w, p)).join(', ')}. The player is at {name(
+							w,
+							here
+						)} after {shown} moves."
+					>
+						{#each Array.from({ length: w.size * w.size }, (_, i) => i) as i (i)}
+							{@const [r, c] = rc(w, i)}
+							<rect
+								x={c * CELL + 1}
+								y={r * CELL + 1}
+								width={CELL - 2}
+								height={CELL - 2}
+								rx="4"
+								class={i === w.goal ? 'goal' : w.pits.includes(i) ? 'pit' : 'floor'}
+							/>
+							<text class="cell-name" x={c * CELL + 4} y={r * CELL + 12}>{name(w, i)}</text>
+							{#if i === w.goal}
+								<text class="mark" x={c * CELL + CELL / 2} y={r * CELL + CELL / 2 + 6}>⚑</text>
+							{:else if w.pits.includes(i)}
+								<text class="mark pit-mark" x={c * CELL + CELL / 2} y={r * CELL + CELL / 2 + 6}
+									>pit</text
+								>
+							{/if}
+						{/each}
+						<polyline
+							class="path"
+							points={cells
+								.slice(0, shown + 1)
+								.map((c) => centre(w, c).join(','))
+								.join(' ')}
 						/>
-						<text class="cell-name" x={c * CELL + 4} y={r * CELL + 12}>{name(w, i)}</text>
-						{#if i === w.goal}
-							<text class="mark" x={c * CELL + CELL / 2} y={r * CELL + CELL / 2 + 6}>⚑</text>
-						{:else if w.pits.includes(i)}
-							<text class="mark pit-mark" x={c * CELL + CELL / 2} y={r * CELL + CELL / 2 + 6}
-								>pit</text
-							>
-						{/if}
-					{/each}
-					<polyline
-						class="path"
-						points={cells
-							.slice(0, shown + 1)
-							.map((c) => centre(w, c).join(','))
-							.join(' ')}
-					/>
-					<circle class="player" cx={centre(w, here)[0]} cy={centre(w, here)[1]} r="9" />
-				</svg>
+						<circle class="player" cx={centre(w, here)[0]} cy={centre(w, here)[1]} r="9" />
+					</Figure>
+				</div>
 
 				<div class="side">
 					<div class="controls">
@@ -227,13 +231,6 @@
 		margin: var(--space-2) 0 var(--space-3);
 	}
 
-	.hist svg {
-		display: block;
-		width: 100%;
-		max-width: 24rem;
-		height: auto;
-	}
-
 	.hist rect {
 		fill: var(--ink-muted);
 		opacity: 0.45;
@@ -249,13 +246,6 @@
 		stroke-width: 2;
 	}
 
-	.hist text {
-		font-family: var(--font-sans);
-		font-size: 9px;
-		fill: var(--ink-muted);
-		text-anchor: middle;
-	}
-
 	figcaption {
 		font-size: 0.85rem;
 		color: var(--ink-muted);
@@ -269,10 +259,7 @@
 	}
 
 	.grid {
-		display: block;
-		width: 100%;
 		max-width: 16rem;
-		height: auto;
 	}
 
 	.floor {
@@ -291,19 +278,19 @@
 
 	.cell-name {
 		font-family: var(--font-mono);
-		font-size: 8px;
+		font-size: max(10px, var(--min-text));
 		fill: var(--ink-muted);
 	}
 
 	.mark {
 		font-family: var(--font-sans);
-		font-size: 16px;
+		font-size: max(16px, var(--min-text));
 		text-anchor: middle;
 		fill: var(--c-vector);
 	}
 
 	.pit-mark {
-		font-size: 11px;
+		font-size: max(11px, var(--min-text));
 		fill: var(--c-loss);
 	}
 
