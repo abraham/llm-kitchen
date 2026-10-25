@@ -11,7 +11,9 @@ points, and some directions carry meaning, like _man_ to _woman_.
 
 - `TokenToVector`: steps the running example from token chips to GPT-2's embedding vectors
   (`VectorStrip`, first 48 of 768 numbers; striped cells are negative).
-- `EmbeddingMap`: a 2D map of words. The visitor picks a word (from the list or by clicking it) and
+- `EmbeddingMap`: a 3D map of words, in perspective, that the visitor turns by dragging or with
+  Turn and Tilt sliders; nearer words draw larger and darker, and a line marks each of the three
+  directions. The visitor picks a word (from the list or by clicking it) and
   sees its nearest neighbors, computed from the full vectors, and the "king − man + woman ≈ queen"
   analogy as an arrow. The live option embeds the visitor's own words and places them with the same
   projection.
@@ -19,15 +21,15 @@ points, and some directions carry meaning, like _man_ to _woman_.
 ## Data
 
 - GPT-2 small's token and position vectors (`static/data/vectors/gpt2/`).
-- The word map from all-MiniLM-L6-v2 (`scripts/record/embeddings.py`): 2D PCA positions, neighbors
+- The word map from all-MiniLM-L6-v2 (`scripts/record/embeddings.py`): 3D PCA positions, neighbors
   from the full 384-number vectors, the analogy, and the PCA basis.
 - Live (T2): all-MiniLM-L6-v2 in the browser once the visitor chooses the Small model tier (~24 MB plus ~27 MB runtime).
 
 ## Decisions
 
-- Visitors pick words rather than drag them: moving a point in the 2D picture wouldn't change its
+- A drag turns the whole map rather than moving a word: moving a point in the picture wouldn't change its
   real vector, so neighbors after a drag would mislead.
 - [Levels](../levels.md): Simple drops the sizes and the model's name. In depth shows the embedding
   as a row of a lookup table (and its share of GPT-2's weights), defines cosine similarity, says the
-  map is PCA keeping about 13%, and shows that the analogy only lands on _queen_ once the input
+  map is PCA keeping about 18%, and shows that the analogy only lands on _queen_ once the input
   words are skipped.

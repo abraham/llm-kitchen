@@ -7,7 +7,14 @@ export const embeddingMap = object({
 	dimensions: integer,
 	explainedVariance: array(number),
 	words: array(
-		object({ word: string, group: string, x: number, y: number, neighbors: array(neighbor) })
+		object({
+			word: string,
+			group: string,
+			x: number,
+			y: number,
+			z: number,
+			neighbors: array(neighbor)
+		})
 	),
 	analogy: object({ expression: string, nearest: array(neighbor) }),
 	pca: object({ mean: array(number), components: array(array(number)) })
