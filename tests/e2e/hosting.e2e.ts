@@ -29,19 +29,31 @@ test('sends the security headers on pages', async ({ request }) => {
 	expect(headers['cache-control']).toBe('public, max-age=300, must-revalidate');
 });
 
-test('gives the inference worker a full policy that allows model downloads, and caches it forever', async ({
+test('gives every worker a full policy and caches it forever; only the inference worker downloads models', async ({
 	request
 }) => {
-	const file = readdirSync('build/_app/immutable/workers').find((f) =>
-		f.startsWith('inference.worker-')
-	);
-	const headers = (await request.get(`/_app/immutable/workers/${file}`)).headers();
-	const csp = headers['content-security-policy'];
-	expect(csp).toContain("default-src 'self'");
-	expect(csp).toContain("script-src 'self' 'wasm-unsafe-eval' blob:;");
-	expect(csp).toContain("object-src 'none'");
-	expect(csp).toContain('https://huggingface.co');
-	expect(headers['cache-control']).toBe('public, max-age=31536000, immutable');
+	const files = readdirSync('build/_app/immutable/workers').filter((f) => f.endsWith('.js'));
+	expect(files.map((f) => f.split('-')[0]).sort()).toEqual([
+		'inference.worker',
+		'tokenizer.worker',
+		'trainer.worker'
+	]);
+	for (const file of files) {
+		const headers = (await request.get(`/_app/immutable/workers/${file}`)).headers();
+		const csp = headers['content-security-policy'];
+		expect(csp, file).toContain("default-src 'self'");
+		expect(csp, file).toContain("object-src 'none'");
+		expect(csp, file).toContain("frame-ancestors 'none'");
+		expect(headers['cache-control'], file).toBe('public, max-age=31536000, immutable');
+		if (file.startsWith('inference.worker-')) {
+			expect(csp).toContain("script-src 'self' 'wasm-unsafe-eval' blob:;");
+			expect(csp).toContain('https://huggingface.co');
+		} else {
+			expect(csp, file).toContain("connect-src 'self';");
+			expect(csp, file).not.toContain('wasm-unsafe-eval');
+			expect(csp, file).not.toContain('huggingface');
+		}
+	}
 });
 
 test("leaves script-src to each page's own policy, which has its inline scripts' hashes", async ({

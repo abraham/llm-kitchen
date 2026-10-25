@@ -50,8 +50,29 @@ describe('firebase hosting config', () => {
 		const csp = header(hosting.headers[workers], 'Content-Security-Policy')!;
 		for (const directive of [
 			"default-src 'self'",
-			"script-src 'self' 'wasm-unsafe-eval'",
-			"object-src 'none'"
+			"connect-src 'self';",
+			"object-src 'none'",
+			"frame-ancestors 'none'"
+		]) {
+			expect(csp).toContain(directive);
+		}
+		expect(csp).not.toContain('script-src');
+		expect(csp).not.toContain('huggingface');
+	});
+
+	it('lets only the inference worker run WebAssembly and download models, after the worker default', () => {
+		const all = hosting.headers.findIndex((r) => r.source === '**');
+		const workers = hosting.headers.findIndex((r) => r.source === '/_app/immutable/workers/**');
+		const inference = hosting.headers.findIndex(
+			(r) => r.source === '/_app/immutable/workers/inference.worker-*.js'
+		);
+		expect(inference).toBeGreaterThan(workers);
+		const csp = header(hosting.headers[inference], 'Content-Security-Policy')!;
+		for (const directive of [
+			"default-src 'self'",
+			"script-src 'self' 'wasm-unsafe-eval' blob:",
+			"object-src 'none'",
+			"frame-ancestors 'none'"
 		]) {
 			expect(csp).toContain(directive);
 		}

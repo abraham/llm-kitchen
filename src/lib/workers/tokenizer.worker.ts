@@ -8,13 +8,21 @@ import {
 } from '#lib/models/tokenizer-encodings.ts';
 
 export type TokenizerRequest = { id: number; name: TokenizerName; input: TokenizerInput };
-export type TokenizerResponse = { id: number; tokens: Token[] } | { id: number; error: string };
+export type TokenizerResponse =
+	{ id: number; type: 'tokens'; tokens: Token[] } | { id: number; type: 'error'; message: string };
+
+function post(message: TokenizerResponse) {
+	self.postMessage(message);
+}
 
 self.onmessage = async ({ data }: MessageEvent<TokenizerRequest>) => {
 	try {
-		const tokens = await runTokenizer(data.name, data.input);
-		self.postMessage({ id: data.id, tokens } satisfies TokenizerResponse);
-	} catch (e) {
-		self.postMessage({ id: data.id, error: String(e) } satisfies TokenizerResponse);
+		post({ id: data.id, type: 'tokens', tokens: await runTokenizer(data.name, data.input) });
+	} catch (error) {
+		post({
+			id: data.id,
+			type: 'error',
+			message: error instanceof Error ? error.message : String(error)
+		});
 	}
 };

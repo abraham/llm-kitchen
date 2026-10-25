@@ -38,6 +38,15 @@
 				"headers": [
 					{
 						"key": "Content-Security-Policy",
+						"value": "default-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+					}
+				]
+			},
+			{
+				"source": "/_app/immutable/workers/inference.worker-*.js",
+				"headers": [
+					{
+						"key": "Content-Security-Policy",
 						"value": "default-src 'self'; script-src 'self' 'wasm-unsafe-eval' blob:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://*.hf.co; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
 					}
 				]

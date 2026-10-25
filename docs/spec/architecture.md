@@ -75,7 +75,7 @@ src/
       use.ts                     provideDatasets, useDataset(s), and all/then for maybe-loaded data
       read.ts                    readDataset for tests and Node scripts
     models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers
-    workers/                     the inference and trainer workers, with typed messages
+    workers/                     the tokenizer, inference, and trainer workers (workers.md)
     math/                        pure numeric code: sampling, BPE, MLP and backprop, attention, ...
     harness/                     pure toy harness: tools, agent loop, caching, injection
     stores/                      progress, theme, motion preferences
@@ -202,7 +202,8 @@ lives in `src/lib/data/`.
 - Widgets with no live option (a single recorded trace, agent sessions, the injection lab,
   reasoning runs) read their dataset directly.
 - One shared inference worker serves both browser models; its request and response messages are
-  discriminated unions shared with `inference-client.ts`. Training runs use `trainer.worker.ts`.
+  discriminated unions shared with `inference-client.ts`. Tokenizers run in a shared tokenizer
+  worker and training runs in `trainer.worker.ts`; [workers.md](workers.md) describes all three.
 - `models/canonical.json` stays the only place GPT-2's sizes and IDs are written.
 
 ## Navigation and progress

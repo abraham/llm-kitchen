@@ -25,7 +25,12 @@ const checks: [string, HeaderRule['headers']][] = [
 	['/', rule('**')],
 	[
 		`/_app/immutable/workers/${worker}`,
-		[...rule('**'), ...rule('/_app/immutable/**'), ...rule('/_app/immutable/workers/**')]
+		[
+			...rule('**'),
+			...rule('/_app/immutable/**'),
+			...rule('/_app/immutable/workers/**'),
+			...rule('/_app/immutable/workers/inference.worker-*.js')
+		]
 	]
 ];
 
