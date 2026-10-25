@@ -14,7 +14,8 @@ import {
 const runs = Object.keys(DATASETS)
 	.filter(
 		(id) =>
-			id.startsWith('agent/') && !['agent/context', 'agent/grades', 'agent/search'].includes(id)
+			id.startsWith('agent/') &&
+			!['agent/context', 'agent/grades', 'agent/search', 'agent/memory'].includes(id)
 	)
 	.map((id) => ({ name: id, run: readDataset(`agent/${id.slice(6) as AgentRunName}`) }));
 

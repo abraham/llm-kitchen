@@ -531,6 +531,23 @@
 		"accessed": "2026-10-25"
 	},
 	{
+		"id": "openai-memory",
+		"authors": ["OpenAI"],
+		"title": "Memory and new controls for ChatGPT",
+		"venue": "OpenAI",
+		"year": 2024,
+		"url": "https://openai.com/index/memory-and-new-controls-for-chatgpt/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "packer2023memgpt",
+		"authors": ["Charles Packer", "Sarah Wooders", "Kevin Lin", "Vivian Fang"],
+		"title": "MemGPT: Towards LLMs as Operating Systems",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2310.08560"
+	},
+	{
 		"id": "pope2022",
 		"authors": ["Reiner Pope", "Sholto Douglas", "Aakanksha Chowdhery", "Jacob Devlin"],
 		"title": "Efficiently Scaling Transformer Inference",

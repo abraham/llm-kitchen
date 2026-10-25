@@ -5,7 +5,8 @@ import type { ExtraLevel } from '#lib/levels.ts';
 export const datasets: readonly DatasetId[] = [
 	'agent/context',
 	'embeddings/minilm-map',
-	'agent/search'
+	'agent/search',
+	'agent/memory'
 ];
 
 /** The levels this chapter has passages for beyond Standard. */

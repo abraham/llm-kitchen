@@ -22,6 +22,7 @@ MODULES = [
     "agent",
     "grading",
     "search",
+    "memory",
     "routing",
     "caching",
     "injection",

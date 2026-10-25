@@ -1,0 +1,87 @@
+{
+	"dataset": "agent/memory",
+	"version": 1,
+	"script": "record/memory.py",
+	"models": [
+		{
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		}
+	],
+	"generatedAt": "2026-10-25",
+	"data": {
+		"version": 1,
+		"model": {
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"displayName": "Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		},
+		"system": "You are a helpful assistant.",
+		"notesHeader": "Notes from earlier conversations with this user:",
+		"chatTokens": 616,
+		"without": [
+			{
+				"question": "Which child in my class loves the rhyme about the cat?",
+				"tokens": 31,
+				"answer": "I'm sorry, but as an AI language model, I do not have access to information about your specific class or any individual students' preferences. Additionally, it is important to respect the privacy and confidentiality of all individuals involved.\n\nIf you would like to know which student in your class enjoys a particular rhyme, you may want to ask them directly or gather feedback from other students who might be able to provide"
+			},
+			{
+				"question": "Which rhyme does Omar love?",
+				"tokens": 25,
+				"answer": "I'm sorry, but I don't have any information about which rhyme Omar loves. Can you provide more context or details about the person and their interests?"
+			},
+			{
+				"question": "Which rhyme does Sam love?",
+				"tokens": 25,
+				"answer": "I'm sorry, but I don't have any information about which rhyme Sam loves. Can you provide more context or details about the situation?"
+			}
+		],
+		"notes": {
+			"general": {
+				"request": "Write short notes about the user that would help you in a future conversation with them. Keep every name and fact about them. Write only the notes.",
+				"notes": "- Name: Mei  \n  - Loves the nursery rhyme \"Twinkle, twinkle, little star\"  \n  - Describes stars as bright gems in the night sky  \n  - Has a strong interest in astronomy  \n  - Often reads books about space and constellations  \n  - Enjoys making models of planets and stars  \n  - Plans to attend an astronomy camp next summer  \n  - Asks for more information about different types of stars and their characteristics  \n  - Wants to learn more about the history of telescopes and their development  \n  - Is fascinated by the idea of traveling to other planets and exploring outer space  \n  - Asks if there are any upcoming space missions or discoveries that might be interesting  \n  - Expresses excitement about learning more about the universe and its mysteries  \n  - Implies a desire to pursue a career related to science and technology  \n  - Shows enthusiasm for sharing knowledge about space and encouraging others to explore the cosmos",
+				"tokens": 193,
+				"answers": [
+					{
+						"question": "Which child in my class loves the rhyme about the cat?",
+						"tokens": 232,
+						"answer": "I'm sorry, but I don't have enough context to determine which child in your class loves the rhyme about the cat. Could you please provide me with more details or clarify who is asking this question?"
+					},
+					{
+						"question": "Which rhyme does Omar love?",
+						"tokens": 226,
+						"answer": "I'm sorry, but I don't have enough context to answer your question. Could you please provide more details or clarify who Omar is referring to?"
+					},
+					{
+						"question": "Which rhyme does Sam love?",
+						"tokens": 226,
+						"answer": "I'm sorry, but I don't have enough context to answer your question. The conversation we had was about Mei's interests in astronomy and space exploration, not about Sam's preferences. If you'd like to ask me something specific about Sam's interests, please let me know what you're looking for!"
+					}
+				]
+			},
+			"specific": {
+				"request": "List every child the user mentioned and the nursery rhyme that child loves, one per line, like this: Name: rhyme. Write only the list.",
+				"notes": "Name: Lily, rhyme: Hey diddle diddle, the cat and the fiddle, the cow jumped over the moon; the little dog laughed to see such sport, and the dish ran away with the spoon.\nName: Omar, rhyme: Mary had a little lamb, its fleece was white as snow; and everywhere that Mary went, the lamb was sure to go.\nName: Priya, rhyme: Jack and Jill went up the hill to fetch a pail of water; Jack fell down and broke his crown, and Jill came tumbling after.\nName: Sam, rhyme: Twinkle, twinkle, little star, how I wonder what you are! Up above the world so high, like a diamond in the sky.\nName: Mei, rhyme: Hickory dickory dock, the mouse ran up the clock; the clock struck one, the mouse ran down, hickory dickory dock.\nName: Leo, rhyme: Hickory Dickory Dock, the mouse ran up the clock; the clock struck one, the mouse ran down, hickory dickory dock.",
+				"tokens": 221,
+				"answers": [
+					{
+						"question": "Which child in my class loves the rhyme about the cat?",
+						"tokens": 260,
+						"answer": "Based on the rhymes provided, it seems that Lily is the child who loves the rhyme about the cat and the fiddle. The rhyme goes:\n\n\"Hey diddle diddle, the cat and the fiddle,\nThe cow jumped over the moon;\nThe little dog laughed to see such sport,\nAnd the dish ran away with the spoon.\"\n\nThis rhyme has been associated with children's games and nursery"
+					},
+					{
+						"question": "Which rhyme does Omar love?",
+						"tokens": 254,
+						"answer": "Omar loves the rhyme \"Mary had a little lamb.\""
+					},
+					{
+						"question": "Which rhyme does Sam love?",
+						"tokens": 254,
+						"answer": "Sam loves the rhyme \"Twinkle, twinkle, little star, how I wonder what you are!\""
+					}
+				]
+			}
+		},
+		"generatedAt": "2026-10-25"
+	}
+}

@@ -6,6 +6,7 @@
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import ContextBudget from './ContextBudget.svelte';
 	import SearchCompare from './SearchCompare.svelte';
+	import MemoryNotes from './MemoryNotes.svelte';
 </script>
 
 ## The prompt keeps growing
@@ -153,6 +154,68 @@ $1/62 + 1/61 \approx 0.0325$ and Leo's rhyme $1/61 + 1/63 \approx 0.0323$.
 
 </At>
 
+## Remembering between chats
+
+<At levels="simple">
+
+All of this happens inside one chat. A new chat starts with an empty prompt, and the model
+remembers nothing of the last one. Apps with a memory feature save notes outside the model and put
+them into the next chat's prompt.<Cite id="openai-memory" /> Here the harness ends the long chat
+by asking the model to write notes, in two ways:
+
+</At>
+<At levels="standard deep">
+
+All of this happens inside one conversation. A new chat starts with an empty prompt, and the
+model, whose weights don't change as you talk, remembers nothing of the last one. Memory features
+fill the gap the same way the strategies above do: the harness saves notes outside the model and
+puts them into the next chat's prompt. ChatGPT, for example, saves things you ask it to remember
+and details it picks up itself, and later began drawing on past chats too.<Cite id="openai-memory" />
+Here the harness ends the long chat by asking the model to write notes, in two ways:
+
+</At>
+
+<MemoryNotes />
+
+<At levels="simple">
+
+Asked openly, the model wrote only about the last child, Mei, and made up the rest, such as plans
+for an astronomy camp. With those notes, the new chat couldn't answer any question. Asked for each
+child and their rhyme, it did better but mixed up Sam's and Mei's rhymes, so the new chat said Sam
+loves "Twinkle, twinkle" without any doubt. A wrong note is repeated in every chat after, which is
+why apps let you see and delete what they remember.<Cite id="openai-memory" />
+
+</At>
+<At levels="standard deep">
+
+Without notes, the new chat knows nothing and says so. Asked openly for notes about the user, the
+model wrote only about the last child, Mei, and filled the rest with things that never came up:
+an interest in astronomy, books about space, an astronomy camp next summer. With those notes it
+still couldn't answer any of the three questions. Asked for each child and the rhyme they love, it
+got three right but gave Sam the star rhyme, which was Mei's, gave Mei Leo's clock rhyme, and left
+out Humpty Dumpty. The new chat then said Sam loves "Twinkle, twinkle", with no sign of doubt.
+
+So what gets written down matters, and a wrong note is worse than a wrong reply: it is repeated in
+every chat after. That's why apps let you see what is remembered, delete it, turn memory off, or
+chat without it, and try not to save sensitive details, such as health, unless
+asked.<Cite id="openai-memory" /> Some systems go further and let the model decide what to move in
+and out of its prompt as it works, the way a computer moves data between fast memory and
+disk.<Cite id="packer2023memgpt" />
+
+</At>
+<At levels="deep">
+
+### What notes cost
+
+The notes were 193 tokens from the open request and 221 from the specific one, against 616 for
+the whole chat. With the specific notes, the new chat's prompt for Omar's question grew from 25
+tokens to 254. Every later chat pays
+for its notes, so they have to stay short, and notes saved after every chat pile up into the same
+problem this chapter began with. The same three answers apply: drop old notes, summarize them, or
+retrieve only those that match the question.
+
+</At>
+
 <RecapCard>
 
 - The model only knows what's in its prompt, and the prompt has a limit.
@@ -161,6 +224,8 @@ $1/62 + 1/61 \approx 0.0325$ and Leo's rhyme $1/61 + 1/63 \approx 0.0323$.
   with a guess.
 - Keyword search finds exact words such as names; search by meaning finds the same idea in other
   words. Many systems run both and merge the results.
+- A new chat starts empty. Memory features save notes and put them into later prompts, and a
+  wrong note is repeated in every chat after.
 
 <At levels="deep">
 

@@ -98,6 +98,7 @@ export interface ContextStrategy {
 export interface ContextSession {
 	model: AgentRun['model'];
 	embedder: { id: string; revision: string };
+	system: string;
 	budget: number;
 	baseTokens: number;
 	question: string;

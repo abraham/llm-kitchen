@@ -28,8 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Memory across sessions.** An agent writing notes it reads next time. A section in
-  [Managing the context](chapters/managing-the-context.md).
 - **Agents that use a screen.** A model that sees screenshots and clicks, bridging
   [Seeing pictures](chapters/seeing-pictures.md) and [The agent loop](chapters/the-agent-loop.md).
 - **Attention views.** One attention grid switching between raw scores, masked scores, and

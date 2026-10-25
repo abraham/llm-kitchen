@@ -18,13 +18,18 @@ gone for the model, and it may fill the gap by making things up.
 - `SearchCompare`: pick one of five questions about the same chat. Three ranked lists show the six
   exchanges by keyword score (BM25, computed in the browser), by cosine similarity of MiniLM
   vectors, and merged by reciprocal rank fusion, with the exchange the question is about marked.
+- `MemoryNotes`: what a new chat starts with: no notes, notes the model wrote when asked openly,
+  or notes it wrote when asked for each child and rhyme. Shows the request, the notes and their size
+  against the whole chat, and the new chat's answers to three questions, each marked against what
+  the earlier chat said.
 
 ## Data
 
 Recorded by `scripts/record/agent.py` (`static/data/agent/context.json`), with retrieval over the
 MiniLM map (`static/data/embeddings/`). The search questions' vectors are recorded by
 `scripts/record/search.py` (`static/data/agent/search.json`) with the same MiniLM revision; the
-rankings are computed in `src/lib/harness/search.ts`.
+rankings are computed in `src/lib/harness/search.ts`. The notes and the new chats' answers are
+recorded by `scripts/record/memory.py` (`static/data/agent/memory.json`) from the same chat.
 
 ## Decisions
 
@@ -39,7 +44,11 @@ rankings are computed in `src/lib/harness/search.ts`.
   text reports all five outcomes.
 - Search by the agent itself (choosing when and what to search) is in
   [The agent loop](the-agent-loop.md), since it needs tools.
+- The memory notes are written by the same small model and kept even though both sets are wrong
+  in places: open-ended notes invent an astronomy profile, specific notes swap two rhymes. The
+  text uses them to show that a wrong note is repeated in every later chat. Notes saved by the
+  harness need no tools; memory the model manages itself is mentioned with MemGPT only.
 - [Levels](../levels.md): Simple keeps the three strategies and their outcomes, and the search
   results without BM25's details or the Anthropic figures. In depth shows the cosine scores behind
-  retrieval, the size of the summary, the BM25 formula, and reciprocal rank fusion with Leo's
-  scores.
+  retrieval, the size of the summary, the BM25 formula, reciprocal rank fusion with Leo's
+  scores, and what notes cost.
