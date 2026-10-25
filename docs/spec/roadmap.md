@@ -11,7 +11,8 @@ belongs to and remove it here.
   Transformer Explainer (MIT) shows it works in the browser: its GPT-2 export outputs every head's
   raw scores, masked scores, and softmax weights. Its file is full precision (626 MB) and comes
   without its export script, so this needs an export of our own, 8-bit, in a model tier. The same
-  outputs could follow one token through the whole model.
+  outputs could follow one token through the whole model. The plan is in
+  [live-attention.md](live-attention.md).
 - **Timing generation live** with and without the KV cache in [Caching](chapters/caching.md), if
   Transformers.js exposes the switch.
 - **T4, bring your own API key:** frontier output with top logprobs and tool calling, through the
@@ -26,7 +27,6 @@ belongs to and remove it here.
   scope and is a separate decision.
 
 ## Content
-
 
 - **Tools as code.** The model writes a short program that calls several tools, instead of one
   JSON call per step. A section in [Tools](chapters/tools.md) or
