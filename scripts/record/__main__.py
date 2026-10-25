@@ -21,6 +21,7 @@ MODULES = [
     "prompts",
     "agent",
     "grading",
+    "search",
     "routing",
     "caching",
     "injection",

@@ -189,6 +189,13 @@ export const GLOSSARY = {
 			'Finding the stored text most relevant to a question (often by comparing embeddings) and putting it into the prompt.',
 		chapter: 'managing-the-context'
 	},
+	'keyword-search': {
+		term: 'keyword search',
+		definition:
+			'Ranking texts by which of the question’s own words they contain, giving more weight to rare words. It finds exact names and codes but not the same idea in other words.',
+		simple: 'Finding texts that contain the same words as the question.',
+		chapter: 'managing-the-context'
+	},
 	'tool-call': {
 		term: 'tool call',
 		definition:

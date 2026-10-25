@@ -5,6 +5,7 @@
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import ContextBudget from './ContextBudget.svelte';
+	import SearchCompare from './SearchCompare.svelte';
 </script>
 
 ## The prompt keeps growing
@@ -82,12 +83,84 @@ assistants that search your documents: they don't read everything, they look up 
 relevant and copy it into the prompt. Memory features work the same way: notes saved outside the
 model and put back into the prompt later.
 
+## Words or meaning
+
+<At levels="simple">
+
+Retrieval above found the cat rhyme by meaning. Search engines have long worked another way: a <GlossaryPopover term="keyword-search">keyword search</GlossaryPopover>
+looks for the question's own words. Each finds things the other misses. Try a few questions about
+the same chat:
+
+</At>
+<At levels="standard deep">
+
+Retrieval above found the cat rhyme by meaning. Search engines have long worked another way: a <GlossaryPopover term="keyword-search">keyword search</GlossaryPopover>
+scores each text by the
+question's own words it contains, after dropping common ones like "the" and "which". The usual
+method, BM25, gives more credit for words that are rare among all the texts and for using them
+more often, and less for long texts.<Cite id="robertson2009" /> It is exact: it finds a name, or
+a code like an error number, that an embedding blurs. Anthropic's example is a search for "Error
+code TS-999", where embeddings may find pages about error codes in general and miss the one about
+TS-999.<Cite id="anthropic-contextual-retrieval" /> But it knows nothing of meaning: "kitty"
+doesn't match "cat". Try a few questions about the same chat:
+
+</At>
+
+<SearchCompare />
+
+<At levels="simple">
+
+Words found Sam, Leo, and the crown, which meaning missed, but found nothing for "kitty", which
+meaning got right. So many systems run both searches and combine the two lists, giving each text
+points for how high it comes in each.<Cite id="cormack2009" /> Here that picked the right exchange
+for 4 of the 5 questions; words alone got 4 and meaning alone 2.
+
+</At>
+<At levels="standard deep">
+
+Words found Sam, Leo, and the crown, which meaning missed: names carry little meaning, and the
+crown pulled meaning toward Humpty Dumpty and the king's men. Meaning found "kitty", a word in no
+exchange. So many systems run both searches and merge the two lists by rank: each text gets points
+for how high it comes in each list, so one near the top of either does well.<Cite id="cormack2009" />
+Anthropic found that adding keyword search to embeddings missed fewer of the right
+passages.<Cite id="anthropic-contextual-retrieval" /> Here the merged list put the right exchange
+first for 4 of the 5 questions, words alone for 4, and meaning alone for 2. It still missed Leo:
+meaning ranked the star rhyme first and words second, which beat Leo's rhyme, first by words but
+only third by meaning.
+
+</At>
+<At levels="deep">
+
+### Scoring words and ranks
+
+For a question with words $q$, BM25 scores a text $D$ as
+
+$$
+\sum_{q} \text{idf}(q)\,\frac{f(q, D)\,(k_1 + 1)}{f(q, D) + k_1\left(1 - b + b\,\frac{|D|}{\text{avgdl}}\right)},
+$$
+
+where $f(q, D)$ counts the word in the text, $|D|$ is the text's length in words, avgdl the
+average length, and $k_1 = 1.2$ and $b = 0.75$ are the usual settings.<Cite id="robertson2009" />
+The count saturates: a word used five times scores less than five times one use. The weight
+$\text{idf}(q) = \ln\!\left(1 + \frac{N - n + 0.5}{n + 0.5}\right)$, for a word in $n$ of the $N$
+texts, is highest for words in only one; the 1 inside the logarithm keeps a word found in every
+text from counting against a match.
+
+Reciprocal rank fusion merges the lists using only ranks, so it needn't compare BM25 scores with
+cosines: each text scores $\sum 1/(k + r)$ over the lists that rank it, at rank $r$, with
+$k = 60$.<Cite id="cormack2009" /> For Leo's question the star rhyme gets
+$1/62 + 1/61 \approx 0.0325$ and Leo's rhyme $1/61 + 1/63 \approx 0.0323$.
+
+</At>
+
 <RecapCard>
 
 - The model only knows what's in its prompt, and the prompt has a limit.
 - When it fills up, the harness drops, summarizes, or retrieves text.
 - Whatever is left out is simply gone for the model: it may say it doesn't know, or fill the gap
   with a guess.
+- Keyword search finds exact words such as names; search by meaning finds the same idea in other
+  words. Many systems run both and merge the results.
 
 <At levels="deep">
 

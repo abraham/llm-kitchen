@@ -79,6 +79,35 @@ and having one call check another's work and send it back for changes.<Cite id="
 
 </At>
 
+## Deciding what to look up
+
+<At levels="simple">
+
+In <ChapterRef to="managing-the-context" />, the harness looked things up once, before the model
+answered, using your question as the search. In an agent, search is a tool, so the model decides
+when to search and what for: above, it searched for just "cat". If the results aren't enough, it
+can search again with something it learned from them. Anthropic's research agents start with
+short, broad searches and then narrow down.<Cite id="anthropic-multi-agent" />
+
+</At>
+<At levels="standard deep">
+
+In <ChapterRef to="managing-the-context" />, the harness retrieved once, before the model
+answered, with your question as the search. In an agent, search is a tool like any other, so the
+model decides whether to search at all and writes the search itself: above, it searched for just
+"cat", not the whole task. After reading the results it can search again with something it found,
+such as a name the first result mentioned, or stop. ReAct's agents answered questions this way with
+search and lookup tools over Wikipedia, reasoning between steps about what to look for
+next.<Cite id="yao2023" />
+
+Anthropic contrasts this with retrieval that fetches the most similar passages once: their research
+agents search in several steps and adapt to what they find. Left to themselves, though, agents
+tended to write long, specific searches that found little, so their prompts tell them to start
+short and broad and then narrow down.<Cite id="anthropic-multi-agent" /> Each search also costs a
+model call, and an agent can keep searching for something that isn't there.<Cite id="anthropic-multi-agent" />
+
+</At>
+
 ## The harness makes the rules
 
 <At levels="simple">

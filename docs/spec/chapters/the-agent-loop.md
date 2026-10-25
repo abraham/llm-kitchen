@@ -26,6 +26,10 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
   for counting. Without these rules, both small Qwen models wrote several calls at once with made-up
   arguments and guessed the word count. The chapter says the harness makes the rules.
 - Qwen2.5-1.5B-Instruct rather than 0.5B, which couldn't complete the task.
+- "Deciding what to look up" contrasts the one-time retrieval of
+  [Managing the context](managing-the-context.md) with search as a tool the model calls with its
+  own query, and can call again. It uses the recorded run's `search_rhymes("cat")` and cites ReAct
+  and Anthropic's research agents rather than recording a new run.
 - "Who decides the next step" places the agent on a range (fixed chain, router, one tool call,
   loop) using Anthropic's split between workflows and agents, and points back to the chapters that
   show each one, rather than adding a widget: the site already has a widget for each kind.

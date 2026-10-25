@@ -483,6 +483,31 @@
 		"url": "https://arxiv.org/abs/2005.11401"
 	},
 	{
+		"id": "robertson2009",
+		"authors": ["Stephen Robertson", "Hugo Zaragoza"],
+		"title": "The Probabilistic Relevance Framework: BM25 and Beyond",
+		"venue": "Foundations and Trends in Information Retrieval",
+		"year": 2009,
+		"url": "https://doi.org/10.1561/1500000019"
+	},
+	{
+		"id": "cormack2009",
+		"authors": ["Gordon V. Cormack", "Charles L. A. Clarke", "Stefan Büttcher"],
+		"title": "Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods",
+		"venue": "SIGIR 2009",
+		"year": 2009,
+		"url": "https://doi.org/10.1145/1571941.1572114"
+	},
+	{
+		"id": "anthropic-contextual-retrieval",
+		"authors": ["Daniel Ford"],
+		"title": "Introducing Contextual Retrieval",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/news/contextual-retrieval",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "pope2022",
 		"authors": ["Reiner Pope", "Sholto Douglas", "Aakanksha Chowdhery", "Jacob Devlin"],
 		"title": "Efficiently Scaling Transformer Inference",

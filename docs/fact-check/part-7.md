@@ -28,20 +28,29 @@ Data: `record_context` in `scripts/record/agent.py`: a chat with no tools, six t
 a named child, and "What happens in it?"), then "Which child in my class loves the rhyme about the
 cat?" answered under each strategy, written to `static/data/agent/context.json`.
 
-| Claim                                                                                                     | Backing                                                        |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Six turns overflow a 600-token budget; each strategy fits                                                 | Test                                                           |
-| The budget is deliberately small; the model can read far more                                             | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
-| With everything kept, the model names Lily                                                                | Test (recorded answer)                                         |
-| Dropping the oldest: the model says the conversation doesn't mention it                                   | Test (recorded answer)                                         |
-| A model can as easily fill a gap with a confident guess                                                   | Ch 16 (hallucination)                                          |
-| The summary kept "Lily" and the answer was right                                                          | Test                                                           |
-| Retrieval by embedding similarity (MiniLM) picked the cat rhyme, and the answer was right                 | Test; cite `lewis2020`                                         |
-| The map uses the Ch 5 projection                                                                          | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
-| Simple: restates Standard in plainer words, with no new claims                                            | Reviewed against the Standard text                             |
-| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.49, the others 0.35–0.45           | Test (recomputed from the stored vectors)                      |
-| In depth: the summary shrank the 149-token first exchange to a 30-token note                              | Test                                                           |
-| In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it | Test (recorded reply and summary against the rhyme text)       |
+| Claim                                                                                                     | Backing                                                                         |
+| --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Six turns overflow a 600-token budget; each strategy fits                                                 | Test                                                                            |
+| The budget is deliberately small; the model can read far more                                             | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768                  |
+| With everything kept, the model names Lily                                                                | Test (recorded answer)                                                          |
+| Dropping the oldest: the model says the conversation doesn't mention it                                   | Test (recorded answer)                                                          |
+| A model can as easily fill a gap with a confident guess                                                   | Ch 16 (hallucination)                                                           |
+| The summary kept "Lily" and the answer was right                                                          | Test                                                                            |
+| Retrieval by embedding similarity (MiniLM) picked the cat rhyme, and the answer was right                 | Test; cite `lewis2020`                                                          |
+| The map uses the Ch 5 projection                                                                          | `ContextBudget` projects with `minilm-map.json`'s PCA basis                     |
+| Simple: restates Standard in plainer words, with no new claims                                            | Reviewed against the Standard text                                              |
+| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.49, the others 0.35–0.45           | Test (recomputed from the stored vectors)                                       |
+| In depth: the summary shrank the 149-token first exchange to a 30-token note                              | Test                                                                            |
+| In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it | Test (recorded reply and summary against the rhyme text)                        |
+| Words or meaning: question vectors from `scripts/record/search.py` (same MiniLM revision as the chat)     | Test (first question's vector equals the chat's)                                |
+| BM25 rewards rare words and repeated use, discounts long texts                                            | Cite `robertson2009`                                                            |
+| Embeddings can miss an exact code like "TS-999" that keyword search finds                                 | Cite `anthropic-contextual-retrieval`                                           |
+| Words find Sam, Leo, and the crown, which meaning misses; meaning finds "kitty", in no exchange           | Test (`search.ts` on the recorded vectors)                                      |
+| The crown pulls meaning toward Humpty Dumpty                                                              | Test                                                                            |
+| Merging lists by rank; Anthropic: embeddings plus BM25 missed fewer passages than embeddings alone        | Cite `cormack2009`; cite `anthropic-contextual-retrieval` (Conclusion, point 1) |
+| Merged 4 of 5, words 4, meaning 2; Leo missed (star 1st + 2nd beats Leo's 1st + 3rd)                      | Test                                                                            |
+| In depth: the BM25 formula with k₁ = 1.2, b = 0.75; the +1 inside the idf logarithm                       | Cite `robertson2009`; `bm25` in `harness/search.ts`                             |
+| In depth: reciprocal rank fusion, Σ 1/(k + r) with k = 60; Leo 0.0325 vs 0.0323                           | Cite `cormack2009`; test                                                        |
 
 ## Ch 25. Caching: reusing the work
 

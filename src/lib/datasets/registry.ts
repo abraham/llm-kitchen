@@ -1,6 +1,6 @@
 import canonical from '../../../models/canonical.json';
 import { type Check, array, integer, nullable, object, string } from './check.ts';
-import { agentGrades, agentRun, contextSession } from './parsers/agent.ts';
+import { agentGrades, agentRun, contextSession, searchQuestions } from './parsers/agent.ts';
 import { embeddingMap, embeddingVectors } from './parsers/embeddings.ts';
 import { clip, clipImages, decisionRecording, fillMask } from './parsers/models.ts';
 import {
@@ -87,6 +87,7 @@ export const DATASETS = {
 	'agent/inject-allowlist': dataset('agent/inject-allowlist.json', agentRun, 'agent'),
 	'agent/context': dataset('agent/context.json', contextSession, 'agent'),
 	'agent/grades': dataset('agent/grades.json', agentGrades, 'grading'),
+	'agent/search': dataset('agent/search.json', searchQuestions, 'search'),
 	'caching/kv-cache': dataset('caching/kv-cache.json', kvCacheRun, 'caching'),
 	'injection/lab': dataset('injection/lab.json', injectionLab, 'injection'),
 	'encoders/fill-mask': dataset('encoders/fill-mask.json', fillMask, 'encoder'),
@@ -102,7 +103,7 @@ type After<T, P extends string> = T extends `${P}${infer N}` ? N : never;
 /** Names of the recorded GPT-2 traces, as in `traces/<name>`. */
 export type TraceName = After<DatasetId, 'traces/'>;
 /** Names of the recorded agent runs, as in `agent/<name>` (the context session and grades are other shapes). */
-export type AgentRunName = Exclude<After<DatasetId, 'agent/'>, 'context' | 'grades'>;
+export type AgentRunName = Exclude<After<DatasetId, 'agent/'>, 'context' | 'grades' | 'search'>;
 
 const envelope = object({
 	dataset: string,

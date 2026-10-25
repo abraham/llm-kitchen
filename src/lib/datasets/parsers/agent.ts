@@ -1,5 +1,6 @@
 import type { AgentRun, ContextSession } from '../../harness/agent.ts';
 import type { AgentGrades } from '../../harness/evals.ts';
+import type { SearchQuestions } from '../../harness/search.ts';
 import {
 	type Check,
 	array,
@@ -58,6 +59,11 @@ export const agentGrades: Check<AgentGrades> = object({
 			withReference: grade
 		})
 	)
+});
+
+export const searchQuestions: Check<SearchQuestions> = object({
+	embedder: object({ id: string, revision: string }),
+	questions: array(object({ question: string, about: integer, vector: array(number) }))
 });
 
 const strategy = object({

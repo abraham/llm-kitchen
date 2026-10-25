@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import type { ContextSession } from '#lib/harness/agent.ts';
+import { search } from '#lib/harness/search.ts';
 
 describe('managing the context', () => {
 	const c: ContextSession = readDataset('agent/context');
@@ -57,5 +58,52 @@ describe('managing the context', () => {
 		expect(c.turns[0].answer).toMatch(/cat catches a mouse/);
 		expect(c.turns[0].task).not.toMatch(/mouse/);
 		expect(c.strategies.summarize.summary).toMatch(/mice/);
+	});
+
+	describe('words or meaning', () => {
+		const questions = readDataset('agent/search').questions;
+		const results = questions.map((q) =>
+			search(
+				q,
+				c.turns.map((t) => t.text),
+				c.turns.map((t) => t.vector)
+			)
+		);
+		const right = (key: 'keyword' | 'meaning' | 'both') =>
+			results.filter((r, i) => r[key].order[0] === questions[i].about).length;
+
+		it('words find Sam, Leo, and the crown; meaning finds "kitty", a word in no exchange', () => {
+			const byWords = (i: number) => results[i].keyword.order[0] === questions[i].about;
+			const byMeaning = (i: number) => results[i].meaning.order[0] === questions[i].about;
+			const ask = (text: string) => questions.findIndex((q) => q.question.includes(text));
+			for (const w of ['Sam', 'Leo', 'crown']) {
+				expect(byWords(ask(w)), w).toBe(true);
+				expect(byMeaning(ask(w)), w).toBe(false);
+			}
+			expect(results[ask('kitty')].keyword.order).toEqual([]);
+			expect(byMeaning(ask('kitty'))).toBe(true);
+			expect(c.turns.some((t) => /kitty/i.test(t.text))).toBe(false);
+		});
+
+		it('the crown pulls meaning toward Humpty Dumpty', () => {
+			const crown = results[questions.findIndex((q) => q.question.includes('crown'))];
+			expect(c.turns[crown.meaning.order[0]].text).toContain('Humpty Dumpty');
+		});
+
+		it('merged: 4 of 5; words alone 4; meaning alone 2', () => {
+			expect([right('both'), right('keyword'), right('meaning')]).toEqual([4, 4, 2]);
+		});
+
+		it('Leo: star rhyme 1/62 + 1/61 ≈ 0.0325 beats Leo’s 1/61 + 1/63 ≈ 0.0323', () => {
+			const i = questions.findIndex((q) => q.question.includes('Leo'));
+			const r = results[i];
+			const star = c.turns.findIndex((t) => t.text.includes('Twinkle'));
+			expect(r.both.order[0]).toBe(star);
+			expect(r.keyword.order.indexOf(star)).toBe(1);
+			expect(r.meaning.order.indexOf(questions[i].about)).toBe(2);
+			expect(r.both.scores[star]).toBeCloseTo(1 / 62 + 1 / 61, 10);
+			expect(r.both.scores[star].toFixed(4)).toBe('0.0325');
+			expect(r.both.scores[questions[i].about].toFixed(4)).toBe('0.0323');
+		});
 	});
 });

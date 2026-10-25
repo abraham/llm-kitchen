@@ -28,10 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **The agent decides what to look up.** It chooses when and what to search, and searches again
-  with what it found; and keyword search versus search by meaning, and combining them. In
-  [Managing the context](chapters/managing-the-context.md), which covers picking by similarity
-  only.
 - **Planning.** Making a plan first and then carrying it out, versus deciding step by step. A
   section in [The agent loop](chapters/the-agent-loop.md).
 - **Memory across sessions.** An agent writing notes it reads next time. A section in
