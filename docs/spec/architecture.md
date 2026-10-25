@@ -73,7 +73,7 @@ src/
       parsers/                   one parser per dataset shape (trace, agent run, injection lab, ...)
       registry.ts                every recorded dataset: id, file, parser, script, and version
       load.ts                    fetchDataset (route loads) and loadDataset (browser, cached)
-      use.ts                     provideDatasets, useDataset(s), and all/then for maybe-loaded data
+      use.ts                     provideDatasets, useDataset(s), and all/andThen for maybe-loaded data
       read.ts                    readDataset for tests and Node scripts
     models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers, and the
                                  live models' list and cache (downloads.md)

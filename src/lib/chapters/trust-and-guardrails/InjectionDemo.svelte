@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { all, then, useDataset } from '#lib/datasets/use.ts';
+	import { all, andThen, useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
@@ -17,7 +17,7 @@
 	} as const;
 	type Guard = keyof typeof GUARDS;
 
-	const data = then(
+	const data = andThen(
 		all([
 			useDataset('agent/inject-none'),
 			useDataset('agent/inject-ask'),

@@ -2,10 +2,10 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { canonical } from '#lib/models/provider.ts';
-	import { all, then, useDataset } from '#lib/datasets/use.ts';
+	import { all, andThen, useDataset } from '#lib/datasets/use.ts';
 
 	const LABELS = ['0', '0.7', '1.5'];
-	const runs = then(
+	const runs = andThen(
 		all([
 			useDataset('traces/the-cat-sat-t00'),
 			useDataset('traces/the-cat-sat-t07'),

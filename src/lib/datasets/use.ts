@@ -37,7 +37,10 @@ export function all<const T extends readonly unknown[]>(values: {
 	return values.some(isPromise) ? (Promise.all(values) as Promise<T>) : (values as unknown as T);
 }
 
-/** Like `promise.then`, but stays synchronous when the value is already here. */
-export function then<T, U>(value: MaybePromise<T>, fn: (value: T) => U): MaybePromise<U> {
+/**
+ * Like `promise.then`, but stays synchronous when the value is already here. Not named `then`: a
+ * module exporting `then` is a thenable, and Vite's dev SSR rejects importing it.
+ */
+export function andThen<T, U>(value: MaybePromise<T>, fn: (value: T) => U): MaybePromise<U> {
 	return isPromise(value) ? value.then(fn) : fn(value);
 }
