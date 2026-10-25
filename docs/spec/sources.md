@@ -49,7 +49,7 @@ Each Part cites at least these:
   Middle").
 - **Harnesses:** Lewis et al. 2020 (RAG), Pope et al. 2022 (KV caching), the providers' prompt
   caching docs, Chen et al. 2023 (FrugalGPT, cascades), and Ong et al. 2024 (RouteLLM, routers).
-- **Tools and agents:** Schick et al. 2023 (Toolformer), the Model Context Protocol announcement and
+- **Agents and Safety:** Schick et al. 2023 (Toolformer), the Model Context Protocol announcement and
   specification, Yao et al. 2023 (ReAct), Perez and Ribeiro 2022 and
   Greshake et al. 2023 (prompt injection), and Hines et al. 2024 (spotlighting) and Wallace et al.
   2024 (instruction hierarchy) for the defenses.

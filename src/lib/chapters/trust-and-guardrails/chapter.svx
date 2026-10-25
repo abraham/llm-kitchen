@@ -104,5 +104,5 @@ just limited what being fooled could do.
 </At>
 </RecapCard>
 
-**Next question:** one agent does every step in one prompt that keeps growing. What if it handed
-parts of the job to other agents?
+**Next question:** guardrails keep an agent from doing damage. But one agent or several, how do
+you know the job was done right?

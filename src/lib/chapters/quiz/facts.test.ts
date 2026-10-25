@@ -4,9 +4,9 @@ import { QUESTIONS } from '#lib/chapters/quiz/data.ts';
 import type { Level } from '#lib/levels.ts';
 
 describe('check yourself', () => {
-	it('asks at least one question from every Part I–IX', () => {
+	it('asks at least one question from every Part I–X', () => {
 		const parts = new Set(QUESTIONS.flatMap((q) => q.chapters.map((s) => chapter(s).part.number)));
-		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'])
+		for (const p of ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'])
 			expect(parts).toContain(p);
 	});
 

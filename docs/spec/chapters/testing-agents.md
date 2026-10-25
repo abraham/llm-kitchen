@@ -39,7 +39,7 @@ checks and totals are computed in the browser (`src/lib/harness/evals.ts`).
 - The code checks are the ground truth here because every task has a checkable answer. The text
   says why free-form tasks need a model grader instead.
 - No timing is recorded, so traces show tokens, not seconds; the text mentions time per step.
-- The chapter closes Tools and agents because it replays the runs of the earlier chapters: tools,
+- The chapter closes Safety because it replays the runs of the earlier chapters: tools,
   the loop, and the guardrails' effect on the user's files.
 - [Levels](../levels.md): Simple keeps the trace, the eval, code checks, the grader's mistakes,
   watching real use, and GAIA, without the τ-bench and judge-bias figures. In depth adds how

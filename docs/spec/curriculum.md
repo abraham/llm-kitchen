@@ -109,21 +109,28 @@ _What does the app add around the model?_
 | 26  | Caching: reusing the work    | `caching`                      | 9, 11, 24 |
 | 27  | Which model answers?         | `routing`                      | 2, 12, 23 |
 
-### Part VIII — Tools and agents
+### Part VIII — Agents
 
-_How does a model act, and how do you keep it safe?_
+_How does a model act?_
+
+| Ch  | Title              | Slug                 | Builds on  |
+| --- | ------------------ | -------------------- | ---------- |
+| 28  | Tools              | `tools`              | 21, 23     |
+| 29  | The agent loop     | `the-agent-loop`     | 11, 28     |
+| 30  | Designing an agent | `designing-agents`   | 27, 28, 29 |
+| 31  | Splitting the work | `splitting-the-work` | 24, 29     |
+
+### Part IX — Safety
+
+_How do you keep an agent safe, and know it did the job?_
 
 | Ch  | Title                | Slug                   | Builds on  |
 | --- | -------------------- | ---------------------- | ---------- |
-| 28  | Tools                | `tools`                | 21, 23     |
-| 29  | The agent loop       | `the-agent-loop`       | 11, 28     |
-| 30  | Designing an agent   | `designing-agents`     | 27, 28, 29 |
-| 31  | Prompt injection     | `prompt-injection`     | 20, 22, 28 |
-| 32  | Trust and guardrails | `trust-and-guardrails` | 29, 31     |
-| 33  | Splitting the work   | `splitting-the-work`   | 24, 29, 32 |
-| 34  | Did it work?         | `testing-agents`       | 28, 29, 32 |
+| 32  | Prompt injection     | `prompt-injection`     | 20, 22, 28 |
+| 33  | Trust and guardrails | `trust-and-guardrails` | 29, 32     |
+| 34  | Did it work?         | `testing-agents`       | 28, 29, 33 |
 
-### Part IX — Other kinds of models
+### Part X — Other kinds of models
 
 _What else is built from the same pieces?_
 
@@ -167,19 +174,21 @@ _How does it all fit together?_ Unnumbered Part.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
   template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
   familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
-  (Ch 28). Prompt injection (Ch 31) then reads as prompting by an attacker.
-- **Harnesses before Tools and agents.** What an app adds around one model call, the prompt it
+  (Ch 28). Prompt injection (Ch 32) then reads as prompting by an attacker.
+- **Harnesses before Agents.** What an app adds around one model call, the prompt it
   builds, how it trims and caches it, and which model gets it, needs only a chat. Tools, the agent
-  loop, and the attacks and guardrails that come with them follow as their own Part, because a
-  model that acts raises a different question: how do you keep it safe?
+  loop, and the ways to design one follow as their own Part.
+- **Safety follows Agents.** A model that acts raises a different question:
+  how do you keep it safe, and how do you know it did the job? Attacks, guardrails, and testing all
+  need the loop and the designs from the Part before.
 - **Search and memory follows Managing the context.** It answers that chapter's question about
   retrieval with keyword search and notes kept between chats, which need no tools.
 - **Designing an agent follows the agent loop.** Once the loop is familiar, the chapter compares it
   with workflows, programs the model writes, and plans made up front.
-- **Splitting the work comes late in Tools and agents.** A lead agent and its helpers need the loop,
-  the context limits from Managing the context, and the guardrails, since each helper can be given
-  only the tools its part needs.
-- **Did it work? closes Tools and agents.** Testing an agent replays the runs of the earlier
+- **Splitting the work closes Agents.** A lead agent and its helpers need the loop and the context
+  limits from Managing the context. Its note that a helper can be given only the tools its part
+  needs comes back in Trust and guardrails.
+- **Did it work? closes Safety.** Testing an agent replays the runs of the earlier
   chapters: the tool calls, the loop, and the guardrails' effect on the user's files.
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
   they draw on every earlier Part, including the KV cache (Ch 26) that recurrent models avoid, and
