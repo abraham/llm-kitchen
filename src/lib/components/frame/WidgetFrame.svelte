@@ -95,6 +95,17 @@
 		max-width: 100%;
 	}
 
+	@media (max-width: 40rem) {
+		.title {
+			order: 1;
+			flex-basis: 100%;
+		}
+
+		.meta {
+			margin-inline-start: auto;
+		}
+	}
+
 	.body {
 		padding: var(--space-4);
 		overflow-x: auto;
