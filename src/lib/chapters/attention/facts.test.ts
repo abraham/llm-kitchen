@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import canonical from '../../../../models/canonical.json';
-import { attend } from '#lib/math/attention.ts';
+import { attend, maskFuture, softmaxRows } from '#lib/math/attention.ts';
+import { readDataset } from '#lib/datasets/read.ts';
 import { parameterBreakdown } from '#lib/math/transformer.ts';
 
 describe('attention', () => {
@@ -68,5 +69,37 @@ describe('attention', () => {
 			expect(score(7, 3)).toBeCloseTo(score(104, 100), 10);
 			expect(score(7, 3)).not.toBeCloseTo(score(7, 5), 3);
 		}
+	});
+
+	describe('one head, step by step', () => {
+		const d = readDataset('attention/ioi-scores');
+		const tokens = d.tokens.map((t) => t.text);
+		const n = tokens.length;
+		const scores = d.scores[9][9];
+		const weights = softmaxRows(maskFuture(scores));
+		const last = n - 1;
+
+		it('the mask hides 91 of the 196 squares', () => {
+			expect(n).toBe(14);
+			const hidden = maskFuture(scores)
+				.flat()
+				.filter((s) => s === null).length;
+			expect([hidden, n * n]).toEqual([91, 196]);
+		});
+
+		it('head 9.9: Mary 4.25 vs John 3.23 becomes 36% vs 13%; When 4.24 and 36%', () => {
+			expect(tokens.slice(0, 4)).toEqual(['When', ' Mary', ' and', ' John']);
+			expect([scores[last][1], scores[last][3], scores[last][0]]).toEqual([4.25, 3.23, 4.24]);
+			expect(
+				[weights[last][1], weights[last][3], weights[last][0]].map((w) => Math.round(w * 100))
+			).toEqual([36, 13, 36]);
+		});
+
+		it('in depth: a gap of Δ in score is a ratio of e^Δ in weight: 2.8, and 36% is about 2.8 × 13%', () => {
+			const ratio = weights[last][1] / weights[last][3];
+			expect(ratio).toBeCloseTo(Math.exp(4.25 - 3.23), 10);
+			expect(Math.exp(4.25 - 3.23).toFixed(1)).toBe('2.8');
+			expect((36 / 13).toFixed(1)).toBe('2.8');
+		});
 	});
 });

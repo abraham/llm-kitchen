@@ -2,7 +2,34 @@ import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import { DATASETS, type TraceName } from '#lib/datasets/registry.ts';
 import canonical from '../../../models/canonical.json';
-import { TOY_ATTENTION, attend } from './attention.ts';
+import { TOY_ATTENTION, attend, maskFuture, softmaxRows } from './attention.ts';
+
+describe('recorded scores', () => {
+	const d = readDataset('attention/ioi-scores');
+	const w = readDataset('traces/attn-ioi').attention!;
+
+	it('are for the same tokens as the recorded weights, every pair, every head', () => {
+		expect(d.tokens).toEqual(w.tokens);
+		expect(d.headSize).toBe(canonical.embeddingSize / canonical.heads);
+		expect(d.scores).toHaveLength(canonical.layers);
+		for (const layer of d.scores) {
+			expect(layer).toHaveLength(canonical.heads);
+			for (const head of layer) for (const row of head) expect(row).toHaveLength(d.tokens.length);
+		}
+	});
+
+	it('masked and softmaxed give back GPT-2’s own weights', () => {
+		let worst = 0;
+		d.scores.forEach((layer, l) =>
+			layer.forEach((head, h) =>
+				softmaxRows(maskFuture(head)).forEach((row, q) =>
+					row.forEach((p, k) => (worst = Math.max(worst, Math.abs(p - w.weights[l][h][q][k]))))
+				)
+			)
+		);
+		expect(worst).toBeLessThan(0.005);
+	});
+});
 
 describe('attend', () => {
 	const r = attend(TOY_ATTENTION);

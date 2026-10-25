@@ -16,7 +16,7 @@ ASSISTANT = json.loads((ROOT / "models" / "assistant.json").read_text())
 # Every model the site runs live, each with its pinned ONNX files.
 LIVE = (CANONICAL, EMBEDDER, ENCODER, CLIP, ASSISTANT)
 # Datasets recorded from the canonical model live in a folder per model, so a switch keeps both.
-PER_MODEL = ("traces", "vectors", "quantize", "speculative")
+PER_MODEL = ("traces", "vectors", "quantize", "speculative", "attention")
 # Where write_dataset writes; `check` points it at a temporary folder.
 OUTPUT = DATA
 

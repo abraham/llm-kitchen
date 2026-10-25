@@ -13,6 +13,7 @@ import sys
 
 MODULES = [
     "traces",
+    "attention",
     "embeddings",
     "quantize",
     "speculative",

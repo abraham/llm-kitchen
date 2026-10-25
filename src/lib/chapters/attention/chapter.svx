@@ -5,6 +5,7 @@
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import AttentionViewer from './AttentionViewer.svelte';
+	import AttentionGrid from './AttentionGrid.svelte';
 	import QKVExplainer from './QKVExplainer.svelte';
 </script>
 
@@ -197,6 +198,50 @@ also see lots of heads putting most of their attention on the very first word. I
 from the fourth word on, that happens more than half the time. Researchers think it's a resting
 spot: softmax always has to share out 100%, so a head with nothing useful to find parks its
 attention there.<Cite id="xiao2024" />
+
+</At>
+
+<At levels="simple">
+
+Here is one head in full, for the sentence about Mary and John. Each row is a word looking back,
+each column a word it could look at. Step through what the head works out: a score for every pair,
+then the mask that hides every later word, then softmax, which turns each row into percentages.
+The buttons page through all 144 heads.
+
+</At>
+<At levels="standard deep">
+
+Here is one head in full, for the sentence about Mary and John: every row is a word doing the
+looking, every column a word it could look at. Step through the formula from the queries and keys
+above: first the score for every pair, then the mask, then softmax along each row. Page through all
+144 heads with the buttons.
+
+</At>
+
+<AttentionGrid />
+
+<At levels="simple">
+
+The head works out a score for every pair, even for words that come later; the mask then throws
+those away, 91 of the 196 squares. For head 9.9, the last word's scores for "Mary" and "John" are
+close, 4.25 and 3.23, yet after softmax "Mary" gets 36% and "John" 13%. Softmax turns a small lead
+in score into a big lead in weight.
+
+</At>
+<At levels="standard deep">
+
+The scores exist for every pair, later words included: the head computes them all at once, and the
+mask throws away the 91 of 196 that look ahead before softmax sees them. For head 9.9, the last
+word's scores for "Mary" and the first "John" differ by about 1 (4.25 against 3.23), yet after
+softmax "Mary" gets 36% and that "John" 13%. Softmax turns small gaps in score into large gaps in
+weight. "When" scores 4.24 and also gets 36%: the resting spot described above.
+
+</At>
+<At levels="deep">
+
+Since a weight is $e^{s}$ divided by the row's total, two scores that differ by $\Delta$ get
+weights in the ratio $e^{\Delta}$, whatever the rest of the row holds: $e^{4.25 - 3.23} \approx 2.8$,
+and 36% is about 2.8 times 13%.
 
 </At>
 

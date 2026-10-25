@@ -25,7 +25,7 @@ import {
 	routingRecording,
 	speculativeRecording
 } from './parsers/runs.ts';
-import { tokenVectors, trace } from './parsers/trace.ts';
+import { attentionScores, tokenVectors, trace } from './parsers/trace.ts';
 
 export interface Dataset<T> {
 	/** Path under `static/data/`. */
@@ -68,6 +68,7 @@ export const DATASETS = {
 	'traces/quirk-moon': traceFile('quirk-moon'),
 	'traces/quirk-painter': traceFile('quirk-painter'),
 	'vectors/the-cat-sat': perModel('vectors', 'the-cat-sat', tokenVectors, 'traces'),
+	'attention/ioi-scores': perModel('attention', 'ioi-scores', attentionScores, 'attention'),
 	'embeddings/minilm-map': dataset('embeddings/minilm-map.json', embeddingMap, 'embeddings'),
 	'embeddings/minilm-vectors': dataset(
 		'embeddings/minilm-vectors.json',
