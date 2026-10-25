@@ -32,3 +32,29 @@ for (const reducedMotion of ['no-preference', 'reduce'] as const) {
 		await expect(widget.getByText('Step 1 of 12')).toBeVisible();
 	});
 }
+
+test('a figure further down animates in when it is scrolled into view', async ({ page }) => {
+	await gotoHydrated(page, '/scale');
+	const figure = page
+		.getByRole('region', { name: 'The scaling curve' })
+		.locator('svg[role="img"]')
+		.first();
+	await expect(figure).toHaveAttribute('data-entering');
+	await figure.scrollIntoViewIfNeeded();
+	await expect(figure).not.toHaveAttribute('data-entering');
+	expect(
+		await figure.evaluate((svg) => svg.getAnimations({ subtree: true }).length)
+	).toBeGreaterThan(0);
+});
+
+test('with reduced motion, figures show at once', async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: 'reduce' });
+	await gotoHydrated(page, '/scale');
+	const figure = page
+		.getByRole('region', { name: 'The scaling curve' })
+		.locator('svg[role="img"]')
+		.first();
+	await expect(figure).not.toHaveAttribute('data-entering');
+	await figure.scrollIntoViewIfNeeded();
+	expect(await figure.evaluate((svg) => svg.getAnimations({ subtree: true }).length)).toBe(0);
+});

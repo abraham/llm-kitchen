@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { entrance } from '../ui/entrance.ts';
 	import { displayToken, formatPercent } from './format.ts';
 
 	let {
@@ -38,6 +39,7 @@
 		width={W}
 		height={H}
 		viewBox="0 0 {W} {H}"
+		{@attach entrance()}
 		role="img"
 		aria-label="Attention from “{tokens[query].trim()}”: {top
 			.map((t) => `${tokens[t.k].trim()} ${formatPercent(t.w)}`)

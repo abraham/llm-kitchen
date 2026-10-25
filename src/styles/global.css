@@ -164,6 +164,17 @@ math[display='block'] {
 	overflow-x: auto;
 }
 
+/* A figure waiting to animate in when it's scrolled to (components/ui/entrance.ts). */
+[data-entering] {
+	opacity: 0;
+}
+
+@media print {
+	[data-entering] {
+		opacity: 1;
+	}
+}
+
 .visually-hidden {
 	position: absolute;
 	width: 1px;

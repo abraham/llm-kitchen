@@ -28,7 +28,7 @@
 		for (let e = Math.log10(from); e <= Math.log10(to) + 1e-9; e += 0.05) {
 			pts.push(`${sx(10 ** e).toFixed(1)},${sy(kaplanLoss(10 ** e)).toFixed(1)}`);
 		}
-		return `M${pts.join('L')}`;
+		return pts.length ? `M${pts.join('L')}` : '';
 	};
 	const superscript = (n: number) =>
 		`10${String(Math.round(Math.log10(n))).replace(/\d/g, (d) => '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(d)])}`;

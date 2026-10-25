@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+	import { entrance } from '../ui/entrance.ts';
 	import { displayToken, formatPercent } from './format.ts';
 
 	let {
@@ -23,7 +24,7 @@
 	const scale = $derived(scaleTo === 'one' ? 1 : Math.max(...bars.map((b) => b.p), 1e-9));
 </script>
 
-<table class="prob-bars">
+<table class="prob-bars" {@attach entrance()}>
 	<caption class="visually-hidden">{caption}</caption>
 	<thead class="visually-hidden">
 		<tr><th scope="col">Next token</th><th scope="col">Probability</th></tr>
@@ -35,9 +36,9 @@
 				<td>
 					<span class="cell">
 						<span class="track" aria-hidden="true">
-							<span class="bar" style:width="{(bar.p / scale) * 100}%"></span>
+							<span class="bar" data-enter="grow" style:width="{(bar.p / scale) * 100}%"></span>
 						</span>
-						<span class="value">{formatPercent(bar.p)}</span>
+						<span class="value" data-enter="fade">{formatPercent(bar.p)}</span>
 					</span>
 				</td>
 			</tr>

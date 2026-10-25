@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { entrance } from '../ui/entrance.ts';
+
 	let {
 		values,
 		cells = 48,
@@ -20,6 +22,7 @@
 
 <span
 	class="strip"
+	{@attach entrance()}
 	role="img"
 	aria-label="{label}: a list of {values.length} numbers, starting {shown
 		.slice(0, 4)
@@ -29,6 +32,7 @@
 	{#each shown as v, i (i)}
 		<span
 			class="cell"
+			data-enter="fade"
 			class:negative={v < 0}
 			style:--strength={Math.round(Math.min(Math.abs(v) / scale, 1) * 100)}
 			title="#{i + 1}: {fmt(v)}"

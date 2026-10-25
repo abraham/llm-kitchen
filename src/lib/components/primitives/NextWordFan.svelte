@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Figure from '../ui/Figure.svelte';
 	import { displayToken, formatPercent } from './format.ts';
 
@@ -27,17 +26,12 @@
 	const narrow = $derived(W < full);
 	const fromX = $derived(narrow ? 4 : promptWidth + 8);
 	const toX = $derived(narrow ? Math.max(fromX + 60, W - LABELS + 20) : fromX + 170);
-
-	let drawn = $state(false);
-	onMount(() => {
-		requestAnimationFrame(() => (drawn = true));
-	});
 </script>
 
 {#if narrow}
 	<p class="prompt-line" aria-hidden="true">{prompt} <span class="blank">___</span></p>
 {/if}
-<div class="fan" class:drawn>
+<div class="fan">
 	<Figure
 		max={full}
 		bind:width={W}
@@ -53,11 +47,9 @@
 			{@const isHighlight = highlight !== undefined && option.label === highlight}
 			<path
 				d="M {fromX} {height / 2} C {fromX + 80} {height / 2}, {toX - 80} {y}, {toX} {y}"
-				pathLength="1"
 				class="line"
 				class:highlight={isHighlight}
 				style:stroke-width={1 + (option.p / max) * 12}
-				style:transition-delay="{i * 60}ms"
 			/>
 			<text x={toX + 8} {y} class="label" class:highlight={isHighlight}>
 				{displayToken(option.label)}
@@ -100,13 +92,6 @@
 		stroke: var(--c-prob);
 		stroke-opacity: 0.7;
 		stroke-linecap: round;
-		stroke-dasharray: 1;
-		stroke-dashoffset: 1;
-		transition: stroke-dashoffset calc(var(--duration) * 2) var(--ease);
-	}
-
-	.drawn .line {
-		stroke-dashoffset: 0;
 	}
 
 	.line.highlight {

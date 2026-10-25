@@ -9,7 +9,8 @@ export default defineConfig({
 	testDir: 'tests/visual',
 	testMatch: '**/*.visual.ts',
 	reporter: 'list',
-	use: { baseURL: 'http://localhost:4173' },
+	// Reduced motion: figures show their final drawing at once instead of animating in on scroll.
+	use: { baseURL: 'http://localhost:4173', reducedMotion: 'reduce' },
 	expect: { toHaveScreenshot: { maxDiffPixelRatio: 0.001, animations: 'disabled' } },
 	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 	webServer: {
