@@ -83,8 +83,9 @@ Controls and containers come from `src/lib/components/ui/` (`Choice`, `Slider`, 
 `ScrollBox`, `Status`), so a picker or a slider looks and behaves the same in every widget. See
 [components.md](components.md).
 
-Transitions between representations use shared-element morphs (Svelte `crossfade` with shared keys,
-plus `flip` for reordering), for example a token chip becoming a vector strip.
+Transitions between representations use shared-element morphs: `TokenToVector` turns each token
+chip into its vector row with Svelte's `crossfade` and shared keys. [visualizations.md](visualizations.md)
+has how figures draw and move.
 
 ## Motion
 
