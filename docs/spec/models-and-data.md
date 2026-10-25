@@ -16,7 +16,10 @@ Some widgets compute their data in the browser instead (bigram counts, BPE merge
 the toy router and diffusion model, and the toy Decision Transformer, which runs weights trained by
 `record/decisions.py`). Their badge says so.
 
-Larger live tiers (a WebGPU chat model and bring-your-own-key APIs) aren't built; see
+The Large tier adds Qwen2.5-0.5B-Instruct (4-bit, 793 MB) for the chat widgets, in [From predictor to assistant](chapters/predictor-to-assistant.md),
+[Instructions, roles, and the system prompt](chapters/instructions-and-roles.md),
+[Learning from examples in the prompt](chapters/few-shot.md), and [Tools](chapters/tools.md)
+([downloads.md](downloads.md#tiers)). Bring-your-own-key APIs aren't built; see
 [roadmap.md](roadmap.md).
 
 ## The canonical small model

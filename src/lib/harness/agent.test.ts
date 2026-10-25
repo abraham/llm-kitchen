@@ -1,8 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import { DATASETS, type AgentRunName } from '#lib/datasets/registry.ts';
-import { segmentPrompt } from './agent.ts';
-import { FakeFiles, calculator, countWords, runTool, simpleCall } from './tools.ts';
+import { parseToolCall, segmentPrompt } from './agent.ts';
+import {
+	CALCULATOR_SCHEMA,
+	FakeFiles,
+	calculator,
+	countWords,
+	runTool,
+	simpleCall
+} from './tools.ts';
 
 const runs = Object.keys(DATASETS)
 	.filter((id) => id.startsWith('agent/') && id !== 'agent/context')
@@ -77,5 +84,32 @@ describe('segmentPrompt', () => {
 		expect(second.some((p) => p.kind === 'call')).toBe(true);
 		expect(second.some((p) => p.kind === 'result')).toBe(true);
 		expect(second.filter((p) => p.kind === 'message').map((p) => p.text)).toEqual([chat.task]);
+	});
+});
+
+describe('parseToolCall', () => {
+	it('reads every recorded step as the recording harness did', () => {
+		for (const { name, run } of runs) {
+			for (const step of run.steps) {
+				const parsed = parseToolCall(step.output);
+				expect(parsed.thought, name).toBe(step.thought);
+				expect(parsed.call, name).toEqual(step.call);
+			}
+		}
+	});
+
+	it('treats a broken call as no call', () => {
+		expect(parseToolCall('<tool_call>\n{"name": calc}\n</tool_call>').call).toBeUndefined();
+		expect(parseToolCall('<tool_call>{"arguments": {}}</tool_call>').call).toBeUndefined();
+		expect(parseToolCall('Sure. <tool_call>{"name": "calculator"}</tool_call>')).toEqual({
+			thought: 'Sure.',
+			call: { name: 'calculator', arguments: {} }
+		});
+	});
+
+	it('lists the calculator to the model as the recorded runs did', () => {
+		const recorded = readDataset('agent/math-tools').tools[0];
+		expect(CALCULATOR_SCHEMA.function.name).toBe(recorded.name);
+		expect(CALCULATOR_SCHEMA.function.description).toBe(recorded.description);
 	});
 });

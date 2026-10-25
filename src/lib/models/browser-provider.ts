@@ -1,6 +1,6 @@
 import type { DataSource } from '#lib/components/frame/data-source.ts';
 import { applyTemperature, sampleIndex } from '#lib/math/sampling.ts';
-import type { BrowserModel } from './browser-model.svelte.ts';
+import type { BrowserModel, GenerateInput, Generated } from './browser-model.svelte.ts';
 import {
 	NotAvailableError,
 	canonical,
@@ -10,6 +10,7 @@ import {
 	type ModelProvider,
 	type NextTokenDistribution,
 	type ProviderInput,
+	type ReplyOptions,
 	type Token
 } from './provider.ts';
 import { tokenize, tokensFor, type TokenizerName } from './tokenizers.ts';
@@ -77,5 +78,19 @@ export class BrowserProvider implements ModelProvider {
 	async fillMask(text: string, { topK = 10 }: { topK?: number } = {}): Promise<Candidate[]> {
 		const top = await this.model.fillMask(text, topK);
 		return top.map((t) => ({ token: { id: t.id, text: t.text }, prob: t.prob }));
+	}
+
+	async reply(input: GenerateInput, options: ReplyOptions): Promise<Generated> {
+		return this.model.generate(input, options.maxTokens, options.ontext);
+	}
+
+	async score(prompt: string, answer: string): Promise<number> {
+		if (!this.tokenizer) return this.model.score(prompt, answer);
+		// Each part on its own, as the recordings tokenize them.
+		const [p, a] = await Promise.all([this.tokenize(prompt), this.tokenize(answer)]);
+		return this.model.score(
+			p.map((t) => t.id),
+			a.map((t) => t.id)
+		);
 	}
 }

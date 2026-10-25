@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { isSlug } from '#lib/curriculum/index.ts';
+import assistant from '../../../models/assistant.json';
 import canonical from '../../../models/canonical.json';
 import clip from '../../../models/clip.json';
 import embedder from '../../../models/embedder.json';
 import encoder from '../../../models/encoder.json';
 import {
+	ASSISTANT_LIVE,
 	BERT_LIVE,
 	CANONICAL_LIVE,
 	CLIP_TEXT,
@@ -20,7 +22,8 @@ describe('downloads', () => {
 			[CANONICAL_LIVE, canonical],
 			[MINILM, embedder],
 			[BERT_LIVE, encoder],
-			[CLIP_TEXT, clip]
+			[CLIP_TEXT, clip],
+			[ASSISTANT_LIVE, assistant]
 		] as const;
 		expect(DOWNLOADS).toEqual(pairs.map(([model]) => model));
 		for (const [model, config] of pairs) {
@@ -32,6 +35,8 @@ describe('downloads', () => {
 		}
 		expect(CLIP_TEXT.file).toBe('text_model');
 		expect(CLIP_TEXT.dtype).toBe(clip.onnxDtype);
+		expect(ASSISTANT_LIVE.dtype).toBe(assistant.onnxDtype);
+		expect(Object.keys(ASSISTANT_LIVE.onnxFiles)).toContain('onnx/model_q4.onnx');
 		expect(Object.keys(CLIP_TEXT.onnxFiles)).toContain('onnx/text_model_q4.onnx');
 		expect(Object.keys(CLIP_TEXT.onnxFiles)).not.toContain('onnx/vision_model_quantized.onnx');
 	});

@@ -23,25 +23,30 @@ live model follows, [workers.md](workers.md#the-inference-worker) the worker tha
 
 ## What can be downloaded
 
-| Model                           | Does                                                      | Size   | Files                                                                          | Used in                                                                                                                                                                                                                                                                                                                                  |
-| ------------------------------- | --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GPT-2 small (8-bit)             | Predicts the next token                                   | 128 MB | `Xenova/gpt2` at its pinned commit                                             | [The guessing game](chapters/guessing-game.md), [Probability and sampling](chapters/probability-and-sampling.md), [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md), [Reading both ways](chapters/encoders.md) |
-| all-MiniLM-L6-v2                | Turns a sentence into a point                             | 24 MB  | `Xenova/all-MiniLM-L6-v2` at its pinned commit                                 | [Meaning as position](chapters/embeddings.md)                                                                                                                                                                                                                                                                                            |
-| BERT base (8-bit)               | Fills in a blank, reading both sides                      | 112 MB | `Xenova/bert-base-uncased` at its pinned commit                                | [Reading both ways](chapters/encoders.md)                                                                                                                                                                                                                                                                                                |
-| CLIP ViT-B/32 text half (4-bit) | Turns a caption into a point it can compare with pictures | 128 MB | `Xenova/clip-vit-base-patch32`'s text model and tokenizer at its pinned commit | [Seeing pictures](chapters/seeing-pictures.md)                                                                                                                                                                                                                                                                                           |
-| ONNX Runtime (shared)           | Runs every model                                          | 27 MB  | The site's own hashed assets                                                   | Every live widget                                                                                                                                                                                                                                                                                                                        |
+| Model                           | Does                                                         | Size   | Files                                                                          | Used in                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------- | ------------------------------------------------------------ | ------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GPT-2 small (8-bit)             | Predicts the next token                                      | 128 MB | `Xenova/gpt2` at its pinned commit                                             | [The guessing game](chapters/guessing-game.md), [Probability and sampling](chapters/probability-and-sampling.md), [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md), [Reading both ways](chapters/encoders.md) |
+| all-MiniLM-L6-v2                | Turns a sentence into a point                                | 24 MB  | `Xenova/all-MiniLM-L6-v2` at its pinned commit                                 | [Meaning as position](chapters/embeddings.md)                                                                                                                                                                                                                                                                                            |
+| BERT base (8-bit)               | Fills in a blank, reading both sides                         | 112 MB | `Xenova/bert-base-uncased` at its pinned commit                                | [Reading both ways](chapters/encoders.md)                                                                                                                                                                                                                                                                                                |
+| CLIP ViT-B/32 text half (4-bit) | Turns a caption into a point it can compare with pictures    | 128 MB | `Xenova/clip-vit-base-patch32`'s text model and tokenizer at its pinned commit | [Seeing pictures](chapters/seeing-pictures.md)                                                                                                                                                                                                                                                                                           |
+| Qwen2.5-0.5B-Instruct (4-bit)   | Chats in its template, follows instructions, and calls tools | 793 MB | `onnx-community/Qwen2.5-0.5B-Instruct` at its pinned commit                    | [From predictor to assistant](chapters/predictor-to-assistant.md), [Instructions, roles, and the system prompt](chapters/instructions-and-roles.md), [Learning from examples in the prompt](chapters/few-shot.md), [Tools](chapters/tools.md)                                                                                            |
+| ONNX Runtime (shared)           | Runs every model                                             | 27 MB  | The site's own hashed assets                                                   | Every live widget                                                                                                                                                                                                                                                                                                                        |
 
 - `src/lib/models/downloads.ts` exports `DOWNLOADS`, one entry per model, built from
-  `models/canonical.json`, `embedder.json`, `encoder.json`, and `clip.json`: id, display name, what
-  it does, the kind of task it runs, the original model (`huggingFaceId`), the ONNX repository
-  (`onnxId`), the pinned commit (`onnxRevision`), the file list with SHA-256s (`onnxFiles`), the
-  size (`onnxMB`), and the slugs of the chapters that use it.
-- `CANONICAL_LIVE`, `MINILM`, `BERT_LIVE`, and `CLIP_TEXT` are entries of `DOWNLOADS`, so a tier
-  and the Models page can't disagree about a model. A new live model gets a config in `models/`,
-  an entry in `DOWNLOADS`, and a place in a tier; `record check live` covers every config.
+  `models/canonical.json`, `embedder.json`, `encoder.json`, `clip.json`, and `assistant.json`: id,
+  display name, what it does, the kind of task it runs, the original model (`huggingFaceId`), the
+  ONNX repository (`onnxId`), the pinned commit (`onnxRevision`), the file list with SHA-256s
+  (`onnxFiles`), the size (`onnxMB`), and the slugs of the chapters that use it.
+- `CANONICAL_LIVE`, `MINILM`, `BERT_LIVE`, `CLIP_TEXT`, and `ASSISTANT_LIVE` are entries of
+  `DOWNLOADS`, so a tier and the Models page can't disagree about a model. A new live model gets a
+  config in `models/`, an entry in `DOWNLOADS`, and a place in a tier; `record check live` covers
+  every config.
 - CLIP downloads only its text half, with 4-bit weights (`onnx/text_model_q4.onnx`, `dtype` in its
-  config): the 8-bit file loses colors, so "a crimson star" matched a green one. Every other model
-  is 8-bit. Its recording,
+  config): the 8-bit file loses colors, so "a crimson star" matched a green one. Qwen2.5-0.5B-Instruct has 4-bit
+  weights and 32-bit activations (`q4`, one file of about 790 MB) and runs on WebGPU, or on the
+  processor where there's none. The 1.5B model the recordings use doesn't work in the browser: its
+  16-bit-activation export (`q4f16`) writes only "!!!!" on WebGPU (0.5B's writes nonsense too), and
+  its 1.8 GB `q4` file runs out of memory as it loads. Every other model is 8-bit. CLIP's recording,
   `vision/clip-images`, has each picture's unit-length image embedding and CLIP's logit scale, so
   a caption typed in the browser is matched against the pictures without the vision half; it loads
   only when the widget runs live.
@@ -58,7 +63,9 @@ some kinds of task (`Capability`), each with one model from `DOWNLOADS`.
 | ---------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------ |
 | **Recorded** (default) | Every widget, recorded                           | None                                                                       | 0                              |
 | **Small**              | `next-token`, `embed`, `fill-mask`, `image-text` | GPT-2 small (8-bit), all-MiniLM-L6-v2, BERT base (8-bit), CLIP's text half | About 419 MB, with the runtime |
+| **Large**              | Small's, plus `chat`                             | Small's models, plus Qwen2.5-0.5B-Instruct (4-bit)                         | About 1.2 GB, with the runtime |
 
+- Large is a superset of Small, so a visitor on Large never needs Small too.
 - `tierModels(tier)` lists a tier's models once each, and `tierMB(tier)` adds their sizes and the
   runtime once.
 - `stores/model-tier.svelte.ts` (`modelTier`) holds the choice, saved as `llm-kitchen:models` in
@@ -113,15 +120,20 @@ and `provider` (or `providerFor(capability)`), a `BrowserProvider` while the wid
 ready, `useProvider` starts the models in the inference worker; the choice on the Models page is
 the click that allows it. A widget with several tasks is live only when all of its models are.
 
-| Widget                                                                                                                   | Tasks                     | Live input                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------ | ------------------------- | -------------------------------------------------------------------------------------- |
-| `GuessTheWord` ([The guessing game](chapters/guessing-game.md))                                                          | `next-token`              | The start of a sentence, whose next word the visitor guesses                           |
-| `RecordedRuns` ([Probability and sampling](chapters/probability-and-sampling.md))                                        | `next-token`              | A beginning, continued at temperatures 0, 0.7, and 1.5 side by side, a token at a time |
-| `EmbeddingMap` ([Meaning as position](chapters/embeddings.md))                                                           | `embed`                   | A word, placed on the map                                                              |
-| `GlassBoxGenerator` ([Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md)) | `next-token`              | A beginning, and any token picked, at any temperature                                  |
-| `PromptVariants` ([A prompt is the start of a document](chapters/prompts-as-documents.md))                               | `next-token`              | A prompt                                                                               |
-| `FillTheBlank` ([Reading both ways](chapters/encoders.md))                                                               | `fill-mask`, `next-token` | A sentence with one `___`: BERT fills it, GPT-2 continues the words before it          |
-| `PictureMatch` ([Seeing pictures](chapters/seeing-pictures.md))                                                          | `image-text`              | A caption, matched against the 12 pictures                                             |
+| Widget                                                                                                                   | Tasks                     | Live input                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------- |
+| `GuessTheWord` ([The guessing game](chapters/guessing-game.md))                                                          | `next-token`              | The start of a sentence, whose next word the visitor guesses                                    |
+| `RecordedRuns` ([Probability and sampling](chapters/probability-and-sampling.md))                                        | `next-token`              | A beginning, continued at temperatures 0, 0.7, and 1.5 side by side, a token at a time          |
+| `EmbeddingMap` ([Meaning as position](chapters/embeddings.md))                                                           | `embed`                   | A word, placed on the map                                                                       |
+| `GlassBoxGenerator` ([Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md)) | `next-token`              | A beginning, and any token picked, at any temperature                                           |
+| `PromptVariants` ([A prompt is the start of a document](chapters/prompts-as-documents.md))                               | `next-token`              | A prompt                                                                                        |
+| `FillTheBlank` ([Reading both ways](chapters/encoders.md))                                                               | `fill-mask`, `next-token` | A sentence with one `___`: BERT fills it, GPT-2 continues the words before it                   |
+| `PictureMatch` ([Seeing pictures](chapters/seeing-pictures.md))                                                          | `image-text`              | A caption, matched against the 12 pictures                                                      |
+| `ChatTemplate` ([From predictor to assistant](chapters/predictor-to-assistant.md))                                       | `chat`                    | The chat already in the widget, sent to Qwen; its reply is written after the cursor             |
+| `BaseVsInstruct` ([From predictor to assistant](chapters/predictor-to-assistant.md))                                     | `next-token`, `chat`      | A prompt for GPT-2, and Qwen with and without its template; the base Qwen column stays recorded |
+| `SystemPrompts` ([Instructions, roles, and the system prompt](chapters/instructions-and-roles.md))                       | `chat`                    | A system prompt of the visitor's own; the sums table is asked again live                        |
+| `FewShot` ([Learning from examples in the prompt](chapters/few-shot.md))                                                 | `chat`, `next-token`      | A word and its right answer, a new row the models score                                         |
+| `ToolsDemo` ([Tools](chapters/tools.md))                                                                                 | `chat`                    | A sum, answered without tools and then through the harness with the calculator                  |
 
 Live, a widget asks the model for everything it shows, the recorded inputs too, so the numbers
 change as soon as it goes live.
@@ -143,6 +155,16 @@ change as soon as it goes live.
   with the Recorded badge; off (the default), it runs live. It's per widget and per page view, not
   saved.
 - **Live input.** The fields in the table above show only while the widget runs live.
+- **Chat.** The live model is Qwen2.5-0.5B-Instruct, while most recordings are 1.5B's, so live
+  replies are weaker than the text's. Qwen replies greedily, as the recordings did, so asking again
+  gives the same reply. The
+  reply streams in as it's written. Scores (`FewShot`) are the chance of every token of the right
+  answer after the prompt, as `record/prompts.py` computes them. `ToolsDemo` runs the recording's
+  harness once: Qwen gets the calculator's schema in its template, the page reads its
+  `<tool_call>` (`parseToolCall` in `harness/agent.ts`, the same rule as `record/agent.py`), runs
+  the toy calculator, and gives Qwen the result. Live tools are only the in-browser toys.
+- `ChatTemplate` is computed, not recorded, so under Recorded and until it's live its badge stays
+  "Computed in your browser"; its `TierStatus` line still shows the tier's state.
 
 ## The Models page
 
@@ -150,8 +172,9 @@ change as soon as it goes live.
   isn't a chapter: it has no number, isn't in the curriculum, and has no levels. A static route wins
   over `[chapter]`, and a unit test checks no chapter slug is `downloads`.
 - **App bar link:** a Models link before the theme toggle on every page. Its icon shows the chosen
-  tier (a filled dot for Recorded, a chip for Small); its accessible name and tooltip are "Models:
-  Recorded" (or Small), with ", downloading N%" or ", download failed" added while that's so; and
+  tier (a filled dot for Recorded, a chip for Small, a stack of chips for Large); its accessible
+  name and tooltip are "Models: Recorded" (or Small, or Large), with ", downloading N%" or
+  ", download failed" added while that's so; and
   it has `aria-current="page"` on the Models page. While the tier downloads, a thin progress ring
   circles the icon, and after a failure a small warning mark sits on its corner; neither changes the
   link's size. It's a link, not a button or menu, so it works without JavaScript and opens in a new
@@ -159,8 +182,8 @@ change as soon as it goes live.
 - **Heading and intro:** "Models" (the page title is "Models and downloads"), then a short
   paragraph: widgets replay recorded runs; choosing a tier runs real models in your browser instead,
   downloaded from Hugging Face and kept until you remove them or the browser clears space.
-- **The choice:** a `Choice` of radios, "Show recordings (default)" and "Small: about 419 MB",
-  each with a line on what it covers. Under it, the tier's state: "Checking…", a progress bar with
+- **The choice:** a `Choice` of radios, "Show recordings (default)", "Small: about 419 MB", and
+  "Large: about 1.2 GB", each with a line on what it covers. Under it, the tier's state: "Checking…", a progress bar with
   MB done of the tier's total, the error with "Try again", or "The Small tier is ready: the widgets
   it covers run live."
 - **One card per model** (a `section` labelled by its name), grouped under a heading for the first
@@ -222,6 +245,11 @@ change as soon as it goes live.
   earlier builds wrote to, so the same model isn't stored twice.
 - **Eviction:** the site doesn't ask for persistent storage. Under storage pressure the browser may
   clear the cache; the model then shows as `missing` and downloads again when asked.
+- **Private windows:** Chrome keeps a private window's cache in memory, and `cache.put` can refuse a
+  big file with `UnknownError` (it refused a 1.2 GB one), though `storage.estimate()` reports room. The
+  worker turns that into "This browser couldn't store … ; a private window may not have room for
+  it", so the Large tier fails with a reason; a hash mismatch fails as `NetworkError` and keeps
+  its own message.
 
 ## Security
 
@@ -240,8 +268,11 @@ change as soon as it goes live.
   - every chapter slug in `DOWNLOADS` exists, and none is `downloads`;
   - Hugging Face links are `https://huggingface.co/` URLs built from the config;
   - Recorded comes first and downloads nothing; every kind of task a widget asks for is covered by
-    a tier with a model in `DOWNLOADS`; a tier's size is its models plus the runtime once;
-    `parseTier` reads anything unknown as Recorded;
+    a tier with a model in `DOWNLOADS`; a tier's size is its models plus the runtime once; Large
+    contains every Small model; `parseTier` reads anything
+    unknown as Recorded;
+  - `parseToolCall` reads every recorded agent step as the recording harness did
+    (`harness/agent.test.ts`);
   - a key at `main` or another revision maps to the pinned URL, and unlisted files, other
     repositories, other hosts, and local paths get no key, so the worker's cache never stores them;
   - with a fake cache: every listed file gives downloaded, one missing doesn't, removing a model
@@ -263,12 +294,15 @@ change as soon as it goes live.
   worker (`tests/e2e/fixtures/fake-inference.worker.ts`). It's built only with `VITE_FIXTURES`, and
   a page uses it when `localStorage` has `llm-kitchen:fake-inference`. It writes placeholder files
   for a download, "starts" at once, and answers every task from made-up numbers, so CI downloads
-  nothing:
+  nothing. Its chat replies are fixed: a calculator call when given the calculator and a sum, the
+  result when given a tool result, "Fake reply." otherwise:
   - choosing Small makes it ready and the covered widgets live;
+  - under Small, the chat widgets say "Recorded · not in the Small tier";
+  - choosing Large makes it ready and the chat widgets live;
   - each live widget takes the visitor's own input and shows the fake answers, and "Show the
     recording" brings back the recorded view and badge;
-  - every page with a live widget, live, has no axe violations and doesn't scroll sideways on a
-    phone.
+  - every page with a live widget, live under Large, has no axe violations and doesn't scroll
+    sideways on a phone.
 - `/downloads` is in the accessibility, phone-width, JavaScript-budget, and Lighthouse page lists,
   and has visual baselines.
 - Real downloads stay out of CI: `record check live` checks the pinned commits and hashes.

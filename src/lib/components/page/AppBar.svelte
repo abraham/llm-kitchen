@@ -35,10 +35,11 @@
 	$effect(() => level.load());
 	$effect(() => modelTier.load());
 
-	/** Tier icons: a filled dot for recordings, a chip for a tier of models. */
+	/** Tier icons: a filled dot for recordings, a chip for Small, a stack of chips for Large. */
 	const TIER_ICONS: Record<TierId, string> = {
 		recorded: 'M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8z',
-		small: 'M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4'
+		small: 'M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4',
+		large: 'M10 10h10v10H10zM7 17H4V4h13v3M13 20v2M17 20v2M20 13h2M20 17h2'
 	};
 
 	const tierState = $derived(modelTier.state);

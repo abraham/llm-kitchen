@@ -1,4 +1,5 @@
 import {
+	ASSISTANT_LIVE,
 	BERT_LIVE,
 	CANONICAL_LIVE,
 	CLIP_TEXT,
@@ -10,7 +11,7 @@ import { RUNTIME_MB } from './onnx-runtime.ts';
 /** A kind of task a widget can run live; a tier covers some of them, each with one model. */
 export type Capability = DownloadableModel['task'];
 
-export type TierId = 'recorded' | 'small';
+export type TierId = 'recorded' | 'small' | 'large';
 
 export interface Tier {
 	id: TierId;
@@ -19,6 +20,13 @@ export interface Tier {
 	summary: string;
 	covers: Partial<Record<Capability, DownloadableModel>>;
 }
+
+const SMALL: Tier['covers'] = {
+	'next-token': CANONICAL_LIVE,
+	embed: MINILM,
+	'fill-mask': BERT_LIVE,
+	'image-text': CLIP_TEXT
+};
 
 /** The choices on the Models page, in order; Recorded is the default. See docs/spec/model-tiers.md. */
 export const TIERS: readonly Tier[] = [
@@ -33,12 +41,14 @@ export const TIERS: readonly Tier[] = [
 		name: 'Small',
 		summary:
 			'GPT-2 for next tokens, BERT for blanks, and small models for meaning and captions, in any browser.',
-		covers: {
-			'next-token': CANONICAL_LIVE,
-			embed: MINILM,
-			'fill-mask': BERT_LIVE,
-			'image-text': CLIP_TEXT
-		}
+		covers: SMALL
+	},
+	{
+		id: 'large',
+		name: 'Large',
+		summary:
+			'Everything in Small, plus Qwen2.5-0.5B-Instruct for chats, system prompts, and tools.',
+		covers: { ...SMALL, chat: ASSISTANT_LIVE }
 	}
 ];
 

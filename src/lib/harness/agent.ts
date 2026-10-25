@@ -20,6 +20,47 @@ export interface ToolInfo {
 	description: string;
 }
 
+/** A tool as a chat template lists it (OpenAI's function format, which Qwen's template reads). */
+export interface ToolSchema {
+	type: 'function';
+	function: ToolInfo & { parameters: unknown };
+}
+
+/** A chat message as chat templates take it, with tool calls and tool results. */
+export interface ChatTurn {
+	role: 'system' | 'user' | 'assistant' | 'tool';
+	content: string;
+	/** The tool a `tool` message answers. */
+	name?: string;
+	tool_calls?: { type: 'function'; function: ToolCall }[];
+}
+
+const TOOL_CALL = /<tool_call>\s*(\{.*?\})\s*<\/tool_call>/s;
+
+/**
+ * The text before a reply's first tool call, and the call, as the recording harness
+ * (scripts/record/agent.py) reads it. A call that isn't valid JSON counts as no call.
+ */
+export function parseToolCall(output: string): { thought: string; call?: ToolCall } {
+	const match = TOOL_CALL.exec(output);
+	if (!match) return { thought: output.trim() };
+	try {
+		const parsed = JSON.parse(match[1]) as { name?: unknown; arguments?: unknown };
+		if (typeof parsed.name !== 'string') return { thought: output.trim() };
+		const args =
+			typeof parsed.arguments === 'object' && parsed.arguments !== null ? parsed.arguments : {};
+		const call: ToolCall = {
+			name: parsed.name,
+			arguments: Object.fromEntries(
+				Object.entries(args).map(([k, v]) => [k, typeof v === 'string' ? v : JSON.stringify(v)])
+			)
+		};
+		return { thought: output.slice(0, match.index).trim(), call };
+	} catch {
+		return { thought: output.trim() };
+	}
+}
+
 export interface AgentRun {
 	model: { id: string; displayName: string; revision: string | null };
 	task: string;

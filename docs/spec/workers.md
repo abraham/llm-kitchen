@@ -4,11 +4,11 @@ Three Web Workers run the site's heavy work off the main thread, so scrolling, t
 hydration never wait on it. Each is a module in `src/lib/workers/`, created in the browser only and
 only when a widget needs it.
 
-| Worker                | Runs                                                                                                                 | Created by                                         | Lives                     |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
-| `tokenizer.worker.ts` | `gpt-tokenizer`'s GPT-2, GPT-4, and GPT-4o encodings                                                                 | `models/tokenizers.ts`, on the first tokenize call | Until the page closes     |
-| `inference.worker.ts` | Transformers.js: GPT-2 small for next tokens, MiniLM for vectors, BERT for blanks, and CLIP's text half for captions | `models/inference-client.ts`, on the first request | Until the page closes     |
-| `trainer.worker.ts`   | Training the tiny character model from `math/mlp.ts`                                                                 | The training widget on mount                       | Until the widget unmounts |
+| Worker                | Runs                                                                                                                                                 | Created by                                         | Lives                     |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
+| `tokenizer.worker.ts` | `gpt-tokenizer`'s GPT-2, GPT-4, and GPT-4o encodings                                                                                                 | `models/tokenizers.ts`, on the first tokenize call | Until the page closes     |
+| `inference.worker.ts` | Transformers.js: GPT-2 small for next tokens, MiniLM for vectors, BERT for blanks, CLIP's text half for captions, and Qwen2.5-0.5B-Instruct for chat | `models/inference-client.ts`, on the first request | Until the page closes     |
+| `trainer.worker.ts`   | Training the tiny character model from `math/mlp.ts`                                                                                                 | The training widget on mount                       | Until the widget unmounts |
 
 ## Why each is a worker
 
@@ -77,9 +77,17 @@ only when a widget needs it.
   - `fill-mask` returns BERT's top `k` tokens for the one `[MASK]`, through Transformers.js's
     fill-mask pipeline;
   - `embed-text` returns CLIP's text embeddings (its tokenizer and `CLIPTextModelWithProjection`),
-    normalized, to compare with the recorded image embeddings.
-- Uses WebGPU when `inference-client.ts` finds an adapter and WebAssembly otherwise, with 8-bit
-  weights either way. ONNX Runtime's WebAssembly files are bundled as the site's own hashed
+    normalized, to compare with the recorded image embeddings;
+  - `generate` runs the chat model greedily on a chat (put in its chat template, with any tool
+    schemas) or on plain text, streams the text as `progress` messages (`{ text }`, beside the
+    download progress messages), and answers with the exact prompt, the reply, its length, and
+    whether the model ended it;
+  - `score` gives the chance the model continues a prompt with every token of an answer: text for
+    the chat model, which has its tokenizer in the worker, token ids for GPT-2.
+- Model calls take turns (`inTurn`): ONNX Runtime can't run one session twice at once, and two
+  widgets on a page can ask together.
+- Uses WebGPU when `inference-client.ts` finds an adapter and WebAssembly otherwise, with each
+  model's weights at its pinned precision. ONNX Runtime's WebAssembly files are bundled as the site's own hashed
   assets, not fetched from a CDN.
 - It downloads and loads only after a click: `BrowserModel.download` and `BrowserModel.load` are
   the only callers of `download` and `load` requests, and one `BrowserModel` per model is shared by

@@ -16,9 +16,11 @@
 	const downloadedMB = $derived(downloaded.reduce((a, m) => a + m.spec.modelMB, 0));
 	const tierState = $derived(modelTier.state);
 
+	const size = (mb: number) => (mb < 1000 ? `${mb} MB` : `${(mb / 1000).toFixed(1)} GB`);
+
 	const OPTIONS: Option<TierId>[] = TIERS.map((t) => ({
 		value: t.id,
-		label: t.id === 'recorded' ? 'Show recordings (default)' : `${t.name}: about ${tierMB(t)} MB`
+		label: t.id === 'recorded' ? 'Show recordings (default)' : `${t.name}: about ${size(tierMB(t))}`
 	}));
 
 	/** Each tier's models that no earlier tier includes. */

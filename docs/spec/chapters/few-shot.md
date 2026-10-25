@@ -25,6 +25,9 @@ small's attention.
 - The attention view is GPT-2's, since that's the model the site shows attention for. The
   probabilities show both models: Qwen learns the tasks from a few examples, while GPT-2 mostly
   repeats an example's answer.
+- Live with the Large model tier ([downloads.md](../downloads.md#widgets)): `FewShot` scores the
+  table with both models in the browser and adds rows for the visitor's own words;
+  the live model is Qwen2.5-0.5B-Instruct, not the recording's 1.5B (see [downloads.md](../downloads.md#what-can-be-downloaded)).
 - [Levels](../levels.md): Simple drops the made-up-label percentages and the model details. In depth
   multiplies token chances for two-token labels and explains the two heads behind an induction
   head, with head 5.0's attention to each answer.

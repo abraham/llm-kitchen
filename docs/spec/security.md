@@ -37,7 +37,7 @@ this spec in the same pull request. The rules for bring-your-own API keys are in
 | A compromised npm package or GitHub Action                     | Lockfile installs, no install scripts, three runtime dependencies, actions locked to commits, deploy credentials only in deploy jobs |
 | A pull request that tries to deploy or read credentials        | Fork pull requests get no OIDC token; `production` deploys only from `main`                                                          |
 | A fork pull request that runs code in CI                       | `pull_request` only, with a read-only token and no secrets; first-time contributors need approval to run workflows                   |
-| A model given real power by a harness demo                     | Demos expose only in-browser toy tools; no network, file system, or `eval` access                                                    |
+| A model given real power by a harness demo                     | Demos, live ones included, expose only in-browser toy tools; no network, file system, or `eval` access                               |
 | A downgrade to HTTP                                            | HSTS for two years, including subdomains                                                                                             |
 
 Anyone with write access to the repository can push a branch whose pull request runs a modified
@@ -89,7 +89,7 @@ the trust boundary, so it stays limited to maintainers.
 
 - Model files download only in the inference worker, after a click, from a pinned Hugging Face
   commit (`onnxRevision`), with `env.allowLocalModels = false`.
-- **Model files are checked by hash.** `models/canonical.json` and `models/embedder.json` list each
+- **Model files are checked by hash.** Each config in `models/` lists each
   file Transformers.js downloads with its SHA-256 (`onnxFiles`). The worker's `env.fetch`
   (`workers/verified-fetch.ts`) refuses any other file from Hugging Face, fetches a pinned model at
   its pinned commit whatever revision is asked for (`pipeline()` reads `config.json` from `main`,

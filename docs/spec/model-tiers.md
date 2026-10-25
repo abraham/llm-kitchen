@@ -18,25 +18,27 @@ moves into the spec it belongs to ([Specs that change](#specs-that-change)) and 
 
 ## Tiers
 
-| Tier                   | Kinds of task                                                           | Models                                                                                                                    | Download     | Needs                            |
-| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| **Recorded** (default) | Every widget, from its recording                                        | None                                                                                                                      | 0            | Nothing                          |
-| **Small**              | `next-token`, `embed`, `fill-mask`, `image-text`                        | GPT-2 small (8-bit, 128 MB), all-MiniLM-L6-v2 (24 MB), BERT base (8-bit, 112 MB), CLIP ViT-B/32 text half (4-bit, 128 MB) | About 419 MB | Any supported browser            |
-| **Large**              | Small's, plus `chat` (an instruct model with a chat template and tools) | Small's models, plus Qwen2.5-1.5B-Instruct (4-bit weights, 16-bit activations, 1,222 MB)                                  | About 1.6 GB | WebGPU with 16-bit float shaders |
+| Tier                   | Kinds of task                                                           | Models                                                                                                                    | Download     |
+| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| **Recorded** (default) | Every widget, from its recording                                        | None                                                                                                                      | 0            |
+| **Small**              | `next-token`, `embed`, `fill-mask`, `image-text`                        | GPT-2 small (8-bit, 128 MB), all-MiniLM-L6-v2 (24 MB), BERT base (8-bit, 112 MB), CLIP ViT-B/32 text half (4-bit, 128 MB) | About 419 MB |
+| **Large**              | Small's, plus `chat` (an instruct model with a chat template and tools) | Small's models, plus Qwen2.5-0.5B-Instruct (4-bit, 793 MB)                                                                | About 1.2 GB |
 
 - Each model is the one, or the ONNX export of the one, that recorded the widgets it covers: GPT-2
   small (12 widgets), MiniLM, `google-bert/bert-base-uncased`, `openai/clip-vit-base-patch32`, and
   `Qwen/Qwen2.5-1.5B-Instruct` (about 13 widgets). Live results then differ from the recordings
-  only by quantization and sampling.
+  only by quantization and sampling. The exception is Large's chat model: 1.5B doesn't run in the
+  browser (its 16-bit-activation export writes only "!!!!" on WebGPU, and its 1.8 GB 4-bit file
+  runs out of memory as it loads), so Large runs Qwen2.5-0.5B-Instruct, smaller and weaker than
+  the recordings' model.
 - Sizes include the 27 MB ONNX Runtime once. Each model is pinned to a commit with every file's
   SHA-256, as GPT-2 and MiniLM are now ([downloads.md](downloads.md)).
 - CLIP runs only its text half: the recording gains each picture's image embedding (512 numbers per
   picture), so captions the visitor types are compared against those without downloading the
   vision half.
 - Large is a superset of Small, so a visitor on Large never needs Small too.
-- Where WebGPU or `shader-f16` is missing, Large is disabled with the reason. A 4-bit model with
-  32-bit activations (1,788 MB) would run there, but slowly enough that the widgets wouldn't feel
-  live.
+- Every tier runs in any supported browser: on WebGPU where there's an adapter, otherwise on the
+  processor, slower.
 
 ## The Models link in the app bar
 
@@ -54,8 +56,7 @@ moves into the spec it belongs to ([Specs that change](#specs-that-change)) and 
 The page becomes **Models** ("Models and downloads" as its title), with the tier choice first.
 
 - **The choice:** a `Choice` of three radios, "Show recordings (default)", "Small: about 419 MB",
-  and "Large: about 1.6 GB, needs a graphics card", each with one line on what it covers. Large is
-  disabled, with the reason, without WebGPU and `shader-f16`.
+  and "Large: about 1.2 GB", each with one line on what it covers.
 - **Choosing a tier is the click that downloads it.** The radio's label gives the size. Picking
   Small or Large saves the choice and starts downloading every model in it that isn't cached, in
   the inference worker, one model after another. A progress bar under the choice shows MB done of
@@ -127,11 +128,10 @@ The page becomes **Models** ("Models and downloads" as its title), with the tier
    worker's `fill-mask` and `embed-text` tasks, `vision/clip-images`, live options in
    `FillTheBlank`, `PictureMatch`, `GuessTheWord`, and `RecordedRuns`, and the fake inference
    worker the end-to-end tests run against.
-3. **Large.** Qwen2.5-1.5B-Instruct on WebGPU and the `chat` task. Live options for the chat
-   template, base vs. instruct, system prompts, few-shot, and tool-calling widgets, in
-   [From predictor to assistant](chapters/predictor-to-assistant.md),
-   [Instructions, roles, and the system prompt](chapters/instructions-and-roles.md),
-   [Learning from examples in the prompt](chapters/few-shot.md), and [Tools](chapters/tools.md).
+3. **Large.** Built. [downloads.md](downloads.md) describes it: Qwen2.5-0.5B-Instruct pinned and
+   checked (`models/assistant.json`, 4-bit), the worker's `generate` and `score`, `parseToolCall`, and live options in
+   `ChatTemplate`, `BaseVsInstruct`, `SystemPrompts`, `FewShot`, and `ToolsDemo`. Widgets that
+   replay sessions (agent runs, the injection lab, reasoning runs) stay recorded without a note.
 4. **Bring your own API key** stays separate and later, as in [roadmap.md](roadmap.md).
 
 ## Security
@@ -154,7 +154,7 @@ The page becomes **Models** ("Models and downloads" as its title), with the tier
   - choosing Small shows tier progress, then covered widgets show "Live · Small" and uncovered ones
     "Recorded · not in the Small tier";
   - "Show the recording" restores the recorded view;
-  - Large is disabled without WebGPU;
+  - under Small, the chat widgets show "Recorded · not in the Small tier";
   - the choice holds after a reload, and Recorded downloads nothing.
 - Lighthouse, the JavaScript budget, axe, and screenshots stay measured on Recorded; the live code
   loads only once a tier is chosen.

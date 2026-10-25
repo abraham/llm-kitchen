@@ -8,9 +8,6 @@ belongs to and remove it here.
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention
   outputs, so [Attention](chapters/attention.md) shows attention recorded for 5 sentences. A custom
   ONNX export with attention outputs would let visitors type their own sentence.
-- **Model tiers, Large:** the Small tier is built ([downloads.md](downloads.md#tiers)). Next is
-  Large, a superset of Small with a chat model on WebGPU, which brings live options to the
-  prompting and tools chapters. The plan is in [model-tiers.md](model-tiers.md).
 - **Timing generation live** with and without the KV cache in [Caching](chapters/caching.md), if
   Transformers.js exposes the switch.
 - **T4, bring your own API key:** frontier output with top logprobs and tool calling, through the
@@ -20,7 +17,7 @@ belongs to and remove it here.
   - extend the CSP `connect-src` allowlist only for the providers supported;
   - warn clearly that the visitor's prompt goes to the provider;
   - never ship a key in the site.
-- The Large tier and T4 both need WebGPU or provider test setups that CI's and local headless
+- T4 needs provider test setups that CI's and local headless
   browsers don't have. A rate-limited serverless proxy for a hosted demo would leave the static
   scope and is a separate decision.
 

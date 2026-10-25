@@ -15,6 +15,21 @@ const NEXT = [
 const NEXT_PROBS = [0.4, 0.3, 0.2, 0.1];
 const FILLS = ['fake', 'live', 'test'];
 
+/**
+ * A chat reply: given the calculator and a sum, a call to it; given its result, the result; given
+ * plain text, " fake fake"; otherwise "Fake reply."
+ */
+function reply(request: Extract<WorkerRequest, { type: 'generate' }>): string {
+	const last = request.messages?.at(-1);
+	if (!last) return ' fake fake';
+	if (last.role === 'tool') return `The answer is ${last.content}.`;
+	const sum = /\d+\s*[-+*/×÷]\s*\d+/.exec(last.content)?.[0];
+	if (request.tools?.length && sum) {
+		return `<tool_call>\n${JSON.stringify({ name: 'calculator', arguments: { expression: sum } })}\n</tool_call>`;
+	}
+	return 'Fake reply.';
+}
+
 function post(message: WorkerResponse) {
 	self.postMessage(message);
 }
@@ -57,5 +72,14 @@ self.onmessage = async ({ data: request }: MessageEvent<WorkerRequest>) => {
 			prob: 0.5 / (i + 1)
 		}));
 		post({ id, type: 'filled', top });
+	} else if (request.type === 'generate') {
+		const text = reply(request);
+		const half = Math.ceil(text.length / 2);
+		post({ id, type: 'progress', text: text.slice(0, half) });
+		post({ id, type: 'progress', text: text.slice(half) });
+		const prompt = request.text ?? JSON.stringify(request.messages);
+		post({ id, type: 'generated', prompt, text: text.trim(), tokens: 3, stopped: true });
+	} else if (request.type === 'score') {
+		post({ id, type: 'scored', p: 0.5 });
 	}
 };
