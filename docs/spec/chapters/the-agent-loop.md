@@ -30,6 +30,10 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
   [Managing the context](managing-the-context.md) with search as a tool the model calls with its
   own query, and can call again. It uses the recorded run's `search_rhymes("cat")` and cites ReAct
   and Anthropic's research agents rather than recording a new run.
+- "Plan first, or step by step" shows a made-up plan for the same cat task in ReWOO's format
+  instead of a recorded run, like "Tools as code": the recording harness runs one tool call per
+  model call. The text gives ReWOO's measured savings and its failures, and Anthropic's mix of the
+  two.
 - "Who decides the next step" places the agent on a range (fixed chain, router, one tool call,
   loop) using Anthropic's split between workflows and agents, and points back to the chapters that
   show each one, rather than adding a widget: the site already has a widget for each kind.
@@ -37,7 +41,8 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
   harness and the toy tools take one JSON call at a time, and running model-written code in the
   browser would need a sandbox the site doesn't have. The chapter says the code must run in one.
 - [Levels](../levels.md): Simple says the two loops, the range from a fixed recipe to a loop, tools
-  written as code, and the harness's rules in plain words. In depth names more of Anthropic's
-  workflows, says a failed program's error goes back to the model, works out what
+  written as code, planning first, and the harness's rules in plain words. In depth names more of
+  Anthropic's workflows, says a failed program's error goes back to the model, works out what
   the loop costs (every call re-reads the conversation, so the total grows
-  with the square of the steps) and points ahead to caching.
+  with the square of the steps), points ahead to caching, and gives ReWOO's HotpotQA token counts
+  and plan-and-solve prompting.

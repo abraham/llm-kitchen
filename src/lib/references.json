@@ -450,6 +450,29 @@
 		"url": "https://arxiv.org/abs/2210.03629"
 	},
 	{
+		"id": "xu2023rewoo",
+		"authors": [
+			"Binfeng Xu",
+			"Zhiyuan Peng",
+			"Bowen Lei",
+			"Subhabrata Mukherjee",
+			"Yuchen Liu",
+			"Dongkuan Xu"
+		],
+		"title": "ReWOO: Decoupling Reasoning from Observations for Efficient Augmented Language Models",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.18323"
+	},
+	{
+		"id": "wang2023plansolve",
+		"authors": ["Lei Wang", "Wanyu Xu", "Yihuai Lan", "Zhiqiang Hu"],
+		"title": "Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning by Large Language Models",
+		"venue": "ACL 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.04091"
+	},
+	{
 		"id": "wang2024codeact",
 		"authors": [
 			"Xingyao Wang",

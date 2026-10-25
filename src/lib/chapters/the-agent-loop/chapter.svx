@@ -202,6 +202,71 @@ the code on its next turn.<Cite id="wang2024codeact" />
 
 </At>
 
+## Plan first, or step by step
+
+<At levels="simple">
+
+The agent above decided one step at a time: after each result, it chose what to do next. Another
+way is to have the model write the whole plan first, with every tool call, and then let the harness
+carry it out. A later step refers to an earlier result by a name, like this made-up plan:
+
+```text
+Plan: Find the cat rhyme.
+#E1 = search_rhymes[cat]
+Plan: Count its words.
+#E2 = count_words[text of #E1]
+```
+
+The harness runs the steps in order, then one last model call reads the plan and the results and
+writes the answer. That takes fewer model calls, so it costs less. But the plan can't change its
+mind: if the search found two cat rhymes, or none, the plan goes ahead anyway.<Cite id="xu2023rewoo" />
+Some agents mix the two: Anthropic's research agent plans first, then decides after each round of
+results whether to change course.<Cite id="anthropic-multi-agent" />
+
+</At>
+<At levels="standard deep">
+
+The agent above decided one step at a time: after each result, it chose what to do next. The other
+way is to plan first. One model call writes the whole plan, every tool call included, and the
+harness carries it out without asking the model again. A later step refers to an earlier result by
+a placeholder, as in ReWOO's format; this plan is made up:
+
+```text
+Plan: Find the cat rhyme.
+#E1 = search_rhymes[cat]
+Plan: Count its words.
+#E2 = count_words[text of #E1]
+```
+
+A final call reads the plan and every result and writes the answer. In the terms of
+"Who decides the next step", the model writes its own workflow, then code runs it. Since the model
+isn't called after every result, prompts don't pile up: across six public tests, ReWOO used 64%
+fewer tokens than a ReAct-style loop with the same tools, and was 4.4 points more accurate on
+average.<Cite id="xu2023rewoo" />
+
+The cost is that a plan is written before anything is seen. If the search had found two cat
+rhymes, or none, the plan would carry on regardless. ReWOO's authors found plans that rested on
+wrong guesses, such as expecting a person's age to appear in a search result, and noted that
+exploring an unknown room would need a plan for every possibility.<Cite id="xu2023rewoo" /> So
+many agents mix the two. Anthropic's lead research agent writes a plan and saves it outside the
+prompt, so it survives if the context fills up, and after each round of results decides whether
+to do more or change course.<Cite id="anthropic-multi-agent" />
+
+</At>
+<At levels="deep">
+
+The savings come from the square in "What the loop costs": a loop of $K$ calls re-reads the
+instructions, examples, and every earlier result $K$ times, while a plan reads them about twice,
+once to plan and once to answer. On HotpotQA, a test of questions that need facts from more than
+one Wikipedia article, a ReAct-style agent used 9,795 tokens per question and ReWOO
+1,986.<Cite id="xu2023rewoo" />
+Planning helps even without tools. Asking GPT-3 to "first understand the problem and devise a plan
+to solve the problem", then carry it out, raised its score on grade-school math problems from
+56.4% with "Let's think step by step" (<ChapterRef to="steps-and-structure" />) to
+58.2%.<Cite id="wang2023plansolve" />
+
+</At>
+
 <RecapCard>
 
 - An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
@@ -212,6 +277,8 @@ the code on its next turn.<Cite id="wang2024codeact" />
 - Some agents write their actions as a short program, so one call can do several steps; that code
   has to run in a sandbox.
 - Each step re-sends the whole conversation, so the prompt keeps growing.
+- An agent can also plan every step first and then carry the plan out: fewer model calls, but a
+  plan can't react to what it finds unless it is checked and revised along the way.
 
 <At levels="deep">
 
