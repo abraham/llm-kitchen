@@ -122,6 +122,20 @@ export interface ToolCall {
 	arguments: Record<string, string>;
 }
 
+/** The calculator as the recorded runs listed it to the model (SCHEMAS in scripts/record/agent.py). */
+export const CALCULATOR_SCHEMA = {
+	type: 'function',
+	function: {
+		name: 'calculator',
+		description: 'Evaluate an arithmetic expression like 12 * (3 + 4).',
+		parameters: {
+			type: 'object',
+			properties: { expression: { type: 'string', description: 'The expression' } },
+			required: ['expression']
+		}
+	}
+} as const;
+
 /** Run one call against the toy tools. */
 export function runTool(call: ToolCall, files: FakeFiles): string {
 	const a = call.arguments;

@@ -1,34 +1,32 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
-	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import TierStatus from '#lib/components/frame/TierStatus.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import { displayToken, formatPercent } from '#lib/components/primitives/format.ts';
-	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';
-	import { BrowserProvider } from '#lib/models/browser-provider.ts';
+	import { useProvider } from '#lib/models/live.svelte.ts';
 	import { canonical } from '#lib/models/provider.ts';
 
 	const SHOWN = 6;
 	const show = (s: string) => s.replaceAll('\n', ' ↵ ');
 	const data = useDataset('prompts/wording');
-	const model = browserModel(CANONICAL_LIVE);
-	const liveProvider = new BrowserProvider(model, 'gpt2');
+	const option = useProvider('next-token', canonical.displayName);
 	const id = $props.id();
 	let group = $state(0);
 	let variant = $state(0);
-	let wantLive = $state(false);
 	let custom = $state('');
 	let live = $state<{ text: string; bars: { label: string; p: number }[] } | null>(null);
 	let busy = $state(false);
 
 	async function runLive() {
 		const text = custom.trimEnd();
-		if (!text) return;
+		const provider = option.provider;
+		if (!text || !provider) return;
 		busy = true;
 		try {
-			const d = await liveProvider.nextTokenDistribution(text, { topK: SHOWN });
+			const d = await provider.nextTokenDistribution(text, { topK: SHOWN });
 			live = { text, bars: d.candidates.map((c) => ({ label: c.token.text, p: c.prob })) };
 		} finally {
 			busy = false;
@@ -38,7 +36,8 @@
 
 <WidgetFrame
 	title="Change the start of the document"
-	source={{ kind: 'recorded', model: canonical.displayName }}
+	source={option.source}
+	live={option}
 	onreset={() => {
 		group = 0;
 		variant = 0;
@@ -108,7 +107,7 @@
 		{/snippet}
 	</Loading>
 
-	{#if model.status.state === 'ready'}
+	{#if option.live}
 		<form
 			class="custom"
 			onsubmit={(e) => {
@@ -131,16 +130,8 @@
 				caption="Live {canonical.displayName}'s top guesses after “{live.text}”"
 			/>
 		{/if}
-	{:else if wantLive || model.active}
-		<ModelConsent
-			{model}
-			purpose="Try your own wording with {canonical.displayName} running live."
-		/>
-	{:else}
-		<button type="button" class="more" onclick={() => (wantLive = true)}
-			>Try your own wording…</button
-		>
 	{/if}
+	<TierStatus {option} purpose="Try your own wording with {canonical.displayName} running live." />
 </WidgetFrame>
 
 <style>
@@ -202,9 +193,5 @@
 		font: inherit;
 		min-width: 16rem;
 		flex: 1;
-	}
-
-	.more {
-		margin-top: var(--space-3);
 	}
 </style>

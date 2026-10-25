@@ -13,9 +13,9 @@ import datetime
 import torch
 from transformers import AutoModelForCausalLM, AutoModelForMaskedLM, AutoTokenizer
 
-from .common import CANONICAL, revision, write_dataset
+from .common import CANONICAL, ENCODER, revision, write_dataset
 
-BERT = "google-bert/bert-base-uncased"
+BERT = ENCODER["huggingFaceId"]
 TOP = 10
 SENTENCES = [
     "The cat sat on the [MASK] of the fridge.",
@@ -67,7 +67,7 @@ def main() -> None:
     data = {
         "version": 1,
         "models": {
-            "bert": {"id": BERT, "displayName": "BERT base", "revision": revision(BERT)},
+            "bert": {"id": BERT, "displayName": ENCODER["displayName"], "revision": revision(BERT)},
             "gpt2": {
                 "id": CANONICAL["huggingFaceId"],
                 "displayName": CANONICAL["displayName"],

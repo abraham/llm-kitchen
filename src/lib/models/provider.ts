@@ -1,4 +1,5 @@
 import type { DataSource } from '#lib/components/frame/data-source.ts';
+import type { GenerateInput, Generated } from './browser-model.svelte.ts';
 import canonicalJson from '../../../models/canonical.json';
 
 /** The canonical small model, defined once in `models/canonical.json`. */
@@ -77,6 +78,20 @@ export interface ModelProvider {
 	generate(input: ProviderInput, options: GenerateOptions): Promise<GenerationStep[]>;
 	attention?(text: string): Promise<Attention>;
 	embed?(texts: string[]): Promise<number[][]>;
+	/** CLIP's text half: unit-length vectors comparable with recorded image embeddings. */
+	embedText?(texts: string[]): Promise<number[][]>;
+	/** The likeliest tokens for the one `[MASK]` in `text`, reading both sides of it. */
+	fillMask?(text: string, options?: { topK?: number }): Promise<Candidate[]>;
+	/** A chat model's greedy reply to a chat (in its template, with tools) or to plain text. */
+	reply?(input: GenerateInput, options: ReplyOptions): Promise<Generated>;
+	/** The chance the model continues `prompt` with every token of `answer`. */
+	score?(prompt: string, answer: string): Promise<number>;
+}
+
+export interface ReplyOptions {
+	maxTokens: number;
+	/** Gets the reply so far as it's written. */
+	ontext?: (soFar: string) => void;
 }
 
 /** The text of a provider input. */

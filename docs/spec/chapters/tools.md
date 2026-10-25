@@ -27,6 +27,9 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/math-no-tools.json`,
   converted to it, and the chapter says so.
 - The toy tools run in the browser (`src/lib/harness/tools.ts`) and never use `eval` or the
   network.
+- Live with the Large model tier ([downloads.md](../downloads.md#widgets)): `ToolsDemo` asks
+  Qwen the visitor's own sum, without tools and then through one turn of the recording's harness
+  with the toy calculator; the live model is Qwen2.5-0.5B-Instruct, not the recording's 1.5B (see [downloads.md](../downloads.md#what-can-be-downloaded)).
 - Tool calls are presented as structured output, building on
   [Asking for steps and structure](steps-and-structure.md).
 - MCP is described, not demonstrated: the toy tools are local functions, and the chapter says the

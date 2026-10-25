@@ -1,8 +1,21 @@
+import type { ChatTurn, ToolSchema } from '#lib/harness/agent.ts';
 import type { DownloadableModel } from './downloads.ts';
 import { send, webgpuAvailable } from './inference-client.ts';
 import { isDownloaded, openModelCache, removeModel } from './model-cache.ts';
 
 export { CANONICAL_LIVE, MINILM } from './downloads.ts';
+
+/** What a chat model writes from: a chat in its template, or plain text it continues. */
+export type GenerateInput = { messages: ChatTurn[]; tools?: ToolSchema[] } | { text: string };
+
+export interface Generated {
+	/** The exact text the model read. */
+	prompt: string;
+	text: string;
+	tokens: number;
+	/** It ended the reply itself, rather than at the token limit. */
+	stopped: boolean;
+}
 
 /** A model that runs in the visitor's browser (tier T2), only after they ask for it. */
 export type BrowserModelSpec = DownloadableModel;
@@ -32,11 +45,6 @@ export class BrowserModel {
 		this.spec = spec;
 	}
 
-	/** Downloading, starting, or failed: a widget shows its card even before it's asked to. */
-	get active(): boolean {
-		return ['downloading', 'loading', 'error'].includes(this.status.state);
-	}
-
 	/** Reads the cache; only a model that isn't downloading, starting, running, or failed changes state. */
 	async check(): Promise<void> {
 		const cache = await openModelCache();
@@ -57,6 +65,7 @@ export class BrowserModel {
 		this.status = { state: 'downloading', fraction: 0 };
 		try {
 			await send({ type: 'download', model: this.spec.onnxId }, (p) => {
+				if (!('file' in p)) return;
 				loaded[p.file] = p.loaded;
 				this.status = { state: 'downloading', fraction: this.#fraction(loaded) };
 			});
@@ -87,10 +96,11 @@ export class BrowserModel {
 					model: this.spec.onnxId,
 					revision: this.spec.onnxRevision,
 					device,
+					dtype: this.spec.dtype ?? 'q8',
 					file: this.spec.file
 				},
 				(p) => {
-					if (!fetching) return;
+					if (!fetching || !('file' in p)) return;
 					loaded[p.file] = p.loaded;
 					this.status = { state: 'downloading', fraction: this.#fraction(loaded) };
 				}
@@ -123,6 +133,23 @@ export class BrowserModel {
 		return r.vectors;
 	}
 
+	/** CLIP's text half: each text as a unit-length vector in the space it shares with pictures. */
+	async embedText(texts: string[]): Promise<number[][]> {
+		const r = await send({ type: 'embed-text', model: this.spec.onnxId, texts });
+		if (r.type !== 'embedded') throw new Error('Unexpected response from the model');
+		return r.vectors;
+	}
+
+	/** The `topK` likeliest tokens for the one `[MASK]` in `text`. */
+	async fillMask(
+		text: string,
+		topK: number
+	): Promise<{ id: number; text: string; prob: number }[]> {
+		const r = await send({ type: 'fill-mask', model: this.spec.onnxId, text, topK });
+		if (r.type !== 'filled') throw new Error('Unexpected response from the model');
+		return r.top;
+	}
+
 	/** Next-token probabilities after the token ids `ids`: the top `topK` and the rest. */
 	async nextToken(
 		ids: number[],
@@ -131,6 +158,35 @@ export class BrowserModel {
 		const r = await send({ type: 'next-token', model: this.spec.onnxId, ids, topK });
 		if (r.type !== 'distribution') throw new Error('Unexpected response from the model');
 		return { top: r.top, rest: r.rest };
+	}
+
+	/**
+	 * A chat model's greedy reply to a chat (in its template, with any tools) or its continuation
+	 * of plain text; `ontext` gets the reply so far as it's written.
+	 */
+	async generate(
+		input: GenerateInput,
+		maxTokens: number,
+		ontext?: (soFar: string) => void
+	): Promise<Generated> {
+		let soFar = '';
+		const r = await send(
+			{ type: 'generate', model: this.spec.onnxId, maxTokens, ...input },
+			(p) => {
+				if (!('text' in p)) return;
+				soFar += p.text;
+				ontext?.(soFar);
+			}
+		);
+		if (r.type !== 'generated') throw new Error('Unexpected response from the model');
+		return { prompt: r.prompt, text: r.text, tokens: r.tokens, stopped: r.stopped };
+	}
+
+	/** The chance the model continues `prompt` with all of `answer` (text for a chat model, else ids). */
+	async score(prompt: string | number[], answer: string | number[]): Promise<number> {
+		const r = await send({ type: 'score', model: this.spec.onnxId, prompt, answer });
+		if (r.type !== 'scored') throw new Error('Unexpected response from the model');
+		return r.p;
 	}
 }
 

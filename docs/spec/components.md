@@ -22,7 +22,7 @@ conventions every component follows, and the common set widgets build from.
 src/lib/components/
   ui/           generic controls and containers; know nothing about LLMs
   primitives/   concept visuals: one per idea in design.md (tokens, vectors, roles, ...)
-  frame/        widget chrome: the frame, data source, loading, consent, stepping, looping
+  frame/        widget chrome: the frame, data source, loading, tier status, stepping, looping
   page/         the chapter page and what prose embeds: shell, nav, references, glossary
   widgets/      whole widgets used by two or more chapters
 ```
@@ -31,7 +31,7 @@ src/lib/components/
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`, `Figure`, `Axis`, `FigureData`; the `scrollable` and `pointer` attachments; the `Concept` type                               |
 | `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`, `RoleKey`; `format.ts`, `roles.ts` |
-| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `FrameLoop` (`loop.svelte.ts`)                            |
+| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `TierStatus`, `StepController` (`stepper.svelte.ts`), `FrameLoop` (`loop.svelte.ts`)                              |
 | `page/`       | `AppBar`, `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`, `At`                    |
 | `widgets/`    | `GlassBoxGenerator`                                                                                                                                                               |
 
@@ -290,8 +290,11 @@ class FrameLoop {
 - A widget's play button reads `loop.running` for its label and `aria-pressed`, and its reset calls
   `loop.stop()`. Interval timers (DiffusionToy's playback) stay in the widget.
 
-The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, `ModelConsent`, and
-`DataSourceBadge` keep their APIs. `Figure`, `Axis`, `FigureData`, and `pointer` are described in
+The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, and `DataSourceBadge` keep
+their APIs. A widget with a live option passes its `LiveOption` to `WidgetFrame` as `live`, for the
+"Show the recording" switch, and to `TierStatus`, the line under it that says what the chosen tier
+means for the widget ([downloads.md](downloads.md#widgets)). `Figure`, `Axis`, `FigureData`, and
+`pointer` are described in
 [visualizations.md](visualizations.md#how-figures-draw).
 
 ## Not shared, on purpose

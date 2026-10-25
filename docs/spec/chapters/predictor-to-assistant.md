@@ -26,7 +26,10 @@ Qwen2.5-0.5B-Instruct, greedy.
 
 ## Decisions
 
-- The comparison is recorded; a live chat model is on the [roadmap](../roadmap.md).
+- Live with the Large model tier ([downloads.md](../downloads.md#widgets)): `ChatTemplate` sends
+  its chat to Qwen2.5-0.5B-Instruct and shows the reply after the cursor, and `BaseVsInstruct` runs
+  the visitor's prompt through GPT-2 and through Qwen with and without its template. The tier has
+  no base Qwen, so that column stays recorded.
 - The training stages are a simplification of real pipelines, labeled as such.
 - The chat template's system slot introduced here is what
   [Instructions, roles, and the system prompt](instructions-and-roles.md) builds on.

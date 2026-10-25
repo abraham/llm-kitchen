@@ -1,0 +1,16 @@
+{
+	"id": "qwen-instruct",
+	"displayName": "Qwen2.5-0.5B-Instruct",
+	"huggingFaceId": "Qwen/Qwen2.5-0.5B-Instruct",
+	"onnxId": "onnx-community/Qwen2.5-0.5B-Instruct",
+	"onnxRevision": "22942cb7d7ba4cc81bb4673549ca4d4614469b5e",
+	"onnxDtype": "q4",
+	"onnxMB": 793,
+	"onnxFiles": {
+		"config.json": "777e01f0fbb3346eb229cb6fb278ed6533c1e4dcb9ebf4bed0f6e94ef17fa1b5",
+		"generation_config.json": "f7e7ce458658b2d40d9eb213b91b77a8bf698845ab89360976722d7ac46928a3",
+		"tokenizer.json": "a8506e7111b80c6d8635951a02eab0f4e1a8e4e5772da83846579e97b16f61bf",
+		"tokenizer_config.json": "6a14243f0ae04884e597b3f032c05e15de9f417318fdcac24ab4e2680e691430",
+		"onnx/model_q4.onnx": "09235a3b1c135cd04ef570e5053b5c079e028078a2cc5f76ba6a251e91bf3296"
+	}
+}

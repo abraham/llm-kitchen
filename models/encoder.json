@@ -1,0 +1,14 @@
+{
+	"id": "bert",
+	"displayName": "BERT base",
+	"huggingFaceId": "google-bert/bert-base-uncased",
+	"onnxId": "Xenova/bert-base-uncased",
+	"onnxRevision": "ab680a327acc2d9c3bd279ffb1cd43454181f743",
+	"onnxMB": 112,
+	"onnxFiles": {
+		"config.json": "4f531ca27e8f36b527fb7ed4ea75405149db1f378f7313ccbf8796c159ae335a",
+		"tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+		"tokenizer_config.json": "ae83fa6ca0333117ff12606020af925d648667ef70d92ff7f27d781ba0ca4544",
+		"onnx/model_quantized.onnx": "f2c1ce78f723dfa260bf743c56596ddd5097e45081cdffa24820aab900855ed0"
+	}
+}

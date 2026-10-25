@@ -16,8 +16,9 @@
 - **Layout:**
   - Every page starts with an app bar (`AppBar`) that stays at the top of the viewport as the page
     scrolls (`--app-bar-height`; in-page links and the chapter rail sit
-    below it): the site name on the left, linking to the menu, and on the right a Downloads link (a
-    download icon, named and titled "Downloads", to the page in [downloads.md](downloads.md)) and a
+    below it): the site name on the left, linking to the menu, and on the right a Models link (an
+    icon for the chosen model tier, named and titled "Models: Recorded" or the tier's name, with a
+    progress ring while the tier downloads, to the page in [downloads.md](downloads.md)) and a
     theme toggle.
     The toggle steps through Auto (the system setting, the default), Light, and Dark; its name says
     which ("Theme: Light") and its icon shows it (half-filled circle, sun, or moon). Light and dark
@@ -40,7 +41,8 @@
     ([visualizations.md](visualizations.md#sizes)).
 - **Widget frame:** every widget uses `WidgetFrame`, with a "Try it" label, a reset button, step
   controls where it steps, and a `DataSourceBadge` showing where its data comes from: **Recorded ·
-  &lt;model&gt;**, **Live · &lt;model&gt;**, **Computed in your browser**, or **Made-up example**.
+  &lt;model&gt;**, **Live · &lt;tier&gt; · &lt;model&gt;** (beside a "Show the recording" switch),
+  **Computed in your browser**, or **Made-up example**.
 - **Typography:** system fonts only: a serif for prose (Iowan Old Style or Charter on Apple devices,
   Georgia on Windows, Noto Serif on Android), the system monospace for tokens and numbers, and the
   system sans for buttons and labels. Nothing is downloaded, so text never reflows after first paint

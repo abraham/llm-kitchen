@@ -43,7 +43,7 @@ src/
     +layout.svelte, +layout.ts   site shell; prerender = true
     +page.svelte                 the menu, from the curriculum
     [chapter]/+page.ts           loads a chapter's prose, first-view datasets, and levels by slug
-    downloads/+page.svelte       the Downloads page: every live model, its state, and its sources
+    downloads/+page.svelte       the Models page: the tier choice, every live model, its state, and its sources
     fixtures/[fixture]/          test-only pages from tests/e2e/fixtures, in the end-to-end build only
   lib/
     curriculum/
@@ -63,7 +63,7 @@ src/
     components/                  see components.md
       ui/                        generic controls and containers, Figure and Axis, and the scrollable and pointer attachments
       primitives/                shared visual elements (see design.md); props in, events out
-      frame/                     WidgetFrame, DataSourceBadge, Loading, ModelConsent, StepController
+      frame/                     WidgetFrame, DataSourceBadge, Loading, TierStatus, StepController
       page/                      chapter shell, ProgressNav, PageMeta, ChapterRef, Cite, GlossaryPopover, ...
       widgets/                   widgets used by two or more chapters
     data/                        hand-written data shared by chapters and logic (the nursery rhymes)
@@ -74,12 +74,12 @@ src/
       load.ts                    fetchDataset (route loads) and loadDataset (browser, cached)
       use.ts                     provideDatasets, useDataset(s), and all/andThen for maybe-loaded data
       read.ts                    readDataset for tests and Node scripts
-    models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers, and the
-                                 live models' list and cache (downloads.md)
+    models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers, the
+                                 live models' list and cache, and the model tiers (downloads.md)
     workers/                     the tokenizer, inference, and trainer workers (workers.md)
     math/                        pure numeric code: sampling, BPE, MLP and backprop, attention, ...
     harness/                     pure toy harness: tools, agent loop, caching, injection
-    stores/                      progress, theme, motion preferences
+    stores/                      progress, theme, motion preferences, the chosen model tier
     glossary.ts                  terms, definitions, and the slug of the chapter that introduces each
     references.json              the bibliography
     site.ts                      name, tagline, description, origin, URL helpers
@@ -196,10 +196,11 @@ lives in `src/lib/data/`.
   reports a `DataSource` for the badge.
   - `RecordedProvider` answers from recorded traces and throws `NotAvailableError` for anything it
     has no recording for, so the widget can offer the live option.
-  - `BrowserProvider` wraps a `BrowserModel` running in the inference worker after
-    `ModelConsent`: GPT-2 for next tokens (with its tokenizer, trimmed to the context window) or
+  - `BrowserProvider` wraps a `BrowserModel` running in the inference worker once the visitor has
+    chosen a model tier: GPT-2 for next tokens (with its tokenizer, trimmed to the context window) or
     MiniLM for embeddings.
-- The live toggle swaps which provider a widget asks; nothing else in the widget changes.
+- `useProvider(capability)` gives a widget the live provider while it runs live, or none, when it
+  asks its recording; nothing else in the widget changes.
 - Widgets with no live option (a single recorded trace, agent sessions, the injection lab,
   reasoning runs) read their dataset directly.
 - One shared inference worker serves both browser models; its request and response messages are

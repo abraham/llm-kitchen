@@ -23,7 +23,9 @@ GPT-2 small.
 
 ## Decisions
 
-- Recorded only; a live fill-mask model is on the [roadmap](../roadmap.md).
+- Live with the Small model tier ([downloads.md](../downloads.md#widgets)): `FillTheBlank` asks
+  BERT base and GPT-2 small (both 8-bit) for every sentence it shows, and takes the visitor's own
+  sentence with one `___`.
 - Each chapter in this Part starts from what changed compared with GPT-2 and reuses earlier widgets
   and visuals.
 - [Levels](../levels.md): Simple keeps the two blanks and the mask in words. In depth adds the

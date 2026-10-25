@@ -1,12 +1,11 @@
 <script lang="ts">
-	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import TierStatus from '#lib/components/frame/TierStatus.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import TokenChip from '#lib/components/primitives/TokenChip.svelte';
 	import type { TraceName } from '#lib/datasets/registry.ts';
 	import { displayToken, formatCount, formatPercent } from '#lib/components/primitives/format.ts';
 	import { applyTemperature, sampleIndex } from '#lib/math/sampling.ts';
-	import { CANONICAL_LIVE, browserModel } from '#lib/models/browser-model.svelte.ts';
-	import { BrowserProvider } from '#lib/models/browser-provider.ts';
+	import { useProvider } from '#lib/models/live.svelte.ts';
 	import { all, useDatasets } from '#lib/datasets/use.ts';
 	import {
 		NotAvailableError,
@@ -33,8 +32,7 @@
 
 	const SHOWN = 10;
 	const TOP_K = 50;
-	const model = browserModel(CANONICAL_LIVE);
-	const liveProvider = new BrowserProvider(model, 'gpt2');
+	const option = useProvider('next-token', canonical.displayName);
 	const id = $props.id();
 
 	let traces = $state<Trace[]>([]);
@@ -46,13 +44,11 @@
 	let notice = $state('');
 	let busy = $state(false);
 	let temperature = $state(1);
-	let useLive = $state(true);
-	let wantLive = $state(false);
 	let custom = $state('');
 	let runs = $state(0);
 	let request = 0;
 
-	const live = $derived(model.status.state === 'ready' && useLive);
+	const live = $derived(option.live);
 	const text = (t: Token[]) => t.map((x) => x.text).join('');
 	const probs = $derived.by(() => {
 		const p = dist?.candidates.map((c) => c.prob) ?? [];
@@ -89,7 +85,8 @@
 		busy = true;
 		notice = '';
 		try {
-			const d = live
+			const liveProvider = option.provider;
+			const d = liveProvider
 				? await liveProvider.nextTokenDistribution(tokens, { topK: TOP_K })
 				: await provider!.nextTokenDistribution(tokens);
 			if (mine !== request) return;
@@ -100,7 +97,7 @@
 			dist = null;
 			notice =
 				error instanceof NotAvailableError
-					? `No recording continues from here. Undo, or run ${canonical.displayName} in your browser to keep going.`
+					? `No recording continues from here. Undo, or choose a model tier to keep going with ${canonical.displayName} in your browser.`
 					: `Something went wrong: ${error instanceof Error ? error.message : String(error)}`;
 		} finally {
 			if (mine === request) busy = false;
@@ -151,9 +148,8 @@
 
 <WidgetFrame
 	{title}
-	source={live
-		? { kind: 'live', model: CANONICAL_LIVE.label }
-		: { kind: 'recorded', model: canonical.displayName }}
+	source={option.source}
+	live={option}
 	onreset={() => {
 		temperature = 1;
 		start(0);
@@ -224,7 +220,8 @@
 		</ol>
 		{#if !live}
 			<p class="note">
-				Greyed-out choices have no recording. Run the model live to try any of them.
+				Greyed-out choices have no recording. With a model tier chosen, the model runs live and you
+				can try any of them.
 			</p>
 		{/if}
 	{/if}
@@ -252,23 +249,16 @@
 		</div>
 	{/snippet}
 
-	{#if model.status.state === 'ready'}
-		<label class="toggle">
-			<input type="checkbox" bind:checked={useLive} />
-			Use {canonical.displayName} running in your browser
-		</label>
+	{#if live}
 		<p class="note">
 			The live copy is compressed to 8 bits, so its percentages differ somewhat from the recorded
 			ones.
 		</p>
-	{:else if wantLive || model.active}
-		<ModelConsent
-			{model}
-			purpose="Type any beginning, pick any token, and set the temperature, with {canonical.displayName} running live."
-		/>
-	{:else}
-		<button type="button" class="more" onclick={() => (wantLive = true)}>Run it live…</button>
 	{/if}
+	<TierStatus
+		{option}
+		purpose="Type any beginning, pick any token, and set the temperature, with {canonical.displayName} running live."
+	/>
 </WidgetFrame>
 
 <style>
@@ -410,16 +400,5 @@
 		font-size: 0.875rem;
 		color: var(--ink-muted);
 		margin: var(--space-2) 0 0;
-	}
-
-	.toggle {
-		display: block;
-		margin-top: var(--space-4);
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-	}
-
-	.more {
-		margin-top: var(--space-4);
 	}
 </style>

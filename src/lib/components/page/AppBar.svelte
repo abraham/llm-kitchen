@@ -2,8 +2,10 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { LEVEL_NAMES, LEVELS, type Level } from '#lib/levels.ts';
+	import type { TierId } from '#lib/models/tiers.ts';
 	import { SITE_NAME } from '#lib/site.ts';
 	import { level } from '#lib/stores/level.svelte.ts';
+	import { modelTier } from '#lib/stores/model-tier.svelte.ts';
 	import { theme, type ThemeChoice } from '#lib/stores/theme.svelte.ts';
 	import Choice, { type Option } from '../ui/Choice.svelte';
 
@@ -31,6 +33,24 @@
 
 	$effect(() => theme.load());
 	$effect(() => level.load());
+	$effect(() => modelTier.load());
+
+	/** Tier icons: a filled dot for recordings, a chip for Small, a stack of chips for Large. */
+	const TIER_ICONS: Record<TierId, string> = {
+		recorded: 'M12 8a4 4 0 1 1 0 8a4 4 0 1 1 0-8z',
+		small: 'M7 7h10v10H7zM10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4',
+		large: 'M10 10h10v10H10zM7 17H4V4h13v3M13 20v2M17 20v2M20 13h2M20 17h2'
+	};
+
+	const tierState = $derived(modelTier.state);
+	const modelsName = $derived(
+		`Models: ${modelTier.tier.name}` +
+			(tierState.state === 'downloading'
+				? `, downloading ${Math.round(tierState.fraction * 100)}%`
+				: tierState.state === 'error'
+					? ', download failed'
+					: '')
+	);
 
 	/**
 	 * Switches level without moving the reader: the block at the top of the content keeps its place,
@@ -65,15 +85,28 @@
 			</div>
 		{/if}
 		<a
-			class="icon"
+			class="icon models"
 			href={resolve('/downloads')}
-			aria-label="Downloads"
-			title="Downloads"
+			aria-label={modelsName}
+			title={modelsName}
 			aria-current={page.url.pathname === resolve('/downloads') ? 'page' : undefined}
 		>
 			<svg viewBox="0 0 24 24" aria-hidden="true">
-				<path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+				<path class:dot={modelTier.choice === 'recorded'} d={TIER_ICONS[modelTier.choice]} />
 			</svg>
+			{#if tierState.state === 'downloading' || tierState.state === 'checking'}
+				<svg class="ring" viewBox="0 0 40 40" aria-hidden="true">
+					<circle
+						cx="20"
+						cy="20"
+						r="18"
+						pathLength="1"
+						stroke-dasharray="{tierState.state === 'downloading' ? tierState.fraction : 0} 1"
+					/>
+				</svg>
+			{:else if tierState.state === 'error'}
+				<span class="warning" aria-hidden="true">!</span>
+			{/if}
 		</a>
 		<button
 			type="button"
@@ -245,6 +278,41 @@
 	.half {
 		fill: currentColor;
 		stroke: none;
+	}
+
+	.models {
+		position: relative;
+	}
+
+	.dot {
+		fill: currentColor;
+	}
+
+	/* The ring and the warning sit over the link's edge, so they don't change its size. */
+	.ring {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		rotate: -90deg;
+		stroke: var(--c-prob);
+		stroke-width: 2.5;
+	}
+
+	.warning {
+		position: absolute;
+		top: 0;
+		right: 0;
+		display: grid;
+		place-items: center;
+		width: 0.9rem;
+		height: 0.9rem;
+		border-radius: 50%;
+		background: var(--c-loss);
+		color: var(--page);
+		font-size: 0.65rem;
+		font-weight: 700;
+		line-height: 1;
 	}
 
 	/* The icon shows the choice before hydration too, so it's set in CSS from the root attribute. */

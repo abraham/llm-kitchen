@@ -1,21 +1,25 @@
 # Models and data
 
 The site always works without downloading a model. Every widget shows real data recorded offline
-by default; visitors opt in to heavier live features.
+by default; visitors opt in to live models by choosing a tier of them on the Models page
+([downloads.md](downloads.md#tiers)).
 
 ## Tiers
 
-| Tier                                | What it is                                                             | Size                                                                             | Used in                                                                                                                                                                                                                    |
-| ----------------------------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **T0 — Recorded** (default)         | JSON from real model runs, made offline by the scripts below           | KBs, instant                                                                     | Every chapter                                                                                                                                                                                                              |
-| **T1 — Tokenizer only**             | `gpt-tokenizer` in a Web Worker                                        | ~1–2 MB                                                                          | [Tokens](chapters/tokens.md), [Quirks and limits](chapters/quirks-and-limits.md), and the live model widgets                                                                                                               |
-| **T2 — Small model in the browser** | Transformers.js running GPT-2 small (8-bit ONNX) or `all-MiniLM-L6-v2` | GPT-2 128 MB or MiniLM 24 MB, plus 27 MB of runtime, cached after the first load | [Meaning as position](chapters/embeddings.md), [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md) |
+| Tier                                | What it is                                                                                                                          | Size                                                                                                                  | Used in                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **T0 — Recorded** (default)         | JSON from real model runs, made offline by the scripts below                                                                        | KBs, instant                                                                                                          | Every chapter                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **T1 — Tokenizer only**             | `gpt-tokenizer` in a Web Worker                                                                                                     | ~1–2 MB                                                                                                               | [Tokens](chapters/tokens.md), [Quirks and limits](chapters/quirks-and-limits.md), and the live model widgets                                                                                                                                                                                                                                                                                                                            |
+| **T2 — Small model in the browser** | Transformers.js running GPT-2 small, `all-MiniLM-L6-v2`, BERT base (8-bit ONNX), and CLIP's text half (4-bit), the Small model tier | GPT-2 128 MB, MiniLM 24 MB, BERT 112 MB, and CLIP text 128 MB, plus 27 MB of runtime, cached after the first download | [The guessing game](chapters/guessing-game.md), [Probability and sampling](chapters/probability-and-sampling.md), [Meaning as position](chapters/embeddings.md), [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md), [Reading both ways](chapters/encoders.md), [Seeing pictures](chapters/seeing-pictures.md) |
 
 Some widgets compute their data in the browser instead (bigram counts, BPE merges, the tiny trainers,
 the toy router and diffusion model, and the toy Decision Transformer, which runs weights trained by
 `record/decisions.py`). Their badge says so.
 
-Larger live tiers (a WebGPU chat model and bring-your-own-key APIs) aren't built; see
+The Large tier adds Qwen2.5-0.5B-Instruct (4-bit, 793 MB) for the chat widgets, in [From predictor to assistant](chapters/predictor-to-assistant.md),
+[Instructions, roles, and the system prompt](chapters/instructions-and-roles.md),
+[Learning from examples in the prompt](chapters/few-shot.md), and [Tools](chapters/tools.md)
+([downloads.md](downloads.md#tiers)). Bring-your-own-key APIs aren't built; see
 [roadmap.md](roadmap.md).
 
 ## The canonical small model
@@ -50,16 +54,16 @@ widget shows in its badge. Implementations:
   `inference-client.ts`.
 
 `GlassBoxGenerator` switches between the two, keeping the same UI; only which provider it asks
-changes. `EmbeddingMap` and `PromptVariants` read their recorded datasets directly and use a
-`BrowserProvider` only for the live option. See [architecture.md](architecture.md) for how recorded
+changes. The other live widgets read their recorded datasets directly and use a `BrowserProvider`
+only when live. Each gets its live provider from
+`useProvider(capability)` ([downloads.md](downloads.md#widgets)). See [architecture.md](architecture.md) for how recorded
 data is registered, checked, and loaded.
 
 ## Live model rules
 
-- A model downloads only when the visitor presses a button that gives its size: `ModelConsent` in
-  a widget, showing the model plus the 27 MB ONNX Runtime build (a unit test checks it against the
-  bundled file), or the Downloads page. [downloads.md](downloads.md) has the states, the cache, and
-  the page.
+- A model downloads only when the visitor chooses a tier on the Models page, whose label gives the
+  tier's size: its models plus the 27 MB ONNX Runtime build (a unit test checks it against the
+  bundled file). [downloads.md](downloads.md) has the tiers, the states, the cache, and the page.
 - The worker bundles only ONNX Runtime's asyncify build. Every
   [supported browser](quality.md#browser-support) can run it; the smaller build Transformers.js
   would pick for Safari without WebGPU is only needed before Safari 26.

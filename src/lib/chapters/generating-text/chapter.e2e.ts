@@ -18,5 +18,5 @@ test('the glass-box generator follows recordings and branches', async ({ page })
 	await widget.getByRole('button', { name: 'Undo' }).click();
 	await widget.getByRole('button', { name: 'Undo' }).click();
 	await expect(widget.getByRole('button', { name: /Add “·bench”.*no recording/ })).toBeDisabled();
-	await expect(widget.getByRole('button', { name: 'Run it live…' })).toBeVisible();
+	await expect(widget.getByRole('link', { name: 'Choose a model tier' })).toBeVisible();
 });

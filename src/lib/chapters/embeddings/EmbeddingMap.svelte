@@ -2,25 +2,23 @@
 	import { loadDataset } from '#lib/datasets/load.ts';
 	import { useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
-	import ModelConsent from '#lib/components/frame/ModelConsent.svelte';
+	import TierStatus from '#lib/components/frame/TierStatus.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Toggle from '#lib/components/ui/Toggle.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import Figure from '#lib/components/ui/Figure.svelte';
 	import { scaleLinear } from '#lib/math/scale.ts';
 	import { nearest, project } from '#lib/math/vectors.ts';
-	import { MINILM, browserModel } from '#lib/models/browser-model.svelte.ts';
-	import { BrowserProvider } from '#lib/models/browser-provider.ts';
+	import { MINILM } from '#lib/models/browser-model.svelte.ts';
+	import { useProvider } from '#lib/models/live.svelte.ts';
 	import type { EmbeddingMapData } from '#lib/datasets/parsers/embeddings.ts';
 
 	const data = useDataset('embeddings/minilm-map');
-	const model = browserModel(MINILM);
-	const liveProvider = new BrowserProvider(model);
+	const option = useProvider('embed', MINILM.label);
 	const id = $props.id();
 
 	let selected = $state('cat');
 	let showAnalogy = $state(false);
-	let wantLive = $state(false);
 	let newWord = $state('');
 	let added = $state<
 		{ word: string; x: number; y: number; neighbors: { word: string; similarity: number }[] }[]
@@ -131,11 +129,12 @@
 
 	async function addWord(d: EmbeddingMapData) {
 		const word = newWord.trim().toLowerCase();
-		if (!word || added.some((a) => a.word === word)) return;
+		const live = option.provider;
+		if (!word || !live || added.some((a) => a.word === word)) return;
 		liveError = '';
 		try {
 			const [[vector], raw] = await Promise.all([
-				liveProvider.embed([word]),
+				live.embed([word]),
 				loadDataset('embeddings/minilm-vectors')
 			]);
 			const [x, y] = project(vector, d.pca.mean, d.pca.components);
@@ -151,9 +150,8 @@
 
 <WidgetFrame
 	title="A map of meaning"
-	source={model.status.state === 'ready'
-		? { kind: 'live', model: MINILM.label }
-		: { kind: 'recorded', model: MINILM.label }}
+	source={option.source}
+	live={option}
 	onreset={() => {
 		selected = 'cat';
 		showAnalogy = false;
@@ -163,7 +161,10 @@
 	<Loading promise={data}>
 		{#snippet children(d)}
 			{@const { sx, sy } = scales(d)}
-			{@const all = [...d.words, ...added.map((a) => ({ ...a, group: 'yours' }))]}
+			{@const all = [
+				...d.words,
+				...(option.live ? added : []).map((a) => ({ ...a, group: 'yours' }))
+			]}
 			{@const current = all.find((w) => w.word === selected) ?? all[0]}
 			{@const pos = (word: string) => all.find((w) => w.word === word)!}
 			{@const k = pos('king')}
@@ -307,28 +308,24 @@
 				</p>
 			</div>
 
-			{#if !wantLive && !model.active && model.status.state !== 'ready'}
-				<button type="button" onclick={() => (wantLive = true)}>Add your own words…</button>
-			{:else}
-				<ModelConsent
-					{model}
-					purpose="To place your own words on the map, a small embedding model has to run in your browser."
-				/>
-				{#if model.status.state === 'ready'}
-					<form
-						class="add"
-						onsubmit={(e) => {
-							e.preventDefault();
-							addWord(d);
-						}}
-					>
-						<label class="label" for="{id}-new">Your word</label>
-						<input id="{id}-new" bind:value={newWord} autocomplete="off" />
-						<button type="submit">Add to the map</button>
-					</form>
-					{#if liveError}<p class="error" role="alert">{liveError}</p>{/if}
-				{/if}
+			{#if option.live}
+				<form
+					class="add"
+					onsubmit={(e) => {
+						e.preventDefault();
+						addWord(d);
+					}}
+				>
+					<label class="label" for="{id}-new">Your word</label>
+					<input id="{id}-new" bind:value={newWord} autocomplete="off" />
+					<button type="submit">Add to the map</button>
+				</form>
+				{#if liveError}<p class="error" role="alert">{liveError}</p>{/if}
 			{/if}
+			<TierStatus
+				{option}
+				purpose="To place your own words on the map, a small embedding model has to run in your browser."
+			/>
 		{/snippet}
 	</Loading>
 </WidgetFrame>

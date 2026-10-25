@@ -10,6 +10,11 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "static" / "data"
 CANONICAL = json.loads((ROOT / "models" / "canonical.json").read_text())
 EMBEDDER = json.loads((ROOT / "models" / "embedder.json").read_text())
+ENCODER = json.loads((ROOT / "models" / "encoder.json").read_text())
+CLIP = json.loads((ROOT / "models" / "clip.json").read_text())
+ASSISTANT = json.loads((ROOT / "models" / "assistant.json").read_text())
+# Every model the site runs live, each with its pinned ONNX files.
+LIVE = (CANONICAL, EMBEDDER, ENCODER, CLIP, ASSISTANT)
 # Datasets recorded from the canonical model live in a folder per model, so a switch keeps both.
 PER_MODEL = ("traces", "vectors", "quantize", "speculative")
 # Where write_dataset writes; `check` points it at a temporary folder.
