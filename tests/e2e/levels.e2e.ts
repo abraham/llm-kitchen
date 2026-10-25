@@ -1,7 +1,7 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync } from 'node:fs';
 import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
+import { expectAccessible } from './a11y.ts';
 import { gotoHydrated } from './helpers.ts';
 
 // Test-only pages in tests/e2e/fixtures, built with VITE_FIXTURES.
@@ -127,10 +127,7 @@ test('each level has no axe violations', async ({ page }) => {
 		await gotoHydrated(page, path);
 		for (const level of ['simple', 'standard', 'deep']) {
 			await choose(page, level);
-			const results = await new AxeBuilder({ page })
-				.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-				.analyze();
-			expect(results.violations.map((v) => `${path} ${level} ${v.id}: ${v.help}`)).toEqual([]);
+			await expectAccessible(page, { label: `${path} ${level}` });
 		}
 	}
 });

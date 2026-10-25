@@ -1,0 +1,11 @@
+- group "Widgets":
+    - text: ''
+    - radio "Show recordings (default) Widgets replay real runs recorded ahead of time. Nothing downloads." [checked]
+    - strong: Show recordings (default)
+    - text: Widgets replay real runs recorded ahead of time. Nothing downloads.
+    - 'radio /Small: about \d+ MB GPT-2 for next tokens, BERT for blanks, and small models for meaning and captions, in any browser\./'
+    - strong: "/Small: about \\d+ MB/"
+    - text: GPT-2 for next tokens, BERT for blanks, and small models for meaning and captions, in any browser.
+    - 'radio /Large: about 1\.2 GB Everything in Small, plus Qwen2\.5-[\d,.]+[bkmBKM]+-Instruct for chats, system prompts, and tools\./'
+    - strong: 'Large: about 1.2 GB'
+    - text: /Everything in Small, plus Qwen2\.5-[\d,.]+[bkmBKM]+-Instruct for chats, system prompts, and tools\./

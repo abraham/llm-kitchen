@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../styles/global.css';
-	import { page } from '$app/state';
 	import favicon from '#lib/assets/favicon.svg';
 	import AppBar from '#lib/components/page/AppBar.svelte';
 	import { LEVEL_CHOICE } from '#lib/chapters/config.ts';
@@ -32,9 +31,7 @@
 	/>
 </svelte:head>
 
-{#if !page.error}
-	<a class="skip" href="#content">Skip to content</a>
-{/if}
+<a class="skip" href="#content">Skip to content</a>
 <AppBar levelChoice={LEVEL_CHOICE} />
 {@render children()}
 <footer class="site-footer">

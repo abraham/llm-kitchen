@@ -63,12 +63,12 @@
 
 			<div class="runs">
 				<section aria-labelledby="{id}-off">
-					<h4 id="{id}-off">Thinking off</h4>
+					<h3 id="{id}-off">Thinking off</h3>
 					{@render result(p.off)}
 					{@render bubble(p.off.answer, 'Reply with thinking off')}
 				</section>
 				<section aria-labelledby="{id}-on">
-					<h4 id="{id}-on">Thinking on</h4>
+					<h3 id="{id}-on">Thinking on</h3>
 					{@render result(p.on)}
 					<div class="thinking">
 						<p class="label">
@@ -104,7 +104,7 @@
 				<caption>All {d.puzzles.length} puzzles</caption>
 				<thead>
 					<tr>
-						<th scope="col"></th>
+						<th scope="col"><span class="visually-hidden">Thinking</span></th>
 						<th scope="col" class="num">Right answers</th>
 						<th scope="col" class="num">Tokens written (average)</th>
 					</tr>
@@ -164,7 +164,7 @@
 		align-items: start;
 	}
 
-	h4 {
+	h3 {
 		margin: 0;
 		font-family: var(--font-sans);
 		font-size: 0.95rem;

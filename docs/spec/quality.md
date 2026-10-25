@@ -12,7 +12,7 @@ Every check is an `npm run` script, so CI and local runs match:
 | `test`            | `vitest run`                                                       | A unit test fails.                                                                  |
 | `build`           | `node scripts/build-og.ts && vite build`                           | Prerendering fails, e.g. a broken internal link or a chapter that throws.           |
 | `test:e2e`        | `playwright test` (Chromium) against the Firebase Hosting emulator | A page or widget test fails, or an accessibility, layout, budget, or hosting check. |
-| `test:lighthouse` | `playwright test --config playwright.lighthouse.config.ts`         | A page scores under 95 for Lighthouse performance or accessibility.                 |
+| `test:lighthouse` | `playwright test --config playwright.lighthouse.config.ts`         | A page scores under 95 for Lighthouse performance or under 100 for accessibility.   |
 | `test:visual`     | `playwright test --config playwright.visual.config.ts`             | Local only: a screenshot differs from its baseline.                                 |
 
 svelte-check doesn't type-check `.svx` files, so a chapter error may only show up in `build`.
@@ -52,22 +52,37 @@ down never blocks a merge; a failure shows up as a failed run.
   `facts.test.ts`); every recorded dataset against its parser (`datasets`); GPT-2 numbers against
   `models/canonical.json` (`consistency`, `canonical`); citations; the curriculum, spec layout, and
   derived chapter numbers (`curriculum`); chapter markup (`chapter-markup`); social images and
-  descriptions (`branding`); the hosting config (`hosting`); and color contrast (`tokens`).
+  descriptions (`branding`); the hosting config (`hosting`); color contrast (`tokens`); and that
+  every `svelte-ignore a11y_*` in `src/` is in an allowlist with its reason (`a11y-ignores`).
 - **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, the menu and
   a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), explanation levels on
   a fixture page (`levels`), the Models page, its tier choice, and the cache states it shows (`downloads`), page
   metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
-  caching), and on every page (`quality`):
+  caching), the keyboard on every page (`keyboard`: each Tab stop is on screen, not under the
+  sticky app bar, and shows a focus ring; focus leaves the page within 600 stops; Shift+Tab from
+  the last stop visits the same stops in reverse; and on chapters, Enter opens each glossary
+  popover and Escape closes it with focus still on its term), the scan helper itself and its
+  exceptions (`a11y`), the names and roles of the chrome every page shares as ARIA snapshots
+  (`names`: the app bar, a chapter's header, Ingredients box, and footer, the site footer, the
+  Models page's tier choice and a model card, and the 404 page), and on every page,
+  the 404 page included (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
-    on chapters with passages for those levels;
+    (on a desktop and a phone) on chapters with passages for those levels;
+  - no axe violations on a phone with every disclosure open;
+  - on chapters, no axe violations with every visible stepped figure at its last step (with
+    reduced motion), nor in each glossary popover, opened from the keyboard and scanned on its own;
   - no requests to another origin, so nothing downloads before a tier is chosen;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
-  - no sideways scrolling at phone width, and no SVG text in a figure smaller than 11px there;
+  - no sideways scrolling at 375 px or at 320 px (WCAG 1.4.10 Reflow), and no SVG text in a figure
+    smaller than 11px at 375 px;
+  - with WCAG 1.4.12's text spacing added on a phone, no sideways scrolling and no text cut off
+    by a box that hides its overflow;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
     tokenizer.
 - **Visual (`tests/visual/`):** screenshots of pages and of every widget with an SVG figure, on a
-  desktop and a phone, run locally only because baselines differ by operating system.
+  desktop and a phone, plus the menu, the Models page, and three figures in forced colors (as with
+  Windows High Contrast), run locally only because baselines differ by operating system.
 
 ## Browser support
 
@@ -84,11 +99,30 @@ Chromium only.
   [design.md](design.md)).
 - No interaction depends on hover.
 - Text-on-color pairs pass WCAG AA in both themes.
+- Every axe scan goes through `expectAccessible` (`tests/e2e/a11y.ts`), with one rule set: WCAG
+  2.0–2.2 A and AA plus axe's best practices (heading order, one `main`, content in landmarks). A
+  failure lists each rule, what it means, and up to five elements, and attaches axe's full results
+  to the Playwright report. Nothing is excluded unless `EXCEPTIONS` in that file names the rule,
+  the page, the elements, and why; it's empty, and `a11y.e2e.ts` checks each entry still matches
+  something. A lint rule keeps tests from importing axe directly. `tests/e2e/pages.ts` lists the
+  pages that e2e and Lighthouse tests check.
+- The 404 page (`+error.svelte`) has a `main`, a heading, and a link back to the menu, so the skip
+  link works there too.
+- **Not automated:** whether a figure's text description says what it shows, whether alt text
+  and labels make sense out of context, and how a screen reader reads a widget as it changes.
+  Before a release that adds or rewrites widgets, someone steps through them with VoiceOver on
+  macOS and iOS, using only the keyboard or touch.
+- **Decisions:** scans run in Chromium only, as the other e2e tests do; axe reads the DOM and
+  computed styles, which rarely differ between engines here. Phone scans are in light only, since
+  contrast is the only rule that differs by theme and both themes are scanned on a desktop. Axe
+  doesn't run in forced colors, where it compares colors the browser has replaced; screenshots
+  cover it. AAA (`wcag2aaa`) is off: 7:1 contrast would change the concept colors, which pass AA
+  in both themes.
 
 ## Performance
 
 - The JavaScript budget above is enforced in CI.
-- Lighthouse (simulated mobile) performance and accessibility are at least 95 on every page
+- Lighthouse (simulated mobile) performance is at least 95 and accessibility is 100 on every page
   (`tests/lighthouse/`, against the Firebase Hosting emulator, one page at a time). No page loads a
   live model under Recorded, the default, so every page is measured as a visitor first sees it.
 - Model downloads happen only after the visitor chooses a tier, in a worker.

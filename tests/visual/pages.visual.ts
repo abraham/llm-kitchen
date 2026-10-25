@@ -43,6 +43,32 @@ test.describe('phone', () => {
 	});
 });
 
+/** Windows High Contrast and similar replace every color, so check figures and focus stay visible. */
+test.describe('forced colors', () => {
+	test.use({ forcedColors: 'active' });
+	for (const path of ['/', '/downloads']) {
+		test(path, async ({ page }) => {
+			await gotoHydrated(page, path);
+			await page.keyboard.press('Tab');
+			await page.evaluate(() => document.fonts.ready);
+			await expect(page).toHaveScreenshot(`${path.slice(1) || 'menu'}-forced-colors.png`);
+		});
+	}
+	for (const slug of ['attention', 'scale', 'embeddings']) {
+		test(`/${slug}`, async ({ page }) => {
+			await gotoHydrated(page, `/${slug}`);
+			await expect(page.getByText(/Loading/)).toHaveCount(0);
+			await page.evaluate(() => document.fonts.ready);
+			const widget = page
+				.locator('section.widget')
+				.filter({ has: page.locator('svg') })
+				.first();
+			await widget.getByRole('button', { name: 'Reset' }).focus();
+			await expect(widget).toHaveScreenshot(`figure-${slug}-forced-colors.png`);
+		});
+	}
+});
+
 /** Chapters with SVG figures: every such widget, on a desktop and a phone. Some figures show
  * only after picking an option, named here. */
 const FIGURE_PAGES: [slug: string, show?: string][] = [

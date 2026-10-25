@@ -93,6 +93,25 @@ export default defineConfig(
 		}
 	},
 	{
+		name: 'tests/one-axe',
+		files: ['tests/**', 'src/**/*.e2e.ts'],
+		ignores: ['tests/e2e/a11y.ts'],
+		rules: {
+			'@typescript-eslint/no-restricted-imports': [
+				'error',
+				{
+					paths: [
+						{
+							name: '@axe-core/playwright',
+							message:
+								'Scan with expectAccessible from tests/e2e/a11y.ts, so every scan has the same rules.'
+						}
+					]
+				}
+			]
+		}
+	},
+	{
 		files: [
 			'src/lib/math/**',
 			'src/lib/harness/**',

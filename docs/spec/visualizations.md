@@ -125,7 +125,7 @@ Text in a figure is never smaller than 11px on screen, at any width. `Figure` ge
 - **Data is also text.** Tables, `ProbBars`' visually hidden caption and header row, and the
   `Status` line under a figure (a polite live region) say what changed in words. A chart whose
   numbers aren't in the prose or a table nearby offers them in `FigureData`, a closed "The numbers"
-  disclosure holding a `table.data`: `ScalingLawChart` (each GPT-2 size and its predicted loss) and
+  disclosure holding a `table.data` in a `ScrollBox`, so a long table scrolls from the keyboard: `ScalingLawChart` (each GPT-2 size and its predicted loss) and
   `KVCacheStepper` (the milliseconds for every new token, with and without the cache).
 - **Every interaction has a control.** Anything the visitor can do by pointing at a figure can be
   done with a button, radio, slider, or select, which keyboards and screen readers reach. Picking a

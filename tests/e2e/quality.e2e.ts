@@ -1,12 +1,9 @@
-import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
-import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
+import { expectAccessible } from './a11y.ts';
 import { gotoHydrated } from './helpers.ts';
-
-/** Every page on the site: the menu, all chapters, and the downloads page. */
-const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`), '/downloads'];
+import { CHAPTER_PAGES, NOT_FOUND, PAGES } from './pages.ts';
 
 /** Chapters whose chapter.ts lists levels: they're checked at every level, not just Standard. */
 const LEVELED_PAGES = readdirSync('src/lib/chapters')
@@ -24,7 +21,7 @@ const TOKENIZER_BUDGET_KB = 350;
 for (const colorScheme of ['light', 'dark'] as const) {
 	test.describe(`${colorScheme} theme`, () => {
 		test.use({ colorScheme });
-		for (const path of PAGES) {
+		for (const path of [...PAGES, NOT_FOUND]) {
 			test(`${path} loads its widgets and has no axe violations`, async ({ page, baseURL }) => {
 				// Models download only after consent, so nothing on a page may fetch from another origin.
 				const offSite: string[] = [];
@@ -34,10 +31,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 				});
 				await gotoHydrated(page, path);
 				await expect(page.getByText(/Loading/)).toHaveCount(0);
-				const results = await new AxeBuilder({ page })
-					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-					.analyze();
-				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+				await expectAccessible(page);
 				expect(offSite).toEqual([]);
 			});
 		}
@@ -51,25 +45,55 @@ test.describe('explanation levels', () => {
 
 	for (const path of LEVELED_PAGES) {
 		for (const level of ['simple', 'deep']) {
-			test(`${path} at ${level} has no axe violations and doesn't scroll sideways on a phone`, async ({
+			test(`${path} at ${level} has no axe violations on a desktop or a phone, and doesn't scroll sideways`, async ({
 				page
 			}) => {
 				await page.addInitScript((l) => localStorage.setItem('llm-kitchen:level', l), level);
 				await gotoHydrated(page, path);
 				await expect(page.locator('html')).toHaveAttribute('data-level', level);
 				await expect(page.getByText(/Loading/)).toHaveCount(0);
-				const results = await new AxeBuilder({ page })
-					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-					.analyze();
-				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+				await expectAccessible(page, { label: 'desktop' });
 
 				await page.setViewportSize({ width: 375, height: 740 });
-				const overflow = await page.evaluate(
-					() => document.documentElement.scrollWidth - document.documentElement.clientWidth
-				);
-				expect(overflow).toBeLessThanOrEqual(0);
+				expect(await sidewaysScroll(page)).toBeLessThanOrEqual(0);
+				await expectAccessible(page, { label: 'phone' });
 			});
 		}
+	}
+});
+
+test.describe('after interacting', () => {
+	test.use({ reducedMotion: 'reduce' });
+	for (const path of CHAPTER_PAGES) {
+		test(`${path} has no axe violations with its figures stepped to the end and in each glossary popover`, async ({
+			page
+		}) => {
+			await gotoHydrated(page, path);
+			await expect(page.getByText(/Loading/)).toHaveCount(0);
+
+			// The last step draws the most marks, labels, and table rows.
+			const nexts = page.locator('.step-controller').getByRole('button', { name: 'Next →' });
+			let stepped = 0;
+			for (const next of await nexts.all()) {
+				if (!(await next.isVisible())) continue;
+				await next.press('End');
+				await expect(next).toHaveAttribute('aria-disabled', 'true');
+				stepped++;
+			}
+			if (stepped) await expectAccessible(page, { label: 'stepped to the end' });
+
+			for (const term of await page.locator('.term > .trigger').all()) {
+				if (!(await term.isVisible())) continue;
+				await term.press('Enter');
+				const popover = `#${await term.getAttribute('aria-controls')}`;
+				await expect(page.locator(popover)).toBeVisible();
+				await expectAccessible(page, {
+					label: `${await term.textContent()} popover`,
+					include: popover
+				});
+				await term.press('Escape');
+			}
+		});
 	}
 });
 
@@ -84,16 +108,13 @@ test.describe('prerendered HTML', () => {
 
 test.describe('phone-sized screen', () => {
 	test.use({ viewport: { width: 375, height: 740 }, hasTouch: true, isMobile: true });
-	for (const path of PAGES) {
-		test(`${path} doesn't scroll sideways, and its figures' text is at least 11px`, async ({
+	for (const path of [...PAGES, NOT_FOUND]) {
+		test(`${path} doesn't scroll sideways at 375 or 320 px, and its figures' text is at least 11px`, async ({
 			page
 		}) => {
 			await gotoHydrated(page, path);
 			await expect(page.getByText(/Loading/)).toHaveCount(0);
-			const overflow = await page.evaluate(
-				() => document.documentElement.scrollWidth - document.documentElement.clientWidth
-			);
-			expect(overflow).toBeLessThanOrEqual(0);
+			expect(await sidewaysScroll(page), '375 px').toBeLessThanOrEqual(0);
 			// Rendered size: the CSS font size times the SVG's scale on screen.
 			const small = await page.evaluate(() =>
 				[...document.querySelectorAll<SVGTextElement>('section.widget svg text')]
@@ -106,6 +127,44 @@ test.describe('phone-sized screen', () => {
 					.filter((t) => t.px < 10.95)
 			);
 			expect(small).toEqual([]);
+			// WCAG 1.4.10 Reflow: 320 CSS px, a 1280 px window zoomed to 400%.
+			await page.setViewportSize({ width: 320, height: 640 });
+			expect(await sidewaysScroll(page), '320 px').toBeLessThanOrEqual(0);
+		});
+
+		test(`${path} with its disclosures open has no axe violations and survives WCAG text spacing`, async ({
+			page
+		}) => {
+			await gotoHydrated(page, path);
+			await expect(page.getByText(/Loading/)).toHaveCount(0);
+			await page.evaluate(() =>
+				document.querySelectorAll('details').forEach((d) => (d.open = true))
+			);
+			await expectAccessible(page, { label: 'phone, disclosures open' });
+
+			// WCAG 1.4.12 Text spacing: these overrides may not cut off or hide text.
+			await page.addStyleTag({
+				content: `* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }
+					p { margin-bottom: 2em !important; }`
+			});
+			expect(await sidewaysScroll(page), 'text spacing').toBeLessThanOrEqual(0);
+			const clipped = await page.evaluate(() =>
+				[...document.querySelectorAll<HTMLElement>('main *')]
+					.filter((el) => {
+						if (!el.textContent?.trim() || el.closest('svg') || el.clientWidth <= 1) return false;
+						const s = getComputedStyle(el);
+						const hides = (o: string) => o === 'hidden' || o === 'clip';
+						return (
+							(hides(s.overflowX) && el.scrollWidth > el.clientWidth + 1) ||
+							(hides(s.overflowY) && el.scrollHeight > el.clientHeight + 1)
+						);
+					})
+					.map(
+						(el) =>
+							`${el.tagName.toLowerCase()}.${el.classList[0] ?? ''}: ${el.textContent!.trim().slice(0, 40)}`
+					)
+			);
+			expect(clipped, 'text cut off').toEqual([]);
 		});
 	}
 });
@@ -132,3 +191,10 @@ test.describe('JavaScript budget', () => {
 		});
 	}
 });
+
+/** How far the page scrolls sideways, in CSS pixels. */
+function sidewaysScroll(page: Page): Promise<number> {
+	return page.evaluate(
+		() => document.documentElement.scrollWidth - document.documentElement.clientWidth
+	);
+}

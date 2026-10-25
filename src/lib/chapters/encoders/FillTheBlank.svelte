@@ -122,7 +122,7 @@
 			</p>
 			<div class="grid" class:busy={!fresh}>
 				<section aria-labelledby="{id}-gpt2">
-					<h4 id="{id}-gpt2">{d.models.gpt2.displayName}</h4>
+					<h3 id="{id}-gpt2">{d.models.gpt2.displayName}</h3>
 					<p class="reads">
 						Reads only <q>{before(sentence)}</q>, the words before the blank.
 					</p>
@@ -132,7 +132,7 @@
 					/>
 				</section>
 				<section aria-labelledby="{id}-bert">
-					<h4 id="{id}-bert">{d.models.bert.displayName}</h4>
+					<h3 id="{id}-bert">{d.models.bert.displayName}</h3>
 					<p class="reads">Reads the whole sentence, on both sides of the blank.</p>
 					<ProbBars
 						bars={shown?.bert ?? []}
@@ -194,7 +194,7 @@
 		opacity: 0.5;
 	}
 
-	h4 {
+	h3 {
 		margin: 0;
 		font-family: var(--font-sans);
 		font-size: 0.95rem;

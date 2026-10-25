@@ -1,0 +1,6 @@
+- main:
+    - heading "Page not found" [level=1]
+    - paragraph: There's no page at this address.
+    - paragraph:
+        - link "Back to the menu":
+            - /url: /

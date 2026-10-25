@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import ScrollBox from './ScrollBox.svelte';
 
 	let {
 		summary = 'The numbers',
@@ -13,7 +14,7 @@
 
 <details class="figure-data">
 	<summary>{summary}</summary>
-	<div class="table">{@render children()}</div>
+	<ScrollBox label={summary} maxHeight="16rem">{@render children()}</ScrollBox>
 </details>
 
 <style>
@@ -28,9 +29,7 @@
 		color: var(--ink-muted);
 	}
 
-	.table {
-		max-height: 16rem;
-		overflow: auto;
-		margin-top: var(--space-1);
+	.figure-data[open] summary {
+		margin-bottom: var(--space-1);
 	}
 </style>
