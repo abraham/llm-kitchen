@@ -5,9 +5,8 @@ belongs to and remove it here.
 
 ## Quality
 
-- **More accessibility checks:** levels on a phone, each glossary popover, stepped figures at their
-  end, Shift+Tab, and ARIA snapshots of the shared chrome. The plan is in
-  [accessibility-checks.md](accessibility-checks.md).
+- **More accessibility checks:** Shift+Tab, every glossary popover from the keyboard, and ARIA
+  snapshots of the shared chrome. The plan is in [accessibility-checks.md](accessibility-checks.md).
 
 ## Live models
 

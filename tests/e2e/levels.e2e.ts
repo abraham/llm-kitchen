@@ -127,7 +127,7 @@ test('each level has no axe violations', async ({ page }) => {
 		await gotoHydrated(page, path);
 		for (const level of ['simple', 'standard', 'deep']) {
 			await choose(page, level);
-			await expectAccessible(page, `${path} ${level}`);
+			await expectAccessible(page, { label: `${path} ${level}` });
 		}
 	}
 });

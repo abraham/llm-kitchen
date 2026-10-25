@@ -62,8 +62,10 @@ down never blocks a merge; a failure shows up as a failed run.
   bar, and shows a focus ring, and focus leaves the page within 600 stops), and on every page,
   the 404 page included (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
-    on chapters with passages for those levels;
+    (on a desktop and a phone) on chapters with passages for those levels;
   - no axe violations on a phone with every disclosure open;
+  - on chapters, no axe violations with every visible stepped figure at its last step (with
+    reduced motion), nor in each glossary popover, opened from the keyboard and scanned on its own;
   - no requests to another origin, so nothing downloads before a tier is chosen;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
   - no sideways scrolling at 375 px or at 320 px (WCAG 1.4.10 Reflow), and no SVG text in a figure

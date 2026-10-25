@@ -4,6 +4,7 @@
 	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
 	import { LEVEL_NAMES, LEVELS, type ExtraLevel } from '#lib/levels.ts';
 	import { absoluteUrl, chapterEditUrl, chapterHeading } from '#lib/site.ts';
+	import { scrollableEquations } from '../ui/scrollable.ts';
 	import At from './At.svelte';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
@@ -60,7 +61,7 @@
 	</aside>
 
 	<div class="column">
-		<main id="content" class="prose">
+		<main id="content" class="prose" {@attach scrollableEquations}>
 			<header>
 				<p class="label">{partLabel(meta.part, ' · ')}</p>
 				<h1><span class="num">{label(meta.slug)}.</span> {meta.title}</h1>

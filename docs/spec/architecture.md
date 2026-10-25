@@ -279,7 +279,8 @@ and remaining phases are in [levels.md](levels.md).
   `scripts/mdsvex-math.ts`, a remark plugin for mdsvex, converts it to MathML with Temml at build
   time, so pages ship no math JavaScript or fonts and every supported browser renders it; bad TeX
   fails the build. A literal dollar sign in prose is written `&#36;`. Wide equations scroll inside
-  their line instead of widening the page.
+  their line instead of widening the page; while one scrolls, `ChapterLayout` makes it focusable
+  (`scrollableEquations` in `ui/scrollable.ts`) so the keyboard can scroll it too.
 - **Tests:** the end-to-end build sets `VITE_FIXTURES`, which turns the control on and adds the
   pages in `tests/e2e/fixtures`: `/fixtures/levels` (passages, inline swaps, and citations at each
   level) and `/fixtures/recap-and-quiz` (per-level recap points and quiz questions).

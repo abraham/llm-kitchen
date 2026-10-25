@@ -3,7 +3,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { expectAccessible } from './a11y.ts';
 import { gotoHydrated } from './helpers.ts';
-import { NOT_FOUND, PAGES } from './pages.ts';
+import { CHAPTER_PAGES, NOT_FOUND, PAGES } from './pages.ts';
 
 /** Chapters whose chapter.ts lists levels: they're checked at every level, not just Standard. */
 const LEVELED_PAGES = readdirSync('src/lib/chapters')
@@ -45,22 +45,55 @@ test.describe('explanation levels', () => {
 
 	for (const path of LEVELED_PAGES) {
 		for (const level of ['simple', 'deep']) {
-			test(`${path} at ${level} has no axe violations and doesn't scroll sideways on a phone`, async ({
+			test(`${path} at ${level} has no axe violations on a desktop or a phone, and doesn't scroll sideways`, async ({
 				page
 			}) => {
 				await page.addInitScript((l) => localStorage.setItem('llm-kitchen:level', l), level);
 				await gotoHydrated(page, path);
 				await expect(page.locator('html')).toHaveAttribute('data-level', level);
 				await expect(page.getByText(/Loading/)).toHaveCount(0);
-				await expectAccessible(page);
+				await expectAccessible(page, { label: 'desktop' });
 
 				await page.setViewportSize({ width: 375, height: 740 });
-				const overflow = await page.evaluate(
-					() => document.documentElement.scrollWidth - document.documentElement.clientWidth
-				);
-				expect(overflow).toBeLessThanOrEqual(0);
+				expect(await sidewaysScroll(page)).toBeLessThanOrEqual(0);
+				await expectAccessible(page, { label: 'phone' });
 			});
 		}
+	}
+});
+
+test.describe('after interacting', () => {
+	test.use({ reducedMotion: 'reduce' });
+	for (const path of CHAPTER_PAGES) {
+		test(`${path} has no axe violations with its figures stepped to the end and in each glossary popover`, async ({
+			page
+		}) => {
+			await gotoHydrated(page, path);
+			await expect(page.getByText(/Loading/)).toHaveCount(0);
+
+			// The last step draws the most marks, labels, and table rows.
+			const nexts = page.locator('.step-controller').getByRole('button', { name: 'Next →' });
+			let stepped = 0;
+			for (const next of await nexts.all()) {
+				if (!(await next.isVisible())) continue;
+				await next.press('End');
+				await expect(next).toHaveAttribute('aria-disabled', 'true');
+				stepped++;
+			}
+			if (stepped) await expectAccessible(page, { label: 'stepped to the end' });
+
+			for (const term of await page.locator('.term > .trigger').all()) {
+				if (!(await term.isVisible())) continue;
+				await term.press('Enter');
+				const popover = `#${await term.getAttribute('aria-controls')}`;
+				await expect(page.locator(popover)).toBeVisible();
+				await expectAccessible(page, {
+					label: `${await term.textContent()} popover`,
+					include: popover
+				});
+				await term.press('Escape');
+			}
+		});
 	}
 });
 
@@ -107,7 +140,7 @@ test.describe('phone-sized screen', () => {
 			await page.evaluate(() =>
 				document.querySelectorAll('details').forEach((d) => (d.open = true))
 			);
-			await expectAccessible(page, 'phone, disclosures open');
+			await expectAccessible(page, { label: 'phone, disclosures open' });
 
 			// WCAG 1.4.12 Text spacing: these overrides may not cut off or hide text.
 			await page.addStyleTag({

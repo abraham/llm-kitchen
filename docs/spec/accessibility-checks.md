@@ -19,10 +19,12 @@ leaves this file.
 
 [quality.md](quality.md#accessibility) describes what's built: one scan helper
 (`expectAccessible`) with WCAG 2.0–2.2 A and AA plus axe's best practices; scans of every page and
-the 404 page in both themes, on a phone with every disclosure open, and at Simple and In depth;
-reflow at 320 px; WCAG text spacing; a Tab sweep of every page; and forced-colors screenshots.
-Turning them on took headings that skipped a level in four widgets, a named corner cell in a
-table, a `main` on the 404 page, and a focusable scroll box in `FigureData`.
+the 404 page in both themes, on a phone with every disclosure open, and at Simple and In depth on a
+desktop and a phone; chapters with stepped figures at their last step and each glossary popover
+open; reflow at 320 px; WCAG text spacing; a Tab sweep of every page; and forced-colors
+screenshots. Turning them on took headings that skipped a level in four widgets, a named corner
+cell in a table, a `main` on the 404 page, a focusable scroll box in `FigureData`, and focusable
+wide equations on phones.
 
 ## Checks still to add
 
@@ -31,18 +33,6 @@ table, a `main` on the 404 page, and a focusable scroll box in `FigureData`.
 If a rule ever needs an exception, it goes in `tests/e2e/a11y.ts` as a `{ rule, selector, reason }`
 entry, passed to axe as `exclude` for that rule only. A unit test checks that each entry has a
 reason and that its selector matches something on some page, so stale exceptions are removed.
-
-### Pages and states
-
-| State              | How it's reached                                                              | Pages                           |
-| ------------------ | ----------------------------------------------------------------------------- | ------------------------------- |
-| Each level, phone  | Simple and In depth at 375 × 740 (they're scanned at desktop width now)       | Chapters with passages for them |
-| Popovers open      | Each glossary term's popover opened in turn and scanned on its own            | Chapters                        |
-| Stepped to the end | Every `StepController` in turn: focus Next, press End, wait for "Step N of N" | Chapters with stepped figures   |
-
-Scanning a page in several states reuses one load: the test reaches each state in order and scans
-after each. Stepped figures are scanned at their end because that's where the most marks, labels,
-and table rows are drawn.
 
 ### Keyboard
 
@@ -96,9 +86,8 @@ with VoiceOver on macOS and iOS, using only the keyboard or touch.
 
 ## Phases
 
-1. **States.** Levels on a phone, each glossary popover, and stepped figures at their end.
-2. **Keyboard.** Shift+Tab back through every page, and Enter and Escape on every popover.
-3. **Names and sources.** The ARIA snapshots, the `svelte-ignore` allowlist, the exception list
+1. **Keyboard.** Shift+Tab back through every page, and Enter and Escape on every popover.
+2. **Names and sources.** The ARIA snapshots, the `svelte-ignore` allowlist, the exception list
    with its test, the helper's own test, and Lighthouse at 100.
 
 ## CI
@@ -116,7 +105,7 @@ with VoiceOver on macOS and iOS, using only the keyboard or touch.
 
 ## Specs that change
 
-- [quality.md](quality.md): the Tests list and the Accessibility section describe the new states,
-  the reverse sweep, ARIA snapshots, the allowlist, and exceptions; the Lighthouse minimum becomes
-  100 for accessibility.
+- [quality.md](quality.md): the Tests list and the Accessibility section describe the reverse
+  sweep, ARIA snapshots, the allowlist, and exceptions; the Lighthouse minimum becomes 100 for
+  accessibility.
 - [principles.md](principles.md): the accessibility success criterion names WCAG 2.2 AA.

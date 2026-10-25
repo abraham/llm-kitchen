@@ -29,7 +29,7 @@ src/lib/components/
 
 | Folder        | Contents                                                                                                                                                                          |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`, `Figure`, `Axis`, `FigureData`; the `scrollable` and `pointer` attachments; the `Concept` type                               |
+| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`, `Figure`, `Axis`, `FigureData`; the `scrollable`, `scrollableEquations`, and `pointer` attachments; the `Concept` type       |
 | `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`, `RoleKey`; `format.ts`, `roles.ts` |
 | `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `TierStatus`, `StepController` (`stepper.svelte.ts`), `FrameLoop` (`loop.svelte.ts`)                              |
 | `page/`       | `AppBar`, `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`, `At`                    |
