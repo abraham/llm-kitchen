@@ -9,12 +9,14 @@
 html {
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
-	/* In-page links land below the sticky app bar. */
+	/* In-page links land below the app bar. */
 	scroll-padding-top: var(--app-bar-height);
 }
 
 body {
 	margin: 0;
+	/* Room for the fixed app bar. */
+	padding-top: var(--app-bar-height);
 	background: var(--page);
 	color: var(--ink);
 	font-family: var(--font-serif);

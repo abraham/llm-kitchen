@@ -5,7 +5,7 @@
 	import { SITE_NAME } from '#lib/site.ts';
 	import { level } from '#lib/stores/level.svelte.ts';
 	import { theme, type ThemeChoice } from '#lib/stores/theme.svelte.ts';
-	import Choice from '../ui/Choice.svelte';
+	import Choice, { type Option } from '../ui/Choice.svelte';
 
 	let {
 		levelChoice = false
@@ -21,6 +21,13 @@
 	};
 
 	const LEVEL_OPTIONS = LEVELS.map((value) => ({ value, label: LEVEL_NAMES[value] }));
+
+	/** Density icons: more lines, more detail. */
+	const LEVEL_ICONS: Record<Level, string> = {
+		simple: 'M4 8h16M4 16h16',
+		standard: 'M4 6h16M4 12h16M4 18h16',
+		deep: 'M4 4.5h16M4 9.5h16M4 14.5h16M4 19.5h16'
+	};
 
 	$effect(() => theme.load());
 	$effect(() => level.load());
@@ -51,11 +58,10 @@
 					legend="Explanations"
 					hideLabel
 					layout="inline"
-					appearance="select"
 					options={LEVEL_OPTIONS}
 					bind:value={() => level.current, choose}
+					option={levelOption}
 				/>
-				<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
 			</div>
 		{/if}
 		<a
@@ -93,10 +99,19 @@
 	</div>
 </header>
 
+{#snippet levelOption(o: Option<Level>)}
+	<span class="option" data-option={o.value} title={o.label}>
+		<svg viewBox="0 0 24 24" aria-hidden="true"><path d={LEVEL_ICONS[o.value]} /></svg>
+		<span class="text">{o.label}</span>
+	</span>
+{/snippet}
+
 <style>
+	/* Fixed, not sticky: Chrome scrolls to a focused control in a sticky bar that sits under the root's
+	   scroll-padding, jumping the page. */
 	.app-bar {
-		position: sticky;
-		top: 0;
+		position: fixed;
+		inset: 0 0 auto;
 		z-index: 15;
 		display: flex;
 		align-items: center;
@@ -113,45 +128,92 @@
 		font-weight: 700;
 		color: var(--ink);
 		text-decoration: none;
+		white-space: nowrap;
+		/* On the narrowest phones the name gives way, so the controls stay on screen. */
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.tools {
+		flex-shrink: 0;
 		--block-space: 0;
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
 	}
 
-	.level {
-		position: relative;
-	}
-
-	/* The native arrow ignores the theme, so it's replaced by .chevron, drawn in the ink color. */
-	.level :global(select) {
-		appearance: none;
-		height: 2.25rem;
-		padding: 0 calc(var(--space-2) + 1.25rem) 0 var(--space-3);
+	.level :global(fieldset) {
+		flex-wrap: nowrap;
+		gap: 2px;
+		padding: 2px;
 		border: 1px solid var(--rule);
 		border-radius: var(--radius);
 		background: var(--surface);
-		color: var(--ink);
-		font-family: var(--font-sans);
-		font-size: 0.875rem;
-		cursor: pointer;
 	}
 
-	.level :global(select:hover) {
+	.level :global(label) {
+		position: relative;
+		display: flex;
+		border-radius: calc(var(--radius) - 2px);
+	}
+
+	.level :global(label:hover) {
 		background: var(--surface-2);
 	}
 
-	.chevron {
+	/* The radio covers its label, so the whole segment is the click target. */
+	.level :global(input) {
 		position: absolute;
-		right: var(--space-2);
-		top: 50%;
-		width: 1rem;
-		height: 1rem;
-		translate: 0 -50%;
-		pointer-events: none;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	.level :global(label:has(input:focus-visible)) {
+		outline: 2px solid var(--focus);
+		outline-offset: 1px;
+	}
+
+	.option {
+		display: flex;
+		align-items: center;
+		gap: var(--space-1);
+		height: 2rem;
+		padding: 0 0.375rem;
+		border-radius: inherit;
+		color: var(--ink-muted);
+		font-size: 0.875rem;
+		white-space: nowrap;
+	}
+
+	/* Unselected options keep their name for screen readers but show only the icon. */
+	.text {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+
+	/* Selected from the root attribute, which app.html sets before the page paints. */
+	:global(:root:not([data-level])) .option[data-option='standard'],
+	:global(:root[data-level='simple']) .option[data-option='simple'],
+	:global(:root[data-level='deep']) .option[data-option='deep'] {
+		padding-right: var(--space-2);
+		background: var(--surface-2);
+		color: var(--ink);
+		font-weight: 600;
+	}
+
+	:global(:root:not([data-level])) .option[data-option='standard'] .text,
+	:global(:root[data-level='simple']) .option[data-option='simple'] .text,
+	:global(:root[data-level='deep']) .option[data-option='deep'] .text {
+		position: static;
+		width: auto;
+		height: auto;
+		clip-path: none;
 	}
 
 	.icon {
@@ -195,5 +257,26 @@
 	:global(:root[data-theme='light']) .sun,
 	:global(:root[data-theme='dark']) .moon {
 		display: block;
+	}
+
+	/* Phones: tighter spacing keeps the name, the levels, and both buttons on one line. */
+	@media (max-width: 30rem) {
+		.app-bar {
+			gap: var(--space-2);
+			padding: 0 var(--space-3);
+		}
+
+		.tools {
+			gap: var(--space-1);
+		}
+
+		.icon {
+			width: 2.25rem;
+			height: 2.25rem;
+		}
+
+		.option {
+			padding: 0 0.25rem;
+		}
 	}
 </style>
