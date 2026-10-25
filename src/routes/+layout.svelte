@@ -4,6 +4,7 @@
 	import favicon from '#lib/assets/favicon.svg';
 	import AppBar from '#lib/components/page/AppBar.svelte';
 	import { LEVEL_CHOICE } from '#lib/chapters/config.ts';
+	import { REPO_URL } from '#lib/site.ts';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -39,6 +40,9 @@
 {@render children()}
 <footer class="site-footer">
 	Made by <a href="https://abrah.am/" rel="noopener noreferrer" target="_blank">Abraham Williams</a>
+	·
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+	<a href={REPO_URL} rel="noopener noreferrer" target="_blank">Source on GitHub</a>
 </footer>
 
 <style>
