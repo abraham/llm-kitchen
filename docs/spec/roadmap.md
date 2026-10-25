@@ -29,6 +29,9 @@ belongs to and remove it here.
 ## Content
 
 - **Expert review:** pending; see [sources.md](sources.md).
+- **Build mode.** A Learn and Build toggle in the app bar. In Build, each chapter becomes a step of
+  instructions for training a small language model on Project Gutenberg books and building a
+  harness around it, from one tested Python package. The plan is in [build-mode.md](build-mode.md).
 
 ## Open questions
 
