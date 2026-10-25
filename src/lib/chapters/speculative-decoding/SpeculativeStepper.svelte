@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { then, useDataset } from '#lib/datasets/use.ts';
+	import { andThen, useDataset } from '#lib/datasets/use.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
@@ -13,7 +13,7 @@
 	let choice = $state(0);
 	let stepper = $state(new Stepper(1));
 
-	then(data, (d) => (stepper = new Stepper(d.runs[0].rounds.length)));
+	andThen(data, (d) => (stepper = new Stepper(d.runs[0].rounds.length)));
 
 	const plural = (n: number, word: string) =>
 		`${n} ${n === 1 ? word : word.endsWith('s') ? `${word}es` : `${word}s`}`;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { then, useDatasets } from '#lib/datasets/use.ts';
+	import { andThen, useDatasets } from '#lib/datasets/use.ts';
 	import { label } from '#lib/curriculum/index.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import StepController from '#lib/components/frame/StepController.svelte';
@@ -42,7 +42,7 @@
 	// start with a placeholder that's overridden when the run arrives, unless the run changed.
 	let stepper = $derived.by(() => {
 		const current = data;
-		const ready = then(current, (run) => new Stepper(events(run).length));
+		const ready = andThen(current, (run) => new Stepper(events(run).length));
 		if (ready instanceof Stepper) return ready;
 		ready.then((s) => {
 			if (data === current) stepper = s;
