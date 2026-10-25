@@ -11,6 +11,18 @@ export const SITE_DESCRIPTION =
 /** Origin for canonical and Open Graph URLs. */
 export const SITE_ORIGIN = 'https://llm.kitchen';
 
+export const REPO_URL = 'https://github.com/abraham/llm-kitchen';
+
+/** The repository path of a chapter's prose. */
+export function chapterSourcePath(slug: string): string {
+	return `src/lib/chapters/${slug}/chapter.svx`;
+}
+
+/** GitHub's editor for a chapter's prose on `main`. */
+export function chapterEditUrl(slug: string): string {
+	return `${REPO_URL}/edit/main/${chapterSourcePath(slug)}`;
+}
+
 export const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
 /** Name of the menu's social image; chapters use their slug. */

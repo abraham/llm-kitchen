@@ -1,8 +1,9 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CURRICULUM, chapter } from '#lib/curriculum/index.ts';
 import { GLOSSARY } from '#lib/glossary.ts';
 import { differingLevels, parseLevels, type Level } from '#lib/levels.ts';
+import { chapterEditUrl, chapterSourcePath } from '#lib/site.ts';
 import { chapterFolders, chapterLevels } from './index.ts';
 import { QUESTIONS } from './quiz/data.ts';
 
@@ -12,6 +13,18 @@ const source = (slug: string) =>
 describe('chapters', () => {
 	it('has one folder per curriculum entry, named by slug', () => {
 		expect(chapterFolders().sort()).toEqual(CURRICULUM.map((c) => c.slug).sort());
+	});
+
+	it("links each chapter's edit link to its source file on GitHub", () => {
+		for (const { slug } of CURRICULUM) {
+			const url = new URL(chapterEditUrl(slug));
+			expect(url.origin).toBe('https://github.com');
+			expect(url.pathname).toBe(`/abraham/llm-kitchen/edit/main/${chapterSourcePath(slug)}`);
+			expect(
+				existsSync(new URL(`../../../${chapterSourcePath(slug)}`, import.meta.url)),
+				slug
+			).toBe(true);
+		}
 	});
 
 	it('points each glossary term at a chapter that mentions it', () => {
