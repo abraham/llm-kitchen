@@ -3,6 +3,12 @@
 Work that isn't built yet. When something here is built, move its description into the spec it
 belongs to and remove it here.
 
+## Quality
+
+- **Accessibility checks** for every page in the states a visitor sees (phone width, open
+  disclosures, stepped figures), plus the keyboard, reflow, and text spacing. The plan is in
+  [accessibility-checks.md](accessibility-checks.md).
+
 ## Live models
 
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention
