@@ -53,5 +53,5 @@ jobs:
           firebaseServiceAccount: ${{ steps.wif.outputs.credentials_json }}
           projectId: ${{ steps.wif.outputs.project_id }}
           channelId: pr-${{ github.event.pull_request.number }}
-          expires: 7d
+          expires: 1d
           firebaseToolsVersion: ${{ steps.firebase-tools.outputs.version }}
