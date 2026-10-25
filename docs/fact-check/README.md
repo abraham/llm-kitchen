@@ -10,8 +10,9 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 - [Part V: Putting it together (Ch 11–17)](part-5.md)
 - [Part VI: Prompt engineering (Ch 18–22)](part-6.md)
 - [Part VII: Harnesses (Ch 23–27)](part-7.md)
-- [Part VIII: Tools and agents (Ch 28–34)](part-8.md)
-- [Part IX: Other kinds of models (Ch 35–40) and the wrap-up (Ch 41–44)](part-9.md)
+- [Part VIII: Agents (Ch 28–31)](part-8.md)
+- [Part IX: Safety (Ch 32–34)](part-9.md)
+- [Part X: Other kinds of models (Ch 35–40) and the wrap-up (Ch 41–44)](part-10.md)
 
 ## Final review (milestone 12)
 
@@ -30,9 +31,9 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 Please read each Part on the deployed preview and log findings as issues. Things worth a close look:
 
 - The simplifications: the made-up numbers in Ch 9's query/key/value walkthrough, the training
-  stages in Ch 15, and the toy harness in Parts VII and VIII. Each is labeled in the text, but check
+  stages in Ch 15, and the toy harness in Parts VII to IX. Each is labeled in the text, but check
   that none of them teaches something false.
 - Interpretations of real data: the attention heads named in Ch 9 (9.6, 9.9, 9.0), the logit-lens
-  reading in Ch 10, and what the small Qwen models' failures in Parts VII and VIII do and don't
+  reading in Ch 10, and what the small Qwen models' failures in Parts VII to IX do and don't
   show.
 - Anything stated without a citation that you'd expect to need one.

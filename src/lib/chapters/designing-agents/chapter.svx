@@ -218,5 +218,5 @@ to solve the problem", then carry it out, raised its score on grade-school math 
 </At>
 </RecapCard>
 
-**Next question:** every tool result is text the harness pastes into the prompt: search results, web
-pages, files. What if some of that text gives the model instructions of its own?
+**Next question:** one agent does every step in one prompt that keeps growing. What if it handed
+parts of the job to other agents?

@@ -1,4 +1,4 @@
-"""Record the Harnesses and Tools and agents chats and agent runs (tier T0).
+"""Record the Harnesses and agent chapters' chats and agent runs (tier T0).
 
 Usage:
     scripts/.venv/bin/python -m scripts.record agent

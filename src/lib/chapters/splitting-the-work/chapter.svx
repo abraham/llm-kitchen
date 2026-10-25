@@ -91,8 +91,8 @@ It works less well when every part needs the same shared context or depends on t
 Anthropic says is true of most coding tasks. The lead also has to describe each task well: given
 vague tasks, their helpers repeated each other's searches or left gaps.<Cite id="anthropic-multi-agent" />
 And each helper can have its own instructions and its own tools,<Cite id="anthropic-multi-agent" />
-so a helper that only needs to read can be given tools that can't change anything, in the spirit
-of <ChapterRef to="trust-and-guardrails" />.
+so a helper that only needs to read can be given tools that can't change anything, an idea that
+comes back in <ChapterRef to="trust-and-guardrails" />.
 
 </At>
 <At levels="deep">
@@ -136,4 +136,6 @@ slow helper holds up the rest.<Cite id="anthropic-multi-agent" />
 </At>
 </RecapCard>
 
-**Next question:** One agent or several, how do you know the job was done right?
+**Next question:** every tool result and every helper's summary is text the harness pastes into
+a prompt: search results, web pages, files. What if some of that text gives the model instructions
+of its own?
