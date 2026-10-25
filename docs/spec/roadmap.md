@@ -36,8 +36,6 @@ belongs to and remove it here.
   [Seeing pictures](chapters/seeing-pictures.md) and [The agent loop](chapters/the-agent-loop.md).
 - **Attention views.** One attention grid switching between raw scores, masked scores, and
   softmax, and paging through all 144 heads, in [Attention](chapters/attention.md) once it's live.
-- **Localization:** the site is English only. Translating means deciding whether to also swap the
-  example corpora and re-record the data per language.
 - **Expert review:** pending; see [sources.md](sources.md).
 
 ## Open questions
