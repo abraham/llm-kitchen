@@ -12,6 +12,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [architecture.md](architecture.md)       | Tech stack, source layout, routing, navigation, glossary, and citations                        |
 | [components.md](components.md)           | Shared component folders, import rules, conventions, and the common set                        |
 | [models-and-data.md](models-and-data.md) | Recorded data and live models: tiers, the canonical model, recording scripts, and safety rules |
+| [workers.md](workers.md)                 | The tokenizer, inference, and trainer workers: what each runs, messages, build, and hosting    |
 | [quality.md](quality.md)                 | Checks, tests, accessibility, and performance budgets                                          |
 | [deployment.md](deployment.md)           | Hosting, deploys, preview channels, headers, and caching                                       |
 | [security.md](security.md)               | Attack surface, threats, security rules, reporting, and repository settings                    |
