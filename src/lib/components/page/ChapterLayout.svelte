@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { Snippet } from 'svelte';
+	import { onMount, type Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
 	import { LEVEL_NAMES, LEVELS, type ExtraLevel } from '#lib/levels.ts';
-	import { chapterEditUrl } from '#lib/site.ts';
+	import { absoluteUrl, chapterEditUrl, chapterHeading } from '#lib/site.ts';
 	import At from './At.svelte';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
@@ -28,6 +28,24 @@
 	const unwritten = $derived(
 		levelChoice ? LEVELS.filter((l) => l !== 'standard' && !levels.includes(l)) : []
 	);
+
+	// Checked after hydration, so the prerendered page never shows a button that does nothing.
+	let canShare = $state(false);
+	onMount(() => {
+		canShare = typeof navigator.share === 'function';
+	});
+
+	async function share() {
+		try {
+			await navigator.share({
+				title: chapterHeading(meta),
+				url: absoluteUrl(resolve('/[chapter]', { chapter: meta.slug }))
+			});
+		} catch (error) {
+			// Closing the share sheet rejects with AbortError.
+			if (!(error instanceof DOMException && error.name === 'AbortError')) throw error;
+		}
+	}
 </script>
 
 <div class="chapter-layout">
@@ -82,6 +100,9 @@
 					<a href={chapterEditUrl(meta.slug)} rel="noopener noreferrer" target="_blank"
 						>Edit this chapter on GitHub</a
 					>
+					{#if canShare}
+						· <button type="button" class="share" onclick={share}>Share this chapter</button>
+					{/if}
 				</p>
 			</footer>
 		</main>
@@ -143,6 +164,23 @@
 		color: var(--ink-muted);
 		font-family: var(--font-sans);
 		font-size: 0.875rem;
+	}
+
+	/* A button, since it opens the share sheet, styled like the link beside it. */
+	.share {
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--c-prob-ink);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-underline-offset: 0.15em;
+		cursor: pointer;
+	}
+
+	.share:hover:not(:disabled) {
+		background: none;
+		text-decoration-thickness: 2px;
 	}
 
 	@media (min-width: 72rem) {

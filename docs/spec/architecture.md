@@ -148,7 +148,10 @@ conventions every shared component follows, are in [components.md](components.md
   error otherwise.
 - `ChapterLayout` renders the progress rail, the heading, the Ingredients box (from `buildsOn`), the
   prose, the link to the next chapter, and "Edit this chapter on GitHub", which opens the chapter's
-  `chapter.svx` on `main` in GitHub's editor (`chapterEditUrl` in `site.ts`).
+  `chapter.svx` on `main` in GitHub's editor (`chapterEditUrl` in `site.ts`). Where the browser has
+  the Web Share API (`navigator.share`), a "Share this chapter" button beside it opens the share
+  sheet with the chapter's heading and canonical URL; it appears only after hydration, so the
+  prerendered page and browsers without a share sheet show just the edit link.
 - A test checks that every curriculum row has a folder with `chapter.svx`, and every folder a row;
   an e2e test checks that no prerendered page says "Loading recorded data".
 

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { gotoHydrated } from './helpers.ts';
 
 test('landing page lists the written chapters', async ({ page }) => {
 	await page.goto('/');
@@ -19,6 +20,29 @@ test('a chapter links to its source on GitHub for editing', async ({ page }) => 
 		'href',
 		'https://github.com/abraham/llm-kitchen/edit/main/src/lib/chapters/guessing-game/chapter.svx'
 	);
+});
+
+test('a chapter offers the share sheet where the browser has one', async ({ page }) => {
+	await page.addInitScript(() => {
+		navigator.share = async (data) => {
+			(window as unknown as { shared: unknown }).shared = data;
+		};
+	});
+	await gotoHydrated(page, '/guessing-game');
+	await page.getByRole('button', { name: 'Share this chapter' }).click();
+	expect(await page.evaluate(() => (window as unknown as { shared: unknown }).shared)).toEqual({
+		title: 'Ch 0. The guessing game',
+		url: 'https://llm.kitchen/guessing-game'
+	});
+});
+
+test('a chapter has no share button where the browser has no share sheet', async ({ page }) => {
+	await page.addInitScript(() => {
+		delete (Navigator.prototype as Partial<Navigator>).share;
+	});
+	await gotoHydrated(page, '/guessing-game');
+	await expect(page.getByRole('link', { name: 'Edit this chapter on GitHub' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Share this chapter' })).toHaveCount(0);
 });
 
 test('an unknown chapter is a 404', async ({ page }) => {
