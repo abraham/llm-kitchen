@@ -363,6 +363,15 @@
 		"url": "https://www.anthropic.com/news/model-context-protocol"
 	},
 	{
+		"id": "anthropic-agents",
+		"authors": ["Erik Schluntz", "Barry Zhang"],
+		"title": "Building effective agents",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/engineering/building-effective-agents",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "mcp-spec",
 		"authors": ["Model Context Protocol"],
 		"title": "Tools (Model Context Protocol specification)",

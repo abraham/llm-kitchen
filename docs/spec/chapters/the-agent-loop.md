@@ -4,7 +4,9 @@
 
 **Key idea:** An agent is a model called in a loop by a harness that runs its tool calls and feeds the
 results back in. The loop stops when the model answers without a tool call, or at a step limit. Each
-step re-sends the whole conversation, so the prompt keeps growing.
+step re-sends the whole conversation, so the prompt keeps growing. An agent is one end of a range,
+from workflows whose steps are fixed in code to loops where the model decides them; the simplest
+setup that works is the one to use.
 
 ## Widgets
 
@@ -24,6 +26,10 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
   for counting. Without these rules, both small Qwen models wrote several calls at once with made-up
   arguments and guessed the word count. The chapter says the harness makes the rules.
 - Qwen2.5-1.5B-Instruct rather than 0.5B, which couldn't complete the task.
-- [Levels](../levels.md): Simple says the two loops and the harness's rules in plain words. In
-  depth works out what the loop costs (every call re-reads the conversation, so the total grows
+- "Who decides the next step" places the agent on a range (fixed chain, router, one tool call,
+  loop) using Anthropic's split between workflows and agents, and points back to the chapters that
+  show each one, rather than adding a widget: the site already has a widget for each kind.
+- [Levels](../levels.md): Simple says the two loops, the range from a fixed recipe to a loop, and
+  the harness's rules in plain words. In depth names more of Anthropic's workflows, works out what
+  the loop costs (every call re-reads the conversation, so the total grows
   with the square of the steps) and points ahead to caching.

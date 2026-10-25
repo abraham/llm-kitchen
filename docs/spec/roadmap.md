@@ -42,9 +42,6 @@ belongs to and remove it here.
   with what it found; and keyword search versus search by meaning, and combining them. In
   [Managing the context](chapters/managing-the-context.md), which covers picking by similarity
   only.
-- **Workflow or agent.** The range from a fixed pipeline, to a router, to one tool call, to a loop,
-  to several agents. An opening for [The agent loop](chapters/the-agent-loop.md);
-  [Which model answers?](chapters/routing.md) already covers routers.
 - **Planning.** Making a plan first and then carrying it out, versus deciding step by step. A
   section in [The agent loop](chapters/the-agent-loop.md).
 - **Memory across sessions.** An agent writing notes it reads next time. A section in

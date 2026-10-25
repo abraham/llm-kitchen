@@ -36,6 +36,49 @@ paper.<Cite id="yao2023" />
 The model never saw the rhyme until the search returned it, and it never counted anything: it
 copied the rhyme into a call to the word counter, then reported the counter's answer, 30 words.
 
+## Who decides the next step
+
+<At levels="simple">
+
+An agent is one end of a range. Along it, what changes is who picks the next step: code written in
+advance, or the model.
+
+- **A fixed recipe.** Code runs the same steps every time, and the model only writes the text.
+- **A fork.** Code sends each question down one of a few set paths, as <ChapterRef to="routing" />
+  passes a question to a bigger model when the small one isn't sure.
+- **One tool.** The model decides once whether to use a tool, as in <ChapterRef to="tools" />.
+- **A loop.** The model picks every next step and when to stop, as in the run above.
+
+The further along, the more kinds of task it can take on, but the more it costs and the more one
+mistake can lead to another. A good rule is to use the simplest one that does the job.<Cite id="anthropic-agents" />
+
+</At>
+<At levels="standard deep">
+
+An agent is one end of a range, and what changes along it is who decides the next step: code
+written in advance, or the model.
+
+- **A fixed chain.** Code runs set steps in order, such as summarize and then translate. The model
+  only writes text.
+- **A router.** Each request goes down one of a few fixed paths, as <ChapterRef to="routing" />
+  passes a question on to a bigger model when the small one seems unsure.
+- **One tool call.** The model decides whether to call a tool, and with what, once, as in <ChapterRef to="tools" />.
+- **A loop.** The model decides what to do after every result, and how many steps to take, as in
+  the run above.
+
+Anthropic calls systems whose path is fixed in code **workflows**, and keeps "agent" for systems
+where the model directs its own steps.<Cite id="anthropic-agents" /> A loop suits tasks whose steps
+can't be known in advance, but it costs more, takes longer, and lets one wrong step lead to the
+next, so their advice is to use the simplest setup that works.<Cite id="anthropic-agents" />
+
+</At>
+<At levels="deep">
+
+Their list of workflows also includes running several calls at once and combining their answers,
+and having one call check another's work and send it back for changes.<Cite id="anthropic-agents" />
+
+</At>
+
 ## The harness makes the rules
 
 <At levels="simple">
@@ -87,6 +130,8 @@ When the prompt outgrows its budget, the harness drops, summarizes, or retrieves
 
 - An agent is a model called in a loop by a harness that runs its tool calls and feeds the results
   back in.
+- Workflows fix the steps in code; an agent lets the model decide them. Use the simplest that
+  works.
 - The loop stops when the model answers without a tool call, or when it hits a step limit.
 - Each step re-sends the whole conversation, so the prompt keeps growing.
 
