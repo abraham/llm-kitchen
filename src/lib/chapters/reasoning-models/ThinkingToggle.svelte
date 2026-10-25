@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { useDataset } from '#lib/datasets/use.ts';
 	import type { ThinkingRun } from '#lib/datasets/parsers/prompts.ts';
-	import { prefersReducedMotion } from 'svelte/motion';
+	import { motion } from '#lib/stores/motion-prefs.svelte.ts';
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
@@ -21,7 +21,7 @@
 
 	function watch(total: number) {
 		stop();
-		if (prefersReducedMotion.current) {
+		if (motion.reduced) {
 			shown = total;
 			return;
 		}

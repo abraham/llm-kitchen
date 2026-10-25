@@ -2,6 +2,7 @@
 	import StepController from '#lib/components/frame/StepController.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { Stepper } from '#lib/components/frame/stepper.svelte.ts';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import { parameterBreakdown } from '#lib/math/transformer.ts';
 	import { label } from '#lib/curriculum/index.ts';
 	import { canonical } from '#lib/models/provider.ts';
@@ -34,59 +35,61 @@
 	onreset={() => stepper.reset()}
 >
 	<div class="layout">
-		<svg viewBox="0 0 340 470" role="img" aria-label="Diagram: {STEPS[s]}">
-			<!-- stacked copies -->
-			{#if s >= 4}
-				{#each [3, 2, 1] as k (k)}
-					<rect x={20 + k * 6} y={100 - k * 6} width="300" height="210" rx="8" class="copy" />
-				{/each}
-			{/if}
-			{#if s >= 1}
-				<rect x="20" y="100" width="300" height="210" rx="8" class="block" />
-				<text x="308" y="120" class="small corner"
-					>{s >= 4 ? `block 1 of ${canonical.layers}` : 'one block'}</text
-				>
-			{/if}
+		<div class="diagram">
+			<Figure viewBox={[340, 470]} label="Diagram: {STEPS[s]}">
+				<!-- stacked copies -->
+				{#if s >= 4}
+					{#each [3, 2, 1] as k (k)}
+						<rect x={20 + k * 6} y={100 - k * 6} width="300" height="210" rx="8" class="copy" />
+					{/each}
+				{/if}
+				{#if s >= 1}
+					<rect x="20" y="100" width="300" height="210" rx="8" class="block" />
+					<text x="308" y="120" class="small corner"
+						>{s >= 4 ? `block 1 of ${canonical.layers}` : 'one block'}</text
+					>
+				{/if}
 
-			<!-- the stream -->
-			<line x1="90" y1="70" x2="90" y2={s >= 5 ? 360 : 330} class="stream" />
-			<rect x="20" y="20" width="140" height="44" rx="6" class="box embed" />
-			<text x="90" y="38" class="label">word vector</text>
-			<text x="90" y="55" class="small">+ position vector</text>
+				<!-- the stream -->
+				<line x1="90" y1="70" x2="90" y2={s >= 5 ? 360 : 330} class="stream" />
+				<rect x="20" y="20" width="140" height="44" rx="6" class="box embed" />
+				<text x="90" y="38" class="label">word vector</text>
+				<text x="90" y="55" class="small">+ position vector</text>
 
-			{#if s >= 1}
-				<path d="M90 140 H200 V150" class="branch" />
-				<rect x="160" y="150" width="140" height={s >= 3 ? 46 : 34} rx="6" class="box attn" />
-				{#if s >= 3}<text x="230" y="166" class="small">layer norm</text>{/if}
-				<text x="230" y={s >= 3 ? 186 : 172} class="label">attention</text>
-				<path d="M230 {s >= 3 ? 196 : 184} V205 H102" class="branch" />
-				<circle cx="90" cy="205" r="11" class="add" />
-				<text x="90" y="210" class="plus">+</text>
-			{/if}
-			{#if s >= 2}
-				<path d="M90 225 H200 V232" class="branch" />
-				<rect x="160" y="232" width="140" height={s >= 3 ? 46 : 34} rx="6" class="box mlp" />
-				{#if s >= 3}<text x="230" y="248" class="small">layer norm</text>{/if}
-				<text x="230" y={s >= 3 ? 268 : 254} class="label"
-					>MLP ({formatCount(canonical.mlpSize)})</text
-				>
-				<path d="M230 {s >= 3 ? 278 : 266} V288 H102" class="branch" />
-				<circle cx="90" cy="288" r="11" class="add" />
-				<text x="90" y="293" class="plus">+</text>
-			{/if}
-			{#if s >= 4}
-				<text x="310" y="330" class="label end">× {canonical.layers}</text>
-			{/if}
-			{#if s >= 5}
-				<rect x="20" y="360" width="300" height="44" rx="6" class="box out" />
-				<text x="170" y="378" class="label">layer norm → vocabulary scores</text>
-				<text x="170" y="395" class="small"
-					>{formatCount(canonical.vocabularySize)} scores → softmax</text
-				>
-				<line x1="170" y1="404" x2="170" y2="424" class="branch" />
-				<text x="170" y="446" class="label">next-token probabilities</text>
-			{/if}
-		</svg>
+				{#if s >= 1}
+					<path d="M90 140 H200 V150" class="branch" />
+					<rect x="160" y="150" width="140" height={s >= 3 ? 46 : 34} rx="6" class="box attn" />
+					{#if s >= 3}<text x="230" y="166" class="small">layer norm</text>{/if}
+					<text x="230" y={s >= 3 ? 186 : 172} class="label">attention</text>
+					<path d="M230 {s >= 3 ? 196 : 184} V205 H102" class="branch" />
+					<circle cx="90" cy="205" r="11" class="add" />
+					<text x="90" y="210" class="plus">+</text>
+				{/if}
+				{#if s >= 2}
+					<path d="M90 225 H200 V232" class="branch" />
+					<rect x="160" y="232" width="140" height={s >= 3 ? 46 : 34} rx="6" class="box mlp" />
+					{#if s >= 3}<text x="230" y="248" class="small">layer norm</text>{/if}
+					<text x="230" y={s >= 3 ? 268 : 254} class="label"
+						>MLP ({formatCount(canonical.mlpSize)})</text
+					>
+					<path d="M230 {s >= 3 ? 278 : 266} V288 H102" class="branch" />
+					<circle cx="90" cy="288" r="11" class="add" />
+					<text x="90" y="293" class="plus">+</text>
+				{/if}
+				{#if s >= 4}
+					<text x="310" y="330" class="label end">× {canonical.layers}</text>
+				{/if}
+				{#if s >= 5}
+					<rect x="20" y="360" width="300" height="44" rx="6" class="box out" />
+					<text x="170" y="378" class="label">layer norm → vocabulary scores</text>
+					<text x="170" y="395" class="small"
+						>{formatCount(canonical.vocabularySize)} scores → softmax</text
+					>
+					<line x1="170" y1="404" x2="170" y2="424" class="branch" />
+					<text x="170" y="446" class="label">next-token probabilities</text>
+				{/if}
+			</Figure>
+		</div>
 		<dl class="count">
 			<dt>Parameters so far</dt>
 			<dd class="mono">{formatCount(total)}</dd>
@@ -110,11 +113,9 @@
 		align-items: flex-start;
 	}
 
-	svg {
+	.diagram {
 		width: 100%;
 		max-width: 340px;
-		height: auto;
-		font-family: var(--font-sans);
 	}
 
 	.stream {
@@ -180,7 +181,7 @@
 	.small {
 		text-anchor: middle;
 		fill: var(--ink);
-		font-size: 13px;
+		font-size: max(13px, var(--min-text));
 	}
 
 	.label.end {
@@ -190,7 +191,7 @@
 	}
 
 	.small {
-		font-size: 11px;
+		font-size: max(11px, var(--min-text));
 		fill: var(--ink-muted);
 	}
 

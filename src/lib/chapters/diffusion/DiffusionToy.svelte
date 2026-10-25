@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { prefersReducedMotion } from 'svelte/motion';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import { FrameLoop } from '#lib/components/frame/loop.svelte.ts';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import LossCurve from '#lib/components/primitives/LossCurve.svelte';
@@ -15,6 +15,8 @@
 		type Shape
 	} from '#lib/math/diffusion.ts';
 	import { seededRandom } from '#lib/math/sampling.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
+	import { motion } from '#lib/stores/motion-prefs.svelte.ts';
 
 	const SHAPES: Shape[] = ['ring', 'square', 'two blobs'];
 	const NOUN: Record<Shape, string> = {
@@ -52,7 +54,7 @@
 	function paint() {
 		clearInterval(player);
 		frames = generate(trainer.model, COUNT, random);
-		if (prefersReducedMotion.current) {
+		if (motion.reduced) {
 			step = STEPS;
 			return;
 		}
@@ -77,7 +79,7 @@
 	$effect(() => () => clearInterval(player));
 
 	const S = 240;
-	const sc = (v: number) => S / 2 + (v / 2.6) * (S / 2);
+	const sc = scaleLinear([-2.6, 2.6], [0, S]);
 	const points = $derived(frames[step] ?? []);
 	const done = $derived(steps >= MAX_STEPS);
 </script>
@@ -105,21 +107,21 @@
 
 	<div class="layout">
 		<div>
-			<svg
-				viewBox="0 0 {S} {S}"
-				class="plot"
-				role="img"
-				aria-label={frames.length
-					? `${COUNT} points, ${step} of ${STEPS} denoising steps done. The faint dots show the ${NOUN[shape]} the model was trained on.`
-					: `The ${NOUN[shape]} the model will learn, as faint dots.`}
-			>
-				{#each target as [x, y], i (i)}
-					<circle cx={sc(x)} cy={sc(-y)} r="1.6" class="target" />
-				{/each}
-				{#each points as [x, y], i (i)}
-					<circle cx={sc(x)} cy={sc(-y)} r="2.2" class="point" />
-				{/each}
-			</svg>
+			<div class="plot">
+				<Figure
+					viewBox={[S, S]}
+					label={frames.length
+						? `${COUNT} points, ${step} of ${STEPS} denoising steps done. The faint dots show the ${NOUN[shape]} the model was trained on.`
+						: `The ${NOUN[shape]} the model will learn, as faint dots.`}
+				>
+					{#each target as [x, y], i (i)}
+						<circle cx={sc(x)} cy={sc(-y)} r="1.6" class="target" />
+					{/each}
+					{#each points as [x, y], i (i)}
+						<circle cx={sc(x)} cy={sc(-y)} r="2.2" class="point" />
+					{/each}
+				</Figure>
+			</div>
 			{#if frames.length}
 				<div class="step">
 					<Slider
@@ -173,10 +175,7 @@
 	}
 
 	.plot {
-		display: block;
-		width: 100%;
 		max-width: 18rem;
-		height: auto;
 		background: var(--surface-2);
 		border-radius: var(--radius);
 	}

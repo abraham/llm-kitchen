@@ -85,13 +85,27 @@ test.describe('prerendered HTML', () => {
 test.describe('phone-sized screen', () => {
 	test.use({ viewport: { width: 375, height: 740 }, hasTouch: true, isMobile: true });
 	for (const path of PAGES) {
-		test(`${path} doesn't scroll sideways`, async ({ page }) => {
+		test(`${path} doesn't scroll sideways, and its figures' text is at least 11px`, async ({
+			page
+		}) => {
 			await gotoHydrated(page, path);
 			await expect(page.getByText(/Loading/)).toHaveCount(0);
 			const overflow = await page.evaluate(
 				() => document.documentElement.scrollWidth - document.documentElement.clientWidth
 			);
 			expect(overflow).toBeLessThanOrEqual(0);
+			// Rendered size: the CSS font size times the SVG's scale on screen.
+			const small = await page.evaluate(() =>
+				[...document.querySelectorAll<SVGTextElement>('section.widget svg text')]
+					.filter((t) => t.getClientRects().length && t.textContent?.trim())
+					.map((t) => {
+						const m = t.ownerSVGElement!.getScreenCTM()!;
+						const px = parseFloat(getComputedStyle(t).fontSize) * Math.hypot(m.a, m.b);
+						return { text: t.textContent!.trim(), px: Math.round(px * 10) / 10 };
+					})
+					.filter((t) => t.px < 10.95)
+			);
+			expect(small).toEqual([]);
 		});
 	}
 });

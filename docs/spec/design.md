@@ -15,7 +15,7 @@
   - No food illustrations competing with the figures.
 - **Layout:**
   - Every page starts with an app bar (`AppBar`) that stays at the top of the viewport as the page
-    scrolls (`--app-bar-height`; in-page links, the chapter rail, and scroll-driven figures sit
+    scrolls (`--app-bar-height`; in-page links and the chapter rail sit
     below it): the site name on the left, linking to the menu, and on the right a Downloads link (a
     download icon, named and titled "Downloads", to the page in [downloads.md](downloads.md)) and a
     theme toggle.
@@ -36,9 +36,8 @@
     the block at the top of the content where it was; if the new level hides that block, the shared
     block before it stays put, so the replacement passage appears in the same place.
   - Prose sits in a single ~68ch column (`.prose`). Widgets break out wider, up to ~1100px
-    (`.breakout`).
-  - Scroll-driven figures (`Scrolly`) sit in a sticky column beside the text on desktop. On phones
-    they appear inline with Prev/Next buttons, and no interaction depends on hover.
+    (`.breakout`). On phones no interaction depends on hover, and figure text stays at 11px or more
+    ([visualizations.md](visualizations.md#sizes)).
 - **Widget frame:** every widget uses `WidgetFrame`, with a "Try it" label, a reset button, step
   controls where it steps, and a `DataSourceBadge` showing where its data comes from: **Recorded ·
   &lt;model&gt;**, **Live · &lt;model&gt;**, **Computed in your browser**, or **Made-up example**.
@@ -90,10 +89,10 @@ has how figures draw and move.
 ## Motion
 
 - 200–600 ms easing, one main motion at a time.
-- Every stepped animation is driven by `StepController`: Prev/Next buttons, ← and → keys, and scroll
-  where the figure is scroll-driven.
-- With reduced motion (the OS setting, read through `prefersReducedMotion` from `svelte/motion` in
-  `stores/motion-prefs.svelte.ts`), durations drop to 0 and widgets jump to the end state.
+- Every stepped animation is driven by `StepController`: Prev/Next buttons and ← and → keys.
+- With reduced motion (the OS setting, read only through `motion` in
+  `stores/motion-prefs.svelte.ts` and the `--duration` token), durations drop to 0 and widgets
+  jump to the end state.
 
 ## Branding
 

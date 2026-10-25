@@ -29,9 +29,9 @@ src/lib/components/
 
 | Folder        | Contents                                                                                                                                                                          |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`; the `scrollable` attachment; the `Concept` type                                                                              |
+| `ui/`         | `Choice`, `Slider`, `Toggle`, `ScrollBox`, `Status`, `Figure`, `Axis`, `FigureData`; the `scrollable` and `pointer` attachments; the `Concept` type                               |
 | `primitives/` | `TokenChip`, `VectorStrip`, `ProbBars`, `SamplerWheel`, `NextWordFan`, `AttentionLines`, `LossCurve`, `ToolCallCard`, `PromptText`, `ChatLog`, `RoleKey`; `format.ts`, `roles.ts` |
-| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `Scrolly`, `FrameLoop` (`loop.svelte.ts`)                 |
+| `frame/`      | `WidgetFrame`, `DataSourceBadge` (`data-source.ts`), `Loading`, `ModelConsent`, `StepController` (`stepper.svelte.ts`), `FrameLoop` (`loop.svelte.ts`)                            |
 | `page/`       | `AppBar`, `ChapterLayout`, `ProgressNav`, `PageMeta`, `IngredientsBox`, `RecapCard`, `Sources`, `CitationScope`, `ChapterRef`, `Cite`, `GlossaryPopover`, `At`                    |
 | `widgets/`    | `GlassBoxGenerator`                                                                                                                                                               |
 
@@ -290,8 +290,9 @@ class FrameLoop {
 - A widget's play button reads `loop.running` for its label and `aria-pressed`, and its reset calls
   `loop.stop()`. Interval timers (DiffusionToy's playback) stay in the widget.
 
-The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, `Scrolly`, `ModelConsent`,
-and `DataSourceBadge` keep their APIs.
+The existing `WidgetFrame`, `StepController` and `Stepper`, `Loading`, `ModelConsent`, and
+`DataSourceBadge` keep their APIs. `Figure`, `Axis`, `FigureData`, and `pointer` are described in
+[visualizations.md](visualizations.md#how-figures-draw).
 
 ## Not shared, on purpose
 

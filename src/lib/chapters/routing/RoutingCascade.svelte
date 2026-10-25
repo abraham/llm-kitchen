@@ -4,17 +4,21 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Slider from '#lib/components/ui/Slider.svelte';
+	import Axis from '#lib/components/ui/Axis.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import { cascade } from '#lib/harness/routing.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 
 	const DEFAULT = 60;
 	const data = useDataset('routing/cascade');
 	let threshold = $state(DEFAULT);
 
-	const W = 560;
+	const MAX_W = 576;
+	let W = $state(MAX_W);
 	const H = 92;
 	const PAD = 12;
 	const ROW = { right: 30, wrong: 66 };
-	const x = (c: number) => PAD + c * (W - 2 * PAD);
+	const x = $derived(scaleLinear([0, 1], [PAD, W - PAD]));
 	const pct = (n: number) => `${Math.round(n * 100)}%`;
 </script>
 
@@ -49,10 +53,11 @@
 					<span><span class="dot wrong"></span>small model wrong</span>
 					<span><span class="zone"></span>passed on to the big model</span>
 				</p>
-				<svg
-					viewBox="0 0 {W} {H}"
-					role="img"
-					aria-label="Each of the {n} questions placed by the small model's confidence. {wrongBelow.length} of its {wrongAll.length} wrong answers are below {threshold}% and get passed on."
+				<Figure
+					max={MAX_W}
+					bind:width={W}
+					height={H}
+					label="Each of the {n} questions placed by the small model's confidence. {wrongBelow.length} of its {wrongAll.length} wrong answers are below {threshold}% and get passed on."
 				>
 					<rect
 						class="zone"
@@ -61,10 +66,14 @@
 						width={Math.max(0, x(Math.min(t, 1)) - x(0))}
 						height={H - 28}
 					/>
-					<line class="axis" x1={x(0)} x2={x(1)} y1={H - 20} y2={H - 20} />
-					{#each [0, 0.25, 0.5, 0.75, 1] as tick (tick)}
-						<text class="tick" x={x(tick)} y={H - 6}>{pct(tick)}</text>
-					{/each}
+					<Axis
+						scale={x}
+						side="bottom"
+						at={H - 20}
+						line
+						ticks={[0, 0.25, 0.5, 0.75, 1]}
+						format={pct}
+					/>
 					{#each rec.questions as q, i (i)}
 						<circle
 							class={q.small.correct ? 'right' : 'wrong'}
@@ -76,7 +85,7 @@
 					{#if t <= 1}
 						<line class="threshold" x1={x(t)} x2={x(t)} y1="4" y2={H - 20} />
 					{/if}
-				</svg>
+				</Figure>
 				<figcaption>The small model’s confidence in its own answer, for each question.</figcaption>
 			</figure>
 
@@ -142,13 +151,6 @@
 		margin: 0 0 var(--space-3);
 	}
 
-	svg {
-		width: 100%;
-		max-width: 36rem;
-		height: auto;
-		display: block;
-	}
-
 	.legend {
 		display: flex;
 		flex-wrap: wrap;
@@ -195,17 +197,6 @@
 	.threshold {
 		stroke: var(--c-prob);
 		stroke-width: 2;
-	}
-
-	.axis {
-		stroke: var(--rule);
-	}
-
-	.tick {
-		font-family: var(--font-sans);
-		font-size: 11px;
-		fill: var(--ink-muted);
-		text-anchor: middle;
 	}
 
 	figcaption {

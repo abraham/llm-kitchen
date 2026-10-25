@@ -21,6 +21,13 @@
 	} = $props();
 
 	const id = $props.id();
+	/** Bumped by Reset, which re-creates the body so components inside it start over too. */
+	let generation = $state(0);
+
+	function reset() {
+		onreset?.();
+		generation++;
+	}
 </script>
 
 <section class="widget breakout" aria-labelledby="{id}-title">
@@ -30,12 +37,14 @@
 		<span class="meta">
 			{#if source}<DataSourceBadge {source} />{/if}
 			{#if onreset}
-				<button type="button" onclick={onreset}>Reset</button>
+				<button type="button" onclick={reset}>Reset</button>
 			{/if}
 		</span>
 	</header>
 	<div class="body">
-		{@render children()}
+		{#key generation}
+			{@render children()}
+		{/key}
 	</div>
 	{#if controls}
 		<footer>{@render controls()}</footer>

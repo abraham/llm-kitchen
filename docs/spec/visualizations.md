@@ -12,8 +12,10 @@ build from, and [design.md](design.md) the colors, shapes, and motion rules they
   (`GlassBoxGenerator`).
 - Every widget renders inside `WidgetFrame`, a `<section class="widget breakout">` named by its
   title (`aria-labelledby`):
-  - a header with the "Try it" label, the title, the `DataSourceBadge`, and a Reset button that
-    puts the widget's state back to the start (every widget but `RecordedRuns` passes `onreset`);
+  - a header with the "Try it" label, the title, the `DataSourceBadge`, and a Reset button. Reset
+    calls the widget's `onreset`, which puts its own state back to the start, and re-creates the
+    frame's body (`{#key}`), so components inside it start over too. Every widget with state passes
+    `onreset`; `RecordedRuns`, which shows fixed text, has nothing to reset and no button;
   - a body that holds the figure, with `overflow-x: auto`, so anything wider than the frame scrolls
     inside it and never widens the page;
   - an optional footer (`controls` snippet) for step buttons and other inputs, on a tinted strip.
@@ -56,15 +58,15 @@ chart library.
 - **Hand-written SVG** for geometry: curves, maps, networks, arcs, grids, and wheels (19
   components, among them `LossCurve`, `AttentionLines`, `NextWordFan`, `SamplerWheel`,
   `EmbeddingMap`, `NeuronPlayground`, `LayerPlayground`, `ScalingLawChart`, `DecisionGrid`, and
-  `KVCacheStepper`).
-  - Coordinates are computed in the script: small scale functions (`sx`, `sy`) map values to
-    user units, and paths are built as strings (`M x y L …`). Layout that needs care is computed
-    too: `EmbeddingMap`'s `placeLabels` tries spots around each dot and skips labels that would
-    overlap, keeping the important words with a leader line.
-  - Most figures size by `viewBox` with `width: 100%; height: auto`, so they scale with the frame,
-    and their text, in user-unit font sizes, scales with them. `AttentionLines` measures its width
-    instead (`bind:clientWidth`, 560 before it mounts) and draws at pixel size, so its words stay
-    readable on a phone. `SamplerWheel` is a fixed size.
+  `KVCacheStepper`). Every chapter figure draws through `Figure` (`components/ui/`), which renders
+  the `<svg>`, names it, and sizes it one of two ways (see [Sizes](#sizes)).
+  - Values map to positions through scales from `math/scale.ts`: `scaleLinear` and `scaleLog`
+    (map, `invert`, and `ticks(count)`), with `niceTicks` picking round steps of 1, 2, or 5. Paths
+    are built as strings (`M x y L …`) from them. `Axis` (`components/ui/`) draws ticks, tick
+    labels, gridlines, an axis line, and a title from a scale, the same in every chart.
+  - Layout that needs care is computed too: `EmbeddingMap`'s `placeLabels` tries spots around each
+    dot and skips labels that would overlap, keeping the important words with a leader line. At a
+    narrower width fewer unimportant labels fit, so a phone shows fewer of them.
   - Strokes and fills come from scoped classes that use the concept tokens (`stroke: var(--c-loss)`),
     so switching theme recolors a figure without re-rendering it. Values that vary per element
     (opacity, stroke width) are `style:` directives.
@@ -75,6 +77,29 @@ chart library.
 
 Concept colors and shapes are the ones in [design.md](design.md#concept-colors-and-shapes); a
 figure never uses a concept's color for something else, and never color alone.
+
+### Sizes
+
+Text in a figure is never smaller than 11px on screen, at any width. `Figure` gets there two ways:
+
+- **Redrawn** (`bind:width`, `height`, `max`): charts whose layout comes from scales. The figure
+  measures the room it has (`bind:clientWidth`) and the widget redraws at that width in CSS pixels,
+  up to `max`, so text sizes in CSS are the sizes on screen. The height is fixed, so a figure
+  doesn't move the page when it hydrates and redraws; before then it's drawn at its starting width
+  and scaled to fit that box. `ScalingLawChart`, `KVCacheStepper`, `RoutingCascade`,
+  `LossLandscape`, `CurveFitter`, `LossCurve`, `EmbeddingMap`, `NextWordFan`, `QuantizeLab`,
+  `FragileLab`, and `DecisionGrid`'s histogram redraw.
+  - A redrawn figure can change layout when it's narrow: `NextWordFan` moves its prompt above the
+    fan, as text, when the two don't fit side by side, and `ScalingLawChart` asks its axis for fewer
+    ticks.
+- **Scaled** (`viewBox`, optional `maxWidth`): diagrams with a fixed layout (`NeuronPlayground`,
+  `LayerPlayground`, `BlockBuilder`, `AttentionMask`, `DiffusionToy`, `DecisionGrid`'s grid,
+  `ContextBudget`'s map). The drawing scales to fit, and `Figure` sets `--min-text` to 11px in
+  drawing units at the current scale, so text sized `max(12px, var(--min-text))` grows just enough
+  to stay readable when the diagram shrinks.
+- `AttentionLines` measures its own width for the same reason, and `SamplerWheel` is a fixed size.
+- A figure hides what's drawn past its edges, as SVG does by default; `overflow` shows it, for end
+  labels beside a line (`LossCurve`, `NextWordFan`).
 
 ## Before JavaScript runs
 
@@ -90,17 +115,26 @@ figure never uses a concept's color for something else, and never color alone.
 
 ## For screen readers and keyboards
 
-- **Figures are images with a description of now.** Each SVG and each drawn element with a meaning
-  (`TokenChip`, `VectorStrip`) has `role="img"` and an `aria-label` built from the same state the
-  drawing is: `LossCurve` says where the loss started and where it is now; `AttentionLines` names
-  the three words the selected word attends to most, with their percentages. The label changes
-  with the figure.
+- **Figures are images with a description of now.** `Figure` requires a `label`, which it renders
+  as the SVG's `role="img"` name, and each widget builds it from the same state the drawing is:
+  `LossCurve` says where the loss started and where it is now; `ScalingLawChart` what the curve
+  shows. Drawn elements with a meaning (`TokenChip`, `VectorStrip`) and the SVGs outside `Figure`
+  (`AttentionLines`, `SamplerWheel`) have their own `role="img"` and label; decorative icons are
+  `aria-hidden`. The label changes with the figure.
 - **Data is also text.** Tables, `ProbBars`' visually hidden caption and header row, and the
-  `Status` line under a figure (a polite live region) say what changed in words.
+  `Status` line under a figure (a polite live region) say what changed in words. A chart whose
+  numbers aren't in the prose or a table nearby offers them in `FigureData`, a closed "The numbers"
+  disclosure holding a `table.data`: `ScalingLawChart` (each GPT-2 size and its predicted loss) and
+  `KVCacheStepper` (the milliseconds for every new token, with and without the cache).
 - **Every interaction has a control.** Anything the visitor can do by pointing at a figure can be
-  done with a button, radio, slider, or select, which keyboards and screen readers reach. Clicking
-  `LayerPlayground`'s output plane moves the input point as a shortcut; the two sliders beside it
-  do the same. Nothing depends on hover.
+  done with a button, radio, slider, or select, which keyboards and screen readers reach. Picking a
+  point in a plane goes through the `pointer` attachment (`components/ui/pointer.ts`): pointer
+  events, so a mouse,
+  pen, or finger works, reporting where the pointer is as fractions of the element, which the
+  widget maps back to values with its scale's `invert`. The element sets `touch-action: none`, so
+  dragging on a phone moves the point, not the page. Clicking or dragging in `LayerPlayground`'s
+  output plane moves the input point; the two sliders beside it do the same. Clicking a word on the
+  map in `EmbeddingMap` selects it, as the Word select does. Nothing depends on hover.
 - **Stepping** (14 widgets) goes through `StepController`: Prev and Next buttons, ← and → (Home
   and End jump), and a visually hidden live region that reads the current step's description. The
   buttons use `aria-disabled` at either end, so focus and the arrow keys keep working.
@@ -114,46 +148,58 @@ figure never uses a concept's color for something else, and never color alone.
   vector row with `crossfade` (shared keys), and `SamplerWheel` spins with a `Tween`. Both take
   their durations from `motion.duration(ms)` (`stores/motion-prefs.svelte.ts`), which is 0 under
   reduced motion.
-- **Playback** (`DiffusionToy`, `DecisionGrid`) and continuous loops (`FrameLoop` in `CurveFitter`,
-  `DiffusionToy`, and `RecurrentMemory`) skip to the end state under reduced motion.
-  `DiffusionToy`, `DecisionGrid`, and `ThinkingToggle` read `prefersReducedMotion` directly rather
-  than through the motion store.
+- **Playback** (`DiffusionToy`, `DecisionGrid`, `ThinkingToggle`) and continuous loops (`FrameLoop`
+  in `CurveFitter`, `DiffusionToy`, and `RecurrentMemory`) skip to the end state under reduced
+  motion.
+- **One path.** Script reads reduced motion only through `motion` (`motion.reduced`,
+  `motion.duration(ms)`), and CSS only through `--duration`. ESLint rejects importing
+  `prefersReducedMotion` anywhere else, and `tests/unit/figures.test.ts` rejects a component that
+  names it or writes its own `prefers-reduced-motion` query.
 - One main motion at a time, 200–600 ms ([design.md](design.md#motion)).
 
 ## On phones
 
-- The frame spans the screen width, the figure scales down (or, for `AttentionLines`, redraws),
-  and wide tables and figures scroll sideways inside the frame's body or a `ScrollBox`.
-  `quality.e2e.ts` checks every page for sideways scrolling at 375px.
+- The frame spans the screen width, figures redraw or scale to fit with their text at 11px or more
+  ([Sizes](#sizes)), and wide tables scroll sideways inside the frame's body or a `ScrollBox`.
+  `quality.e2e.ts` checks every page at 375px for sideways scrolling and for SVG text rendered
+  smaller than 11px.
 - `StepController` hides its "or use ← → keys" hint on touch screens (`hover: none`).
-- `Scrolly`, the scroll-driven layout (text steps beside a sticky figure on wide screens, the figure
-  inline with Prev and Next on narrow ones), exists in `frame/`, but no chapter uses it.
 
 ## Tests
 
 - **Numbers:** each chapter's `facts.test.ts` checks that the functions and data its widgets draw
-  from produce what the prose says.
+  from produce what the prose says, and `math/scale.test.ts` checks the scales and ticks.
 - **Markup:** shared `ui/` and `primitives/` components are rendered with `svelte/server` and their
-  prerendered HTML checked for names, roles, and initial values ([components.md](components.md#testing)).
+  prerendered HTML checked for names, roles, and initial values ([components.md](components.md#testing));
+  `ui/figures.test.ts` covers `Figure`, `Axis`, and `FigureData`.
+- **Rules:** `tests/unit/figures.test.ts` fails on an SVG that is neither named (`role="img"` and a
+  label) nor hidden, a chapter that writes `<svg>` instead of using `Figure`, and a component that
+  reads reduced motion itself.
 - **Behavior:** each chapter's `chapter.e2e.ts` drives its widgets the way a visitor does, finding
   controls by role and figures by their image names (for example
   `getByRole('img', { name: /Vector for cat/ })`). `interaction.e2e.ts` steps a recorded generation
   with the keyboard, with and without reduced motion.
 - **Every page:** `quality.e2e.ts` runs axe in light and dark, checks the prerendered HTML, phone
-  width, and the JavaScript budget; the Lighthouse suite keeps performance and accessibility at 95
-  or above.
-- **Looks:** `tests/visual/` keeps screenshots of one representative widget per Part, in light and
-  dark, locally only.
+  width and figure text size, and the JavaScript budget; the Lighthouse suite keeps performance and
+  accessibility at 95 or above.
+- **Looks:** `tests/visual/` keeps screenshots, locally only: one representative widget per Part in
+  light and dark, and every widget with an SVG figure on a desktop and on a phone.
 
 ## Decisions
 
 - **SVG, not canvas.** Every figure is small (one of the largest, `LayerPlayground`'s shaded plane,
-  is 40 × 40 cells), so SVG costs nothing in speed and gives what canvas can't: it's in the prerendered HTML, it's sharp at any
-  zoom, it's styled by the same tokens as the page (so themes and contrast tests cover it), its
-  text is real text, and e2e tests can query it.
+  is 40 × 40 cells), so SVG costs nothing in speed and gives what canvas can't: it's in the
+  prerendered HTML, it's sharp at any zoom, it's styled by the same tokens as the page (so themes
+  and contrast tests cover it), its text is real text, and e2e tests can query it.
 - **No chart library.** Each figure is a few dozen lines of scales and paths. A library would cost
   more of the 150 KB JavaScript budget ([quality.md](quality.md)) than all the figures together,
-  and would bring its own look instead of the site's.
+  and would bring its own look instead of the site's. `math/scale.ts` is the part of one the
+  figures share, in under a hundred lines.
+- **Redraw charts, scale diagrams.** A chart's layout comes from its scales, so drawing it at the
+  real width costs nothing and keeps text, line widths, and dots their designed size. A diagram's
+  layout is hand-placed, so it scales as a whole and only its text is held at a readable size.
+- **Fixed heights for redrawn figures.** Only the width follows the room there is, so hydrating and
+  redrawing never moves the content below.
 - **HTML for text-shaped things.** Tokens, prompts, and bars of labelled values wrap, reflow, and
   read better as HTML than as positioned SVG text, and a bar chart that is a table needs no extra
   description.

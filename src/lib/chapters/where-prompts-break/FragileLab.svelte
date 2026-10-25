@@ -3,7 +3,9 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Figure from '#lib/components/ui/Figure.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
+	import { scaleLinear } from '#lib/math/scale.ts';
 
 	const data = useDataset('prompts/fragile');
 	let tab = $state<'order' | 'format' | 'position'>('order');
@@ -13,9 +15,10 @@
 		['position', 'Position in a long prompt']
 	] as const;
 
-	const W = 420;
+	const MAX_W = 512;
+	let W = $state(MAX_W);
 	const H = 180;
-	const P = 30;
+	const P = 36;
 </script>
 
 <WidgetFrame
@@ -81,8 +84,8 @@
 				</table>
 			{:else}
 				{@const pos = d.position}
-				{@const sx = (x: number) => P + (x / (pos.facts - 1)) * (W - P - 10)}
-				{@const sy = (y: number) => 10 + (1 - y) * (H - P - 10)}
+				{@const sx = scaleLinear([0, pos.facts - 1], [P, W - 10])}
+				{@const sy = scaleLinear([0, 1], [H - P, 10])}
 				{@const avg = pos.positions.map((x, i) => ({
 					x,
 					p: pos.runs.reduce((a, r) => a + r.points[i].p, 0) / pos.runs.length
@@ -94,10 +97,11 @@
 					{pos.runs.length}
 					people; the line is their average.
 				</p>
-				<svg
-					viewBox="0 0 {W} {H}"
-					role="img"
-					aria-label="Chance of the right number by where the line sits. {misses.length} misses, all with the line somewhere in the middle; none when it was first or last."
+				<Figure
+					max={MAX_W}
+					bind:width={W}
+					height={H}
+					label="Chance of the right number by where the line sits. {misses.length} misses, all with the line somewhere in the middle; none when it was first or last."
 				>
 					<line x1={P} y1={sy(0)} x2={W - 10} y2={sy(0)} class="axis" />
 					<line x1={P} y1={sy(0)} x2={P} y2={sy(1)} class="axis" />
@@ -120,7 +124,7 @@
 						d={avg.map((a, i) => `${i ? 'L' : 'M'} ${sx(a.x)} ${sy(a.p)}`).join(' ')}
 						class="avg"
 					/>
-				</svg>
+				</Figure>
 				<p class="readout">
 					{misses.length} of {pos.runs.length * pos.positions.length} answers went wrong, every one with
 					the line somewhere in the middle. Average chance of the right number: {formatPercent(
@@ -179,21 +183,14 @@
 		vertical-align: middle;
 	}
 
-	svg {
-		display: block;
-		width: 100%;
-		max-width: 32rem;
-		height: auto;
-		font-family: var(--font-sans);
-	}
-
 	.axis {
 		stroke: var(--rule);
 	}
 
 	.tick {
-		font-size: 10px;
+		font-size: 11px;
 		fill: var(--ink-muted);
+		dominant-baseline: middle;
 	}
 
 	.end {
