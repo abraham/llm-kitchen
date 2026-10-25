@@ -3,7 +3,7 @@
 Usage: scripts/.venv/bin/python -m scripts.record embeddings
 
 Writes:
-  static/data/embeddings/minilm-map.json      words, 2D PCA positions, nearest neighbors (full 384-D),
+  static/data/embeddings/minilm-map.json      words, 3D PCA positions, nearest neighbors (full 384-D),
                                          the analogy result, and the PCA basis for live words
   static/data/embeddings/minilm-vectors.json  the full vectors, only fetched by the live option
 """
@@ -61,10 +61,10 @@ def main() -> None:
     mean = vectors.mean(0)
     centered = vectors - mean
     _, _, v = torch.linalg.svd(centered, full_matrices=False)
-    components = v[:2]
+    components = v[:3]
     coords = centered @ components.T
     explained = (torch.linalg.svdvals(centered) ** 2)
-    explained = (explained[:2] / explained.sum()).tolist()
+    explained = (explained[:3] / explained.sum()).tolist()
 
     target = vectors[words.index("king")] - vectors[words.index("man")] + vectors[words.index("woman")]
     target = torch.nn.functional.normalize(target, dim=0)
@@ -82,6 +82,7 @@ def main() -> None:
                 "group": group_of[w],
                 "x": round(float(coords[i, 0]), 4),
                 "y": round(float(coords[i, 1]), 4),
+                "z": round(float(coords[i, 2]), 4),
                 "neighbors": [
                     {"word": n, "similarity": s}
                     for n, s in nearest(vectors[i], vectors, words, {w}, 5)
@@ -111,7 +112,7 @@ def main() -> None:
         compact=True,
     )
     print("analogy:", analogy)
-    print("explained variance (2D):", explained)
+    print("explained variance (3D):", explained)
     print("cat neighbors:", data["words"][0]["neighbors"])
 
 

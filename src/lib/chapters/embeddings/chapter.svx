@@ -54,14 +54,15 @@ every token.
 
 <At levels="simple">
 
-A list of numbers can be read as a place: two numbers mark a point on a flat map, and longer lists
-mark points in a space with more directions. Nearby points mean similar things.
+A list of numbers can be read as a place: two numbers mark a point on a flat map, three a point in
+a room, and longer lists mark points in a space with more directions. Nearby points mean similar
+things.
 
 </At>
 <At levels="standard deep">
 
-A list of numbers can be read as a position. Two numbers place a point on a flat map; 384 or 768
-numbers place it in a space with that many directions. Nearby points have similar lists, and similar
+A list of numbers can be read as a position. Two numbers place a point on a flat map, and three
+place it in a room; 384 or 768 numbers place it in a space with that many directions. Nearby points have similar lists, and similar
 lists turn out to mean similar things.
 
 </At>
@@ -69,13 +70,14 @@ lists turn out to mean similar things.
 <At levels="simple">
 
 The map below uses a small model built for comparing meanings.<Cite id="minilm-model-card" />
-Pick a word to see its nearest neighbors.
+Pick a word to see its nearest neighbors, and drag the map to turn it.
 
 </At>
 <At levels="standard deep">
 
 The map below uses all-MiniLM-L6-v2, a small model built for comparing meanings, which turns any
-text into 384 numbers.<Cite id="minilm-model-card" /> Pick a word to see its nearest neighbors.
+text into 384 numbers.<Cite id="minilm-model-card" /> Pick a word to see its nearest neighbors, and
+drag the map (or use the sliders) to turn it and see it from another side.
 
 </At>
 
@@ -83,13 +85,15 @@ text into 384 numbers.<Cite id="minilm-model-card" /> Pick a word to see its nea
 
 <At levels="simple">
 
-The map squashes many numbers onto a flat page, so a few neighbors may look far apart on it.
+The map squashes many numbers down to three directions, so a few neighbors may look far apart on
+it.
 
 </At>
 <At levels="standard deep">
 
-The map is a flattened view. Squashing 384 numbers onto a page loses most of the detail, so a few
-neighbors may look far apart on the map. The lists of neighbors and similarity scores use all 384
+The map is a squashed view. Squashing 384 numbers down to three directions loses most of the
+detail, so a few neighbors may look far apart on the map, and turning it shows words that looked
+close from one side sitting far apart from another. The lists of neighbors and similarity scores use all 384
 numbers.
 
 </At>
@@ -108,9 +112,9 @@ where $a_i$ is the $i$-th number in $a$. It is 1 when the vectors point the same
 are at right angles, and −1 when they point opposite ways; *cat* and *kitten* score 0.79. This
 model's vectors all have length 1, so here cosine similarity is just the sum $a \cdot b$.
 
-The flat map comes from principal component analysis: it keeps the two directions along which
-these words' vectors spread out the most, and drops the other 382. Those two directions hold
-only about 13% of the spread, which is why neighbors on the map can mislead.
+The map comes from principal component analysis: it keeps the three directions along which
+these words' vectors spread out the most, and drops the other 381. Those three directions hold
+only about 18% of the spread, which is why neighbors on the map can mislead.
 
 </At>
 
@@ -127,8 +131,10 @@ word is *queen*. So directions in the space can carry meaning, like the step fro
 
 Tick *Show king − man + woman*. Taking the vector for *king*, subtracting *man*, and adding *woman*
 gives a list of numbers whose nearest word on this map, comparing all 384 numbers, is *queen*. That
-works because the step from *man* to *woman* partly lines up with the step from *king* to *queen*.
-Squashed onto the flat map, the two steps don't look alike: the map keeps too little of the detail.
+works because the step from *man* to *woman* partly lines up with the step from *king* to *queen*:
+the two are about 75° apart in all 384 numbers, where parallel would be 0°. That's still closer
+than most steps between these words. So don't expect parallel arrows on the map; their angle
+changes as you turn it.
 This famous example was first shown in
 2013 with word vectors from a model called word2vec.<Cite id="mikolov2013" /> It doesn't work for
 every analogy, and on this map it only has a few dozen words to choose from, but it shows that

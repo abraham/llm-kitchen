@@ -38,9 +38,10 @@ describe('embeddings, In depth', () => {
 		expect(dot(vec('cat'), vec('kitten'))).toBeCloseTo(cosine(vec('cat'), vec('kitten')), 4);
 	});
 
-	it('the map keeps 2 of 384 directions, "only about 13% of the spread"', () => {
-		expect(map.dimensions - 2).toBe(382);
-		expect(Math.round((map.explainedVariance[0] + map.explainedVariance[1]) * 100)).toBe(13);
+	it('the map keeps 3 of 384 directions, "only about 18% of the spread"', () => {
+		expect(map.explainedVariance).toHaveLength(3);
+		expect(map.dimensions - 3).toBe(381);
+		expect(Math.round(map.explainedVariance.reduce((a, b) => a + b, 0) * 100)).toBe(18);
 	});
 
 	it('"counted with them, the nearest word is king itself, at 0.63 against 0.58 for queen"', () => {
