@@ -30,8 +30,8 @@ belongs to and remove it here.
 
 - **Expert review:** pending; see [sources.md](sources.md).
 - **Build mode.** A Learn and Build toggle in the app bar. In Build, each chapter becomes a step of
-  instructions for training a small language model on Project Gutenberg books and building a
-  harness around it, from one tested Python package. The plan is in [build-mode.md](build-mode.md).
+  instructions for training a small language model on Project Gutenberg books, the smaller
+  models a harness relies on (such as a safety model for tool calls), and the harness itself, from one tested Python package. The plan is in [build-mode.md](build-mode.md).
 
 ## Open questions
 
