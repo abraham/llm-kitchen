@@ -14,6 +14,18 @@ test('a chapter page renders its prerendered content', async ({ page }) => {
 	await expect(page.locator('em', { hasText: 'The cat sat on the ___' })).toBeVisible();
 });
 
+test('every page credits its author in the footer', async ({ page }) => {
+	for (const path of ['/', '/guessing-game', '/downloads', '/not-a-chapter']) {
+		await page.goto(path);
+		const footer = page.getByRole('contentinfo');
+		await expect(footer, path).toHaveText('Made by Abraham Williams');
+		await expect(footer.getByRole('link', { name: 'Abraham Williams' })).toHaveAttribute(
+			'href',
+			'https://abrah.am/'
+		);
+	}
+});
+
 test('a chapter links to its source on GitHub for editing', async ({ page }) => {
 	await page.goto('/guessing-game');
 	await expect(page.getByRole('link', { name: 'Edit this chapter on GitHub' })).toHaveAttribute(

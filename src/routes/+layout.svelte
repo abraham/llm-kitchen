@@ -37,6 +37,9 @@
 {/if}
 <AppBar levelChoice={LEVEL_CHOICE} />
 {@render children()}
+<footer class="site-footer">
+	Made by <a href="https://abrah.am/" rel="noopener noreferrer" target="_blank">Abraham Williams</a>
+</footer>
 
 <style>
 	.skip {
@@ -51,5 +54,14 @@
 
 	.skip:focus {
 		top: var(--space-2);
+	}
+
+	.site-footer {
+		padding: var(--space-6) var(--space-4);
+		border-top: 1px solid var(--rule);
+		color: var(--ink-muted);
+		font-family: var(--font-sans);
+		font-size: 0.875rem;
+		text-align: center;
 	}
 </style>
