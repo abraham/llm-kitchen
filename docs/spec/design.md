@@ -37,7 +37,8 @@
     the block at the top of the content where it was; if the new level hides that block, the shared
     block before it stays put, so the replacement passage appears in the same place.
   - Every page ends with a footer (in `+layout.svelte`, outside `main`): "Made by Abraham
-    Williams", with the name linking to `https://abrah.am/`.
+    Williams", with the name linking to `https://abrah.am/`, then "Source on GitHub", linking to
+    the repository (`REPO_URL` in `site.ts`).
   - Prose sits in a single ~68ch column (`.prose`). Widgets break out wider, up to ~1100px
     (`.breakout`). On phones no interaction depends on hover, and figure text stays at 11px or more
     ([visualizations.md](visualizations.md#sizes)).
