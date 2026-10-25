@@ -22,24 +22,35 @@ only when a widget needs it.
 - **Trainer.** Training runs thousands of steps; in a worker the page stays responsive and the loss
   curve updates as steps finish.
 
+## What runs in a worker
+
+- Work that runs while a page loads, or that can block the main thread for longer than about a
+  frame, goes in a worker. The Lighthouse suite catches it when it doesn't.
+- Short loops the reader starts can stay on the main thread if they do a frame's worth of work at a
+  time, like the training in `CurveFitter`, `RecurrentMemory`, and `DiffusionToy`.
+
 ## Messages
 
 - Each worker file exports its request and response types as discriminated unions, and the code
   that talks to it imports them with `import type`, so the two sides can't drift. Pages send only
   these typed messages; a worker never reads from the page any other way.
-- **Request–reply workers** (tokenizer, inference) number every request. The client keeps a map
-  from id to the waiting promise, the worker echoes the id on its reply, and the client resolves
-  or rejects that promise. Several widgets can share one worker with requests in flight at once.
-- **Errors** come back as messages: the tokenizer worker replies `{ id, error }`, the inference
-  worker `{ id, type: 'error', message }`, and the client rejects the matching promise, so the
-  widget can show the error. If the tokenizer worker itself fails, every waiting request is
-  rejected.
-- **Progress.** The inference worker sends `progress` messages with the request's id while it
-  downloads model files; `BrowserModel` turns them into the fraction its consent card shows.
-- **The trainer** is a stream rather than request–reply: the widget sends `start`, `pause`, or
-  `reset`. The worker sends `info` (the model's size) when it starts and after each reset, and
-  `progress` (step, loss, and now and then a sample) after every 25 steps until the step limit or a
-  pause.
+- **Request–reply workers** (tokenizer, inference) go through one client helper,
+  `workers/rpc.ts`. It numbers every request, keeps a map from id to the waiting promise, and
+  resolves or rejects that promise when the worker replies with the same id. Several widgets can
+  share one worker with requests in flight at once.
+- **Errors.** Both workers reply to a failed request with `{ id, type: 'error', message }`, and the
+  helper rejects the matching promise, so the widget can show the error.
+- **Crashes.** If a worker itself fails (its script doesn't load, or it runs out of memory), the
+  helper rejects every waiting request and drops the worker; the next request starts a new one.
+- **Progress.** The helper hands `progress` messages to the callback of the request with the same
+  id. `BrowserModel` turns the inference worker's download progress into the fraction its consent
+  card shows.
+- **Stale replies.** Workers don't cancel requests. A widget that asks again before an answer
+  arrives ignores replies for input it no longer shows, as `SpellingBlindSpot` does.
+- **The trainer** is a stream rather than request–reply, so it doesn't use the helper: the widget
+  sends `start`, `pause`, or `reset`. The worker sends `info` (the model's size) when it starts and
+  after each reset, and `progress` (step, loss, and now and then a sample) after every 25 steps
+  until the step limit or a pause.
 
 ## The tokenizer worker
 
@@ -48,10 +59,10 @@ only when a widget needs it.
   text one token at a time. It loads each vocabulary once and keeps it.
 - `tokenizer.worker.ts` only answers messages with `runTokenizer`; it has no other state.
 - `models/tokenizers.ts` is what widgets and providers import. `tokenize(name, text)` and
-  `tokensFor(name, ids)` return promises of tokens. In a browser they post to the shared worker,
-  which is created (and its module loaded) on the first call. Where `Worker` doesn't exist, as in
-  Node for unit tests and fact checks, they call `runTokenizer` in place, so tests get the same
-  tokens without a browser.
+  `tokensFor(name, ids)` return promises of tokens. In a browser they send a request through the
+  helper to the shared worker, which is created (and its module loaded) on the first call. Where
+  `Worker` doesn't exist, as in Node for unit tests and fact checks, they call `runTokenizer` in
+  place, so tests get the same tokens without a browser.
 - Server-side rendering never tokenizes: widgets tokenize only in effects, event handlers, or
   behind a `window` check, so the prerendered page shows their loading state.
 
@@ -87,9 +98,13 @@ only when a widget needs it.
 
 ## Security
 
-- A worker gets only its own response's header policy, not the page's. `firebase.json` gives
-  everything under `/_app/immutable/workers/` a complete policy of its own; [security.md](security.md#in-the-browser)
-  has the details.
+- A worker gets only its own response's header policy, not the page's, so `firebase.json` gives
+  every worker under `/_app/immutable/workers/` a complete policy: `default-src 'self'`,
+  `connect-src 'self'`, `object-src 'none'`, `base-uri 'self'`, and `frame-ancestors 'none'`.
+- Only the inference worker's file (`inference.worker-*.js`) also gets `'wasm-unsafe-eval'` and
+  `blob:` in `script-src`, for ONNX Runtime, and Hugging Face in `connect-src`. The tokenizer and
+  trainer workers can't fetch from another origin or run WebAssembly.
+  [security.md](security.md#in-the-browser) has the full policies.
 - Only the inference worker fetches from Hugging Face, and every file it downloads is checked
   against the pinned model's list and SHA-256 by `workers/verified-fetch.ts`
   ([security.md](security.md#models)).
@@ -102,11 +117,15 @@ only when a widget needs it.
 
 - `src/lib/models/tokenizers.test.ts` and the fact checks tokenize in Node through the same
   `runTokenizer` the worker uses.
+- `src/lib/workers/rpc.test.ts` drives the helper with a fake worker: replies reach the request
+  with their id when several are in flight, errors reject only their request, progress reaches its
+  callback, and a crash rejects every waiting request and starts a new worker on the next one.
 - The [Tokens](chapters/tokens.md) e2e test types into the widget and checks the tokens the worker
   sends back; the [Learning from mistakes](chapters/learning-from-mistakes.md) e2e test trains
   through the trainer worker.
-- `tests/e2e/hosting.e2e.ts` and `scripts/check-live-headers.ts` check the inference worker's
-  header policy and caching, locally and on the live site.
+- `tests/e2e/hosting.e2e.ts` checks the policy and caching the Hosting emulator serves for every
+  worker file, including that only the inference worker can reach Hugging Face.
+  `scripts/check-live-headers.ts` checks the inference worker on the live site.
 - `src/lib/workers/verified-fetch.test.ts` checks that model downloads must be listed files with
   matching hashes.
 - The Lighthouse suite (`tests/lighthouse/`) catches main-thread work that should move into a

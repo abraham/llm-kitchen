@@ -56,11 +56,13 @@ the trust boundary, so it stays limited to maintainers.
   `base-uri 'self'`, `form-action 'self'`, `connect-src 'self'` on pages, and
   `frame-ancestors 'none'`.
 - **Workers get a complete policy.** A worker gets only its response's header policy, not the page's.
-  `firebase.json` sends workers under `/_app/immutable/workers/` `default-src 'self'`,
-  `script-src 'self' 'wasm-unsafe-eval' blob:` (ONNX Runtime imports its loader from a `blob:` URL
-  it makes from the site's own file), the Hugging Face `connect-src`, `object-src 'none'`,
-  `base-uri 'self'`, and `frame-ancestors 'none'`. Pages keep a header without `script-src`, since
-  one without SvelteKit's hashes would block their inline scripts.
+  `firebase.json` sends every worker under `/_app/immutable/workers/` `default-src 'self'`,
+  `connect-src 'self'`, `object-src 'none'`, `base-uri 'self'`, and `frame-ancestors 'none'`.
+  Only the inference worker (`inference.worker-*.js`) also gets `script-src 'self'
+'wasm-unsafe-eval' blob:` (ONNX Runtime imports its loader from a `blob:` URL it makes from the
+  site's own file) and the Hugging Face `connect-src`, so no other worker can reach another origin
+  or run WebAssembly ([workers.md](workers.md#security)). Pages keep a header without
+  `script-src`, since one without SvelteKit's hashes would block their inline scripts.
 - **HSTS for two years.** `firebase.json` sends
   `Strict-Transport-Security: max-age=63072000; includeSubDomains`, which Hosting serves on the
   custom domain (it overrides HSTS only on `*.web.app`). Every subdomain in use (`www`) is on
@@ -196,8 +198,8 @@ findings are SHA-256 hashes in `models/embedder.json`).
 ## Checked by tests
 
 - `tests/unit/hosting.test.ts`: the `firebase.json` headers, including `frame-ancestors 'none'`.
-- `tests/e2e/hosting.e2e.ts`: the headers the Hosting emulator actually serves on pages and on the
-  inference worker, and `security.txt` at its well-known path.
+- `tests/e2e/hosting.e2e.ts`: the headers the Hosting emulator actually serves on pages and on
+  every worker, and `security.txt` at its well-known path.
 - `tests/unit/citations.test.ts`: every reference URL is `https://`.
 - `tests/unit/datasets.test.ts`: every recorded dataset passes its checks.
 - `tests/unit/security.test.ts`: `src/` uses no API under [No raw HTML](#in-the-browser), every
