@@ -75,6 +75,8 @@ export const ROWS = [
 		'Text a model reads can carry instructions of its own. See why a model follows them, and how well defenses written into the prompt hold up.'],
 	['trust-and-guardrails', 'Trust and guardrails', 'agents', ['the-agent-loop', 'prompt-injection'],
 		'A web page can hide instructions that an agent then follows. See prompt injection happen, and what different guardrails change.'],
+	['splitting-the-work', 'Splitting the work', 'agents', ['managing-the-context', 'the-agent-loop', 'trust-and-guardrails'],
+		'One agent keeps every step in one growing prompt. See a lead agent hand subtasks to helpers that each start fresh, and what that costs.'],
 	['encoders', 'Reading both ways', 'others', ['embeddings', 'attention'],
 		'Encoder models read the whole text at once, in both directions. That makes them good at filling blanks and understanding, not writing.'],
 	['mixture-of-experts', 'Many experts', 'others', ['a-neuron', 'the-transformer-block'],

@@ -85,6 +85,7 @@ const FIGURE_PAGES: [slug: string, show?: string][] = [
 	['managing-the-context', 'Retrieve what’s relevant'],
 	['caching'],
 	['routing'],
+	['splitting-the-work'],
 	['encoders'],
 	['recurrent-models'],
 	['diffusion'],
@@ -103,6 +104,8 @@ for (const [device, use] of [
 				await expect(page.getByText(/Loading/)).toHaveCount(0);
 				if (show) await page.getByRole('radio', { name: show }).check();
 				await page.evaluate(() => document.fonts.ready);
+				// A figure taller than the screen scrolls under the fixed app bar.
+				await page.addStyleTag({ content: '.app-bar { visibility: hidden; }' });
 				const widgets = page.locator('section.widget').filter({ has: page.locator('svg') });
 				const count = await widgets.count();
 				expect(count).toBeGreaterThan(0);

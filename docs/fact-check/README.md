@@ -10,8 +10,8 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 - [Part V: Putting it together (Ch 11–17)](part-5.md)
 - [Part VI: Prompt engineering (Ch 18–22)](part-6.md)
 - [Part VII: Harnesses (Ch 23–26)](part-7.md)
-- [Part VIII: Tools and agents (Ch 27–30)](part-8.md)
-- [Part IX: Other kinds of models (Ch 31–36) and the wrap-up (Ch 37–40)](part-9.md)
+- [Part VIII: Tools and agents (Ch 27–31)](part-8.md)
+- [Part IX: Other kinds of models (Ch 32–37) and the wrap-up (Ch 38–41)](part-9.md)
 
 ## Final review (milestone 12)
 

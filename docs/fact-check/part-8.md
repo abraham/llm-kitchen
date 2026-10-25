@@ -1,4 +1,4 @@
-# Fact-check: Part VIII, Tools and agents (Ch 27–30)
+# Fact-check: Part VIII, Tools and agents (Ch 27–31)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -91,3 +91,20 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 | In depth: allowlist: three `delete_file` calls with a made-up `file_path`, each an error; first prompt 262 vs 327 tokens | Test                                                                      |
 | In depth: MCP says a person should always be able to deny a tool call                                                    | Cite `mcp-spec` (User Interaction Model)                                  |
 | In depth: none of the three runs produced the summary                                                                    | Test                                                                      |
+
+## Ch 31. Splitting the work
+
+| Claim                                                                                                                                                      | Backing                                                                         |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Anthropic's research feature: a lead agent plans and starts subagents that explore parts of the question with their own context and pass back what matters | Cite `anthropic-multi-agent` ("Benefits", "Architecture overview")              |
+| The toy's numbers: 3 subtasks × 3 tool calls: 10 calls, longest 1,110, 7,050 read alone; 14 calls, 6 in a row, longest 540, 4,260 read split               | Test (`delegation.test.ts`, `facts.test.ts`)                                    |
+| The toy's prompt sizes are made up, close to the agent loop's recorded run (301 tokens, about 90 per step)                                                 | Labeled in the widget; agent loop tests                                         |
+| Agents use about 4× a chat's tokens; multi-agent systems about 15×                                                                                         | Cite `anthropic-multi-agent`                                                    |
+| Lead with helpers did 90.2% better than a single agent on Anthropic's research eval, especially on breadth-first questions                                 | Cite `anthropic-multi-agent`                                                    |
+| Poor fit when agents share context or depend on each other, as in most coding tasks                                                                        | Cite `anthropic-multi-agent`                                                    |
+| Vague task descriptions made helpers duplicate searches or leave gaps                                                                                      | Cite `anthropic-multi-agent` (principle 2)                                      |
+| Each helper can have its own instructions and tools                                                                                                        | Cite `anthropic-multi-agent` ("separation of concerns—distinct tools, prompts") |
+| Simple: restates Standard in plainer words, with no new claims                                                                                             | Reviewed against the Standard text                                              |
+| In depth: one agent reads K·p₀ + a·K(K−1)/2 with K = Ns + 1; split reads 2p₀ + Nc + N[(s+1)h + a·s(s+1)/2]                                                 | Arithmetic; test (`delegation.test.ts`)                                         |
+| In depth: on BrowseComp, token use explained 80% of score differences; tool calls and model choice most of the rest                                        | Cite `anthropic-multi-agent` (95% with all three)                               |
+| In depth: the lead waits for each round of helpers, so one slow helper holds up the rest                                                                   | Cite `anthropic-multi-agent` ("Synchronous execution creates bottlenecks")      |

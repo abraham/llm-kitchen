@@ -207,6 +207,14 @@ export const GLOSSARY = {
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
 		chapter: 'the-agent-loop'
 	},
+	subagent: {
+		term: 'subagent',
+		definition:
+			'An agent that another agent starts for one part of a job. It begins with a fresh prompt holding only its task, and reports back a short result.',
+		simple:
+			'A helper agent, given one part of a job and a fresh start, that reports back when done.',
+		chapter: 'splitting-the-work'
+	},
 	cascade: {
 		term: 'cascade',
 		definition:

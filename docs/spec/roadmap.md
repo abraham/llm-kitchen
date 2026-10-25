@@ -28,9 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Several agents.** A manager hands subtasks to specialist agents, each with its own context, so
-  the manager's context stays small. A new chapter after [The agent loop](chapters/the-agent-loop.md)
-  that builds on [Managing the context](chapters/managing-the-context.md).
 - **Testing and watching agents.** Traces of every model and tool call in a run, cost and time per
   step, fixed test sets versus watching real use, a model grading answers, and agent benchmarks
   such as GAIA. A new chapter in the Tools and agents part; today only model benchmarks appear, in

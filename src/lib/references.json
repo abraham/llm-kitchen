@@ -372,6 +372,22 @@
 		"accessed": "2026-10-25"
 	},
 	{
+		"id": "anthropic-multi-agent",
+		"authors": [
+			"Jeremy Hadfield",
+			"Barry Zhang",
+			"Kenneth Lien",
+			"Florian Scholz",
+			"Jeremy Fox",
+			"Daniel Ford"
+		],
+		"title": "How we built our multi-agent research system",
+		"venue": "Anthropic",
+		"year": 2025,
+		"url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "mcp-spec",
 		"authors": ["Model Context Protocol"],
 		"title": "Tools (Model Context Protocol specification)",

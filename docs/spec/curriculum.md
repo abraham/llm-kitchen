@@ -118,6 +118,7 @@ _How does a model act, and how do you keep it safe?_
 | 28  | The agent loop       | `the-agent-loop`       | 11, 27     |
 | 29  | Prompt injection     | `prompt-injection`     | 20, 22, 27 |
 | 30  | Trust and guardrails | `trust-and-guardrails` | 28, 29     |
+| 31  | Splitting the work   | `splitting-the-work`   | 24, 28, 30 |
 
 ### Part IX — Other kinds of models
 
@@ -125,12 +126,12 @@ _What else is built from the same pieces?_
 
 | Ch  | Title                         | Slug                 | Builds on |
 | --- | ----------------------------- | -------------------- | --------- |
-| 31  | Reading both ways             | `encoders`           | 5, 9      |
-| 32  | Many experts                  | `mixture-of-experts` | 6, 10     |
-| 33  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
-| 34  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
-| 35  | Painting from noise           | `diffusion`          | 7, 11     |
-| 36  | Choosing actions              | `decision-models`    | 7, 11, 28 |
+| 32  | Reading both ways             | `encoders`           | 5, 9      |
+| 33  | Many experts                  | `mixture-of-experts` | 6, 10     |
+| 34  | Remembering without attention | `recurrent-models`   | 7, 8, 25  |
+| 35  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
+| 36  | Painting from noise           | `diffusion`          | 7, 11     |
+| 37  | Choosing actions              | `decision-models`    | 7, 11, 28 |
 
 ### Wrap-up
 
@@ -138,10 +139,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug              | Builds on                  |
 | --- | ------------------------ | ----------------- | -------------------------- |
-| 37  | Recap: the whole picture | `recap`           | —                          |
-| 38  | From message to reply    | `end-to-end`      | —                          |
-| 39  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 32, 34 |
-| 40  | Check yourself           | `quiz`            | —                          |
+| 38  | Recap: the whole picture | `recap`           | —                          |
+| 39  | From message to reply    | `end-to-end`      | —                          |
+| 40  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 25, 33, 35 |
+| 41  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -163,6 +164,9 @@ _How does it all fit together?_ Unnumbered Part.
   builds, how it trims and caches it, and which model gets it, needs only a chat. Tools, the agent
   loop, and the attacks and guardrails that come with them follow as their own Part, because a
   model that acts raises a different question: how do you keep it safe?
+- **Splitting the work closes Tools and agents.** A lead agent and its helpers need the loop, the
+  context limits from Managing the context, and the guardrails, since each helper can be given only
+  the tools its part needs.
 - **Other kinds of models come last.** They are breadth rather than a step in the main story, and
   they draw on every earlier Part, including the KV cache (Ch 25) that recurrent models avoid, and
   the agent loop (Ch 28) that decision models replace with predicted moves.
