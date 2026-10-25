@@ -53,5 +53,6 @@ describe('FigureData', () => {
 		const { body } = render(FigureData, { props: { children: raw('<table></table>') } });
 		expect(body).toMatch(/<details[^>]*><summary[^>]*>The numbers<\/summary>/);
 		expect(body).not.toMatch(/<details[^>]* open/);
+		expect(body).toMatch(/role="region"[^>]* aria-label="The numbers"/);
 	});
 });

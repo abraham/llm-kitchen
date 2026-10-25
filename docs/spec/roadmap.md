@@ -5,8 +5,8 @@ belongs to and remove it here.
 
 ## Quality
 
-- **Accessibility checks** for every page in the states a visitor sees (phone width, open
-  disclosures, stepped figures), plus the keyboard, reflow, and text spacing. The plan is in
+- **More accessibility checks:** levels on a phone, each glossary popover, stepped figures at their
+  end, Shift+Tab, and ARIA snapshots of the shared chrome. The plan is in
   [accessibility-checks.md](accessibility-checks.md).
 
 ## Live models

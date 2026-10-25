@@ -58,16 +58,23 @@ down never blocks a merge; a failure shows up as a failed run.
   a fixture page (`levels`), the Models page, its tier choice, and the cache states it shows (`downloads`), page
   metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
-  caching), and on every page (`quality`):
+  caching), tabbing through every page (`keyboard`: each stop is on screen, not under the sticky app
+  bar, and shows a focus ring, and focus leaves the page within 600 stops), and on every page,
+  the 404 page included (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
     on chapters with passages for those levels;
+  - no axe violations on a phone with every disclosure open;
   - no requests to another origin, so nothing downloads before a tier is chosen;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
-  - no sideways scrolling at phone width, and no SVG text in a figure smaller than 11px there;
+  - no sideways scrolling at 375 px or at 320 px (WCAG 1.4.10 Reflow), and no SVG text in a figure
+    smaller than 11px at 375 px;
+  - with WCAG 1.4.12's text spacing added on a phone, no sideways scrolling and no text cut off
+    by a box that hides its overflow;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
     tokenizer.
 - **Visual (`tests/visual/`):** screenshots of pages and of every widget with an SVG figure, on a
-  desktop and a phone, run locally only because baselines differ by operating system.
+  desktop and a phone, plus the menu, the Models page, and three figures in forced colors (as with
+  Windows High Contrast), run locally only because baselines differ by operating system.
 
 ## Browser support
 
@@ -84,6 +91,14 @@ Chromium only.
   [design.md](design.md)).
 - No interaction depends on hover.
 - Text-on-color pairs pass WCAG AA in both themes.
+- Every axe scan goes through `expectAccessible` (`tests/e2e/a11y.ts`), with one rule set: WCAG
+  2.0–2.2 A and AA plus axe's best practices (heading order, one `main`, content in landmarks). A
+  failure lists each rule, what it means, and up to five elements, and attaches axe's full results
+  to the Playwright report. Nothing is excluded. A lint rule keeps tests from importing axe
+  directly. `tests/e2e/pages.ts` lists the pages that e2e and Lighthouse tests check.
+- The 404 page (`+error.svelte`) has a `main`, a heading, and a link back to the menu, so the skip
+  link works there too.
+- Further checks are planned in [accessibility-checks.md](accessibility-checks.md).
 
 ## Performance
 

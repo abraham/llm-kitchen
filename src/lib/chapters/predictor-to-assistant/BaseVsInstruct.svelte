@@ -133,7 +133,7 @@
 					{@const live = option.live && c.key !== 'base'}
 					{@const out = live ? runs[prompt]?.[c.key] : recorded?.[c.key]}
 					<section class="col" class:chat={c.key === 'instruct'} aria-label="{c.title}, {c.detail}">
-						<h4>{c.title}<span>{c.detail}</span></h4>
+						<h3>{c.title}<span>{c.detail}</span></h3>
 						{#if option.live && c.key === 'base'}
 							<p class="end">
 								The Large tier has no base Qwen, so this column stays recorded{recorded
@@ -205,13 +205,13 @@
 		border-color: var(--c-vector);
 	}
 
-	h4 {
+	h3 {
 		margin: 0 0 var(--space-2);
 		font-family: var(--font-sans);
 		font-size: 0.9rem;
 	}
 
-	h4 span {
+	h3 span {
 		display: block;
 		font-weight: 400;
 		font-size: 0.75rem;

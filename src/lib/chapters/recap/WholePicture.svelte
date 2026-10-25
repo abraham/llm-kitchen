@@ -280,7 +280,7 @@
 		{#each current.children ?? [] as c (c)}
 			{@const part = PARTS[c]}
 			<li style:--c="var(--c-{part.color})" style:--t="var(--c-{part.color}-tint)">
-				<h4>{part.name}</h4>
+				<h3>{part.name}</h3>
 				<p>{part.what}</p>
 				<p class="links">
 					{#each part.chapters as slug (slug)}
@@ -334,7 +334,7 @@
 		gap: var(--space-1);
 	}
 
-	h4 {
+	h3 {
 		margin: 0;
 		font-family: var(--font-sans);
 		font-size: 0.95rem;

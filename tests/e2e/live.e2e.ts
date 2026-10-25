@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
+import { expectAccessible } from './a11y.ts';
 import { gotoHydrated } from './helpers.ts';
 
 const LIVE_PAGES = [
@@ -205,12 +205,7 @@ test.describe('live widgets on a phone', () => {
 			await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
 			await expect(page.getByText(/Loading/)).toHaveCount(0);
 			await expect(page.locator('.busy')).toHaveCount(0);
-			const results = await new AxeBuilder({ page })
-				.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-				.analyze();
-			expect(
-				results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)
-			).toEqual([]);
+			await expectAccessible(page);
 			const overflow = await page.evaluate(
 				() => document.documentElement.scrollWidth - document.documentElement.clientWidth
 			);

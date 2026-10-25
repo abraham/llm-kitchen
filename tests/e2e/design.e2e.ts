@@ -1,5 +1,5 @@
-import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { expectAccessible } from './a11y.ts';
 import { gotoHydrated } from './helpers.ts';
 
 const pages = ['/', '/guessing-game'];
@@ -11,10 +11,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
 		for (const path of pages) {
 			test(`${path} has no axe violations`, async ({ page }) => {
 				await gotoHydrated(page, path);
-				const results = await new AxeBuilder({ page })
-					.withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
-					.analyze();
-				expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([]);
+				await expectAccessible(page);
 			});
 		}
 	});
