@@ -89,6 +89,8 @@ has how figures draw and move.
 ## Motion
 
 - 200–600 ms easing, one main motion at a time.
+- Figures animate in the first time they come into view: lines draw, bars grow, and the rest fades
+  in, sweeping from the top left ([visualizations.md](visualizations.md#motion)).
 - Every stepped animation is driven by `StepController`: Prev/Next buttons and ← and → keys.
 - With reduced motion (the OS setting, read only through `motion` in
   `stores/motion-prefs.svelte.ts` and the `--duration` token), durations drop to 0 and widgets

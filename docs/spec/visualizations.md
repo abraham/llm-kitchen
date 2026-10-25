@@ -105,7 +105,8 @@ Text in a figure is never smaller than 11px on screen, at any width. `Figure` ge
 
 - Every page is prerendered, and every widget renders its starting state in that HTML: the first
   step, the default settings, and the recorded data inlined by the route. A visitor sees the
-  finished figure before the page hydrates, and Lighthouse measures it as such.
+  finished figure before the page hydrates, and Lighthouse measures it as such; once it hydrates,
+  the figure plays its entrance (see [Motion](#motion)).
 - Widgets touch browser APIs only after mounting (in an `$effect` or attachment), so prerendering
   never runs them. Live models, tokenizer results, and anything measured from the layout appear
   after hydration, in place of the starting state.
@@ -141,6 +142,23 @@ Text in a figure is never smaller than 11px on screen, at any width. `Figure` ge
 
 ## Motion
 
+- **Entrance.** Figures animate in the first time they're shown, through the `entrance`
+  attachment (`components/ui/entrance.ts`) on every `Figure`, `AttentionLines`, `ProbBars`, and
+  `VectorStrip`:
+  - SVG lines and unfilled curves draw themselves (an animated `stroke-dashoffset`); other shapes
+    and text fade in. HTML parts opt in: `ProbBars`' bars grow from the left
+    (`data-enter="grow"`), and its percentages and `VectorStrip`'s cells fade in
+    (`data-enter="fade"`).
+  - Each part starts a little later the further it is from the top left, so the figure sweeps in
+    over about a second (`--duration` × 2 per part, staggered over `--duration` × 1.5). A figure
+    with more than 300 shapes (`LayerPlayground`'s plane) fades in whole.
+  - A figure on screen when it mounts animates at once; one further down is hidden
+    (`data-entering`, `opacity: 0` in `global.css`) until 15% of it is in view. Print shows it
+    regardless. It plays once per mount, so a widget's Reset, which re-creates its body, plays it
+    again.
+  - It uses the Web Animations API with `fill: 'backwards'`, so nothing is left behind on the
+    elements once it ends, and it reads its length from `--duration`, so under reduced motion
+    nothing is hidden and nothing moves.
 - **Stepped figures** change state, and the elements that move animate with CSS transitions that
   use the `--duration` (300ms) and `--ease` tokens. `tokens.css` sets `--duration` to 0 under
   `prefers-reduced-motion`, so those widgets jump to the new state with no code of their own.
@@ -178,12 +196,14 @@ Text in a figure is never smaller than 11px on screen, at any width. `Figure` ge
 - **Behavior:** each chapter's `chapter.e2e.ts` drives its widgets the way a visitor does, finding
   controls by role and figures by their image names (for example
   `getByRole('img', { name: /Vector for cat/ })`). `interaction.e2e.ts` steps a recorded generation
-  with the keyboard, with and without reduced motion.
+  with the keyboard, with and without reduced motion, and checks that a figure further down waits
+  hidden and animates when scrolled to, and shows at once under reduced motion.
 - **Every page:** `quality.e2e.ts` runs axe in light and dark, checks the prerendered HTML, phone
   width and figure text size, and the JavaScript budget; the Lighthouse suite keeps performance and
   accessibility at 95 or above.
 - **Looks:** `tests/visual/` keeps screenshots, locally only: one representative widget per Part in
-  light and dark, and every widget with an SVG figure on a desktop and on a phone.
+  light and dark, and every widget with an SVG figure on a desktop and on a phone. They're taken
+  with reduced motion, so every figure shows its final drawing without being scrolled to.
 
 ## Decisions
 

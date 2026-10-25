@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { entrance } from './entrance.ts';
 
 	let {
 		label,
@@ -53,6 +54,7 @@
 		class:overflow
 		role="img"
 		aria-label={label}
+		{@attach entrance()}
 	>
 		{@render children()}
 	</svg>
