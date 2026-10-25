@@ -58,8 +58,10 @@ down never blocks a merge; a failure shows up as a failed run.
   a fixture page (`levels`), the Models page, its tier choice, and the cache states it shows (`downloads`), page
   metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
-  caching), tabbing through every page (`keyboard`: each stop is on screen, not under the sticky app
-  bar, and shows a focus ring, and focus leaves the page within 600 stops), and on every page,
+  caching), the keyboard on every page (`keyboard`: each Tab stop is on screen, not under the
+  sticky app bar, and shows a focus ring; focus leaves the page within 600 stops; Shift+Tab from
+  the last stop visits the same stops in reverse; and on chapters, Enter opens each glossary
+  popover and Escape closes it with focus still on its term), and on every page,
   the 404 page included (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
     (on a desktop and a phone) on chapters with passages for those levels;

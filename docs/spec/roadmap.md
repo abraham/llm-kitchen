@@ -5,8 +5,9 @@ belongs to and remove it here.
 
 ## Quality
 
-- **More accessibility checks:** Shift+Tab, every glossary popover from the keyboard, and ARIA
-  snapshots of the shared chrome. The plan is in [accessibility-checks.md](accessibility-checks.md).
+- **More accessibility checks:** ARIA snapshots of the shared chrome, an allowlist of Svelte a11y
+  ignores, and Lighthouse accessibility at 100. The plan is in
+  [accessibility-checks.md](accessibility-checks.md).
 
 ## Live models
 

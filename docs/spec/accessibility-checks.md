@@ -21,8 +21,8 @@ leaves this file.
 (`expectAccessible`) with WCAG 2.0–2.2 A and AA plus axe's best practices; scans of every page and
 the 404 page in both themes, on a phone with every disclosure open, and at Simple and In depth on a
 desktop and a phone; chapters with stepped figures at their last step and each glossary popover
-open; reflow at 320 px; WCAG text spacing; a Tab sweep of every page; and forced-colors
-screenshots. Turning them on took headings that skipped a level in four widgets, a named corner
+open; reflow at 320 px; WCAG text spacing; a Tab sweep of every page, forward and back; Enter and
+Escape on every glossary popover; and forced-colors screenshots. Turning them on took headings that skipped a level in four widgets, a named corner
 cell in a table, a `main` on the 404 page, a focusable scroll box in `FigureData`, and focusable
 wide equations on phones.
 
@@ -33,14 +33,6 @@ wide equations on phones.
 If a rule ever needs an exception, it goes in `tests/e2e/a11y.ts` as a `{ rule, selector, reason }`
 entry, passed to axe as `exclude` for that rule only. A unit test checks that each entry has a
 reason and that its selector matches something on some page, so stale exceptions are removed.
-
-### Keyboard
-
-The Tab sweep (`keyboard.e2e.ts`) only moves forward. It gains:
-
-- Shift+Tab from the footer link back through the same elements in reverse;
-- every glossary popover, not just one: Enter opens it, Escape closes it and returns focus to its
-  term.
 
 ### Names that shouldn't change
 
@@ -86,8 +78,7 @@ with VoiceOver on macOS and iOS, using only the keyboard or touch.
 
 ## Phases
 
-1. **Keyboard.** Shift+Tab back through every page, and Enter and Escape on every popover.
-2. **Names and sources.** The ARIA snapshots, the `svelte-ignore` allowlist, the exception list
+1. **Names and sources.** The ARIA snapshots, the `svelte-ignore` allowlist, the exception list
    with its test, the helper's own test, and Lighthouse at 100.
 
 ## CI
@@ -105,7 +96,6 @@ with VoiceOver on macOS and iOS, using only the keyboard or touch.
 
 ## Specs that change
 
-- [quality.md](quality.md): the Tests list and the Accessibility section describe the reverse
-  sweep, ARIA snapshots, the allowlist, and exceptions; the Lighthouse minimum becomes 100 for
-  accessibility.
+- [quality.md](quality.md): the Tests list and the Accessibility section describe ARIA
+  snapshots, the allowlist, and exceptions; the Lighthouse minimum becomes 100 for accessibility.
 - [principles.md](principles.md): the accessibility success criterion names WCAG 2.2 AA.
