@@ -44,6 +44,7 @@ src/
     +layout.svelte, +layout.ts   site shell; prerender = true
     +page.svelte                 the menu, from the curriculum
     [chapter]/+page.ts           loads a chapter's prose, first-view datasets, and levels by slug
+    downloads/+page.svelte       the Downloads page: every live model, its state, and its sources
     fixtures/[fixture]/          test-only pages from tests/e2e/fixtures, in the end-to-end build only
   lib/
     curriculum/
@@ -74,7 +75,8 @@ src/
       load.ts                    fetchDataset (route loads) and loadDataset (browser, cached)
       use.ts                     provideDatasets, useDataset(s), and all/then for maybe-loaded data
       read.ts                    readDataset for tests and Node scripts
-    models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers
+    models/                      ModelProvider, RecordedProvider, BrowserProvider, tokenizers, and the
+                                 live models' list and cache (downloads.md)
     workers/                     the tokenizer, inference, and trainer workers (workers.md)
     math/                        pure numeric code: sampling, BPE, MLP and backprop, attention, ...
     harness/                     pure toy harness: tools, agent loop, caching, injection

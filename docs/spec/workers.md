@@ -76,9 +76,11 @@ only when a widget needs it.
   assets, not fetched from a CDN.
 - `next-token` returns the top `k` probabilities and the total of the rest, computed from the last
   position's logits in the worker, so only a few numbers cross back to the page.
-- It loads only after consent: `BrowserModel.load` is the only caller of a `load` request, and one
-  `BrowserModel` per model is shared by every widget on a page. [models-and-data.md](models-and-data.md#live-model-rules)
-  has the rules for live models.
+- It downloads and loads only after a click: `BrowserModel.download` and `BrowserModel.load` are
+  the only callers of `download` and `load` requests, and one `BrowserModel` per model is shared by
+  every widget in a tab. `download` stores a model's listed files in the site's cache without
+  starting it, and `load` reads them from there; [downloads.md](downloads.md) has the cache and the
+  states. [models-and-data.md](models-and-data.md#live-model-rules) has the rules for live models.
 
 ## The trainer worker
 

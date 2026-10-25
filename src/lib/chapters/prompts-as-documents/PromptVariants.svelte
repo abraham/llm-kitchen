@@ -131,7 +131,7 @@
 				caption="Live {canonical.displayName}'s top guesses after “{live.text}”"
 			/>
 		{/if}
-	{:else if wantLive || model.status.state !== 'idle'}
+	{:else if wantLive || model.active}
 		<ModelConsent
 			{model}
 			purpose="Try your own wording with {canonical.displayName} running live."

@@ -301,7 +301,7 @@
 				</p>
 			</div>
 
-			{#if !wantLive}
+			{#if !wantLive && !model.active && model.status.state !== 'ready'}
 				<button type="button" onclick={() => (wantLive = true)}>Add your own words…</button>
 			{:else}
 				<ModelConsent

@@ -16,7 +16,9 @@
 - **Layout:**
   - Every page starts with an app bar (`AppBar`) that stays at the top of the viewport as the page
     scrolls (`--app-bar-height`; in-page links, the chapter rail, and scroll-driven figures sit
-    below it): the site name on the left, linking to the menu, and a theme toggle on the right.
+    below it): the site name on the left, linking to the menu, and on the right a Downloads link (a
+    download icon, named and titled "Downloads", to the page in [downloads.md](downloads.md)) and a
+    theme toggle.
     The toggle steps through Auto (the system setting, the default), Light, and Dark; its name says
     which ("Theme: Light") and its icon shows it (half-filled circle, sun, or moon). Light and dark
     are saved (`stores/theme.svelte.ts`) and an inline script in `app.html` applies them before the

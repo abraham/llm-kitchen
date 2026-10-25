@@ -4,7 +4,7 @@ import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import { DEBUG_PORT } from '../../playwright.lighthouse.config.ts';
 
 /** Every page on the site: the menu and all chapters. None loads a live model without consent. */
-const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`)];
+const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`), '/downloads'];
 const MIN_SCORE = 95;
 /** Runs per page at most. Like Lighthouse CI's default, a page passes on its best run. */
 const MAX_RUNS = 3;

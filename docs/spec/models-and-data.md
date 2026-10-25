@@ -56,8 +56,10 @@ data is registered, checked, and loaded.
 
 ## Live model rules
 
-- Before any download, `ModelConsent` asks, showing the download size: the model plus the 27 MB ONNX
-  Runtime build (a unit test checks it against the bundled file).
+- A model downloads only when the visitor presses a button that gives its size: `ModelConsent` in
+  a widget, showing the model plus the 27 MB ONNX Runtime build (a unit test checks it against the
+  bundled file), or the Downloads page. [downloads.md](downloads.md) has the states, the cache, and
+  the page.
 - The worker bundles only ONNX Runtime's asyncify build. Every
   [supported browser](quality.md#browser-support) can run it; the smaller build Transformers.js
   would pick for Safari without WebGPU is only needed before Safari 26.

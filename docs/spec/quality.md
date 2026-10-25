@@ -55,7 +55,8 @@ down never blocks a merge; a failure shows up as a failed run.
   descriptions (`branding`); the hosting config (`hosting`); and color contrast (`tokens`).
 - **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, the menu and
   a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), explanation levels on
-  a fixture page (`levels`), page metadata
+  a fixture page (`levels`), the Downloads page and the cache states it shows (`downloads`), page
+  metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
   caching), and on every page (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth

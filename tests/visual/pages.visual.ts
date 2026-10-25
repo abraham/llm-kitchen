@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { gotoHydrated } from '../e2e/helpers.ts';
 
-/** One representative widget per Part, plus the menu. */
+/** One representative widget per Part, plus the menu and the downloads page. */
 const SHOTS: { path: string; widget?: number }[] = [
 	{ path: '/' },
 	{ path: '/guessing-game', widget: 0 },
@@ -9,7 +9,8 @@ const SHOTS: { path: string; widget?: number }[] = [
 	{ path: '/learning-from-mistakes', widget: 1 },
 	{ path: '/attention', widget: 1 },
 	{ path: '/generating-text', widget: 0 },
-	{ path: '/the-agent-loop', widget: 0 }
+	{ path: '/the-agent-loop', widget: 0 },
+	{ path: '/downloads' }
 ];
 
 for (const colorScheme of ['light', 'dark'] as const) {

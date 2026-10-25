@@ -77,7 +77,8 @@ the trust boundary, so it stays limited to maintainers.
   [architecture.md](architecture.md#data)). Invalid data throws and the widget shows the error; it
   never renders unchecked.
 - **External links** come only from `references.json`, must be `https://` (`citations.test.ts`), and
-  open with `rel="noopener noreferrer"`.
+  open with `rel="noopener noreferrer"`. The one exception is the Downloads page's links to each
+  model on Hugging Face, built from `models/*.json` (`downloads.test.ts`).
 - **Workers** take typed messages from the page only. The inference worker downloads only the model
   and commit its message names, and those come from `canonical.json` and `embedder.json`, never
   from anything the visitor types.
@@ -86,15 +87,18 @@ the trust boundary, so it stays limited to maintainers.
 
 ### Models
 
-- Model files download only in the inference worker, after consent, from a pinned Hugging Face
+- Model files download only in the inference worker, after a click, from a pinned Hugging Face
   commit (`onnxRevision`), with `env.allowLocalModels = false`.
 - **Model files are checked by hash.** `models/canonical.json` and `models/embedder.json` list each
   file Transformers.js downloads with its SHA-256 (`onnxFiles`). The worker's `env.fetch`
   (`workers/verified-fetch.ts`) refuses any other file from Hugging Face, fetches a pinned model at
   its pinned commit whatever revision is asked for (`pipeline()` reads `config.json` from `main`,
   ignoring `revision`), and hashes each file as it streams with `@noble/hashes`, so progress still
-  shows. A mismatch errors the download before Transformers.js uses or caches it. Files a browser
-  cached before these checks existed aren't rechecked.
+  shows. A mismatch errors the download before Transformers.js uses or caches it.
+- **Only checked files are cached,** in the site's own store, keyed by pinned URL; the worker
+  deletes the store Transformers.js used before these checks existed, so nothing unchecked is read
+  back. Cached files aren't hashed again on each start: anything that could write to the store
+  could already run script on the site ([downloads.md](downloads.md#the-cache)).
 - `scripts.record check live` downloads each listed file and checks its hash and the total size.
 - ONNX Runtime's JavaScript and WebAssembly are bundled with the site, never loaded from a CDN.
 - Recording scripts load models with `from_pretrained` only: never `trust_remote_code=True`,
