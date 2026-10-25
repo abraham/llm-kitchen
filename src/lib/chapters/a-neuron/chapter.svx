@@ -1,5 +1,6 @@
 <script lang="ts">
 	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -7,21 +8,38 @@
 	import NeuronPlayground from './NeuronPlayground.svelte';
 </script>
 
-## The smallest working part
+## What a model is made of
 
 <At levels="simple">
 
-Each token's list of numbers goes through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>.
-Each one is simple enough to work out by hand. Move the sliders and watch the numbers flow.
+So far, text goes in as tokens, each token becomes a list of numbers, and out comes a chance for
+every possible next token. A language model is the calculation in between. This Part asks what that
+calculation is made of (this chapter) and where its numbers come from (the next one).
+
+The counting model in <ChapterRef to="predicting-by-counting" /> looked its answer up in a table.
+A large language model works it out instead, by passing the numbers through millions of tiny
+calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>.
 
 </At>
 <At levels="standard deep">
 
-The last chapter ended with vectors: lists of numbers for each token. What does the model do with
-them? It feeds them through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>. Each one is simple enough to work out by
-hand. Move the sliders and watch the numbers flow.
+The pieces so far fit together like this. Text is split into tokens
+(<ChapterRef to="tokens" />), each token becomes a vector, a list of numbers
+(<ChapterRef to="embeddings" />), and at the other end the model gives a chance for every possible
+next token (<ChapterRef to="probability-and-sampling" />). A language model is the calculation in
+between: numbers in, chances out. This Part answers two questions about it. What is the calculation
+made of? That's this chapter. And where do its numbers come from? That's the next.
+
+The counting model in <ChapterRef to="predicting-by-counting" /> computed almost nothing: it looked
+its answer up in a table of counts. A large language model computes its answer instead, by passing
+the numbers through millions of tiny calculators called <GlossaryPopover term="neuron">neurons</GlossaryPopover>.
 
 </At>
+
+## One neuron
+
+Each neuron is simple enough to work out by hand. This one has two inputs so you can follow every
+number; a neuron in GPT-2 reads 768. Move the sliders and watch the numbers flow.
 
 <NeuronPlayground />
 
@@ -32,6 +50,9 @@ hand. Move the sliders and watch the numbers flow.
 A neuron does three things. It multiplies each input by its own <GlossaryPopover term="weight">weight</GlossaryPopover>,
 which says how much that input matters. It adds the results up, plus one extra number called the
 **bias**. Then it squashes the total: a common squash, ReLU, turns anything below 0 into 0.
+
+Think of it as a vote. Each input pushes the total up or down, as hard as its weight says, and the
+neuron only passes a signal on when the total comes out above 0.
 
 </At>
 <At levels="standard deep">
@@ -46,6 +67,10 @@ A neuron does three things:
 3. **Squash** the total with an *activation function*. ReLU, for example, turns any negative total
    into 0 and leaves positive totals alone. Without this step, stacking neurons would only ever
    produce straight lines, however many you used.
+
+So a neuron is a small detector. The weights decide which mix of inputs it looks for, the bias how
+much of that mix it needs, and the squash makes it stay quiet until it has enough: with ReLU, it
+outputs 0 below that point and a bigger number the further past it the inputs go.
 
 The idea is old. Warren McCulloch and Walter Pitts described a mathematical neuron in
 1943,<Cite id="mcculloch1943" /> loosely inspired by brain cells, and Frank Rosenblatt's
@@ -83,16 +108,18 @@ or a flat plane, however many layers you stack.
 
 <At levels="simple">
 
-One neuron can only draw one straight edge. Many neurons side by side in a **layer**, feeding
-into a next layer, can draw complicated shapes. Below, three neurons and one output neuron fence
-off a triangle. Turn neurons off to see what fewer can do:
+One neuron answers one yes-or-no question about its inputs, so on a map of them it can only draw
+one straight edge: on one side it fires, on the other it stays quiet. Many neurons side by side
+make a **layer**, and a next layer can combine their answers into complicated shapes. Below, three
+neurons and one output neuron fence off a triangle. Turn neurons off to see what fewer can do:
 
 </At>
 <At levels="standard deep">
 
-One neuron can only draw one simple boundary. The power comes from numbers: put many neurons side
-by side in a **layer**, feed their outputs into the next layer, and the network can represent
-complicated patterns.
+One neuron answers one question about its inputs: is this mix of them big enough? On a map of the
+inputs, the answer changes along a straight line. It fires on one side and stays quiet on the other.
+The power comes from numbers: put many neurons side by side in a **layer**, feed their outputs into
+the next layer, and the network can pick out complicated regions.
 
 Below, a layer of three neurons reads the same two inputs. Each one draws its own straight line and
 fires only on the far side of it. A second layer, here a single output neuron, adds up what they say
@@ -105,16 +132,41 @@ neurons off to see what fewer can do. One gives a single straight edge, two a we
 
 <At levels="simple">
 
-GPT-2 small has 3,072 neurons in each of its 12 blocks. Every one of their weights is just a
-number like the ones on your sliders. The question is how they get set.
+A token's vector has 768 numbers rather than 2, so GPT-2's neurons pick out regions in a space
+with 768 directions. Nobody can draw that, but each neuron still works just like the ones above.
 
 </At>
 <At levels="standard deep">
 
-GPT-2 small has a layer of 3,072 neurons in each of its 12 blocks, and each of those neurons reads
-all 768 numbers of a token's vector.<Cite id="gpt2-config" /> Its activation function is GELU, a
-smooth cousin of ReLU.<Cite id="hendrycks2016" /> Every one of its weights and biases is just a number
-like the ones on your sliders. The question is how they get set.
+Two inputs give a flat square you can draw. A neuron in GPT-2 reads 768 numbers, so it splits a
+space with 768 directions instead, and the next layer combines thousands of those splits. Nobody
+can draw that, but each neuron still multiplies, adds, and squashes like the ones above.
+
+</At>
+
+## Where neurons sit in a model
+
+<At levels="simple">
+
+GPT-2 small is built from 12 **blocks**, one after another. In each block, a part called attention
+lets each token take in what came before it (<ChapterRef to="attention" />), and then a layer of
+3,072 neurons works on each token's vector. After the last block, the vector becomes a chance for
+every next token.
+
+</At>
+<At levels="standard deep">
+
+Here is the whole path through GPT-2 small, with the parts this course has covered and the ones
+still to come:
+
+1. Each token becomes a vector of 768 numbers (<ChapterRef to="embeddings" />).
+2. The vectors pass through 12 **blocks**, one after another. In each block, attention lets every
+   token take in information from the tokens before it (<ChapterRef to="attention" />), and then a
+   layer of 3,072 neurons works on each token's vector on its own.<Cite id="gpt2-config" /> The
+   two together make a transformer block (<ChapterRef to="the-transformer-block" />).
+3. After the last block, each token's vector is turned into a chance for every possible next token.
+
+Its neurons use GELU, a smooth cousin of ReLU, as their squash.<Cite id="hendrycks2016" />
 
 </At>
 <At levels="deep">
@@ -139,12 +191,33 @@ which matches the exact curve to within about 0.001 everywhere.<Cite id="hendryc
 
 </At>
 
+## Who sets the weights?
+
+<At levels="simple">
+
+Every one of those neurons has weights, numbers like the ones on your sliders. So does the rest of
+the model: the token vectors are numbers too. Above, someone chose the triangle's weights by hand.
+Nobody could do that for millions of them.
+
+</At>
+<At levels="standard deep">
+
+Every one of those neurons has its own weights and bias, numbers like the ones on your sliders. So
+does the rest of the model: the token vectors from <ChapterRef to="embeddings" /> are numbers too,
+and so is attention. GPT-2 small has about 124 million in all. The triangle's weights above were
+picked by hand to make a triangle. Nobody could pick 124 million, and nobody knows in advance which
+patterns a language model needs its neurons to pick out.
+
+</At>
+
 <RecapCard>
 
+- A language model is a calculation from token vectors to a chance for every next token, and much
+  of that calculation is done by neurons.
 - A neuron multiplies each input by a weight, adds them up with a bias, and squashes the result.
 - Weights say how much each input matters, and in which direction.
-- Layers of many neurons, stacked, can represent complicated patterns. GPT-2 small has 3,072 per
-  block in its 12 blocks.
+- Layers of many neurons, stacked, can pick out complicated patterns. GPT-2 small has a layer of
+  3,072 in each of its 12 blocks, after attention.
 
 <At levels="deep">
 
@@ -154,5 +227,4 @@ which matches the exact curve to within about 0.001 everywhere.<Cite id="hendryc
 </At>
 </RecapCard>
 
-**Next question:** GPT-2 small has about 124 million numbers like these. Nobody set them by hand,
-so how were they chosen?
+**Next question:** nobody set GPT-2's 124 million numbers by hand. So how were they chosen?

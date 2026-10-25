@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { Adam } from '#lib/math/mlp.ts';
+import { Adam, CharModel } from '#lib/math/mlp.ts';
+import { RHYMES } from '#lib/data/rhymes.ts';
 
 describe('learning from mistakes, In depth', () => {
 	it('guessing evenly among V choices gives a loss of ln V; perplexity e^L undoes it', () => {
@@ -45,5 +46,18 @@ describe('learning from mistakes, In depth', () => {
 			expected -= (lr * (m / (1 - 0.9 ** t))) / (Math.sqrt(v / (1 - 0.999 ** t)) + 1e-8);
 			expect(param[0]).toBeCloseTo(expected, 12);
 		});
+	});
+});
+
+describe('learning from mistakes, Standard', () => {
+	it('the tiny model: 8 numbers per character, 3 characters into 64 neurons, a chance per character', () => {
+		const lower = RHYMES.map((r) => r.text.toLowerCase());
+		const vocab = ['\u0000', ...[...new Set(lower.join(''))].sort()];
+		const V = vocab.length;
+		const model = new CharModel({ vocab, context: 3, embedding: 8, hidden: 64 }, 1);
+		expect(model.E.length).toBe(V * 8);
+		expect(model.parameterCount).toBe(V * 8 + 3 * 8 * 64 + 64 + 64 * V + V);
+		expect(model.parameterCount).toBe(3790);
+		expect(model.probabilities([1, 2, 3]).length).toBe(V);
 	});
 });

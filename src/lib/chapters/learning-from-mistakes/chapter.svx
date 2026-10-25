@@ -9,25 +9,68 @@
 	import TinyTrainer from './TinyTrainer.svelte';
 </script>
 
-## Start random, then improve
+## What training is
 
 <At levels="simple">
 
-A new network's weights are random, so its predictions are nonsense. Training fixes that one
-small nudge at a time. Press *Take 1 step* to nudge every number once, or *Train* to watch the
-network learn to follow a wavy line.
+Nobody sets a model's weights by hand. They are found by **training**: show the model examples,
+measure how wrong its predictions are, and nudge every weight so it's a little less wrong. Then
+repeat, millions of times.
+
+For a language model, any text is full of examples: at every point, the words so far are the
+question and the next word is the answer. The counting model learned from the same kind of text
+in <ChapterRef to="predicting-by-counting" />, by filling in a table. A network has no table to
+fill in, so it starts from random weights and improves them a little at a time.
 
 </At>
 <At levels="standard deep">
 
-A new network's weights are random numbers, so its predictions are nonsense. Training fixes that
-one small nudge at a time. The network below has 16 neurons and 49 numbers, all listed under it.
-Press *Take 1 step* to see every number nudged once, or *Train* to watch them learn to follow a wavy
-line.
+In <ChapterRef to="a-neuron" /> you set the weights yourself. A real model's weights are found by
+**training**, a loop with three parts:
+
+1. **Predict.** Run the model on examples whose right answers are known.
+2. **Measure.** Score how wrong the predictions were.
+3. **Nudge.** Change every weight a little, in whichever direction makes the score better.
+
+Then repeat, millions of times. For a language model the examples come free with any text: at
+every point, the words so far are the question and the word that comes next is the answer.
+
+The counting model in <ChapterRef to="predicting-by-counting" /> learned from text like this too.
+Counting is a kind of training: read the text once and fill in a table. A network can't be filled
+in like that, because no single weight stands for one pair of words; each weight plays a part in
+many predictions. So it starts from random weights and improves them by trial and correction.
+
+</At>
+
+## Start small
+
+<At levels="simple">
+
+To see every weight move, start with a network far smaller than a language model. It has one input
+and one output: for each place along a line, it predicts a height. The dots are its examples, and
+the curve is its prediction. Press *Take 1 step* to nudge every number once, or *Train* to watch it
+learn to follow the dots.
+
+</At>
+<At levels="standard deep">
+
+To see every weight move, start with a network far smaller than a language model. It has one input
+and one output: for each place along a line, it predicts a height. The dots are the examples, and
+the curve is what the network currently predicts. It has 16 neurons, which squash with tanh, one of
+the choices in the neuron above, and 49 numbers, all listed under it. They start random, so the
+curve starts wrong. Press *Take 1 step* to see every number nudged once, or *Train* to watch them
+learn to follow the dots.
 
 </At>
 
 <CurveFitter />
+
+<At levels="standard deep">
+
+Each step is the loop above: predict a height for every dot, measure how far off the curve is, and
+nudge all 49 numbers. The next two sections take apart the measuring and the nudging.
+
+</At>
 
 ## Measuring the mistake
 
@@ -84,7 +127,9 @@ single weight, so the landscape is just a curve:
 <LossLandscape />
 
 Try a large step size: the ball overshoots and bounces around. Try a small one from the start: it
-can settle in a dip that isn't the lowest point. Real training balances these.
+can settle in a dip that isn't the lowest point. Real training balances these. This is what each
+*Take 1 step* did to the curve above: every one of its 49 numbers moved a little downhill, and the
+▲ and ▼ marks showed which way.
 
 <At levels="simple">
 
@@ -133,17 +178,25 @@ second, so every weight gets its own step size. The networks here use its usual 
 <At levels="simple">
 
 The same recipe trains a language model. The one below reads 3 characters and guesses the next,
-using the nursery rhymes from <ChapterRef to="predicting-by-counting" />. It trains entirely in your
-browser.
+using the nursery rhymes from <ChapterRef to="predicting-by-counting" />. Each character gets its own
+list of numbers, those feed a layer of neurons, and out comes a chance for every character: the
+whole path from the last chapter, in miniature. It trains entirely in your browser.
 
 </At>
 <At levels="standard deep">
 
 The same recipe trains a language model. The one below reads the 3 characters before a gap and
-predicts the next character, using the six nursery rhymes from <ChapterRef to="predicting-by-counting" />. It turns each character into a
-small vector, feeds them through one layer of neurons, and outputs a probability for every
-character, a scaled-down version of a design from 2003.<Cite id="bengio2003" /> It trains entirely in
-your browser.
+predicts the next character, using the six nursery rhymes from <ChapterRef to="predicting-by-counting" />.
+It has every part from the path in <ChapterRef to="a-neuron" />, in miniature:
+
+- each character becomes a vector of 8 numbers, as tokens do in <ChapterRef to="embeddings" />;
+- the 3 vectors feed a layer of 64 neurons;
+- the neurons feed an output that gives a chance for every character
+  (<ChapterRef to="probability-and-sampling" />).
+
+It's a scaled-down version of a design from 2003,<Cite id="bengio2003" /> and it trains entirely in
+your browser. All of its numbers start random, the character vectors included, and every step
+nudges every one of them.
 
 </At>
 
@@ -152,7 +205,8 @@ your browser.
 <At levels="simple">
 
 At first it writes random letters. As it trains, its loss falls, and real words appear, then
-pieces of real phrases.
+pieces of real phrases. Its character lists were learned too. That's where the token vectors
+of <ChapterRef to="embeddings" /> come from: they are weights like any other.
 
 </At>
 <At levels="standard deep">
@@ -160,6 +214,10 @@ pieces of real phrases.
 At first it writes random letters, and its loss sits on the dashed line: the loss you'd get by
 guessing every character with equal chance. As training goes on, the loss falls and the writing
 starts to look like the rhymes: real words appear, then fragments of real phrases.
+
+Nothing told it what the characters are. Its character vectors were nudged along with every other
+weight, just to make the next character easier to predict. That is the answer to where the token
+vectors in <ChapterRef to="embeddings" /> come from: they're weights, learned the same way.
 
 </At>
 
@@ -188,13 +246,44 @@ nothing is dropped, so the same input always gives the same probabilities.
 
 </At>
 
+## What comes next is built on this
+
+<At levels="simple">
+
+The rest of the course keeps this recipe. Attention and the transformer block, in the next Part,
+are more weights, trained the same way. Today's biggest models use the same recipe with far more
+weights and text, and a chat assistant is the same model trained further on conversations.
+
+</At>
+<At levels="standard deep">
+
+From here on, every model in the course is weights set by this loop. What changes is how the
+weights are arranged, how many there are, and which examples they learn from:
+
+- **Arranged differently.** Attention and the transformer block
+  (<ChapterRef to="attention" through="the-transformer-block" />) add new parts to the
+  calculation, and training sets their weights just as it set these.
+- **Many more of them.** Today's largest models follow the same recipe with billions of weights
+  (<ChapterRef to="scale" />), and storing them all takes its own tricks
+  (<ChapterRef to="quantization" />).
+- **Different examples.** An assistant is a base model trained further on conversations
+  (<ChapterRef to="predictor-to-assistant" />).
+
+Training also explains some limits. The loss only rewards text that's likely to come next, not
+text that's true, which is one reason models make things up (<ChapterRef to="quirks-and-limits" />).
+
+</At>
+
 <RecapCard>
 
-- A network starts with random weights and learns from examples.
+- A network starts with random weights and learns from examples: predict, measure the mistake,
+  nudge every weight, repeat.
+- For a language model, any text is examples: the words so far, and the word that came next.
 - The loss measures how wrong it is. For a language model: how surprised it was by the real next
   token.
 - Gradient descent nudges every weight downhill on the loss; backpropagation works out which way
   that is for every weight at once.
+- Token vectors are weights too, learned the same way.
 
 <At levels="deep">
 
