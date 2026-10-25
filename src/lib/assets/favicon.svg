@@ -1,19 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
 	<title>LLM Kitchen</title>
 	<style>
-		.bowl { fill: #1f1b16; }
-		.token { fill: #d97706; }
-		.vector { fill: #0d9488; }
+		.skewer { fill: #1f1b16; }
 		.attention { fill: #db2777; }
+		.rice { fill: #ffffff; }
+		.vector { fill: #0d9488; }
 		@media (prefers-color-scheme: dark) {
-			.bowl { fill: #ece6dc; }
-			.token { fill: #f59e0b; }
-			.vector { fill: #14b8a6; }
+			.skewer { fill: #ece6dc; }
 			.attention { fill: #f472b6; }
+			.vector { fill: #14b8a6; }
 		}
 	</style>
-	<circle class="token" cx="9" cy="12.5" r="5" />
-	<circle class="attention" cx="23" cy="12.5" r="5" />
-	<circle class="vector" cx="16" cy="9" r="5" />
-	<path class="bowl" d="M1 14.5h30a15 14 0 0 1-30 0z" />
+	<circle class="attention" cx="290" cy="-670" r="90" />
+	<circle class="rice" cx="480" cy="-480" r="90" />
+	<circle class="vector" cx="670" cy="-290" r="90" />
+	<path
+		class="skewer"
+		d="m843-60-85-85q-49 30-107 24t-101-49q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T360-360q-29-29-41-66.5t-7-75.5q-38 5-75.5-7T170-550q-43-43-49-101.5T145-759l-85-85 56-56 86 85q49-30 107-24t101 49q29 29 41 66t7 75q38-5 75.5 7.5T600-600q29 29 41 66t7 75q38-5 75.5 7.5T790-410q43 43 49 101t-24 107l85 85-57 57ZM670-200q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM480-390q38 0 64-26t26-64q0-38-26-64t-64-26q-38 0-64 26t-26 64q0 38 26 64t64 26ZM354-606q26-26 26-64t-26-64q-26-26-64-26t-64 26q-26 26-26 64t26 64q26 26 64 26t64-26Z"
+	/>
 </svg>
