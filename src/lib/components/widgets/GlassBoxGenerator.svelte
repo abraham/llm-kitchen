@@ -261,7 +261,7 @@
 			The live copy is compressed to 8 bits, so its percentages differ somewhat from the recorded
 			ones.
 		</p>
-	{:else if wantLive || model.status.state !== 'idle'}
+	{:else if wantLive || model.active}
 		<ModelConsent
 			{model}
 			purpose="Type any beginning, pick any token, and set the temperature, with {canonical.displayName} running live."

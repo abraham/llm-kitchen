@@ -5,8 +5,8 @@ import { gzipSync } from 'node:zlib';
 import { CURRICULUM } from '../../src/lib/curriculum/index.ts';
 import { gotoHydrated } from './helpers.ts';
 
-/** Every page on the site: the menu and all chapters. */
-const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`)];
+/** Every page on the site: the menu, all chapters, and the downloads page. */
+const PAGES = ['/', ...CURRICULUM.map((c) => `/${c.slug}`), '/downloads'];
 
 /** Chapters whose chapter.ts lists levels: they're checked at every level, not just Standard. */
 const LEVELED_PAGES = readdirSync('src/lib/chapters')

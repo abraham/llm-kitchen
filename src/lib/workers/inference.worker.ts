@@ -13,17 +13,54 @@ import {
 // CDN), so they get long-lived caching and the page CSP can stay 'self'.
 import asyncifyMjs from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url';
 import asyncifyWasm from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
-import canonical from '../../../models/canonical.json';
-import embedder from '../../../models/embedder.json';
-import { verifiedFetch } from './verified-fetch.ts';
+import { DOWNLOADS } from '#lib/models/downloads.ts';
+import {
+	cacheKey,
+	OLD_CACHE,
+	openModelCache,
+	pinnedUrl,
+	removeUnlisted
+} from '#lib/models/model-cache.ts';
+import { verifiedFetch, type PinnedModel } from './verified-fetch.ts';
 
+const fetchPinned = verifiedFetch(DOWNLOADS);
 env.allowLocalModels = false;
-env.fetch = verifiedFetch([canonical, embedder]);
+env.fetch = fetchPinned;
 const abs = (url: string) => new URL(url, self.location.href).href;
 // One build for every supported browser; only Safari older than 26 (no WebGPU) needed another.
 if (env.backends.onnx.wasm) {
 	env.backends.onnx.wasm.wasmPaths = { mjs: abs(asyncifyMjs), wasm: abs(asyncifyWasm) };
 }
+
+let opened: Promise<Cache | null> | undefined;
+
+/** The site's model store, cleared of older commits and of the old store on first use. */
+function modelCache(): Promise<Cache | null> {
+	return (opened ??= openModelCache().then(async (cache) => {
+		if (cache) {
+			await Promise.all([removeUnlisted(cache, DOWNLOADS), caches.delete(OLD_CACHE)]).catch(
+				() => {}
+			);
+		}
+		return cache;
+	}));
+}
+
+// Transformers.js reads and writes the site's store, keyed by pinned URL, so the page can find a
+// model's files from its config. It writes a file only after verifiedFetch has checked all of it.
+env.useBrowserCache = false;
+env.useCustomCache = true;
+env.customCache = {
+	async match(request) {
+		const key = cacheKey(request, DOWNLOADS);
+		return key ? (await modelCache())?.match(key) : undefined;
+	},
+	async put(request, response) {
+		const key = cacheKey(request, DOWNLOADS);
+		const cache = key ? await modelCache() : null;
+		if (key && cache) await cache.put(key, response).catch(() => {});
+	}
+};
 
 export type WorkerRequest =
 	| {
@@ -37,11 +74,13 @@ export type WorkerRequest =
 			/** ONNX file to load instead of the default, without the dtype suffix. */
 			file?: string;
 	  }
+	| { id: number; type: 'download'; model: string }
 	| { id: number; type: 'embed'; model: string; texts: string[] }
 	| { id: number; type: 'next-token'; model: string; ids: number[]; topK: number };
 
 export type WorkerResponse =
 	| { id: number; type: 'progress'; file: string; loaded: number; total: number }
+	| { id: number; type: 'downloaded' }
 	| { id: number; type: 'loaded'; device: 'webgpu' | 'wasm' }
 	| { id: number; type: 'embedded'; vectors: number[][] }
 	| { id: number; type: 'distribution'; top: { id: number; prob: number }[]; rest: number }
@@ -85,10 +124,73 @@ async function nextToken(model: PreTrainedModel, ids: number[], k: number) {
 	return { top, rest: Math.max(0, 1 - top.reduce((a, t) => a + t.prob, 0)) };
 }
 
+type Progress = (file: string, loaded: number, total: number) => void;
+
+const downloads = new Map<string, { done: Promise<void>; listeners: Set<Progress> }>();
+
+/** Downloads a model's missing files into the cache; a second request joins the first. */
+async function download(model: PinnedModel, onprogress: Progress): Promise<void> {
+	let job = downloads.get(model.onnxId);
+	if (!job) {
+		const listeners = new Set<Progress>();
+		const done = fetchFiles(model, (...p) => listeners.forEach((l) => l(...p))).finally(() =>
+			downloads.delete(model.onnxId)
+		);
+		job = { done, listeners };
+		downloads.set(model.onnxId, job);
+	}
+	const { done, listeners } = job;
+	listeners.add(onprogress);
+	try {
+		await done;
+	} finally {
+		listeners.delete(onprogress);
+	}
+}
+
+async function fetchFiles(model: PinnedModel, report: Progress): Promise<void> {
+	const cache = await modelCache();
+	if (!cache) throw new Error("This browser doesn't keep downloads");
+	for (const path of Object.keys(model.onnxFiles)) {
+		const url = pinnedUrl(model, path);
+		const cached = await cache.match(url);
+		if (cached) {
+			const size = Number(cached.headers.get('content-length')) || 0;
+			report(path, size, size);
+			continue;
+		}
+		const response = await fetchPinned(url);
+		if (!response.ok || !response.body) {
+			throw new Error(`Couldn't download ${path} (HTTP ${response.status})`);
+		}
+		const total = Number(response.headers.get('content-length')) || 0;
+		let loaded = 0;
+		const counted = response.body.pipeThrough(
+			new TransformStream<Uint8Array, Uint8Array>({
+				transform(chunk, controller) {
+					loaded += chunk.byteLength;
+					report(path, loaded, total);
+					controller.enqueue(chunk);
+				}
+			})
+		);
+		// The body errors at its end if its SHA-256 doesn't match, and then `put` stores nothing.
+		const headers = total ? { 'content-length': String(total) } : undefined;
+		await cache.put(url, new Response(counted, { headers }));
+	}
+}
+
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 	const request = event.data;
 	try {
-		if (request.type === 'load') {
+		if (request.type === 'download') {
+			const model = DOWNLOADS.find((m) => m.onnxId === request.model);
+			if (!model) throw new Error(`${request.model} isn't a model this site downloads`);
+			await download(model, (file, loaded, total) =>
+				post({ id: request.id, type: 'progress', file, loaded, total })
+			);
+			post({ id: request.id, type: 'downloaded' });
+		} else if (request.type === 'load') {
 			const progress_callback = (p: {
 				status: string;
 				file?: string;

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import type { BrowserModel } from '#lib/models/browser-model.svelte.ts';
 	import { RUNTIME_MB } from '#lib/models/onnx-runtime.ts';
 
@@ -9,27 +10,42 @@
 </script>
 
 <div class="consent">
-	{#if model.status.state === 'idle'}
+	{#if model.status.state === 'checking' || model.status.state === 'missing'}
 		<p id="{id}-title" class="title">Run a real model in your browser?</p>
 		<p>
 			{purpose} This downloads <strong>{model.spec.label}</strong>: about {model.spec.modelMB} MB for
 			the model plus {RUNTIME_MB} MB for the code that runs it, about {downloadMB}
-			MB in total. Your browser keeps a copy, so it's only downloaded once. Everything runs on your device;
-			nothing you type is sent anywhere.
+			MB in total.
+			{#if model.keepsDownloads}
+				Your browser keeps a copy, so it's only downloaded once.
+			{:else}
+				This browser doesn't keep downloads, so it downloads again on each visit.
+			{/if}
+			Everything runs on your device; nothing you type is sent anywhere.
 		</p>
-		<button type="button" onclick={() => model.load()}>
+		<button type="button" disabled={model.status.state === 'checking'} onclick={() => model.load()}>
 			Download about {downloadMB} MB and run it
 		</button>
-	{:else if model.status.state === 'loading'}
-		<p id="{id}-title" class="title">Downloading {model.spec.label}…</p>
+	{:else if model.status.state === 'downloaded'}
+		<p id="{id}-title" class="title">Run a real model in your browser?</p>
+		<p>
+			{purpose} <strong>{model.spec.label}</strong> is already downloaded in this browser. Everything
+			runs on your device; nothing you type is sent anywhere.
+		</p>
+		<button type="button" onclick={() => model.load()}>Run it (already downloaded)</button>
+	{:else if model.status.state === 'downloading'}
+		<p id="{id}-title" class="title" role="status">Downloading {model.spec.label}…</p>
 		<progress
 			max="1"
-			value={model.status.fraction ?? undefined}
+			value={model.status.fraction}
 			aria-label="Download progress for {model.spec.label}"
 		></progress>
-		{#if model.status.fraction !== null}
-			<span class="mono">{Math.round(model.status.fraction * 100)}%</span>
-		{/if}
+		<span class="mono"
+			>{Math.round(model.status.fraction * model.spec.modelMB)} of {model.spec.modelMB} MB</span
+		>
+	{:else if model.status.state === 'loading'}
+		<p id="{id}-title" class="title" role="status">Starting {model.spec.label}…</p>
+		<progress aria-label="Starting {model.spec.label}"></progress>
 	{:else if model.status.state === 'ready'}
 		<p id="{id}-title" class="title ready" role="status">
 			{model.spec.label} is running in your browser
@@ -43,6 +59,7 @@
 		</p>
 		<button type="button" onclick={() => model.load()}>Try again</button>
 	{/if}
+	<p class="manage"><a href={resolve('/downloads')}>Manage downloads</a></p>
 </div>
 
 <style>
@@ -71,5 +88,10 @@
 	progress {
 		width: min(20rem, 100%);
 		accent-color: var(--c-prob);
+	}
+
+	.manage {
+		margin: var(--space-2) 0 0;
+		font-size: 0.875rem;
 	}
 </style>

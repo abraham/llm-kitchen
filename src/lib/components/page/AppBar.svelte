@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { LEVEL_NAMES, LEVELS, type Level } from '#lib/levels.ts';
 	import { SITE_NAME } from '#lib/site.ts';
 	import { level } from '#lib/stores/level.svelte.ts';
@@ -57,9 +58,20 @@
 				<svg class="chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
 			</div>
 		{/if}
+		<a
+			class="icon"
+			href={resolve('/downloads')}
+			aria-label="Downloads"
+			title="Downloads"
+			aria-current={page.url.pathname === resolve('/downloads') ? 'page' : undefined}
+		>
+			<svg viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M12 3v12M7 10l5 5 5-5M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+			</svg>
+		</a>
 		<button
 			type="button"
-			class="theme"
+			class="icon"
 			aria-label="Theme: {NAMES[theme.choice]}"
 			title="Theme: {NAMES[theme.choice]}"
 			onclick={() => theme.next()}
@@ -142,7 +154,7 @@
 		pointer-events: none;
 	}
 
-	.theme {
+	.icon {
 		display: grid;
 		place-items: center;
 		width: 2.5rem;
@@ -151,6 +163,11 @@
 		border-radius: 50%;
 		background: none;
 		color: var(--ink);
+	}
+
+	a.icon:hover,
+	a.icon[aria-current='page'] {
+		background: var(--surface-2);
 	}
 
 	svg {

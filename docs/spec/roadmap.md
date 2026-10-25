@@ -5,9 +5,6 @@ belongs to and remove it here.
 
 ## Live models
 
-- **Downloads:** one cache and one state per model shared by every widget, and a Downloads page
-  linked from the app bar that lists every model with its state and Hugging Face links. The plan is
-  in [downloads.md](downloads.md).
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention
   outputs, so [Attention](chapters/attention.md) shows attention recorded for 5 sentences. A custom
   ONNX export with attention outputs would let visitors type their own sentence.
