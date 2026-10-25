@@ -164,5 +164,5 @@ the rest.
 </At>
 </RecapCard>
 
-**Next question:** the vectors are learned, but learned by what? What does the model do with all
-these numbers?
+**Next question:** a model turns these vectors into a chance for every next token. What is that
+calculation made of, and where do its numbers come from?

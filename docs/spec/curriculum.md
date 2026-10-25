@@ -54,7 +54,7 @@ _How does text become something a model can compute with?_
 
 ### Part III — Learning
 
-_Where do the model's numbers come from?_
+_What is the model's calculation made of, and where do its numbers come from?_
 
 | Ch  | Title                  | Slug                     | Builds on |
 | --- | ---------------------- | ------------------------ | --------- |
@@ -152,6 +152,11 @@ _How does it all fit together?_ Unnumbered Part.
 - **Prediction comes first, with words.** Part I stays on prediction itself: guess, count, sample.
   Counting word pairs needs words, not numbers.
 - **Text is just numbers opens Representation.** Text → numbers → tokens → vectors is one story.
+- **Learning sits between the two ends.** Parts I and II give the model's input (vectors) and
+  output (a chance for every next token). Part III fills in the calculation between them: what it is
+  made of (neurons) and how its numbers are set (training). Its tiny language model has every piece
+  so far: vectors, a layer of neurons, and a chance for every next character. Every later Part keeps
+  the same recipe with the weights arranged differently, more of them, or other examples.
 - **Part V is the whole model at work.** After Generating text and Scale come the two chapters about
   running a big model on real hardware, Fewer bits per number and Guessing ahead. They need only
   Scale and Generating text, and model names use both (`qat`, `Q4_0`, `-assistant`). Thinking before
