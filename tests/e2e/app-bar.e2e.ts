@@ -26,6 +26,10 @@ test('the app bar shows the brand and a theme toggle on every page, and stays in
 		await page.mouse.wheel(0, 2000);
 		await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(500);
 		expect((await bar.boundingBox())?.y).toBe(0);
+		// Focusing a control in the bar doesn't scroll the page.
+		const scrolled = await page.evaluate(() => scrollY);
+		await bar.getByRole('button', { name: /^Theme: / }).focus();
+		expect(await page.evaluate(() => scrollY)).toBe(scrolled);
 	}
 });
 
