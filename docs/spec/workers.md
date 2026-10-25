@@ -4,11 +4,11 @@ Three Web Workers run the site's heavy work off the main thread, so scrolling, t
 hydration never wait on it. Each is a module in `src/lib/workers/`, created in the browser only and
 only when a widget needs it.
 
-| Worker                | Runs                                                                | Created by                                         | Lives                     |
-| --------------------- | ------------------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
-| `tokenizer.worker.ts` | `gpt-tokenizer`'s GPT-2, GPT-4, and GPT-4o encodings                | `models/tokenizers.ts`, on the first tokenize call | Until the page closes     |
-| `inference.worker.ts` | Transformers.js: GPT-2 small for next tokens and MiniLM for vectors | `models/inference-client.ts`, on the first request | Until the page closes     |
-| `trainer.worker.ts`   | Training the tiny character model from `math/mlp.ts`                | The training widget on mount                       | Until the widget unmounts |
+| Worker                | Runs                                                                                                                 | Created by                                         | Lives                     |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------- |
+| `tokenizer.worker.ts` | `gpt-tokenizer`'s GPT-2, GPT-4, and GPT-4o encodings                                                                 | `models/tokenizers.ts`, on the first tokenize call | Until the page closes     |
+| `inference.worker.ts` | Transformers.js: GPT-2 small for next tokens, MiniLM for vectors, BERT for blanks, and CLIP's text half for captions | `models/inference-client.ts`, on the first request | Until the page closes     |
+| `trainer.worker.ts`   | Training the tiny character model from `math/mlp.ts`                                                                 | The training widget on mount                       | Until the widget unmounts |
 
 ## Why each is a worker
 
@@ -69,18 +69,28 @@ only when a widget needs it.
 ## The inference worker
 
 - Loads each model once per id and forgets a failed load so it can be retried. A load names the
-  task, the model id and pinned revision, the device, and optionally an ONNX file; later `embed`
-  and `next-token` requests use the loaded model.
+  task (`next-token`, `embed`, `fill-mask`, or `image-text`), the model id and pinned revision,
+  the device, and optionally an ONNX file; later requests use the loaded model:
+  - `next-token` returns the top `k` probabilities and the total of the rest, computed from the
+    last position's logits in the worker, so only a few numbers cross back to the page;
+  - `embed` returns MiniLM's mean-pooled, normalized vectors;
+  - `fill-mask` returns BERT's top `k` tokens for the one `[MASK]`, through Transformers.js's
+    fill-mask pipeline;
+  - `embed-text` returns CLIP's text embeddings (its tokenizer and `CLIPTextModelWithProjection`),
+    normalized, to compare with the recorded image embeddings.
 - Uses WebGPU when `inference-client.ts` finds an adapter and WebAssembly otherwise, with 8-bit
   weights either way. ONNX Runtime's WebAssembly files are bundled as the site's own hashed
   assets, not fetched from a CDN.
-- `next-token` returns the top `k` probabilities and the total of the rest, computed from the last
-  position's logits in the worker, so only a few numbers cross back to the page.
 - It downloads and loads only after a click: `BrowserModel.download` and `BrowserModel.load` are
   the only callers of `download` and `load` requests, and one `BrowserModel` per model is shared by
   every widget in a tab. `download` stores a model's listed files in the site's cache without
   starting it, and `load` reads them from there; [downloads.md](downloads.md) has the cache and the
   states. [models-and-data.md](models-and-data.md#live-model-rules) has the rules for live models.
+- The end-to-end build (`VITE_FIXTURES`) also has a fake inference worker,
+  `tests/e2e/fixtures/fake-inference.worker.ts`, which `inference-client.ts` starts instead when
+  `localStorage` has `llm-kitchen:fake-inference`. It answers the same requests at once from
+  made-up numbers and downloads nothing ([downloads.md](downloads.md#tests)). Other builds don't
+  include it.
 
 ## The trainer worker
 

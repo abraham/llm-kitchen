@@ -62,7 +62,7 @@ def live() -> None:
     """Check that each live model's pinned commit has the files its config lists (`onnxFiles`, the
     files Transformers.js downloads), with the stated total size and each file's SHA-256."""
     failures = []
-    for model in (common.CANONICAL, common.EMBEDDER):
+    for model in common.LIVE:
         repo, revision = model["onnxId"], model["onnxRevision"]
         url = f"https://huggingface.co/api/models/{repo}/revision/{revision}?blobs=true"
         with urllib.request.urlopen(url, timeout=30) as response:

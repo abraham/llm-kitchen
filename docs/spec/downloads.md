@@ -23,20 +23,28 @@ live model follows, [workers.md](workers.md#the-inference-worker) the worker tha
 
 ## What can be downloaded
 
-| Model                 | Does                          | Size   | Files                                          | Used in                                                                                                                                                                     |
-| --------------------- | ----------------------------- | ------ | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GPT-2 small (8-bit)   | Predicts the next token       | 128 MB | `Xenova/gpt2` at its pinned commit             | [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md) |
-| all-MiniLM-L6-v2      | Turns a sentence into a point | 24 MB  | `Xenova/all-MiniLM-L6-v2` at its pinned commit | [Meaning as position](chapters/embeddings.md)                                                                                                                               |
-| ONNX Runtime (shared) | Runs either model             | 27 MB  | The site's own hashed assets                   | Every live widget                                                                                                                                                           |
+| Model                           | Does                                                      | Size   | Files                                                                          | Used in                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------- | --------------------------------------------------------- | ------ | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GPT-2 small (8-bit)             | Predicts the next token                                   | 128 MB | `Xenova/gpt2` at its pinned commit                                             | [The guessing game](chapters/guessing-game.md), [Probability and sampling](chapters/probability-and-sampling.md), [Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md), [A prompt is the start of a document](chapters/prompts-as-documents.md), [Reading both ways](chapters/encoders.md) |
+| all-MiniLM-L6-v2                | Turns a sentence into a point                             | 24 MB  | `Xenova/all-MiniLM-L6-v2` at its pinned commit                                 | [Meaning as position](chapters/embeddings.md)                                                                                                                                                                                                                                                                                            |
+| BERT base (8-bit)               | Fills in a blank, reading both sides                      | 112 MB | `Xenova/bert-base-uncased` at its pinned commit                                | [Reading both ways](chapters/encoders.md)                                                                                                                                                                                                                                                                                                |
+| CLIP ViT-B/32 text half (4-bit) | Turns a caption into a point it can compare with pictures | 128 MB | `Xenova/clip-vit-base-patch32`'s text model and tokenizer at its pinned commit | [Seeing pictures](chapters/seeing-pictures.md)                                                                                                                                                                                                                                                                                           |
+| ONNX Runtime (shared)           | Runs every model                                          | 27 MB  | The site's own hashed assets                                                   | Every live widget                                                                                                                                                                                                                                                                                                                        |
 
 - `src/lib/models/downloads.ts` exports `DOWNLOADS`, one entry per model, built from
-  `models/canonical.json` and `models/embedder.json`: id, display name, what it does, the original
-  model (`huggingFaceId`), the ONNX repository (`onnxId`), the pinned commit (`onnxRevision`), the
-  file list with SHA-256s (`onnxFiles`), the size (`onnxMB`), and the slugs of the chapters that use
-  it.
-- `MINILM` and `CANONICAL_LIVE` (re-exported by `browser-model.svelte.ts`) are entries of
-  `DOWNLOADS`, so a tier and the Models page can't disagree about a model. A new live model gets a
-  config in `models/`, an entry in `DOWNLOADS`, and a place in a tier.
+  `models/canonical.json`, `embedder.json`, `encoder.json`, and `clip.json`: id, display name, what
+  it does, the kind of task it runs, the original model (`huggingFaceId`), the ONNX repository
+  (`onnxId`), the pinned commit (`onnxRevision`), the file list with SHA-256s (`onnxFiles`), the
+  size (`onnxMB`), and the slugs of the chapters that use it.
+- `CANONICAL_LIVE`, `MINILM`, `BERT_LIVE`, and `CLIP_TEXT` are entries of `DOWNLOADS`, so a tier
+  and the Models page can't disagree about a model. A new live model gets a config in `models/`,
+  an entry in `DOWNLOADS`, and a place in a tier; `record check live` covers every config.
+- CLIP downloads only its text half, with 4-bit weights (`onnx/text_model_q4.onnx`, `dtype` in its
+  config): the 8-bit file loses colors, so "a crimson star" matched a green one. Every other model
+  is 8-bit. Its recording,
+  `vision/clip-images`, has each picture's unit-length image embedding and CLIP's logit scale, so
+  a caption typed in the browser is matched against the pictures without the vision half; it loads
+  only when the widget runs live.
 - The runtime isn't a model and has no state: it's part of the site's build, downloads the first
   time a model runs, and the browser keeps it with the site's other long-cached files
   ([deployment.md](deployment.md)). It's listed so the sizes add up to what the visitor downloads.
@@ -46,10 +54,10 @@ live model follows, [workers.md](workers.md#the-inference-worker) the worker tha
 `src/lib/models/tiers.ts` exports `TIERS`, the choices on the Models page in order. A tier covers
 some kinds of task (`Capability`), each with one model from `DOWNLOADS`.
 
-| Tier                   | Kinds of task          | Models                                | Download                       |
-| ---------------------- | ---------------------- | ------------------------------------- | ------------------------------ |
-| **Recorded** (default) | Every widget, recorded | None                                  | 0                              |
-| **Small**              | `next-token`, `embed`  | GPT-2 small (8-bit), all-MiniLM-L6-v2 | About 179 MB, with the runtime |
+| Tier                   | Kinds of task                                    | Models                                                                     | Download                       |
+| ---------------------- | ------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------ |
+| **Recorded** (default) | Every widget, recorded                           | None                                                                       | 0                              |
+| **Small**              | `next-token`, `embed`, `fill-mask`, `image-text` | GPT-2 small (8-bit), all-MiniLM-L6-v2, BERT base (8-bit), CLIP's text half | About 419 MB, with the runtime |
 
 - `tierModels(tier)` lists a tier's models once each, and `tierMB(tier)` adds their sizes and the
   runtime once.
@@ -97,15 +105,26 @@ client-side navigation all see the same one.
 
 ## Widgets
 
-A widget with a live option calls `useProvider(capability, recordedModel)` (`models/live.svelte.ts`)
-during initialization and gets a `LiveOption`: whether the chosen tier covers the task, how far
-its model has got, and `provider`, a `BrowserProvider` while the widget runs live and `null`
-otherwise, when the widget uses its recording. It never imports a model. Once the tier is ready,
-`useProvider` starts the model in the inference worker; the choice on the Models page is the click
-that allows it. The live widgets are [Meaning as position](chapters/embeddings.md) (`embed`),
-[Generating text](chapters/generating-text.md) and [Quirks and limits](chapters/quirks-and-limits.md)
-(`GlassBoxGenerator`, `next-token`), and [A prompt is the start of a
-document](chapters/prompts-as-documents.md) (`next-token`).
+A widget with a live option calls `useProvider(capabilities, recordedModel)`
+(`models/live.svelte.ts`) during initialization, with the kind of task it needs or a list of them,
+and gets a `LiveOption`: whether the chosen tier covers every task, how far their models have got,
+and `provider` (or `providerFor(capability)`), a `BrowserProvider` while the widget runs live and
+`null` otherwise, when the widget uses its recording. It never imports a model. Once the tier is
+ready, `useProvider` starts the models in the inference worker; the choice on the Models page is
+the click that allows it. A widget with several tasks is live only when all of its models are.
+
+| Widget                                                                                                                   | Tasks                     | Live input                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------- | -------------------------------------------------------------------------------------- |
+| `GuessTheWord` ([The guessing game](chapters/guessing-game.md))                                                          | `next-token`              | The start of a sentence, whose next word the visitor guesses                           |
+| `RecordedRuns` ([Probability and sampling](chapters/probability-and-sampling.md))                                        | `next-token`              | A beginning, continued at temperatures 0, 0.7, and 1.5 side by side, a token at a time |
+| `EmbeddingMap` ([Meaning as position](chapters/embeddings.md))                                                           | `embed`                   | A word, placed on the map                                                              |
+| `GlassBoxGenerator` ([Generating text](chapters/generating-text.md), [Quirks and limits](chapters/quirks-and-limits.md)) | `next-token`              | A beginning, and any token picked, at any temperature                                  |
+| `PromptVariants` ([A prompt is the start of a document](chapters/prompts-as-documents.md))                               | `next-token`              | A prompt                                                                               |
+| `FillTheBlank` ([Reading both ways](chapters/encoders.md))                                                               | `fill-mask`, `next-token` | A sentence with one `___`: BERT fills it, GPT-2 continues the words before it          |
+| `PictureMatch` ([Seeing pictures](chapters/seeing-pictures.md))                                                          | `image-text`              | A caption, matched against the 12 pictures                                             |
+
+Live, a widget asks the model for everything it shows, the recorded inputs too, so the numbers
+change as soon as it goes live.
 
 | Option state  | Badge                                               | `TierStatus` line under the widget                                                                  |
 | ------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -114,16 +133,16 @@ document](chapters/prompts-as-documents.md) (`next-token`).
 | `downloading` | Recorded · downloading the Small tier…              | Tier progress, MB done of MB total                                                                  |
 | `failed`      | Recorded · the Small tier didn't finish downloading | The message (an alert) and a link to the Models page                                                |
 | `starting`    | Recorded · starting GPT-2 small (8-bit)…            | "Starting GPT-2 small (8-bit) in your browser…"                                                     |
-| `stopped`     | Recorded · GPT-2 small (8-bit) didn't start         | The message (an alert) and "Try again", which starts the model again                                |
+| `stopped`     | Recorded · GPT-2 small (8-bit) didn't start         | The message (an alert) and "Try again", which starts the models again                               |
 | `live`        | Live · Small · GPT-2 small (8-bit)                  | Where it runs (graphics card or processor), and "Live results differ from the numbers in the text." |
 
+- A widget with several models names them all: "Live · Small · BERT base (8-bit) and GPT-2 small
+  (8-bit)". A long badge wraps rather than widening the page on a phone.
 - **Show the recording.** A live widget's `WidgetFrame` (its `live` prop) has a "Show the
   recording" switch beside the badge. On, the widget shows exactly what it shows under Recorded,
   with the Recorded badge; off (the default), it runs live. It's per widget and per page view, not
   saved.
-- **Live input.** Where a recording fixes the input, a live widget adds a field for the visitor's
-  own: a beginning in `GlassBoxGenerator`, a word in `EmbeddingMap`, a prompt in `PromptVariants`.
-  The fields show only while the widget runs live.
+- **Live input.** The fields in the table above show only while the widget runs live.
 
 ## The Models page
 
@@ -140,7 +159,7 @@ document](chapters/prompts-as-documents.md) (`next-token`).
 - **Heading and intro:** "Models" (the page title is "Models and downloads"), then a short
   paragraph: widgets replay recorded runs; choosing a tier runs real models in your browser instead,
   downloaded from Hugging Face and kept until you remove them or the browser clears space.
-- **The choice:** a `Choice` of radios, "Show recordings (default)" and "Small: about 179 MB",
+- **The choice:** a `Choice` of radios, "Show recordings (default)" and "Small: about 419 MB",
   each with a line on what it covers. Under it, the tier's state: "Checking…", a progress bar with
   MB done of the tier's total, the error with "Try again", or "The Small tier is ready: the widgets
   it covers run live."
@@ -230,7 +249,7 @@ document](chapters/prompts-as-documents.md) (`next-token`).
 - **End-to-end** (`tests/e2e/downloads.e2e.ts`), with no network to Hugging Face:
   - the Models link, named "Models: Recorded", on the menu and on a chapter goes to `/downloads`,
     with `aria-current` there;
-  - the page offers the tiers, with Recorded chosen, and lists both models under Small and the
+  - the page offers the tiers, with Recorded chosen, and lists the four models under Small and the
     runtime, with sizes, commits, chapter links, both Hugging Face links, "Not downloaded", and no
     buttons;
   - after the test writes placeholder entries for every listed file into `llm-kitchen-models`,
@@ -240,6 +259,16 @@ document](chapters/prompts-as-documents.md) (`next-token`).
     failed", and [Meaning as position](chapters/embeddings.md)'s map says "Recorded · the Small tier
     didn't finish downloading" with an alert and no word field;
   - under Recorded, the live widgets link to the Models page and show no live input.
+- **End-to-end, live** (`tests/e2e/live.e2e.ts`), against the end-to-end build's fake inference
+  worker (`tests/e2e/fixtures/fake-inference.worker.ts`). It's built only with `VITE_FIXTURES`, and
+  a page uses it when `localStorage` has `llm-kitchen:fake-inference`. It writes placeholder files
+  for a download, "starts" at once, and answers every task from made-up numbers, so CI downloads
+  nothing:
+  - choosing Small makes it ready and the covered widgets live;
+  - each live widget takes the visitor's own input and shows the fake answers, and "Show the
+    recording" brings back the recorded view and badge;
+  - every page with a live widget, live, has no axe violations and doesn't scroll sideways on a
+    phone.
 - `/downloads` is in the accessibility, phone-width, JavaScript-budget, and Lighthouse page lists,
   and has visual baselines.
 - Real downloads stay out of CI: `record check live` checks the pinned commits and hashes.

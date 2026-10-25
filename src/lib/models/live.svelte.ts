@@ -19,48 +19,66 @@ export type LiveState =
 	| { state: 'live'; device: 'webgpu' | 'wasm' };
 
 /**
- * A widget's live option for one kind of task: whether the chosen model tier covers it, how far its
- * model has got, and the visitor's "Show the recording" switch for this widget.
+ * A widget's live option for the kinds of task it needs: whether the chosen model tier covers them,
+ * how far their models have got, and the visitor's "Show the recording" switch for this widget.
  */
 export class LiveOption {
 	/** Per widget and page view: the visitor's switch back to the recording. Not saved. */
 	showRecording = $state(false);
-	readonly capability: Capability;
+	readonly capabilities: readonly Capability[];
 	/** The model the recording came from, for the badge. */
 	readonly recorded: string;
 
-	constructor(capability: Capability, recorded: string) {
-		this.capability = capability;
+	constructor(capabilities: Capability | readonly Capability[], recorded: string) {
+		this.capabilities = typeof capabilities === 'string' ? [capabilities] : capabilities;
 		this.recorded = recorded;
 	}
 
-	/** The chosen tier's model for this task, if it covers it. */
-	get model(): BrowserModel | null {
-		const spec = modelTier.tier.covers[this.capability];
-		return spec ? browserModel(spec) : null;
+	/** The chosen tier's model for each task, in order, or `null` if it doesn't cover them all. */
+	get models(): BrowserModel[] | null {
+		const covers = modelTier.tier.covers;
+		const specs = this.capabilities.map((c) => covers[c]);
+		return specs.every((s) => s !== undefined) ? specs.map(browserModel) : null;
 	}
 
-	#provider = $derived.by(() => {
-		const model = this.model;
-		return model && new BrowserProvider(model, TOKENIZERS[this.capability] ?? null);
-	});
+	/** The models' names, for the badge and status line. */
+	get label(): string {
+		return this.models?.map((m) => m.spec.label).join(' and ') ?? '';
+	}
 
-	/** The live provider while the widget runs live; otherwise the widget uses its recording. */
+	#providers = $derived.by(() =>
+		this.models?.map((m, i) => new BrowserProvider(m, TOKENIZERS[this.capabilities[i]] ?? null))
+	);
+
+	/** The live provider for the first task while the widget runs live; otherwise `null`. */
 	get provider(): BrowserProvider | null {
-		return this.live ? this.#provider : null;
+		return this.providerFor(this.capabilities[0]);
+	}
+
+	/** The live provider for one of the tasks while the widget runs live; otherwise `null`. */
+	providerFor(capability: Capability): BrowserProvider | null {
+		return this.live ? (this.#providers?.[this.capabilities.indexOf(capability)] ?? null) : null;
+	}
+
+	/** Starts every model that isn't running or failed to start; after a failure, the retry. */
+	start(): void {
+		for (const model of this.models ?? []) void model.load();
 	}
 
 	get state(): LiveState {
 		const tier = modelTier.state;
 		if (tier.state === 'recorded') return { state: 'recorded' };
-		const model = this.model;
-		if (!model) return { state: 'uncovered' };
+		const models = this.models;
+		if (!models) return { state: 'uncovered' };
 		if (tier.state === 'checking') return { state: 'checking' };
 		if (tier.state === 'downloading') return { state: 'downloading', fraction: tier.fraction };
 		if (tier.state === 'error') return { state: 'failed', message: tier.message };
-		const status = model.status;
-		if (status.state === 'ready') return { state: 'live', device: status.device };
-		if (status.state === 'error') return { state: 'stopped', message: status.message };
+		const statuses = models.map((m) => m.status);
+		const failed = statuses.find((s) => s.state === 'error');
+		if (failed?.state === 'error') return { state: 'stopped', message: failed.message };
+		if (statuses.every((s) => s.state === 'ready')) {
+			return { state: 'live', device: statuses[0].state === 'ready' ? statuses[0].device : 'wasm' };
+		}
 		return { state: 'starting' };
 	}
 
@@ -72,7 +90,7 @@ export class LiveOption {
 	get source(): DataSource {
 		const state = this.state;
 		const tier = modelTier.tier.name;
-		const model = this.model?.spec.label ?? '';
+		const model = this.label;
 		switch (state.state) {
 			case 'live':
 				return this.showRecording
@@ -96,15 +114,20 @@ export class LiveOption {
 }
 
 /**
- * The live option for a widget that needs one kind of task, created during the widget's
- * initialization: its provider is live when the chosen tier covers the task and is ready. Once the
- * tier is downloaded, it starts the model in the inference worker.
+ * The live option for a widget that needs some kinds of task, created during the widget's
+ * initialization: its providers are live when the chosen tier covers the tasks and is ready. Once
+ * the tier is downloaded, it starts the models in the inference worker.
  */
-export function useProvider(capability: Capability, recorded: string): LiveOption {
-	const option = new LiveOption(capability, recorded);
+export function useProvider(
+	capabilities: Capability | readonly Capability[],
+	recorded: string
+): LiveOption {
+	const option = new LiveOption(capabilities, recorded);
 	$effect(() => {
-		const model = option.model;
-		if (modelTier.state.state === 'ready' && model?.status.state !== 'error') void model?.load();
+		if (modelTier.state.state !== 'ready') return;
+		for (const model of option.models ?? []) {
+			if (model.status.state !== 'error') void model.load();
+		}
 	});
 	return option;
 }

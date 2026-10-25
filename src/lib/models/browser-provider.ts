@@ -4,6 +4,7 @@ import type { BrowserModel } from './browser-model.svelte.ts';
 import {
 	NotAvailableError,
 	canonical,
+	type Candidate,
 	type GenerateOptions,
 	type GenerationStep,
 	type ModelProvider,
@@ -67,5 +68,14 @@ export class BrowserProvider implements ModelProvider {
 
 	async embed(texts: string[]): Promise<number[][]> {
 		return this.model.embed(texts);
+	}
+
+	async embedText(texts: string[]): Promise<number[][]> {
+		return this.model.embedText(texts);
+	}
+
+	async fillMask(text: string, { topK = 10 }: { topK?: number } = {}): Promise<Candidate[]> {
+		const top = await this.model.fillMask(text, topK);
+		return top.map((t) => ({ token: { id: t.id, text: t.text }, prob: t.prob }));
 	}
 }

@@ -33,7 +33,9 @@ test('gives every worker a full policy and caches it forever; only the inference
 	request
 }) => {
 	const files = readdirSync('build/_app/immutable/workers').filter((f) => f.endsWith('.js'));
-	expect(files.map((f) => f.split('-')[0]).sort()).toEqual([
+	// The end-to-end build also has the fake inference worker from tests/e2e/fixtures.
+	const real = files.filter((f) => !f.startsWith('fake-inference.worker-'));
+	expect(real.map((f) => f.split('-')[0]).sort()).toEqual([
 		'inference.worker',
 		'tokenizer.worker',
 		'trainer.worker'

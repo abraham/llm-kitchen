@@ -16,14 +16,16 @@ see turn a picture into tokens and put them in the context next to the text.
 ## Data
 
 Recorded by `scripts/record/clip.py` (`static/vision/`): CLIP ViT-B/32 on 224 × 224 pictures the
-script draws itself.
+script draws itself, and each picture's image embedding (`vision/clip-images`) for live captions.
 
 ## Decisions
 
 - Simple colored shapes drawn by the script instead of photos, so there are no licensing questions.
 - A ranked list instead of a shared 2D map: every caption–picture similarity falls between 0.18 and
   0.36, so a map wouldn't show the matches clearly.
-- No live caption embedding yet; see [roadmap.md](../roadmap.md).
+- Live with the Small model tier ([downloads.md](../downloads.md#widgets)): only CLIP's text half
+  runs in the browser. `PictureMatch` embeds every caption, and the visitor's own, and compares
+  them with the recorded image embeddings, a softmax of 100 × similarity as CLIP does.
 - [Levels](../levels.md): Simple keeps patches, the shared space, and multimodal chat. In depth
   counts a patch's numbers and the class token, and shows how CLIP's temperature turns close
   similarities into clear choices.

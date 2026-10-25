@@ -2,7 +2,7 @@ import canonical from '../../../models/canonical.json';
 import { type Check, array, integer, nullable, object, string } from './check.ts';
 import { agentRun, contextSession } from './parsers/agent.ts';
 import { embeddingMap, embeddingVectors } from './parsers/embeddings.ts';
-import { clip, decisionRecording, fillMask } from './parsers/models.ts';
+import { clip, clipImages, decisionRecording, fillMask } from './parsers/models.ts';
 import {
 	baseVsInstruct,
 	fewShot,
@@ -90,6 +90,7 @@ export const DATASETS = {
 	'injection/lab': dataset('injection/lab.json', injectionLab, 'injection'),
 	'encoders/fill-mask': dataset('encoders/fill-mask.json', fillMask, 'encoder'),
 	'vision/clip': dataset('vision/clip.json', clip, 'clip'),
+	'vision/clip-images': dataset('vision/clip-images.json', clipImages, 'clip'),
 	'decisions/grid': dataset('decisions/grid.json', decisionRecording, 'decisions')
 } as const;
 

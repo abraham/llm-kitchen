@@ -1,8 +1,14 @@
-import { CANONICAL_LIVE, MINILM, type DownloadableModel } from './downloads.ts';
+import {
+	BERT_LIVE,
+	CANONICAL_LIVE,
+	CLIP_TEXT,
+	MINILM,
+	type DownloadableModel
+} from './downloads.ts';
 import { RUNTIME_MB } from './onnx-runtime.ts';
 
 /** A kind of task a widget can run live; a tier covers some of them, each with one model. */
-export type Capability = 'next-token' | 'embed';
+export type Capability = DownloadableModel['task'];
 
 export type TierId = 'recorded' | 'small';
 
@@ -25,8 +31,14 @@ export const TIERS: readonly Tier[] = [
 	{
 		id: 'small',
 		name: 'Small',
-		summary: `${CANONICAL_LIVE.label} for next-token widgets and ${MINILM.label} for meaning maps, in any browser.`,
-		covers: { 'next-token': CANONICAL_LIVE, embed: MINILM }
+		summary:
+			'GPT-2 for next tokens, BERT for blanks, and small models for meaning and captions, in any browser.',
+		covers: {
+			'next-token': CANONICAL_LIVE,
+			embed: MINILM,
+			'fill-mask': BERT_LIVE,
+			'image-text': CLIP_TEXT
+		}
 	}
 ];
 

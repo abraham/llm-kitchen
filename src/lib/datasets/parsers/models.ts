@@ -38,6 +38,14 @@ export const clip = object({
 });
 export type Clip = Infer<typeof clip>;
 
+/** Each picture's CLIP image embedding (normalized), for captions embedded live. */
+export const clipImages = object({
+	model: modelRef,
+	logitScale: number,
+	images: array(object({ name: string, embedding: array(number) }))
+});
+export type ClipImages = Infer<typeof clipImages>;
+
 const tensor: Check<number[] | number[][]> = (v, path) =>
 	Array.isArray(v) && Array.isArray(v[0]) ? array(array(number))(v, path) : array(number)(v, path);
 

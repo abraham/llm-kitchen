@@ -8,6 +8,9 @@ Writes:
                                      32-pixel patches lines up with the picture
   static/data/vision/clip.json            for each picture its patch vectors (first numbers only); and
                                      for each caption, how well it matches every picture
+  static/data/vision/clip-images.json     each picture's whole image embedding and CLIP's logit scale,
+                                     so a caption typed in the browser (CLIP's text half, live)
+                                     can be matched without the vision half
 """
 
 from __future__ import annotations
@@ -19,12 +22,12 @@ import torch
 from PIL import Image, ImageDraw
 from transformers import CLIPModel, CLIPProcessor
 
-from .common import ROOT, revision, write_dataset
+from .common import CLIP, ROOT, revision, write_dataset
 
 # The pictures are served as images next to the data, not as a dataset.
 IMAGES = ROOT / "static" / "vision"
 
-MODEL = "openai/clip-vit-base-patch32"
+MODEL = CLIP["huggingFaceId"]
 SIZE = 224
 PATCH_DIMS = 32
 COLORS = {"red": "#d62828", "blue": "#1d4ed8", "green": "#15803d"}
@@ -89,7 +92,7 @@ def main() -> None:
     grid = SIZE // model.config.vision_config.patch_size
     data = {
         "version": 1,
-        "model": {"id": MODEL, "displayName": "CLIP ViT-B/32", "revision": revision(MODEL)},
+        "model": {"id": MODEL, "displayName": CLIP["displayName"], "revision": revision(MODEL)},
         "imageSize": SIZE,
         "patchSize": model.config.vision_config.patch_size,
         "grid": grid,
@@ -115,6 +118,20 @@ def main() -> None:
         "source": {"torch": torch.__version__},
     }
     write_dataset("vision/clip", data, "clip", compact=True)
+    write_dataset(
+        "vision/clip-images",
+        {
+            "model": data["model"],
+            "logitScale": round(float(scale), 4),
+            "images": [
+                {"name": n, "embedding": [round(float(v), 4) for v in image_vecs[i]]}
+                for i, n in enumerate(names)
+            ],
+            "generatedAt": data["generatedAt"],
+        },
+        "clip",
+        compact=True,
+    )
     for j, t in enumerate(captions):
         best = probs[j].topk(3)
         print(f"{t!r:28}", [(names[int(i)], round(float(v), 3)) for v, i in zip(*best)])

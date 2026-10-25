@@ -9,14 +9,25 @@ const config = (name: string): Config =>
 	JSON.parse(readFileSync(`models/${name}.json`, 'utf8')) as Config;
 
 const canonical = config('canonical');
+const encoder = config('encoder');
+const clip = config('clip');
 const MINILM = { ...config('embedder'), label: 'all-MiniLM-L6-v2', chapters: ['embeddings'] };
 const DOWNLOADS = [
 	{
 		...canonical,
 		label: `${canonical.displayName} (8-bit)`,
-		chapters: ['generating-text', 'quirks-and-limits', 'prompts-as-documents']
+		chapters: [
+			'guessing-game',
+			'probability-and-sampling',
+			'generating-text',
+			'quirks-and-limits',
+			'prompts-as-documents',
+			'encoders'
+		]
 	},
-	MINILM
+	MINILM,
+	{ ...encoder, label: `${encoder.displayName} (8-bit)`, chapters: ['encoders'] },
+	{ ...clip, label: `${clip.displayName} text half (4-bit)`, chapters: ['seeing-pictures'] }
 ];
 const RUNTIME_MB = 27;
 const SMALL_MB = DOWNLOADS.reduce((a, m) => a + m.onnxMB, RUNTIME_MB);
@@ -117,7 +128,9 @@ test('a downloaded tier holds across pages and reloads, until a model is removed
 	await expect(card.getByRole('status')).toHaveText('Not downloaded');
 	await expect(page.getByRole('radio', { name: /^Show recordings/ })).toBeChecked();
 	await expect(modelsLink(page)).toBeVisible();
-	expect(await cachedFiles(page)).toBe(Object.keys(canonical.onnxFiles).length);
+	expect(await cachedFiles(page)).toBe(
+		DOWNLOADS.filter((m) => m !== MINILM).reduce((a, m) => a + Object.keys(m.onnxFiles).length, 0)
+	);
 
 	await page.getByRole('button', { name: 'Remove all' }).click();
 	await expect.poll(() => cachedFiles(page)).toBe(0);

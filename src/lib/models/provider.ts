@@ -77,6 +77,10 @@ export interface ModelProvider {
 	generate(input: ProviderInput, options: GenerateOptions): Promise<GenerationStep[]>;
 	attention?(text: string): Promise<Attention>;
 	embed?(texts: string[]): Promise<number[][]>;
+	/** CLIP's text half: unit-length vectors comparable with recorded image embeddings. */
+	embedText?(texts: string[]): Promise<number[][]>;
+	/** The likeliest tokens for the one `[MASK]` in `text`, reading both sides of it. */
+	fillMask?(text: string, options?: { topK?: number }): Promise<Candidate[]>;
 }
 
 /** The text of a provider input. */

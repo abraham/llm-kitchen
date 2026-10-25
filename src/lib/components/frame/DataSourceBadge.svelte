@@ -20,10 +20,13 @@
 		border: 1px solid var(--rule);
 		border-radius: 999px;
 		padding: 0 var(--space-2);
-		white-space: nowrap;
+		/* Short badges stay on one line; a long live one wraps instead of widening a phone's page. */
+		max-width: 100%;
+		text-wrap: balance;
 	}
 
 	.dot {
+		flex-shrink: 0;
 		width: 0.5rem;
 		height: 0.5rem;
 		border-radius: 50%;

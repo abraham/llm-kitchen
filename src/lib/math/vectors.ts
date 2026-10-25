@@ -1,4 +1,5 @@
 /** Vector helpers for the embedding chapter. Vectors are plain number arrays. */
+import { softmax } from './sampling.ts';
 
 export function dot(a: readonly number[], b: readonly number[]): number {
 	let s = 0;
@@ -44,4 +45,17 @@ export function nearest(
 		.map((item) => ({ word: item.word, similarity: cosine(query, item.vector) }))
 		.sort((a, b) => b.similarity - a.similarity)
 		.slice(0, k);
+}
+
+/**
+ * How well a caption matches each picture, as CLIP scores it: the similarity of unit-length
+ * vectors, and the chance of each picture, a softmax of the similarities times CLIP's logit scale.
+ */
+export function matchPictures(
+	caption: readonly number[],
+	pictures: readonly (readonly number[])[],
+	logitScale: number
+): { similarity: number[]; probability: number[] } {
+	const similarity = pictures.map((p) => dot(caption, p));
+	return { similarity, probability: softmax(similarity.map((s) => s * logitScale)) };
 }

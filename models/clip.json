@@ -1,0 +1,16 @@
+{
+	"id": "clip",
+	"displayName": "CLIP ViT-B/32",
+	"huggingFaceId": "openai/clip-vit-base-patch32",
+	"onnxId": "Xenova/clip-vit-base-patch32",
+	"onnxRevision": "d15189d7028b43f1d3e65039190477f6af591c2a",
+	"onnxFile": "text_model",
+	"onnxDtype": "q4",
+	"onnxMB": 128,
+	"onnxFiles": {
+		"config.json": "493ef57ff783e42d1530c91b53469b7fdf8db8a9c1408e86998fcb7899a4f495",
+		"tokenizer.json": "f7f3b7af117d467b58374797691a6438d3e6b9e9cef800dfd5dced7f697a90cd",
+		"tokenizer_config.json": "60ba2912bc6344c94bc16bbdec27fa1209409167b6f2fdf3cfe9e65462ea3967",
+		"onnx/text_model_q4.onnx": "e4ccd15d806b8af841a036884b42034535d58e04c52df00f56e73f72d3c166d5"
+	}
+}

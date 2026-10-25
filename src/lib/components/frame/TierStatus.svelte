@@ -7,7 +7,7 @@
 
 	const state = $derived(option.state);
 	const tier = $derived(modelTier.tier.name);
-	const model = $derived(option.model?.spec.label ?? '');
+	const model = $derived(option.label);
 </script>
 
 {#if state.state === 'recorded'}
@@ -40,11 +40,12 @@
 {:else if state.state === 'stopped'}
 	<div class="tier-status" role="alert">
 		<p class="error">{model} didn't start: {state.message}</p>
-		<button type="button" onclick={() => option.model?.load()}>Try again</button>
+		<button type="button" onclick={() => option.start()}>Try again</button>
 	</div>
 {:else if !option.showRecording}
 	<p class="tier-status note">
-		{model} is running in your browser
+		{model}
+		{option.capabilities.length > 1 ? 'are' : 'is'} running in your browser
 		{state.device === 'webgpu' ? 'on your graphics card' : 'on your processor'}. Live results differ
 		from the numbers in the text.
 	</p>

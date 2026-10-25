@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
+import { matchPictures } from '#lib/math/vectors.ts';
 
 describe('seeing pictures', () => {
 	const d = readDataset('vision/clip');
@@ -47,5 +48,18 @@ describe('seeing pictures', () => {
 			...d.captions.slice(0, 12).map((c: { similarity: number[] }) => Math.max(...c.similarity))
 		);
 		expect(Math.max(...caption('a photo of a cat').similarity)).toBeLessThan(exactBest);
+	});
+
+	it('records each picture’s unit-length embedding, so live captions match the same way', () => {
+		const images = readDataset('vision/clip-images');
+		expect(images.images.map((i) => i.name)).toEqual(names);
+		expect(images.logitScale).toBe(100);
+		const vectors = images.images.map((i) => i.embedding);
+		for (const [i, v] of vectors.entries()) {
+			expect(v).toHaveLength(d.embeddingDimensions);
+			expect(Math.hypot(...v)).toBeCloseTo(1, 3);
+			const { probability } = matchPictures(v, vectors, images.logitScale);
+			expect(probability.indexOf(Math.max(...probability))).toBe(i);
+		}
 	});
 });

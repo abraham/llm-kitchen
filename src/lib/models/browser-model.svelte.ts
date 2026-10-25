@@ -82,6 +82,7 @@ export class BrowserModel {
 					model: this.spec.onnxId,
 					revision: this.spec.onnxRevision,
 					device,
+					dtype: this.spec.dtype ?? 'q8',
 					file: this.spec.file
 				},
 				(p) => {
@@ -116,6 +117,23 @@ export class BrowserModel {
 		const r = await send({ type: 'embed', model: this.spec.onnxId, texts });
 		if (r.type !== 'embedded') throw new Error('Unexpected response from the model');
 		return r.vectors;
+	}
+
+	/** CLIP's text half: each text as a unit-length vector in the space it shares with pictures. */
+	async embedText(texts: string[]): Promise<number[][]> {
+		const r = await send({ type: 'embed-text', model: this.spec.onnxId, texts });
+		if (r.type !== 'embedded') throw new Error('Unexpected response from the model');
+		return r.vectors;
+	}
+
+	/** The `topK` likeliest tokens for the one `[MASK]` in `text`. */
+	async fillMask(
+		text: string,
+		topK: number
+	): Promise<{ id: number; text: string; prob: number }[]> {
+		const r = await send({ type: 'fill-mask', model: this.spec.onnxId, text, topK });
+		if (r.type !== 'filled') throw new Error('Unexpected response from the model');
+		return r.top;
 	}
 
 	/** Next-token probabilities after the token ids `ids`: the top `topK` and the rest. */

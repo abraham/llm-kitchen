@@ -3,17 +3,21 @@
 // src/lib/models/browser-model.svelte.ts.
 import {
 	AutoModelForCausalLM,
+	AutoTokenizer,
+	CLIPTextModelWithProjection,
 	env,
 	pipeline,
 	Tensor,
 	type FeatureExtractionPipeline,
-	type PreTrainedModel
+	type FillMaskPipeline,
+	type PreTrainedModel,
+	type PreTrainedTokenizer
 } from '@huggingface/transformers';
 // ONNX Runtime's WebAssembly files are bundled as hashed assets of this site (instead of the default
 // CDN), so they get long-lived caching and the page CSP can stay 'self'.
 import asyncifyMjs from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.mjs?url';
 import asyncifyWasm from 'onnxruntime-web/ort-wasm-simd-threaded.asyncify.wasm?url';
-import { DOWNLOADS } from '#lib/models/downloads.ts';
+import { DOWNLOADS, type DownloadableModel } from '#lib/models/downloads.ts';
 import {
 	cacheKey,
 	OLD_CACHE,
@@ -66,16 +70,20 @@ export type WorkerRequest =
 	| {
 			id: number;
 			type: 'load';
-			task: 'embed' | 'next-token';
+			task: DownloadableModel['task'];
 			model: string;
 			/** Hugging Face commit to download, so the files can't change under the site. */
 			revision: string;
 			device: 'webgpu' | 'wasm';
+			/** The weights' precision, which picks the ONNX file's suffix. */
+			dtype: 'q8' | 'q4';
 			/** ONNX file to load instead of the default, without the dtype suffix. */
 			file?: string;
 	  }
 	| { id: number; type: 'download'; model: string }
 	| { id: number; type: 'embed'; model: string; texts: string[] }
+	| { id: number; type: 'embed-text'; model: string; texts: string[] }
+	| { id: number; type: 'fill-mask'; model: string; text: string; topK: number }
 	| { id: number; type: 'next-token'; model: string; ids: number[]; topK: number };
 
 export type WorkerResponse =
@@ -83,10 +91,16 @@ export type WorkerResponse =
 	| { id: number; type: 'downloaded' }
 	| { id: number; type: 'loaded'; device: 'webgpu' | 'wasm' }
 	| { id: number; type: 'embedded'; vectors: number[][] }
+	| { id: number; type: 'filled'; top: { id: number; text: string; prob: number }[] }
 	| { id: number; type: 'distribution'; top: { id: number; prob: number }[]; rest: number }
 	| { id: number; type: 'error'; message: string };
 
 const extractors = new Map<string, Promise<FeatureExtractionPipeline>>();
+const unmaskers = new Map<string, Promise<FillMaskPipeline>>();
+const textEncoders = new Map<
+	string,
+	Promise<{ tokenizer: PreTrainedTokenizer; model: PreTrainedModel }>
+>();
 const causalModels = new Map<string, Promise<PreTrainedModel>>();
 
 function post(message: WorkerResponse) {
@@ -208,7 +222,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 				}
 			};
 			const options = {
-				dtype: 'q8' as const,
+				dtype: request.dtype,
 				device: request.device,
 				revision: request.revision,
 				progress_callback,
@@ -225,6 +239,23 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 							options
 						) as Promise<FeatureExtractionPipeline>
 				);
+			} else if (request.task === 'fill-mask') {
+				await once(
+					unmaskers,
+					request.model,
+					() => pipeline('fill-mask', request.model, options) as Promise<FillMaskPipeline>
+				);
+			} else if (request.task === 'image-text') {
+				await once(textEncoders, request.model, async () => {
+					const [tokenizer, model] = await Promise.all([
+						AutoTokenizer.from_pretrained(request.model, {
+							revision: request.revision,
+							progress_callback
+						}),
+						CLIPTextModelWithProjection.from_pretrained(request.model, options)
+					]);
+					return { tokenizer, model };
+				});
 			} else {
 				await once(causalModels, request.model, () =>
 					AutoModelForCausalLM.from_pretrained(request.model, options)
@@ -236,6 +267,29 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			if (!extractor) throw new Error('Model not loaded');
 			const output = await extractor(request.texts, { pooling: 'mean', normalize: true });
 			post({ id: request.id, type: 'embedded', vectors: output.tolist() as number[][] });
+		} else if (request.type === 'embed-text') {
+			const encoder = await textEncoders.get(request.model);
+			if (!encoder) throw new Error('Model not loaded');
+			const inputs = encoder.tokenizer(request.texts, { padding: true, truncation: true });
+			const { text_embeds } = (await encoder.model(inputs)) as { text_embeds: Tensor };
+			const vectors = (text_embeds.tolist() as number[][]).map((v) => {
+				const norm = Math.hypot(...v);
+				return v.map((x) => x / norm);
+			});
+			post({ id: request.id, type: 'embedded', vectors });
+		} else if (request.type === 'fill-mask') {
+			const unmasker = await unmaskers.get(request.model);
+			if (!unmasker) throw new Error('Model not loaded');
+			const output = (await unmasker(request.text, { top_k: request.topK })) as {
+				token: number;
+				token_str: string;
+				score: number;
+			}[];
+			post({
+				id: request.id,
+				type: 'filled',
+				top: output.map((o) => ({ id: o.token, text: o.token_str, prob: o.score }))
+			});
 		} else if (request.type === 'next-token') {
 			const model = await causalModels.get(request.model);
 			if (!model) throw new Error('Model not loaded');

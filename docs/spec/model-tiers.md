@@ -18,11 +18,11 @@ moves into the spec it belongs to ([Specs that change](#specs-that-change)) and 
 
 ## Tiers
 
-| Tier                   | Kinds of task                                                           | Models                                                                                                                   | Download     | Needs                            |
-| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------ | -------------------------------- |
-| **Recorded** (default) | Every widget, from its recording                                        | None                                                                                                                     | 0            | Nothing                          |
-| **Small**              | `next-token`, `embed`, `fill-mask`, `image-text`                        | GPT-2 small (8-bit, 128 MB), all-MiniLM-L6-v2 (23 MB), BERT base (8-bit, 111 MB), CLIP ViT-B/32 text half (8-bit, 65 MB) | About 355 MB | Any supported browser            |
-| **Large**              | Small's, plus `chat` (an instruct model with a chat template and tools) | Small's models, plus Qwen2.5-1.5B-Instruct (4-bit weights, 16-bit activations, 1,222 MB)                                 | About 1.6 GB | WebGPU with 16-bit float shaders |
+| Tier                   | Kinds of task                                                           | Models                                                                                                                    | Download     | Needs                            |
+| ---------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
+| **Recorded** (default) | Every widget, from its recording                                        | None                                                                                                                      | 0            | Nothing                          |
+| **Small**              | `next-token`, `embed`, `fill-mask`, `image-text`                        | GPT-2 small (8-bit, 128 MB), all-MiniLM-L6-v2 (24 MB), BERT base (8-bit, 112 MB), CLIP ViT-B/32 text half (4-bit, 128 MB) | About 419 MB | Any supported browser            |
+| **Large**              | Small's, plus `chat` (an instruct model with a chat template and tools) | Small's models, plus Qwen2.5-1.5B-Instruct (4-bit weights, 16-bit activations, 1,222 MB)                                  | About 1.6 GB | WebGPU with 16-bit float shaders |
 
 - Each model is the one, or the ONNX export of the one, that recorded the widgets it covers: GPT-2
   small (12 widgets), MiniLM, `google-bert/bert-base-uncased`, `openai/clip-vit-base-patch32`, and
@@ -53,7 +53,7 @@ moves into the spec it belongs to ([Specs that change](#specs-that-change)) and 
 
 The page becomes **Models** ("Models and downloads" as its title), with the tier choice first.
 
-- **The choice:** a `Choice` of three radios, "Show recordings (default)", "Small: about 355 MB",
+- **The choice:** a `Choice` of three radios, "Show recordings (default)", "Small: about 419 MB",
   and "Large: about 1.6 GB, needs a graphics card", each with one line on what it covers. Large is
   disabled, with the reason, without WebGPU and `shader-f16`.
 - **Choosing a tier is the click that downloads it.** The radio's label gives the size. Picking
@@ -122,11 +122,11 @@ The page becomes **Models** ("Models and downloads" as its title), with the tier
    with Small holding GPT-2 and MiniLM, the store, the Models link, the choice on the page,
    badges, "Show the recording", and `useProvider` in `GlassBoxGenerator`, `EmbeddingMap`, and
    `PromptVariants`. `ModelConsent` is gone.
-2. **Fill out Small.** BERT base and CLIP's text half, pinned and checked, and live options in
-   [Reading both ways](chapters/encoders.md) and [Seeing pictures](chapters/seeing-pictures.md);
-   more GPT-2 widgets go live, such as the visitor's own sentence in
-   [The guessing game](chapters/guessing-game.md) and temperatures side by side in
-   [Probability and sampling](chapters/probability-and-sampling.md).
+2. **Fill out Small.** Built. [downloads.md](downloads.md) describes it: BERT base and CLIP's text
+   half pinned and checked (`models/encoder.json`, `models/clip.json`, `record check live`), the
+   worker's `fill-mask` and `embed-text` tasks, `vision/clip-images`, live options in
+   `FillTheBlank`, `PictureMatch`, `GuessTheWord`, and `RecordedRuns`, and the fake inference
+   worker the end-to-end tests run against.
 3. **Large.** Qwen2.5-1.5B-Instruct on WebGPU and the `chat` task. Live options for the chat
    template, base vs. instruct, system prompts, few-shot, and tool-calling widgets, in
    [From predictor to assistant](chapters/predictor-to-assistant.md),

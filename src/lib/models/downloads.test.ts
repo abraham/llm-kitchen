@@ -1,23 +1,39 @@
 import { describe, expect, it } from 'vitest';
 import { isSlug } from '#lib/curriculum/index.ts';
 import canonical from '../../../models/canonical.json';
+import clip from '../../../models/clip.json';
 import embedder from '../../../models/embedder.json';
-import { CANONICAL_LIVE, DOWNLOADS, filesUrl, MINILM, originalUrl } from './downloads.ts';
+import encoder from '../../../models/encoder.json';
+import {
+	BERT_LIVE,
+	CANONICAL_LIVE,
+	CLIP_TEXT,
+	DOWNLOADS,
+	filesUrl,
+	MINILM,
+	originalUrl
+} from './downloads.ts';
 
 describe('downloads', () => {
 	it('lists every live model, with the size, commit, and files of its config', () => {
-		expect(DOWNLOADS).toContain(CANONICAL_LIVE);
-		expect(DOWNLOADS).toContain(MINILM);
-		for (const [model, config] of [
+		const pairs = [
 			[CANONICAL_LIVE, canonical],
-			[MINILM, embedder]
-		] as const) {
+			[MINILM, embedder],
+			[BERT_LIVE, encoder],
+			[CLIP_TEXT, clip]
+		] as const;
+		expect(DOWNLOADS).toEqual(pairs.map(([model]) => model));
+		for (const [model, config] of pairs) {
 			expect(model.modelMB).toBe(config.onnxMB);
 			expect(model.onnxId).toBe(config.onnxId);
 			expect(model.onnxRevision).toBe(config.onnxRevision);
 			expect(model.onnxFiles).toEqual(config.onnxFiles);
 			expect(model.huggingFaceId).toBe(config.huggingFaceId);
 		}
+		expect(CLIP_TEXT.file).toBe('text_model');
+		expect(CLIP_TEXT.dtype).toBe(clip.onnxDtype);
+		expect(Object.keys(CLIP_TEXT.onnxFiles)).toContain('onnx/text_model_q4.onnx');
+		expect(Object.keys(CLIP_TEXT.onnxFiles)).not.toContain('onnx/vision_model_quantized.onnx');
 	});
 
 	it('names chapters that exist, and no chapter is called downloads', () => {

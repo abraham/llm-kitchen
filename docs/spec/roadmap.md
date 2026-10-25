@@ -8,13 +8,9 @@ belongs to and remove it here.
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention
   outputs, so [Attention](chapters/attention.md) shows attention recorded for 5 sentences. A custom
   ONNX export with attention outputs would let visitors type their own sentence.
-- **Model tiers:** a site-wide choice between recordings and two downloadable tiers of models
-  (Small, and Large with a chat model on WebGPU), made on the Models page linked from the app bar.
-  It brings live options to more GPT-2 widgets ([The guessing game](chapters/guessing-game.md),
-  [Probability and sampling](chapters/probability-and-sampling.md)), a fill-mask encoder for
-  [Reading both ways](chapters/encoders.md), CLIP's text half for
-  [Seeing pictures](chapters/seeing-pictures.md), and a chat model for the prompting and tools
-  chapters. The plan is in [model-tiers.md](model-tiers.md).
+- **Model tiers, Large:** the Small tier is built ([downloads.md](downloads.md#tiers)). Next is
+  Large, a superset of Small with a chat model on WebGPU, which brings live options to the
+  prompting and tools chapters. The plan is in [model-tiers.md](model-tiers.md).
 - **Timing generation live** with and without the KV cache in [Caching](chapters/caching.md), if
   Transformers.js exposes the switch.
 - **T4, bring your own API key:** frontier output with top logprobs and tool calling, through the
