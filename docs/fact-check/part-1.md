@@ -47,6 +47,8 @@ test, or labeled in the text as a simplification. Tests: each chapter's `facts.t
 | Temperature divides raw scores before softmax; <1 sharpens, >1 flattens; 0 is greedy                      | Test (`applyTemperature`, `softmax`)                                                            |
 | "Divide by the temperature": log probabilities stand in for raw scores; top is e^(gap/T) times the second | Test (same chances as the temperature widget; adding a constant to every score changes nothing) |
 | Top-k keeps only the k most likely                                                                        | Cite `fan2018`, test (`topK`)                                                                   |
+| Top-p (nucleus) keeps the most likely words until their chances add up to p; few when sure, many when not | Cite `holtzman2020`, test (`topP`)                                                              |
+| In the widget, top-p 0.5 keeps floor, bed, couch, and ground, together 58%                                | Test (the recorded top ten, rescaled)                                                           |
 | Widget uses only the top 10, rescaled                                                                     | Labeled "Simplified:" in the text                                                               |
 | Real model has 50,257 options                                                                             | Test (`canonical.json`)                                                                         |
 | Recorded runs: 16 tokens at T = 0, 0.7, 1.5; T = 0 matches greedy                                         | Test (traces)                                                                                   |
@@ -54,4 +56,4 @@ test, or labeled in the text as a simplification. Tests: each chapter's `facts.t
 | In depth: p_i = e^(z_i/T) / Σ e^(z_j/T); the ratio of two chances is e^((z_i − z_j)/T)                    | Test (`softmax`, existing temperature test)                                                     |
 | In depth: T = 1 leaves the probabilities unchanged; near 0 the top score takes everything                 | Test                                                                                            |
 | In depth: the recorded runs divide GPT-2's raw scores by T and draw from all 50,257 tokens                | `scripts/record/traces.py` (softmax of logits / T, then a multinomial draw)                     |
-| In depth: nucleus sampling keeps the smallest set of top tokens whose chances reach a threshold p         | Cite `holtzman2020`                                                                             |
+| In depth: top-p keeps the smallest set of top tokens with chances summing to at least p, then rescales    | Test (`topP`)                                                                                   |

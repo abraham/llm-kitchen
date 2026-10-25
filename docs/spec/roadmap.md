@@ -51,9 +51,6 @@ belongs to and remove it here.
   [Managing the context](chapters/managing-the-context.md).
 - **Agents that use a screen.** A model that sees screenshots and clicks, bridging
   [Seeing pictures](chapters/seeing-pictures.md) and [The agent loop](chapters/the-agent-loop.md).
-- **Top-p control.** Nucleus sampling is only described, at In depth; a control in the sampling
-  widget of [Probability and sampling](chapters/probability-and-sampling.md) would let visitors
-  try it.
 - **Dropout.** Not mentioned anywhere; it's used only in training, so one In depth line in
   [Learning from mistakes](chapters/learning-from-mistakes.md).
 - **Attention views.** One attention grid switching between raw scores, masked scores, and
