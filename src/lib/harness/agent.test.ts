@@ -12,7 +12,7 @@ import {
 } from './tools.ts';
 
 const runs = Object.keys(DATASETS)
-	.filter((id) => id.startsWith('agent/') && id !== 'agent/context')
+	.filter((id) => id.startsWith('agent/') && id !== 'agent/context' && id !== 'agent/grades')
 	.map((id) => ({ name: id, run: readDataset(`agent/${id.slice(6) as AgentRunName}`) }));
 
 describe('toy tools', () => {

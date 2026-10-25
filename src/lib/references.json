@@ -388,6 +388,51 @@
 		"accessed": "2026-10-25"
 	},
 	{
+		"id": "zheng2023judge",
+		"authors": [
+			"Lianmin Zheng",
+			"Wei-Lin Chiang",
+			"Ying Sheng",
+			"Siyuan Zhuang",
+			"Zhanghao Wu",
+			"Yonghao Zhuang",
+			"Zi Lin",
+			"Zhuohan Li",
+			"Dacheng Li",
+			"Eric P. Xing",
+			"Hao Zhang",
+			"Joseph E. Gonzalez",
+			"Ion Stoica"
+		],
+		"title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2306.05685"
+	},
+	{
+		"id": "mialon2023gaia",
+		"authors": [
+			"Grégoire Mialon",
+			"Clémentine Fourrier",
+			"Craig Swift",
+			"Thomas Wolf",
+			"Yann LeCun",
+			"Thomas Scialom"
+		],
+		"title": "GAIA: a benchmark for General AI Assistants",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2311.12983"
+	},
+	{
+		"id": "yao2024taubench",
+		"authors": ["Shunyu Yao", "Noah Shinn", "Pedram Razavi", "Karthik Narasimhan"],
+		"title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2406.12045"
+	},
+	{
 		"id": "mcp-spec",
 		"authors": ["Model Context Protocol"],
 		"title": "Tools (Model Context Protocol specification)",

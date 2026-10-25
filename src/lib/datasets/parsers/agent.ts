@@ -1,4 +1,5 @@
 import type { AgentRun, ContextSession } from '../../harness/agent.ts';
+import type { AgentGrades } from '../../harness/evals.ts';
 import {
 	type Check,
 	array,
@@ -6,6 +7,7 @@ import {
 	dictionary,
 	integer,
 	literal,
+	nullable,
 	number,
 	object,
 	optional,
@@ -38,6 +40,24 @@ export const agentRun: Check<AgentRun> = object({
 	steps: array(agentStep),
 	finished: boolean,
 	files: object({ before: array(string), after: array(string) })
+});
+
+const grade = nullable(
+	object({ reply: string, verdict: literal('pass', 'fail', 'unclear'), promptTokens: integer })
+);
+
+export const agentGrades: Check<AgentGrades> = object({
+	model: modelRef,
+	system: string,
+	cases: array(
+		object({
+			run: string,
+			reference: string,
+			answer: nullable(string),
+			alone: grade,
+			withReference: grade
+		})
+	)
 });
 
 const strategy = object({

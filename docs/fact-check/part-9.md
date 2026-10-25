@@ -1,4 +1,4 @@
-# Fact-check: Part IX, Other kinds of models (Ch 32–37), and the wrap-up (Ch 38–41)
+# Fact-check: Part IX, Other kinds of models (Ch 33–38), and the wrap-up (Ch 39–42)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts` (the recorded data says what the prose says),
@@ -15,7 +15,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
   and the weights of the toy Decision Transformer trained on them, by `scripts/record/decisions.py`
   (seeded; the model's revision is the SHA-1 of the script).
 
-## Ch 32. Reading both ways
+## Ch 33. Reading both ways
 
 | Claim                                                                                                                                   | Backing                                                             |
 | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -32,7 +32,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: 10 tokens: 55 of 100 pairs with the causal mask                                                                               | Test                                                                |
 | In depth: only the hidden 15% are predicted; of them 80% `[MASK]`, 10% random, 10% unchanged, since `[MASK]` never appears in real text | Cite `devlin2019` (§3.1, Appendix C.2)                              |
 
-## Ch 33. Many experts
+## Ch 34. Many experts
 
 | Claim                                                                                                | Backing                                                               |
 | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -48,7 +48,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: favored experts train faster; a loss term penalizes uneven use                             | Cite `shazeer2017` (§4)                                               |
 | In depth: DeepSeek-V3 balances experts without an extra loss term                                    | Cite `deepseek2024` (abstract)                                        |
 
-## Ch 34. Remembering without attention
+## Ch 35. Remembering without attention
 
 | Claim                                                                                                                  | Backing                                         |
 | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -67,7 +67,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: the LSTM's cell is carried forward by addition (constant error carousel), with gates for writing and reading | Cite `hochreiter1997` (abstract)                |
 | In depth: GPT-2 at 1,024 tokens keeps 18,874,368 numbers; the tiny model 32                                            | Test (`canonical.json`)                         |
 
-## Ch 35. Seeing pictures
+## Ch 36. Seeing pictures
 
 | Claim                                                                                                                                                   | Backing                                        |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
@@ -83,7 +83,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                |
 | In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                |
 
-## Ch 36. Painting from noise
+## Ch 37. Painting from noise
 
 | Claim                                                                                                        | Backing                                                   |
 | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
@@ -97,7 +97,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: after 50 steps ᾱ ≈ 0.0045, under 7% of the point left                                              | Test                                                      |
 | In depth: the sampling step x_{t−1} = (x_t − β_t/√(1 − ᾱ_t) ε̂)/√(1 − β_t) + σ_t z, no fresh noise at the end | Cite `ho2020` (Algorithm 2); `generate` in `diffusion.ts` |
 
-## Ch 37. Choosing actions
+## Ch 38. Choosing actions
 
 | Claim                                                                                                                                                     | Backing                                                 |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -122,19 +122,19 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: R̂_t = r_t + r_{t+1} + …, R̂_{t+1} = R̂_t − r_t; aiming 12 the tokens go 12 … 19, and the goal pays 19                                             | Cite `chen2021decision`; test                           |
 | In depth: many RL methods estimate the reward a move leads to and pick the best                                                                           | Cite `sutton2018`                                       |
 
-## Ch 38. Recap
+## Ch 39. Recap
 
 The diagram restates earlier chapters; each box links to its chapter. The quiz has been its own
-chapter (now Ch 41) since milestone 20.
+chapter (now Ch 42) since milestone 20.
 
 - [x] Simple: restates the summary paragraph in plainer words, with no new claims.
 - [x] In depth: GPT-2 in a few lines: h = W_E[x] + W_P[i] (Ch 5, 10); the block update (Ch 10's In
       depth); softmax(LN_f(h_n) W_Eᵀ / T) (Ch 10's logit lens, Ch 3's temperature); cross-entropy
       and the gradient step (Ch 7's In depth). Each formula restates its chapter.
-- [x] In depth: each other kind of model changes one line: the mask (Ch 32), the MLP (Ch 33),
-      attention itself (Ch 34), what a token stands for (Ch 35, 37), how the output is made (Ch 36).
+- [x] In depth: each other kind of model changes one line: the mask (Ch 33), the MLP (Ch 34),
+      attention itself (Ch 35), what a token stands for (Ch 36, 38), how the output is made (Ch 37).
 
-## Ch 39. From message to reply
+## Ch 40. From message to reply
 
 Each stage restates the chapters it links (`src/lib/chapters/end-to-end/data.ts`); the unit test checks that
 every Part I–VIII is linked from a stage and Part IX from the closing box. Data comes from three
@@ -156,7 +156,7 @@ existing recordings, labeled in the widget:
       (`static/data/caching/kv-cache.json`, as in Ch 25).
 - [x] "The loop stops at an end-of-turn token": Ch 11 and Ch 15 (chat markers); the Qwen prompt
       ends each turn with `<|im_end|>`.
-- [x] The closing box's one-line summaries match Ch 32–37 (both-ways attention; part of the network
+- [x] The closing box's one-line summaries match Ch 33–38 (both-ways attention; part of the network
       per token; fixed-size memory; picture patches as tokens; refined from noise; game moves as
       tokens).
 - [x] Simple: restates the intro and the two-loops paragraphs, with no new claims.
@@ -165,7 +165,7 @@ existing recordings, labeled in the widget:
       with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
       21 + 59 + the end-of-turn token.
 
-## Ch 40. Picking a model
+## Ch 41. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
@@ -192,7 +192,7 @@ every name splits into known parts that spell it back.
 | In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 25 In depth (`qwen2024`, config); test                             |
 | In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
 
-## Ch 41. Check yourself
+## Ch 42. Check yourself
 
 Fifteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
 has at least one. Each answer restates its linked chapter:
@@ -206,11 +206,11 @@ has at least one. Each answer restates its linked chapter:
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 25, 27, 29, 30,
       31). The e2e test answers all fifteen and checks the revisit list.
 - [x] A Decision Transformer asked for more than any training run scored plays like the best runs
-      it has seen (Ch 37; added with the chapter).
+      it has seen (Ch 38; added with the chapter).
 - [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
       prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 25 with no new
       claims.
 - [x] In depth only: cross-entropy averages −ln p over the real next tokens (Ch 7's In depth);
       min(1, p/q) and a redraw from max(0, p − q) keep the big model's probabilities (Ch 14's In
       depth); without a KV cache the work grows with the square of n (Ch 25's In depth); Mixtral
-      shares attention and embeddings, so a token uses more than a quarter (Ch 33's In depth).
+      shares attention and embeddings, so a token uses more than a quarter (Ch 34's In depth).

@@ -215,6 +215,20 @@ export const GLOSSARY = {
 			'A helper agent, given one part of a job and a fresh start, that reports back when done.',
 		chapter: 'splitting-the-work'
 	},
+	eval: {
+		term: 'eval',
+		definition:
+			'A fixed set of tasks with a way to check each result, run again after every change to see whether a model or agent got better or worse.',
+		simple: 'A fixed list of test tasks, each with a way to tell whether the result is right.',
+		chapter: 'testing-agents'
+	},
+	'llm-judge': {
+		term: 'LLM as a judge',
+		definition:
+			'Using a model to grade another model’s output, often against a list of criteria or a correct answer, where code can’t check it.',
+		simple: 'A model used to mark another model’s answers right or wrong.',
+		chapter: 'testing-agents'
+	},
 	cascade: {
 		term: 'cascade',
 		definition:

@@ -77,6 +77,8 @@ export const ROWS = [
 		'A web page can hide instructions that an agent then follows. See prompt injection happen, and what different guardrails change.'],
 	['splitting-the-work', 'Splitting the work', 'agents', ['managing-the-context', 'the-agent-loop', 'trust-and-guardrails'],
 		'One agent keeps every step in one growing prompt. See a lead agent hand subtasks to helpers that each start fresh, and what that costs.'],
+	['testing-agents', 'Did it work?', 'agents', ['tools', 'the-agent-loop', 'trust-and-guardrails'],
+		'Read the trace of every call an agent made, check its runs with code and with a model as grader, and see how often the grader is fooled.'],
 	['encoders', 'Reading both ways', 'others', ['embeddings', 'attention'],
 		'Encoder models read the whole text at once, in both directions. That makes them good at filling blanks and understanding, not writing.'],
 	['mixture-of-experts', 'Many experts', 'others', ['a-neuron', 'the-transformer-block'],

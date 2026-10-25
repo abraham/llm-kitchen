@@ -136,4 +136,4 @@ slow helper holds up the rest.<Cite id="anthropic-multi-agent" />
 </At>
 </RecapCard>
 
-**Next question:** GPT-2 is one kind of model. What other kinds are built from the same pieces?
+**Next question:** One agent or several, how do you know the job was done right?

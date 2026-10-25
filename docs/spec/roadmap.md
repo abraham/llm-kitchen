@@ -28,10 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Testing and watching agents.** Traces of every model and tool call in a run, cost and time per
-  step, fixed test sets versus watching real use, a model grading answers, and agent benchmarks
-  such as GAIA. A new chapter in the Tools and agents part; today only model benchmarks appear, in
-  [Picking a model](chapters/picking-a-model.md).
 - **The agent decides what to look up.** It chooses when and what to search, and searches again
   with what it found; and keyword search versus search by meaning, and combining them. In
   [Managing the context](chapters/managing-the-context.md), which covers picking by similarity
