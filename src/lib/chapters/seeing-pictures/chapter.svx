@@ -104,11 +104,79 @@ tokens.
 
 </At>
 
+## Agents that use a screen
+
+<At levels="simple">
+
+Put a model that sees inside the loop from <ChapterRef to="the-agent-loop" /> and you get a <GlossaryPopover term="computer-use">computer-use agent</GlossaryPopover>.
+The harness takes a screenshot and gives it to the model with the task. The model answers with an action, like a
+click at a spot on the screen or some text to type. The harness does it, takes a new screenshot,
+and goes round again, as in this made-up run:
+
+```text
+screenshot 1 → click(412, 230)
+screenshot 2 → type("cat rhymes")
+screenshot 3 → key("Enter")
+screenshot 4 → done
+```
+
+It's hard. To click a button, the model has to work out where it is in pixels, which Anthropic had
+to train its model to do.<Cite id="anthropic-computer-use" /> On a test of 369 real computer tasks,
+people finished about 72% and the best model 12%.<Cite id="xie2024osworld" /> And everything on the
+screen reaches the model, so a web page can hide instructions in it, as in <ChapterRef to="trust-and-guardrails" />.<Cite id="anthropic-computer-use" />
+
+</At>
+<At levels="standard deep">
+
+Put a model that sees inside the loop from <ChapterRef to="the-agent-loop" /> and you get a <GlossaryPopover term="computer-use">computer-use agent</GlossaryPopover>,
+which works any program the way a person does. The harness takes a screenshot and gives it to the model with the task.
+The model answers with a tool call for an action: move the pointer and click at a position, type
+text, press a key. The harness carries it out, and the next screenshot is the tool's result. This
+run is made up:
+
+```text
+screenshot 1 → click(412, 230)
+screenshot 2 → type("cat rhymes")
+screenshot 3 → key("Enter")
+screenshot 4 → done
+```
+
+The hard part is pointing. To click a button, the model has to give its position in pixels, and
+Anthropic had to train its model to count pixels across the screen, a skill it compares to
+counting the letters in a word (<ChapterRef to="quirks-and-limits" />). Seeing the screen as a
+series of screenshots, like a flipbook, the model can also miss a message that appears and
+vanishes between them.<Cite id="anthropic-computer-use" />
+
+OSWorld tests this on 369 tasks in real desktop and web apps, each checked by a script that
+inspects the computer afterwards. People finished over 72% of them and the best model of early
+2024 about 12%, failing mostly at finding the right place on the screen and at knowing how the
+apps work.<Cite id="xie2024osworld" /> Later that year Anthropic reported 14.9% for its first
+computer-use model.<Cite id="anthropic-computer-use" /> And everything on the screen reaches the
+model, so a web page can carry instructions just as the poisoned page in <ChapterRef to="trust-and-guardrails" />
+did; Anthropic names this prompt injection as a main risk
+of computer use.<Cite id="anthropic-computer-use" />
+
+</At>
+<At levels="deep">
+
+### What a screenshot costs
+
+Anthropic's models read a picture in 28 × 28-pixel patches, one token each, so a $w \times h$
+screenshot costs $\lceil w/28 \rceil \times \lceil h/28 \rceil$ tokens.<Cite id="anthropic-vision" />
+A 1280 × 800 screen is 46 × 29 = 1,334 tokens, against the 49 patches of CLIP's 224-pixel
+pictures above. Every step adds one, and each call re-reads them all, as in <ChapterRef to="the-agent-loop" />:
+after ten steps, a harness that keeps every screenshot sends 13,340 tokens of them with each call.
+
+</At>
+
 <RecapCard>
 
 - A vision transformer cuts a picture into patches and treats each patch like a token.
 - CLIP puts pictures and captions into one shared space, so words can find matching pictures.
 - Chat models that see turn a picture into tokens and put them in the context next to the text.
+- A computer-use agent is the agent loop with screenshots as tool results and clicks and typing
+  as actions. Pointing at the right pixel is hard, and anything on the screen can carry an
+  injected instruction.
 
 <At levels="deep">
 

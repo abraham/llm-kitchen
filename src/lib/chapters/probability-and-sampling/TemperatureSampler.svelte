@@ -5,7 +5,7 @@
 	import Slider from '#lib/components/ui/Slider.svelte';
 	import ProbBars from '#lib/components/primitives/ProbBars.svelte';
 	import SamplerWheel from '#lib/components/primitives/SamplerWheel.svelte';
-	import { applyTemperature, sampleIndex, topK } from '#lib/math/sampling.ts';
+	import { applyTemperature, sampleIndex, topK, topP } from '#lib/math/sampling.ts';
 
 	import { canonical } from '#lib/models/provider.ts';
 
@@ -14,24 +14,19 @@
 
 	let temperature = $state(1);
 	let k = $state(SHOWN);
+	let p = $state(1);
 	let lastPick = $state<number | null>(null);
 	let spins = $state(0);
 	let tally = $state<number[] | null>(null);
 
+	// Temperature first, then top-k, then top-p on what top-k kept.
 	function distribution(base: { label: string; p: number }[]) {
 		const tempered = applyTemperature(
 			base.map((b) => b.p),
 			temperature
-		);
-		const kept = new Set(
-			topK(
-				tempered.map((p, i) => ({ item: i, p })),
-				k
-			).map((w) => w.item)
-		);
-		const masked = tempered.map((p, i) => (kept.has(i) ? p : 0));
-		const sum = masked.reduce((a, b) => a + b, 0);
-		return base.map((b, i) => ({ label: b.label, p: masked[i] / sum }));
+		).map((prob, i) => ({ item: i, p: prob }));
+		const kept = new Map(topP(topK(tempered, k), p).map((w) => [w.item, w.p]));
+		return base.map((b, i) => ({ label: b.label, p: kept.get(i) ?? 0 }));
 	}
 
 	function sampleOnce(probs: number[]) {
@@ -49,13 +44,14 @@
 	function reset() {
 		temperature = 1;
 		k = SHOWN;
+		p = 1;
 		lastPick = null;
 		tally = null;
 	}
 </script>
 
 <WidgetFrame
-	title="Temperature and top-k"
+	title="Temperature, top-k, and top-p"
 	source={{ kind: 'recorded', model: canonical.displayName }}
 	onreset={reset}
 >
@@ -84,6 +80,15 @@
 					concept="prob"
 					bind:value={() => k, (v) => ((k = v), (tally = null))}
 				/>
+				<Slider
+					label="Top-p"
+					min={0.05}
+					max={1}
+					step={0.05}
+					format={(v) => v.toFixed(2)}
+					concept="prob"
+					bind:value={() => p, (v) => ((p = v), (tally = null))}
+				/>
 			</div>
 			<p class="hint">
 				{#if temperature === 0}
@@ -96,6 +101,8 @@
 					Temperature 1: the model's own probabilities.
 				{/if}
 				{#if k < SHOWN}Top-k {k}: only the {k} most likely words can be picked.{/if}
+				{#if p < 1}Top-p {p.toFixed(2)}: only the most likely words, until their chances reach
+					{Math.round(p * 100)}%, can be picked.{/if}
 			</p>
 
 			<div class="stage">

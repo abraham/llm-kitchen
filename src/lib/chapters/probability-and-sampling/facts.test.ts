@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import { type TraceName } from '#lib/datasets/registry.ts';
 import canonical from '../../../../models/canonical.json';
-import { applyTemperature, softmax } from '#lib/math/sampling.ts';
+import { applyTemperature, softmax, topP } from '#lib/math/sampling.ts';
 const trace = (name: TraceName) => readDataset(`traces/${name}`);
 
 describe('probability and sampling', () => {
@@ -48,5 +48,15 @@ describe('probability and sampling', () => {
 		const total = probs.reduce((a, b) => a + b, 0);
 		softmax(probs.map(Math.log), 1).forEach((p, i) => expect(p).toBeCloseTo(probs[i] / total, 12));
 		expect(softmax(probs.map(Math.log), 0.001)[0]).toBeCloseTo(1, 6);
+	});
+
+	it('"In the widget, top-p 0.5 keeps four words, floor, bed, couch, and ground, whose chances add up to 58%"', () => {
+		const ten = trace('the-cat-sat').steps[0].candidates.slice(0, 10);
+		const total = ten.reduce((a, c) => a + c.prob, 0);
+		const words = ten.map((c) => ({ item: c.token.text, p: c.prob / total }));
+		const kept = topP(words, 0.5).map((w) => w.item);
+		expect(kept).toEqual([' floor', ' bed', ' couch', ' ground']);
+		const sum = words.filter((w) => kept.includes(w.item)).reduce((a, w) => a + w.p, 0);
+		expect(Math.round(sum * 100)).toBe(58);
 	});
 });

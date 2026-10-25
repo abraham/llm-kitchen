@@ -71,18 +71,29 @@ gets close to 0, all the probability goes to the top score, which is why 0 means
 same number to every score changes nothing; only the gaps matter.
 
 The recorded runs further down divide GPT-2's raw scores by $T$ and draw from all 50,257 tokens;
-the widget's cut to ten is only for the picture. Two other controls cut off the long tail of
-unlikely tokens instead of flattening it: top-k, next, and nucleus sampling, which keeps the
-smallest set of top tokens whose chances add up to at least a threshold $p$. Nucleus sampling keeps
-few tokens when the model is sure and many when it isn't.<Cite id="holtzman2020" />
+the widget's cut to ten is only for the picture. Two other controls, next, cut off the long tail
+of unlikely tokens instead of flattening it. In the widget they apply after the temperature, top-k
+first, and what's left is rescaled to add up to 100%.
 
 </At>
 
-## Top-k
+## Top-k and top-p
 
 **Top-k** is a simpler control: only the *k* most likely words are allowed, and the rest are set to
 zero.<Cite id="fan2018" /> It stops the model from ever picking something very unlikely, which is
 where nonsense tends to come from.
+
+**Top-p**, also called nucleus sampling, cuts by chance instead of by count: it keeps the most
+likely words until their chances add up to *p*, and drops the rest.<Cite id="holtzman2020" /> So it
+keeps a few words when the model is sure and many when it isn't. In the widget, top-p 0.5 keeps four
+words, *floor*, *bed*, *couch*, and *ground*, whose chances add up to 58%.
+
+<At levels="deep">
+
+Written down, top-p keeps the smallest set $V$ of most likely tokens with
+$\sum_{i \in V} p_i \ge p$, then divides each kept chance by that sum so they add up to 1.
+
+</At>
 
 ## The same prompt, three ways
 
@@ -100,6 +111,7 @@ picked and each one makes the next guess harder.
 - Temperature sharpens (below 1) or flattens (above 1) the distribution. Temperature 0 always picks
   the top word.
 - Top-k only allows the k most likely words.
+- Top-p only allows the most likely words until their chances add up to p.
 
 <At levels="deep">
 

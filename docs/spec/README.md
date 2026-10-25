@@ -21,6 +21,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [levels.md](levels.md)                   | Plan: Simple, Standard, and In depth explanations, chosen in the app bar                          |
 | [downloads.md](downloads.md)             | The model tiers, how live models download, stay cached, and show their state, and the Models page |
 | [model-tiers.md](model-tiers.md)         | Plan: one site-wide choice of Recorded, Small, or Large models, made on the Models page           |
+| [live-attention.md](live-attention.md)   | Plan: GPT-2's attention for the visitor's own sentence, from a GPT-2 export of our own            |
 | [roadmap.md](roadmap.md)                 | What isn't built yet, and open questions                                                          |
 
 ## Rules

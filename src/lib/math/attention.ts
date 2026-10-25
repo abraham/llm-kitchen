@@ -38,6 +38,20 @@ export function attend({ tokens, queries, keys, values }: AttentionInput): Atten
 	return { scores, weights, outputs };
 }
 
+/** The causal mask: each token's scores for later tokens become null (−∞). */
+export function maskFuture(scores: readonly (readonly number[])[]): (number | null)[][] {
+	return scores.map((row, q) => row.map((s, k) => (k > q ? null : s)));
+}
+
+/** Softmax along each row over the unmasked scores; masked places get weight 0. */
+export function softmaxRows(masked: readonly (readonly (number | null)[])[]): number[][] {
+	return masked.map((row) => {
+		const p = softmax(row.filter((s): s is number => s !== null));
+		let i = 0;
+		return row.map((s) => (s === null ? 0 : p[i++]));
+	});
+}
+
 /** Made-up vectors for the `attention` walkthrough. Not from a real model; chosen to be readable. */
 export const TOY_ATTENTION: AttentionInput = {
 	tokens: ['The', 'trophy', 'suitcase', 'it'],

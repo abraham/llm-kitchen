@@ -13,6 +13,7 @@ import sys
 
 MODULES = [
     "traces",
+    "attention",
     "embeddings",
     "quantize",
     "speculative",
@@ -20,6 +21,9 @@ MODULES = [
     "reasoning",
     "prompts",
     "agent",
+    "grading",
+    "search",
+    "memory",
     "routing",
     "caching",
     "injection",

@@ -7,7 +7,12 @@ belongs to and remove it here.
 
 - **Live attention.** The standard GPT-2 ONNX export used by Transformers.js has no attention
   outputs, so [Attention](chapters/attention.md) shows attention recorded for 5 sentences. A custom
-  ONNX export with attention outputs would let visitors type their own sentence.
+  ONNX export with attention outputs would let visitors type their own sentence. Polo Club's
+  Transformer Explainer (MIT) shows it works in the browser: its GPT-2 export outputs every head's
+  raw scores, masked scores, and softmax weights. Its file is full precision (626 MB) and comes
+  without its export script, so this needs an export of our own, 8-bit, in a model tier. The same
+  outputs could follow one token through the whole model. The plan is in
+  [live-attention.md](live-attention.md).
 - **Timing generation live** with and without the KV cache in [Caching](chapters/caching.md), if
   Transformers.js exposes the switch.
 - **T4, bring your own API key:** frontier output with top logprobs and tool calling, through the
@@ -23,8 +28,6 @@ belongs to and remove it here.
 
 ## Content
 
-- **Localization:** the site is English only. Translating means deciding whether to also swap the
-  example corpora and re-record the data per language.
 - **Expert review:** pending; see [sources.md](sources.md).
 
 ## Open questions

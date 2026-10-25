@@ -2,9 +2,9 @@
 
 **Question:** One tool call helps. What if a task needs several, one after another?
 
-**Key idea:** An agent is a model called in a loop by a harness that runs its tool calls and feeds the
-results back in. The loop stops when the model answers without a tool call, or at a step limit. Each
-step re-sends the whole conversation, so the prompt keeps growing.
+**Key idea:** An agent is a model called in a loop by a harness that runs its tool calls and feeds
+the results back in. The loop stops when the model answers without a tool call, or at a step limit.
+Each step re-sends the whole conversation, so the prompt keeps growing.
 
 ## Widgets
 
@@ -24,6 +24,8 @@ Recorded by `scripts/record/agent.py` (`static/data/agent/`): Qwen2.5-1.5B-Instr
   for counting. Without these rules, both small Qwen models wrote several calls at once with made-up
   arguments and guessed the word count. The chapter says the harness makes the rules.
 - Qwen2.5-1.5B-Instruct rather than 0.5B, which couldn't complete the task.
+- Other ways to build an agent (workflows, search as a tool, tools as code, planning first) are in
+  [Designing an agent](designing-agents.md), so this chapter keeps to the loop itself.
 - [Levels](../levels.md): Simple says the two loops and the harness's rules in plain words. In
   depth works out what the loop costs (every call re-reads the conversation, so the total grows
   with the square of the steps) and points ahead to caching.

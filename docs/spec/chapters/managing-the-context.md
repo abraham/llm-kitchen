@@ -10,8 +10,9 @@ gone for the model, and it may fill the gap by making things up.
 ## Widgets
 
 - `ContextBudget`: a budget bar fills as a chat goes on: six nursery rhymes, each loved by a
-  different child in the visitor's class, then a question about the first one. When it overflows, the visitor picks a strategy (drop the oldest turns, summarize them, or retrieve only
-  relevant ones) and sees what the model answers. Retrieval reuses the embedding map from
+  different child in the visitor's class, then a question about the first one. When it overflows,
+  the visitor picks a strategy (drop the oldest turns, summarize them, or retrieve only relevant
+  ones) and sees what the model answers. Retrieval reuses the embedding map from
   [Meaning as position](embeddings.md): the question becomes a point and the nearest chunks light
   up.
 
@@ -28,5 +29,7 @@ MiniLM map (`static/data/embeddings/`).
   model can read far more.
 - Failures are kept as real examples: after dropping the oldest turns, the model said it couldn't
   tell; the summary repeated a mistake from the model's first reply.
+- Keyword search and memory between chats have their own chapter,
+  [Search and memory](search-and-memory.md), so this one keeps one idea and one widget.
 - [Levels](../levels.md): Simple keeps the three strategies and their outcomes. In depth shows the
   cosine scores behind retrieval and the size of the summary.

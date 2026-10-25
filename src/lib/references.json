@@ -165,6 +165,20 @@
 		"url": "https://www.jmlr.org/papers/v3/bengio03a.html"
 	},
 	{
+		"id": "srivastava2014",
+		"authors": [
+			"Nitish Srivastava",
+			"Geoffrey Hinton",
+			"Alex Krizhevsky",
+			"Ilya Sutskever",
+			"Ruslan Salakhutdinov"
+		],
+		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+		"venue": "Journal of Machine Learning Research 15",
+		"year": 2014,
+		"url": "https://jmlr.org/papers/v15/srivastava14a.html"
+	},
+	{
 		"id": "kingma2015",
 		"authors": ["Diederik P. Kingma", "Jimmy Ba"],
 		"title": "Adam: A Method for Stochastic Optimization",
@@ -349,6 +363,76 @@
 		"url": "https://www.anthropic.com/news/model-context-protocol"
 	},
 	{
+		"id": "anthropic-agents",
+		"authors": ["Erik Schluntz", "Barry Zhang"],
+		"title": "Building effective agents",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/engineering/building-effective-agents",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "anthropic-multi-agent",
+		"authors": [
+			"Jeremy Hadfield",
+			"Barry Zhang",
+			"Kenneth Lien",
+			"Florian Scholz",
+			"Jeremy Fox",
+			"Daniel Ford"
+		],
+		"title": "How we built our multi-agent research system",
+		"venue": "Anthropic",
+		"year": 2025,
+		"url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "zheng2023judge",
+		"authors": [
+			"Lianmin Zheng",
+			"Wei-Lin Chiang",
+			"Ying Sheng",
+			"Siyuan Zhuang",
+			"Zhanghao Wu",
+			"Yonghao Zhuang",
+			"Zi Lin",
+			"Zhuohan Li",
+			"Dacheng Li",
+			"Eric P. Xing",
+			"Hao Zhang",
+			"Joseph E. Gonzalez",
+			"Ion Stoica"
+		],
+		"title": "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2306.05685"
+	},
+	{
+		"id": "mialon2023gaia",
+		"authors": [
+			"Grégoire Mialon",
+			"Clémentine Fourrier",
+			"Craig Swift",
+			"Thomas Wolf",
+			"Yann LeCun",
+			"Thomas Scialom"
+		],
+		"title": "GAIA: a benchmark for General AI Assistants",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2311.12983"
+	},
+	{
+		"id": "yao2024taubench",
+		"authors": ["Shunyu Yao", "Noah Shinn", "Pedram Razavi", "Karthik Narasimhan"],
+		"title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2406.12045"
+	},
+	{
 		"id": "mcp-spec",
 		"authors": ["Model Context Protocol"],
 		"title": "Tools (Model Context Protocol specification)",
@@ -366,12 +450,102 @@
 		"url": "https://arxiv.org/abs/2210.03629"
 	},
 	{
+		"id": "xu2023rewoo",
+		"authors": [
+			"Binfeng Xu",
+			"Zhiyuan Peng",
+			"Bowen Lei",
+			"Subhabrata Mukherjee",
+			"Yuchen Liu",
+			"Dongkuan Xu"
+		],
+		"title": "ReWOO: Decoupling Reasoning from Observations for Efficient Augmented Language Models",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.18323"
+	},
+	{
+		"id": "wang2023plansolve",
+		"authors": ["Lei Wang", "Wanyu Xu", "Yihuai Lan", "Zhiqiang Hu"],
+		"title": "Plan-and-Solve Prompting: Improving Zero-Shot Chain-of-Thought Reasoning by Large Language Models",
+		"venue": "ACL 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.04091"
+	},
+	{
+		"id": "wang2024codeact",
+		"authors": [
+			"Xingyao Wang",
+			"Yangyi Chen",
+			"Lifan Yuan",
+			"Yizhe Zhang",
+			"Yunzhu Li",
+			"Hao Peng",
+			"Heng Ji"
+		],
+		"title": "Executable Code Actions Elicit Better LLM Agents",
+		"venue": "ICML 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.01030"
+	},
+	{
+		"id": "smolagents-secure",
+		"authors": ["Hugging Face"],
+		"title": "Secure code execution (smolagents documentation)",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/docs/smolagents/tutorials/secure_code_execution",
+		"accessed": "2026-10-25"
+	},
+	{
 		"id": "lewis2020",
 		"authors": ["Patrick Lewis", "Ethan Perez", "Aleksandra Piktus", "Fabio Petroni"],
 		"title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
 		"venue": "NeurIPS 2020",
 		"year": 2020,
 		"url": "https://arxiv.org/abs/2005.11401"
+	},
+	{
+		"id": "robertson2009",
+		"authors": ["Stephen Robertson", "Hugo Zaragoza"],
+		"title": "The Probabilistic Relevance Framework: BM25 and Beyond",
+		"venue": "Foundations and Trends in Information Retrieval",
+		"year": 2009,
+		"url": "https://doi.org/10.1561/1500000019"
+	},
+	{
+		"id": "cormack2009",
+		"authors": ["Gordon V. Cormack", "Charles L. A. Clarke", "Stefan Büttcher"],
+		"title": "Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods",
+		"venue": "SIGIR 2009",
+		"year": 2009,
+		"url": "https://doi.org/10.1145/1571941.1572114"
+	},
+	{
+		"id": "anthropic-contextual-retrieval",
+		"authors": ["Daniel Ford"],
+		"title": "Introducing Contextual Retrieval",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/news/contextual-retrieval",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "openai-memory",
+		"authors": ["OpenAI"],
+		"title": "Memory and new controls for ChatGPT",
+		"venue": "OpenAI",
+		"year": 2024,
+		"url": "https://openai.com/index/memory-and-new-controls-for-chatgpt/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "packer2023memgpt",
+		"authors": ["Charles Packer", "Sarah Wooders", "Kevin Lin", "Vivian Fang"],
+		"title": "MemGPT: Towards LLMs as Operating Systems",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2310.08560"
 	},
 	{
 		"id": "pope2022",
@@ -518,6 +692,32 @@
 		"venue": "NeurIPS 2023",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2304.08485"
+	},
+	{
+		"id": "xie2024osworld",
+		"authors": ["Tianbao Xie", "Danyang Zhang", "Jixuan Chen", "Xiaochuan Li"],
+		"title": "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.07972"
+	},
+	{
+		"id": "anthropic-computer-use",
+		"authors": ["Anthropic"],
+		"title": "Developing a computer use model",
+		"venue": "Anthropic",
+		"year": 2024,
+		"url": "https://www.anthropic.com/news/developing-computer-use",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "anthropic-vision",
+		"authors": ["Anthropic"],
+		"title": "Vision",
+		"venue": "Claude API documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/vision",
+		"accessed": "2026-10-25"
 	},
 	{
 		"id": "sohl-dickstein2015",

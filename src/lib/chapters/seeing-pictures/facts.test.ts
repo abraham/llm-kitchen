@@ -31,6 +31,15 @@ describe('seeing pictures', () => {
 		expect([d.imageSize, d.grid, d.patchSize, d.patchDimensions]).toEqual([224, 7, 32, 768]);
 	});
 
+	it('in depth: a 1280 × 800 screenshot in 28-pixel patches is 46 × 29 = 1,334 tokens; ten 13,340', () => {
+		const tokens = (w: number, h: number) => Math.ceil(w / 28) * Math.ceil(h / 28);
+		// Anthropic's documented examples, to check the formula.
+		expect([tokens(200, 200), tokens(1000, 1000), tokens(1092, 1092)]).toEqual([64, 1296, 1521]);
+		expect([Math.ceil(1280 / 28), Math.ceil(800 / 28), tokens(1280, 800)]).toEqual([46, 29, 1334]);
+		expect(10 * tokens(1280, 800)).toBe(13340);
+		expect(d.grid * d.grid).toBe(49);
+	});
+
 	it('gives identical background patches identical vectors', () => {
 		const patches: number[][] = d.images[0].patches;
 		expect(patches[0]).toEqual(patches[48]);

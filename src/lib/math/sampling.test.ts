@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applyTemperature, sampleIndex, seededRandom, softmax, topK } from './sampling.ts';
+import { applyTemperature, sampleIndex, seededRandom, softmax, topK, topP } from './sampling.ts';
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
@@ -59,6 +59,35 @@ describe('topK', () => {
 		const kept = topK(items, 2);
 		expect(kept.map((w) => w.item)).toEqual(['b', 'c']);
 		expect(kept[0].p).toBeCloseTo(0.5 / 0.9);
+	});
+});
+
+describe('topP', () => {
+	const items = [
+		{ item: 'a', p: 0.1 },
+		{ item: 'b', p: 0.5 },
+		{ item: 'c', p: 0.3 },
+		{ item: 'd', p: 0.1 }
+	];
+
+	it('keeps the fewest most likely items whose chances reach p, in their original order', () => {
+		expect(topP(items, 0.5).map((w) => w.item)).toEqual(['b']);
+		expect(topP(items, 0.6).map((w) => w.item)).toEqual(['b', 'c']);
+		const kept = topP(items, 0.8);
+		expect(kept.map((w) => w.item)).toEqual(['b', 'c']);
+		expect(kept[0].p).toBeCloseTo(0.5 / 0.8);
+	});
+
+	it('keeps everything at p = 1 and at least one item at any p', () => {
+		expect(topP(items, 1)).toHaveLength(4);
+		expect(topP(items, 0).map((w) => w.item)).toEqual(['b']);
+	});
+
+	it('keeps few items when one is likely and many when chances are even', () => {
+		const sure = [0.9, 0.04, 0.03, 0.03].map((p, item) => ({ item, p }));
+		const unsure = [0.25, 0.25, 0.25, 0.25].map((p, item) => ({ item, p }));
+		expect(topP(sure, 0.9)).toHaveLength(1);
+		expect(topP(unsure, 0.9)).toHaveLength(4);
 	});
 });
 

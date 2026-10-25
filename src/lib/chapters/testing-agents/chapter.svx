@@ -1,0 +1,213 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import RunTrace from './RunTrace.svelte';
+	import TestSet from './TestSet.svelte';
+</script>
+
+## Looking inside a run
+
+<At levels="simple">
+
+When an agent gets a job wrong, its last message rarely says why. So harnesses keep a **trace**: a
+log of every model call and every tool call in the run, in order. Here are the traces of seven
+runs recorded for earlier chapters, such as <ChapterRef to="tools" /> and <ChapterRef to="trust-and-guardrails" />.
+The darker a number, the bigger that call's prompt.
+
+</At>
+<At levels="standard deep">
+
+When an agent fails, its final message rarely says why. Did it search for the wrong thing, get a
+bad tool result, or follow something it shouldn't have? To find out, harnesses keep a **trace**:
+a record of every model call and tool call in a run, in order, often with how long each took and
+how many tokens it used. Here are the traces of seven runs recorded for earlier chapters, from
+the chapters <ChapterRef to="the-model-is-not-the-product" /> to <ChapterRef to="trust-and-guardrails" />.
+A darker cell means a bigger prompt.
+
+</At>
+
+<RunTrace />
+
+<At levels="simple">
+
+With no guardrails, the summary run never answers. Its trace shows why: the page told it to delete
+the files, and it did, then fetched the page again and started over. Its 8 calls read 4,179 tokens
+in all, and every one of them costs money.
+
+</At>
+<At levels="standard deep">
+
+With no guardrails, the summary run ends with no answer, which on its own says little. The trace
+shows the page's hidden instruction, three deletions, a second fetch of the same page, and a
+fourth attempt at a file that is gone. Each call reads its whole prompt again, so the 8 calls read
+4,179 tokens in all. Prompts are most of what an agent costs: in τ-bench, a test introduced below,
+they were 95.9% of the price of a GPT-4o agent.<Cite id="yao2024taubench" /> Anthropic says adding
+full tracing in production is what let them see why their agents failed to find obvious
+information.<Cite id="anthropic-multi-agent" />
+
+</At>
+
+## A fixed set of tests
+
+<At levels="simple">
+
+A trace explains one run. To know whether a change to the prompt, the tools, or the model made
+things better, you need an <GlossaryPopover term="eval">eval</GlossaryPopover>: a fixed list of
+tasks, each with a way to check the result, run again after every change. Some results code can
+check exactly. Does the answer contain 7006652? Are all the user's files still there?
+
+</At>
+<At levels="standard deep">
+
+A trace explains one run. To know whether a change to the prompt, the tools, or the model made
+things better or worse, you need an <GlossaryPopover term="eval">eval</GlossaryPopover>: a fixed
+set of tasks, each with a way to check the result, run again after every change. It needn't be
+big: Anthropic started with about 20 tasks drawn from real use, because early changes moved
+results so much that a few cases showed it.<Cite id="anthropic-multi-agent" />
+
+Where the right answer is known, code can check it: does the answer contain 7006652? For an agent
+that changes things, it can also check the **end state**, what the world looks like afterwards,
+rather than the exact steps, since an agent may reach the same result by different
+paths.<Cite id="anthropic-multi-agent" /> Are all the user's files still there?
+
+</At>
+
+<TestSet />
+
+<At levels="simple">
+
+Code checks are fast and never change their mind. They catch the multiplication done in the
+model's head (7,050,952 is wrong) and the run that deleted every file. Only 2 of the 7 runs pass
+both checks.
+
+</At>
+<At levels="standard deep">
+
+The two code checks catch the multiplication done without a calculator (7,050,952 is wrong), the
+reply that never finishes the sentence, the "summary" that mentions no cat facts, and the run that
+deleted every file. The run with "ask before deleting" keeps the files but never answers, so it
+fails too. Only 2 of the 7 runs pass both checks.
+
+</At>
+
+## A model as the grader
+
+<At levels="simple">
+
+Code can only check answers it can match, like a number. For free-form answers, like a summary,
+teams use an <GlossaryPopover term="llm-judge">LLM as a judge</GlossaryPopover>: another model reads
+the task and the answer and says pass or fail. Here the grader is the same small model that did
+the tasks. On its own, it passes all five answers, including the wrong product. Shown a correct
+answer, it catches the wrong product but still passes two answers that are wrong.
+
+</At>
+<At levels="standard deep">
+
+String matching only works when the right answer has one fixed form. A good summary can be
+worded a thousand ways, so teams also use an <GlossaryPopover term="llm-judge">LLM as a
+judge</GlossaryPopover>: a model given the task, the answer, and often a list of criteria or a
+correct answer, that says pass or fail. Here the grader is Qwen2.5-1.5B-Instruct, the same small
+model that ran the tasks. On its own it passes all five answers, agreeing with the code checks on
+only 2. Shown a correct answer, it fails the wrong product, though its reason has the two numbers
+the wrong way round, and still passes the reply that never finishes the sentence and the summary
+with no cat facts: it mixes up the correct answer with the one it is grading. That is 3 of 5.
+
+Strong graders do much better. GPT-4, judging which of two chat answers was better, agreed with
+people over 80% of the time, as often as people agree with each other. It also favored the answer
+shown first, longer answers, and, to a degree, its own answers.<Cite id="zheng2023judge" /> So a
+grader needs testing too, against answers people have graded. Anthropic grades research reports
+with one model call and a rubric: are the claims accurate, the sources good, the task fully
+covered, the tools used sensibly? People still test by hand, and caught what the grader missed,
+such as agents choosing pages written to rank in search over better
+sources.<Cite id="anthropic-multi-agent" />
+
+</At>
+
+## Watching real use
+
+<At levels="simple">
+
+A test set only holds the tasks someone thought of. Once people use an agent, traces from real
+runs show the failures nobody wrote a test for, and each one can become a new test. And the same
+task can go differently from one run to the next, so it's worth running each test more than once.
+
+</At>
+<At levels="standard deep">
+
+A test set only holds the tasks someone thought to write down. Once people use an agent, traces
+of real runs show the failures nobody wrote a test for, and each can become a new test. Watching
+needn't mean reading people's conversations: Anthropic monitors patterns, such as which decisions
+agents make and how they interact, without looking at what individual users
+wrote.<Cite id="anthropic-multi-agent" />
+
+The recordings here use greedy decoding, so a rerun gives the same trace. Real agents usually
+sample, so the same task can succeed once and fail the next time. τ-bench, a test of agents
+serving simulated customers that checks the final state of a database much as the files are
+checked above, runs each task several times. GPT-4o solved about 61% of its shop tasks on a single
+try, but fewer than 25% on all of 8 tries.<Cite id="yao2024taubench" />
+
+</At>
+
+## Benchmarks
+
+<At levels="simple">
+
+Public test sets, called benchmarks, compare agents on the same tasks. GAIA has 466 questions that
+are simple for people but need web browsing and tools. People got 92% right; GPT-4 with plugins got
+15%.<Cite id="mialon2023gaia" /> A benchmark score says how a model does on those tasks, not on
+yours, which is why <ChapterRef to="picking-a-model" /> suggests trying your own prompts.
+
+</At>
+<At levels="standard deep">
+
+Public test sets, **benchmarks**, compare agents on the same tasks. GAIA has 466 questions that
+are simple for people but need reasoning, web browsing, handling more than text, and tools.
+Its authors found people got 92% right and GPT-4 with plugins 15%.<Cite id="mialon2023gaia" />
+A benchmark says how an agent does on its tasks, with its tools, graded its way. Your own
+tasks may differ on all three, which is why <ChapterRef to="picking-a-model" /> ends with trying
+your own prompts, and why teams keep an eval of their own.
+
+</At>
+<At levels="deep">
+
+### Once versus every time
+
+If a task succeeds independently with probability $p$ on each try, the chance it succeeds on all
+of $k$ tries is $p^k$, which falls fast: at $p = 0.6$, one try succeeds 60% of the time but eight
+in a row only $0.6^8 \approx 1.7\%$ of the time. Real tasks vary, some always passing and some
+never, which is why τ-bench's measured drop is gentler than that. τ-bench calls this measure
+pass^k. From $n$ tries of a task with $c$ successes it estimates it as
+
+$$
+\text{pass}^k = \frac{\binom{c}{k}}{\binom{n}{k}},
+$$
+
+averaged over tasks: the chance that $k$ tries picked from the $n$ are all
+successes.<Cite id="yao2024taubench" /> It is the opposite of pass@k, the chance that at least one
+of $k$ tries succeeds, which suits tasks where a test can pick out the good try, like code with
+unit tests.
+
+</At>
+
+<RecapCard>
+
+- A trace records every model call and tool call in a run, so you can see where a failure began
+  and what each step cost.
+- An eval is a fixed set of tasks with a way to check each, run again after every change. Code
+  can check answers with a known form and the end state, such as which files are left.
+- A model can grade free-form answers, but small graders are easily fooled, and even strong ones
+  need checking against people.
+- Real use finds failures tests miss, the same task can pass once and fail the next time, and a
+  benchmark score is only about the benchmark's tasks.
+
+<At levels="deep">
+
+- If each try succeeds with chance $p$, all of $k$ tries do with chance $p^k$.
+
+</At>
+</RecapCard>
+
+**Next question:** GPT-2 is one kind of model. What other kinds are built from the same pieces?

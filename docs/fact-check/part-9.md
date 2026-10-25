@@ -1,4 +1,4 @@
-# Fact-check: Part IX, Other kinds of models (Ch 31–36), and the wrap-up (Ch 37–40)
+# Fact-check: Part IX, Other kinds of models (Ch 35–40), and the wrap-up (Ch 41–44)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts` (the recorded data says what the prose says),
@@ -15,7 +15,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
   and the weights of the toy Decision Transformer trained on them, by `scripts/record/decisions.py`
   (seeded; the model's revision is the SHA-1 of the script).
 
-## Ch 31. Reading both ways
+## Ch 35. Reading both ways
 
 | Claim                                                                                                                                   | Backing                                                             |
 | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
@@ -32,7 +32,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: 10 tokens: 55 of 100 pairs with the causal mask                                                                               | Test                                                                |
 | In depth: only the hidden 15% are predicted; of them 80% `[MASK]`, 10% random, 10% unchanged, since `[MASK]` never appears in real text | Cite `devlin2019` (§3.1, Appendix C.2)                              |
 
-## Ch 32. Many experts
+## Ch 36. Many experts
 
 | Claim                                                                                                | Backing                                                               |
 | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
@@ -48,7 +48,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: favored experts train faster; a loss term penalizes uneven use                             | Cite `shazeer2017` (§4)                                               |
 | In depth: DeepSeek-V3 balances experts without an extra loss term                                    | Cite `deepseek2024` (abstract)                                        |
 
-## Ch 33. Remembering without attention
+## Ch 37. Remembering without attention
 
 | Claim                                                                                                                  | Backing                                         |
 | ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
@@ -67,23 +67,29 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: the LSTM's cell is carried forward by addition (constant error carousel), with gates for writing and reading | Cite `hochreiter1997` (abstract)                |
 | In depth: GPT-2 at 1,024 tokens keeps 18,874,368 numbers; the tiny model 32                                            | Test (`canonical.json`)                         |
 
-## Ch 34. Seeing pictures
+## Ch 38. Seeing pictures
 
-| Claim                                                                                                                                                   | Backing                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                         |
-| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data)          |
-| Identical background patches get identical vectors                                                                                                      | Test                                           |
-| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)                  |
-| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                           |
-| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                                 |
-| Simple: restates Standard in plainer words, with no new claims                                                                                          | Reviewed against the Standard text             |
-| In depth: 32 × 32 × 3 = 3,072 numbers per patch, one learned matrix to 768, plus position                                                               | Cite `dosovitskiy2021` (§3.1); test            |
-| In depth: a class token makes 50 vectors; its output stands for the picture; CLIP's shared space has 512 numbers                                        | Cite `dosovitskiy2021`; test (recorded config) |
-| In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                |
-| In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                |
+| Claim                                                                                                                                                   | Backing                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| A vision transformer cuts a picture into patches, each turned into a vector                                                                             | Cite `dosovitskiy2021`                                                                       |
+| CLIP ViT-B/32: 224-pixel pictures, 7 × 7 grid of 32-pixel patches, 768 numbers each                                                                     | Test (recorded model config and data)                                                        |
+| Identical background patches get identical vectors                                                                                                      | Test                                                                                         |
+| CLIP trained on 400 million picture–caption pairs, two parts pushed together                                                                            | Cite `radford2021` (abstract)                                                                |
+| All 12 exact descriptions pick the right picture first; "something round" barely prefers a circle; "a photo of a cat" scores lower than any exact match | Test                                                                                         |
+| Multimodal chat models turn pictures into tokens in the language model's context                                                                        | Cite `liu2023`                                                                               |
+| Simple: restates Standard in plainer words, with no new claims                                                                                          | Reviewed against the Standard text                                                           |
+| In depth: 32 × 32 × 3 = 3,072 numbers per patch, one learned matrix to 768, plus position                                                               | Cite `dosovitskiy2021` (§3.1); test                                                          |
+| In depth: a class token makes 50 vectors; its output stands for the picture; CLIP's shared space has 512 numbers                                        | Cite `dosovitskiy2021`; test (recorded config)                                               |
+| In depth: similarities × a learned temperature (100) before the softmax; red circle 0.271 vs square 0.268 gives 42% vs 32%                              | Cite `radford2021` (§2.5); test                                                              |
+| In depth: training batches of 32,768 pairs; each picture picks its caption and each caption its picture                                                 | Cite `radford2021` (§2.3, §2.5)                                                              |
+| Computer-use agent: screenshot in, click/type/key actions out, the next screenshot is the tool result; the example run is made up                       | Cite `anthropic-computer-use`; labeled "made-up"                                             |
+| Anthropic trained its model to count pixels to click, comparing it to counting letters; screenshots are a flipbook that can miss short-lived messages   | Cite `anthropic-computer-use` ("The research process", "The future of computer use")         |
+| OSWorld: 369 tasks in real apps, checked by scripts; people over 72%, best model 12.24%, failing at GUI grounding and operational knowledge             | Cite `xie2024osworld` (abstract)                                                             |
+| Anthropic's first computer-use model scored 14.9% on OSWorld                                                                                            | Cite `anthropic-computer-use`                                                                |
+| Prompt injection through what's on screen is a main risk                                                                                                | Cite `anthropic-computer-use` ("Making computer use safe")                                   |
+| In depth: 28 × 28-pixel patches, ⌈w/28⌉ × ⌈h/28⌉ tokens; 1280 × 800 is 46 × 29 = 1,334; ten screenshots 13,340                                          | Cite `anthropic-vision` ("Resolution and token cost"); test (also checks the docs' examples) |
 
-## Ch 35. Painting from noise
+## Ch 39. Painting from noise
 
 | Claim                                                                                                        | Backing                                                   |
 | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
@@ -97,7 +103,7 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: after 50 steps ᾱ ≈ 0.0045, under 7% of the point left                                              | Test                                                      |
 | In depth: the sampling step x_{t−1} = (x_t − β_t/√(1 − ᾱ_t) ε̂)/√(1 − β_t) + σ_t z, no fresh noise at the end | Cite `ho2020` (Algorithm 2); `generate` in `diffusion.ts` |
 
-## Ch 36. Choosing actions
+## Ch 40. Choosing actions
 
 | Claim                                                                                                                                                     | Backing                                                 |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -122,19 +128,19 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 | In depth: R̂_t = r_t + r_{t+1} + …, R̂_{t+1} = R̂_t − r_t; aiming 12 the tokens go 12 … 19, and the goal pays 19                                             | Cite `chen2021decision`; test                           |
 | In depth: many RL methods estimate the reward a move leads to and pick the best                                                                           | Cite `sutton2018`                                       |
 
-## Ch 37. Recap
+## Ch 41. Recap
 
 The diagram restates earlier chapters; each box links to its chapter. The quiz has been its own
-chapter (now Ch 40) since milestone 20.
+chapter (now Ch 44) since milestone 20.
 
 - [x] Simple: restates the summary paragraph in plainer words, with no new claims.
 - [x] In depth: GPT-2 in a few lines: h = W_E[x] + W_P[i] (Ch 5, 10); the block update (Ch 10's In
       depth); softmax(LN_f(h_n) W_Eᵀ / T) (Ch 10's logit lens, Ch 3's temperature); cross-entropy
       and the gradient step (Ch 7's In depth). Each formula restates its chapter.
-- [x] In depth: each other kind of model changes one line: the mask (Ch 31), the MLP (Ch 32),
-      attention itself (Ch 33), what a token stands for (Ch 34, 36), how the output is made (Ch 35).
+- [x] In depth: each other kind of model changes one line: the mask (Ch 35), the MLP (Ch 36),
+      attention itself (Ch 37), what a token stands for (Ch 38, 40), how the output is made (Ch 39).
 
-## Ch 38. From message to reply
+## Ch 42. From message to reply
 
 Each stage restates the chapters it links (`src/lib/chapters/end-to-end/data.ts`); the unit test checks that
 every Part I–VIII is linked from a stage and Part IX from the closing box. Data comes from three
@@ -142,9 +148,9 @@ existing recordings, labeled in the widget:
 
 - [x] The harness, cache, tool, and reply stages use the Ch 23 recording
       (`static/data/agent/chat.json`, Qwen2.5-1.5B-Instruct): call 1 is 400 tokens, call 2 is 493 and
-      starts with the whole of call 1, so only 93 tokens need new work (Ch 25). The one tool call
+      starts with the whole of call 1, so only 93 tokens need new work (Ch 26). The one tool call
       is `search_rhymes` with `{"query": "cat"}`; the run's policy is `none` (no guardrail asked),
-      which the widget says, noting the search only reads (Ch 30).
+      which the widget says, noting the search only reads (Ch 32).
 - [x] In-model stages use GPT-2 small on "The cat sat on the" (`static/data/traces/gpt2/the-cat-sat.json`,
       `static/data/vectors/gpt2/the-cat-sat.json`): 5 tokens; temperature 0 picks " floor" at 7.6%; the
       logit lens reads " same" after block 1 and " floor" after blocks 8 and 12 (as Ch 10 says).
@@ -153,10 +159,10 @@ existing recordings, labeled in the widget:
       vectors for ' the' and its position"). The text says GPT-2 specifically, since Qwen2.5 uses
       rotary position embeddings inside attention instead.
 - [x] KV cache: 500 tokens took about 10 s with the cache and 43 s without
-      (`static/data/caching/kv-cache.json`, as in Ch 25).
+      (`static/data/caching/kv-cache.json`, as in Ch 26).
 - [x] "The loop stops at an end-of-turn token": Ch 11 and Ch 15 (chat markers); the Qwen prompt
       ends each turn with `<|im_end|>`.
-- [x] The closing box's one-line summaries match Ch 31–36 (both-ways attention; part of the network
+- [x] The closing box's one-line summaries match Ch 35–40 (both-ways attention; part of the network
       per token; fixed-size memory; picture patches as tokens; refined from noise; game moves as
       tokens).
 - [x] Simple: restates the intro and the two-loops paragraphs, with no new claims.
@@ -165,7 +171,7 @@ existing recordings, labeled in the widget:
       with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
       21 + 59 + the end-of-turn token.
 
-## Ch 39. Picking a model
+## Ch 43. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
@@ -189,10 +195,10 @@ every name splits into known parts that spell it back.
 | `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                            | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts) |
 | Simple: restates Standard in plainer words, with no new claims                                                          | Reviewed against the Standard text                                    |
 | In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                 | Cite `qwen25-model-card`; test (`weightBytes`)                        |
-| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 25 In depth (`qwen2024`, config); test                             |
+| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 26 In depth (`qwen2024`, config); test                             |
 | In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
 
-## Ch 40. Check yourself
+## Ch 44. Check yourself
 
 Fifteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
 has at least one. Each answer restates its linked chapter:
@@ -203,14 +209,14 @@ has at least one. Each answer restates its linked chapter:
       (Ch 13; added in milestone 21).
 - [x] Speculative decoding writes exactly the big model's text in fewer passes (Ch 14; added in
       milestone 21).
-- [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 25, 27, 29, 30,
+- [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 26, 28, 31, 32,
       31). The e2e test answers all fifteen and checks the revisit list.
 - [x] A Decision Transformer asked for more than any training run scored plays like the best runs
-      it has seen (Ch 36; added with the chapter).
+      it has seen (Ch 40; added with the chapter).
 - [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
       prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 25 with no new
       claims.
 - [x] In depth only: cross-entropy averages −ln p over the real next tokens (Ch 7's In depth);
       min(1, p/q) and a redraw from max(0, p − q) keep the big model's probabilities (Ch 14's In
-      depth); without a KV cache the work grows with the square of n (Ch 25's In depth); Mixtral
-      shares attention and embeddings, so a token uses more than a quarter (Ch 32's In depth).
+      depth); without a KV cache the work grows with the square of n (Ch 26's In depth); Mixtral
+      shares attention and embeddings, so a token uses more than a quarter (Ch 36's In depth).

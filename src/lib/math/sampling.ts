@@ -40,6 +40,24 @@ export function topK<T>(items: readonly Weighted<T>[], k: number): Weighted<T>[]
 	return normalize(kept);
 }
 
+/**
+ * Nucleus sampling: keep the smallest set of most likely items whose chances add up to at least
+ * `p` (always at least one), in their original order, and renormalize.
+ */
+export function topP<T>(items: readonly Weighted<T>[], p: number): Weighted<T>[] {
+	const ranked = [...items].map((w, i) => ({ w, i })).sort((a, b) => b.w.p - a.w.p || a.i - b.i);
+	const total = items.reduce((a, w) => a + w.p, 0);
+	let sum = 0;
+	let count = 0;
+	while (count < ranked.length && (count === 0 || sum < p * total)) sum += ranked[count++].w.p;
+	return normalize(
+		ranked
+			.slice(0, count)
+			.sort((a, b) => a.i - b.i)
+			.map(({ w }) => w)
+	);
+}
+
 export function normalize<T>(items: readonly Weighted<T>[]): Weighted<T>[] {
 	const sum = items.reduce((a, w) => a + w.p, 0);
 	return items.map((w) => ({ item: w.item, p: sum > 0 ? w.p / sum : 0 }));

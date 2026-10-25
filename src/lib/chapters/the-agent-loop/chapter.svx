@@ -98,5 +98,5 @@ When the prompt outgrows its budget, the harness drops, summarizes, or retrieves
 </At>
 </RecapCard>
 
-**Next question:** every tool result is text the harness pastes into the prompt: search results, web
-pages, files. What if some of that text gives the model instructions of its own?
+**Next question:** here the model chose every step. Is a loop like this always the best way to build
+an agent?

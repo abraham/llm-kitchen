@@ -176,6 +176,17 @@ text from 8 million web pages, nudging all of its 124 million weights to make th
 likely.<Cite id="radford2019" />
 
 </At>
+<At levels="deep">
+
+### Dropout
+
+Training GPT-2 also used **dropout**: at each step, some of the numbers flowing through the network
+are set to zero at random, each with a chance of 0.1, a different tenth every step.<Cite id="gpt2-config" />
+The network can't rely on any one neuron, so it memorizes its training text less and does better on
+text it hasn't seen.<Cite id="srivastava2014" /> Dropout is only for training: when the model is used,
+nothing is dropped, so the same input always gives the same probabilities.
+
+</At>
 
 <RecapCard>
 

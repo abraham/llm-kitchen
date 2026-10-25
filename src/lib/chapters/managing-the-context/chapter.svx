@@ -97,5 +97,5 @@ model and put back into the prompt later.
 </At>
 </RecapCard>
 
-**Next question:** every call re-sends the whole conversation, and the model reads all of it again.
-Does it really redo all that work every time?
+**Next question:** retrieval found the cat rhyme by its meaning. Is meaning always the best way to
+search, and what can the harness keep once the chat is over?

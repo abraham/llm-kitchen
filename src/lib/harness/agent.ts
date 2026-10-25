@@ -97,6 +97,8 @@ export interface ContextStrategy {
 /** The `managing-the-context` session: six agent tasks, then a question about the first one. */
 export interface ContextSession {
 	model: AgentRun['model'];
+	embedder: { id: string; revision: string };
+	system: string;
 	budget: number;
 	baseTokens: number;
 	question: string;

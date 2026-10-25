@@ -1,6 +1,12 @@
 import canonical from '../../../models/canonical.json';
 import { type Check, array, integer, nullable, object, string } from './check.ts';
-import { agentRun, contextSession } from './parsers/agent.ts';
+import {
+	agentGrades,
+	agentRun,
+	contextSession,
+	memoryRecording,
+	searchQuestions
+} from './parsers/agent.ts';
 import { embeddingMap, embeddingVectors } from './parsers/embeddings.ts';
 import { clip, clipImages, decisionRecording, fillMask } from './parsers/models.ts';
 import {
@@ -19,7 +25,7 @@ import {
 	routingRecording,
 	speculativeRecording
 } from './parsers/runs.ts';
-import { tokenVectors, trace } from './parsers/trace.ts';
+import { attentionScores, tokenVectors, trace } from './parsers/trace.ts';
 
 export interface Dataset<T> {
 	/** Path under `static/data/`. */
@@ -62,6 +68,7 @@ export const DATASETS = {
 	'traces/quirk-moon': traceFile('quirk-moon'),
 	'traces/quirk-painter': traceFile('quirk-painter'),
 	'vectors/the-cat-sat': perModel('vectors', 'the-cat-sat', tokenVectors, 'traces'),
+	'attention/ioi-scores': perModel('attention', 'ioi-scores', attentionScores, 'attention'),
 	'embeddings/minilm-map': dataset('embeddings/minilm-map.json', embeddingMap, 'embeddings'),
 	'embeddings/minilm-vectors': dataset(
 		'embeddings/minilm-vectors.json',
@@ -86,6 +93,9 @@ export const DATASETS = {
 	'agent/inject-ask': dataset('agent/inject-ask.json', agentRun, 'agent'),
 	'agent/inject-allowlist': dataset('agent/inject-allowlist.json', agentRun, 'agent'),
 	'agent/context': dataset('agent/context.json', contextSession, 'agent'),
+	'agent/grades': dataset('agent/grades.json', agentGrades, 'grading'),
+	'agent/search': dataset('agent/search.json', searchQuestions, 'search'),
+	'agent/memory': dataset('agent/memory.json', memoryRecording, 'memory'),
 	'caching/kv-cache': dataset('caching/kv-cache.json', kvCacheRun, 'caching'),
 	'injection/lab': dataset('injection/lab.json', injectionLab, 'injection'),
 	'encoders/fill-mask': dataset('encoders/fill-mask.json', fillMask, 'encoder'),
@@ -100,8 +110,11 @@ export type DataOf<I extends DatasetId> = (typeof DATASETS)[I] extends Dataset<i
 type After<T, P extends string> = T extends `${P}${infer N}` ? N : never;
 /** Names of the recorded GPT-2 traces, as in `traces/<name>`. */
 export type TraceName = After<DatasetId, 'traces/'>;
-/** Names of the recorded agent runs, as in `agent/<name>` (the context session is a different shape). */
-export type AgentRunName = Exclude<After<DatasetId, 'agent/'>, 'context'>;
+/** Names of the recorded agent runs, as in `agent/<name>` (the context session and grades are other shapes). */
+export type AgentRunName = Exclude<
+	After<DatasetId, 'agent/'>,
+	'context' | 'grades' | 'search' | 'memory'
+>;
 
 const envelope = object({
 	dataset: string,

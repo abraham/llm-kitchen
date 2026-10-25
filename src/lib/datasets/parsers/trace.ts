@@ -24,3 +24,15 @@ export const tokenVectors = object({
 	logitLens: array(array(candidate))
 });
 export type TokenVectors = Infer<typeof tokenVectors>;
+
+/** Every GPT-2 head's raw scores (query · key / √64) for one sentence, before mask and softmax. */
+export const attentionScores = object({
+	model: string,
+	modelDisplayName: string,
+	prompt: string,
+	tokens: array(token),
+	headSize: integer,
+	/** scores[layer][head][query][key], every pair, later keys included. */
+	scores: array(array(array(array(number))))
+});
+export type AttentionScores = Infer<typeof attentionScores>;

@@ -1,0 +1,139 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import SplitTheWork from './SplitTheWork.svelte';
+</script>
+
+## One prompt for everything
+
+<At levels="simple">
+
+In <ChapterRef to="the-agent-loop" />, one agent did every step of the job in one conversation.
+Every tool result stayed in its prompt, so each call read more than the last. On a big job, like
+comparing ten products, the prompt fills up with search results the agent no longer needs.
+
+</At>
+<At levels="standard deep">
+
+The agent in <ChapterRef to="the-agent-loop" /> did every step in one conversation. Every tool
+result stayed in its prompt, so each call read more than the one before. On a big job, such as
+comparing ten products, the prompt fills with search results the agent has already used, and the
+harness has to drop or summarize them, as in <ChapterRef to="managing-the-context" />.
+
+</At>
+
+## A lead and its helpers
+
+<At levels="simple">
+
+Another way is to split the job. A **lead** agent breaks it into parts and writes a short task for
+each. Each part goes to a <GlossaryPopover term="subagent">subagent</GlossaryPopover>, a helper that
+starts with a fresh prompt holding only its task, makes its own tool calls, and sends back a short
+summary. The lead only ever reads the summaries. Anthropic's research feature works like
+this.<Cite id="anthropic-multi-agent" />
+
+</At>
+<At levels="standard deep">
+
+Another way is to split the job. A **lead** agent breaks it into parts and writes a short task for
+each. Each part goes to a <GlossaryPopover term="subagent">subagent</GlossaryPopover>, a helper that
+is an agent loop of its own: it starts with a fresh prompt holding only its task, makes its own
+tool calls, and sends back a short summary. The lead never sees the helpers' tool results, only
+their summaries. Anthropic's research feature works this way: a lead agent plans the search and
+starts helpers that each explore one part of the question with their own context, then pass back
+what matters.<Cite id="anthropic-multi-agent" />
+
+</At>
+
+Try it, with made-up prompt sizes:
+
+<SplitTheWork />
+
+<At levels="simple">
+
+With three parts of three tool calls each, one agent's last prompt is 1,110 tokens long. Split up,
+no prompt is over 540, and because the helpers can work at the same time, fewer calls wait for the
+one before.
+
+</At>
+<At levels="standard deep">
+
+With three subtasks of three tool calls each, one agent makes 10 calls and its last prompt is
+1,110 tokens long. Split up, there are 14 calls, but no prompt is over 540 tokens, and because the
+helpers can run at the same time, only 6 calls wait for the one before. Here the split version even
+reads fewer tokens in all, 4,260 against 7,050, because no prompt carries every result.
+
+</At>
+
+## What splitting costs
+
+<At levels="simple">
+
+The toy does the same work either way, but real helpers search more widely, so splitting usually
+costs more. In Anthropic's data, a system of several agents used about 15 times as many tokens as a
+chat. It paid off on broad questions that split into separate parts.<Cite id="anthropic-multi-agent" />
+It works less well when every part depends on the others, as in most coding, and the lead has to
+describe each part clearly, or helpers repeat each other's work.<Cite id="anthropic-multi-agent" />
+
+</At>
+<At levels="standard deep">
+
+The toy keeps the work the same either way. Real systems don't: their helpers search more widely,
+so they spend far more tokens. In Anthropic's data, an agent used about 4 times as many tokens as a
+chat, and a system of several agents about 15 times. In return, their lead with helpers did 90.2%
+better than a single agent on their own research test, especially on broad questions that split
+into independent parts.<Cite id="anthropic-multi-agent" />
+
+It works less well when every part needs the same shared context or depends on the others, which
+Anthropic says is true of most coding tasks. The lead also has to describe each task well: given
+vague tasks, their helpers repeated each other's searches or left gaps.<Cite id="anthropic-multi-agent" />
+And each helper can have its own instructions and its own tools,<Cite id="anthropic-multi-agent" />
+so a helper that only needs to read can be given tools that can't change anything, in the spirit
+of <ChapterRef to="trust-and-guardrails" />.
+
+</At>
+<At levels="deep">
+
+### The arithmetic
+
+One agent doing $N$ subtasks of $s$ tool calls makes $K = Ns + 1$ calls and, as in the agent loop,
+reads $K\,p_0 + a\,K(K-1)/2$ tokens in all, which grows with the square of the work. Split up, the
+lead's two calls read $p_0$ and $p_0 + Nc$, where $c$ is what each handoff and summary add, and
+each helper's $s + 1$ calls read $(s+1)\,h + a\,s(s+1)/2$, where $h$ is a helper's first prompt.
+The total,
+
+$$
+2p_0 + Nc + N\left[(s+1)\,h + a\,\frac{s(s+1)}{2}\right],
+$$
+
+grows only in proportion to $N$. The widget uses $p_0 = 300$, $a = 90$, $h = 150$, and $c = 80$.
+
+Anthropic found that how many tokens a system spends explains most of how well it does. On
+BrowseComp, a test of finding hard-to-find facts on the web, token use alone explained 80% of the
+differences in score, and the number of tool calls and the choice of model most of the
+rest.<Cite id="anthropic-multi-agent" /> Splitting the work across helpers is one way to spend
+more. Their lead also waits for each round of helpers to finish before going on: simpler, but one
+slow helper holds up the rest.<Cite id="anthropic-multi-agent" />
+
+</At>
+
+<RecapCard>
+
+- A lead agent can split a job and hand each part to a subagent that starts with a fresh prompt and
+  reports back a short summary.
+- No prompt has to hold every result, and helpers can run at the same time.
+- Real systems spend many more tokens this way. It pays off on broad jobs that split into
+  independent parts, less on tightly linked ones like most coding.
+
+<At levels="deep">
+
+- Split up, the tokens read grow in proportion to the number of subtasks; one agent's grow with
+  the square of the work.
+
+</At>
+</RecapCard>
+
+**Next question:** One agent or several, how do you know the job was done right?

@@ -1,4 +1,7 @@
 import type { AgentRun, ContextSession } from '../../harness/agent.ts';
+import type { AgentGrades } from '../../harness/evals.ts';
+import type { MemoryRecording } from '../../harness/memory.ts';
+import type { SearchQuestions } from '../../harness/search.ts';
 import {
 	type Check,
 	array,
@@ -6,6 +9,7 @@ import {
 	dictionary,
 	integer,
 	literal,
+	nullable,
 	number,
 	object,
 	optional,
@@ -38,6 +42,46 @@ export const agentRun: Check<AgentRun> = object({
 	steps: array(agentStep),
 	finished: boolean,
 	files: object({ before: array(string), after: array(string) })
+});
+
+const grade = nullable(
+	object({ reply: string, verdict: literal('pass', 'fail', 'unclear'), promptTokens: integer })
+);
+
+export const agentGrades: Check<AgentGrades> = object({
+	model: modelRef,
+	system: string,
+	cases: array(
+		object({
+			run: string,
+			reference: string,
+			answer: nullable(string),
+			alone: grade,
+			withReference: grade
+		})
+	)
+});
+
+export const searchQuestions: Check<SearchQuestions> = object({
+	embedder: object({ id: string, revision: string }),
+	questions: array(object({ question: string, about: integer, vector: array(number) }))
+});
+
+const memoryAnswer = object({ question: string, tokens: integer, answer: string });
+const memoryNotes = object({
+	request: string,
+	notes: string,
+	tokens: integer,
+	answers: array(memoryAnswer)
+});
+
+export const memoryRecording: Check<MemoryRecording> = object({
+	model: modelRef,
+	system: string,
+	notesHeader: string,
+	chatTokens: integer,
+	without: array(memoryAnswer),
+	notes: record(['general', 'specific'], memoryNotes)
 });
 
 const strategy = object({

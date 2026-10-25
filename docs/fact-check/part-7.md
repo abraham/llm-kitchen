@@ -1,4 +1,4 @@
-# Fact-check: Part VII, Harnesses (Ch 23–26)
+# Fact-check: Part VII, Harnesses (Ch 23–27)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -43,7 +43,30 @@ cat?" answered under each strategy, written to `static/data/agent/context.json`.
 | In depth: the summary shrank the 149-token first exchange to a 30-token note                              | Test                                                           |
 | In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it | Test (recorded reply and summary against the rhyme text)       |
 
-## Ch 25. Caching: reusing the work
+## Ch 25. Search and memory
+
+Data: the Ch 24 chat (`static/data/agent/context.json`); question vectors (MiniLM) from `scripts/record/search.py`; notes and new-chat answers (Qwen2.5-1.5B-Instruct, greedy) from `scripts/record/memory.py`.
+
+| Claim                                                                                                                                                                | Backing                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Words or meaning: question vectors from `scripts/record/search.py` (same MiniLM revision as the chat)                                                                | Test (first question's vector equals the chat's)                                |
+| BM25 rewards rare words and repeated use, discounts long texts                                                                                                       | Cite `robertson2009`                                                            |
+| Embeddings can miss an exact code like "TS-999" that keyword search finds                                                                                            | Cite `anthropic-contextual-retrieval`                                           |
+| Words find Sam, Leo, and the crown, which meaning misses; meaning finds "kitty", in no exchange                                                                      | Test (`search.ts` on the recorded vectors)                                      |
+| The crown pulls meaning toward Humpty Dumpty                                                                                                                         | Test                                                                            |
+| Merging lists by rank; Anthropic: embeddings plus BM25 missed fewer passages than embeddings alone                                                                   | Cite `cormack2009`; cite `anthropic-contextual-retrieval` (Conclusion, point 1) |
+| Merged 4 of 5, words 4, meaning 2; Leo missed (star 1st + 2nd beats Leo's 1st + 3rd)                                                                                 | Test                                                                            |
+| In depth: the BM25 formula with k₁ = 1.2, b = 0.75; the +1 inside the idf logarithm                                                                                  | Cite `robertson2009`; `bm25` in `harness/search.ts`                             |
+| Remembering: a new chat starts empty; memory features put saved notes into later prompts                                                                             | Cite `openai-memory`                                                            |
+| ChatGPT saves what you ask and details it picks up, later also past chats; view, delete, turn off, temporary chat; avoids sensitive details like health unless asked | Cite `openai-memory` (Feb 2024 post and its April 2025 update)                  |
+| Open notes: only Mei, made-up astronomy interests and camp; no question answered                                                                                     | Test (`scripts/record/memory.py` recording)                                     |
+| Specific notes: three right; Sam given Mei's star rhyme, Mei given Leo's clock rhyme, no Humpty Dumpty; new chat says Sam loves "Twinkle, twinkle"                   | Test                                                                            |
+| Some systems let the model move text in and out of its prompt, like an OS paging memory                                                                              | Cite `packer2023memgpt` (abstract)                                              |
+| In depth: notes 193 and 221 tokens vs the 616-token chat; Omar's prompt 25 → 254 tokens                                                                              | Test                                                                            |
+| In depth: reciprocal rank fusion, Σ 1/(k + r) with k = 60; Leo 0.0325 vs 0.0323                                                                                      | Cite `cormack2009`; test                                                        |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                       | Reviewed against the Standard text                                              |
+
+## Ch 26. Caching: reusing the work
 
 Data: `scripts/record/caching.py` times GPT-2 small (float32, CPU) generating 500 greedy tokens
 after "The cat sat on the", with and without its KV cache, three times each (median per token),
@@ -73,7 +96,7 @@ written to `static/data/caching/kv-cache.json`. The prompt-cache view is compute
 | In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                       |
 | In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                    |
 
-## Ch 26. Which model answers?
+## Ch 27. Which model answers?
 
 Data: `scripts/record/routing.py`: Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct, greedy, answer 40
 short questions under the system prompt "Answer with just the answer". Each answer is graded by code

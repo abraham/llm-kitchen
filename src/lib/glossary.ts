@@ -189,6 +189,13 @@ export const GLOSSARY = {
 			'Finding the stored text most relevant to a question (often by comparing embeddings) and putting it into the prompt.',
 		chapter: 'managing-the-context'
 	},
+	'keyword-search': {
+		term: 'keyword search',
+		definition:
+			'Ranking texts by which of the question’s own words they contain, giving more weight to rare words. It finds exact names and codes but not the same idea in other words.',
+		simple: 'Finding texts that contain the same words as the question.',
+		chapter: 'search-and-memory'
+	},
 	'tool-call': {
 		term: 'tool call',
 		definition:
@@ -206,6 +213,28 @@ export const GLOSSARY = {
 		definition:
 			'A model called in a loop by a harness that runs its tool calls and feeds the results back in.',
 		chapter: 'the-agent-loop'
+	},
+	subagent: {
+		term: 'subagent',
+		definition:
+			'An agent that another agent starts for one part of a job. It begins with a fresh prompt holding only its task, and reports back a short result.',
+		simple:
+			'A helper agent, given one part of a job and a fresh start, that reports back when done.',
+		chapter: 'splitting-the-work'
+	},
+	eval: {
+		term: 'eval',
+		definition:
+			'A fixed set of tasks with a way to check each result, run again after every change to see whether a model or agent got better or worse.',
+		simple: 'A fixed list of test tasks, each with a way to tell whether the result is right.',
+		chapter: 'testing-agents'
+	},
+	'llm-judge': {
+		term: 'LLM as a judge',
+		definition:
+			'Using a model to grade another model’s output, often against a list of criteria or a correct answer, where code can’t check it.',
+		simple: 'A model used to mark another model’s answers right or wrong.',
+		chapter: 'testing-agents'
 	},
 	cascade: {
 		term: 'cascade',
@@ -252,6 +281,12 @@ export const GLOSSARY = {
 	multimodal: {
 		term: 'multimodal model',
 		definition: 'A model that takes in more than one kind of input, such as text and pictures.',
+		chapter: 'seeing-pictures'
+	},
+	'computer-use': {
+		term: 'computer-use agent',
+		definition:
+			'An agent that sees screenshots and acts by clicking and typing, so it can work programs the way a person does.',
 		chapter: 'seeing-pictures'
 	},
 	diffusion: {
