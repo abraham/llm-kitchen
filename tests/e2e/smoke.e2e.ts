@@ -13,6 +13,14 @@ test('a chapter page renders its prerendered content', async ({ page }) => {
 	await expect(page.locator('em', { hasText: 'The cat sat on the ___' })).toBeVisible();
 });
 
+test('a chapter links to its source on GitHub for editing', async ({ page }) => {
+	await page.goto('/guessing-game');
+	await expect(page.getByRole('link', { name: 'Edit this chapter on GitHub' })).toHaveAttribute(
+		'href',
+		'https://github.com/abraham/llm-kitchen/edit/main/src/lib/chapters/guessing-game/chapter.svx'
+	);
+});
+
 test('an unknown chapter is a 404', async ({ page }) => {
 	const response = await page.goto('/not-a-chapter');
 	expect(response?.status()).toBe(404);

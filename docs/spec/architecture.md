@@ -147,7 +147,8 @@ conventions every shared component follows, are in [components.md](components.md
   live option. `Loading` renders data that is already here immediately, and a loading line or the
   error otherwise.
 - `ChapterLayout` renders the progress rail, the heading, the Ingredients box (from `buildsOn`), the
-  prose, and the link to the next chapter.
+  prose, the link to the next chapter, and "Edit this chapter on GitHub", which opens the chapter's
+  `chapter.svx` on `main` in GitHub's editor (`chapterEditUrl` in `site.ts`).
 - A test checks that every curriculum row has a folder with `chapter.svx`, and every folder a row;
   an e2e test checks that no prerendered page says "Loading recorded data".
 

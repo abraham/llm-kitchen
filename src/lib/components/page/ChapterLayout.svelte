@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import { chapter, label, next, partLabel, type Chapter } from '#lib/curriculum/index.ts';
 	import { LEVEL_NAMES, LEVELS, type ExtraLevel } from '#lib/levels.ts';
+	import { chapterEditUrl } from '#lib/site.ts';
 	import At from './At.svelte';
 	import CitationScope from './CitationScope.svelte';
 	import IngredientsBox from './IngredientsBox.svelte';
@@ -75,6 +76,13 @@
 					<p class="label">More chapters are on the way.</p>
 					<a href={resolve('/')}>Back to the menu</a>
 				{/if}
+				<p class="edit">
+					Spotted a mistake?
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a href={chapterEditUrl(meta.slug)} rel="noopener noreferrer" target="_blank"
+						>Edit this chapter on GitHub</a
+					>
+				</p>
 			</footer>
 		</main>
 	</div>
@@ -126,8 +134,15 @@
 		margin: 0;
 	}
 
-	.next a {
+	.next > a {
 		font-size: 1.25rem;
+	}
+
+	.next .edit {
+		margin: var(--space-6) 0 0;
+		color: var(--ink-muted);
+		font-family: var(--font-sans);
+		font-size: 0.875rem;
 	}
 
 	@media (min-width: 72rem) {
