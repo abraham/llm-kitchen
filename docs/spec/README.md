@@ -20,6 +20,7 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [sources.md](sources.md)                 | How claims are backed: citations, fact-check lists, and the core sources                        |
 | [levels.md](levels.md)                   | Plan: Simple, Standard, and In depth explanations, chosen in the app bar                        |
 | [downloads.md](downloads.md)             | How live models download, stay cached, and show their state, and the Downloads page             |
+| [model-tiers.md](model-tiers.md)         | Plan: one site-wide choice of Recorded, Small, or Large models, made on the Models page         |
 | [roadmap.md](roadmap.md)                 | What isn't built yet, and open questions                                                        |
 
 ## Rules
