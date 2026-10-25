@@ -55,13 +55,13 @@ down never blocks a merge; a failure shows up as a failed run.
   descriptions (`branding`); the hosting config (`hosting`); and color contrast (`tokens`).
 - **E2E (each chapter's `chapter.e2e.ts`, plus `tests/e2e/`):** each chapter's widgets, the menu and
   a 404 (`smoke`), stepping and keyboard (`interaction`), themes (`design`), explanation levels on
-  a fixture page (`levels`), the Downloads page and the cache states it shows (`downloads`), page
+  a fixture page (`levels`), the Models page, its tier choice, and the cache states it shows (`downloads`), page
   metadata
   (`branding`), what Firebase Hosting serves (`hosting`: clean URLs, the 404 page, headers, and
   caching), and on every page (`quality`):
   - no axe violations, in light and dark, once the widgets have loaded, and at Simple and In depth
     on chapters with passages for those levels;
-  - no requests to another origin, so nothing downloads before consent;
+  - no requests to another origin, so nothing downloads before a tier is chosen;
   - recorded data in the prerendered HTML, so no widget says "Loading" before JavaScript runs;
   - no sideways scrolling at phone width, and no SVG text in a figure smaller than 11px there;
   - a JavaScript budget of 150 KB gzipped, or 350 KB on the two pages that load the GPT-2
@@ -90,5 +90,5 @@ Chromium only.
 - The JavaScript budget above is enforced in CI.
 - Lighthouse (simulated mobile) performance and accessibility are at least 95 on every page
   (`tests/lighthouse/`, against the Firebase Hosting emulator, one page at a time). No page loads a
-  live model without consent, so every page is measured as a visitor first sees it.
-- Model downloads happen only after consent, in a worker.
+  live model under Recorded, the default, so every page is measured as a visitor first sees it.
+- Model downloads happen only after the visitor chooses a tier, in a worker.

@@ -19,7 +19,7 @@ special end token or a length limit.
 ## Data
 
 - Recorded GPT-2 small traces for the running example and its branches (`the-cat-sat-*`).
-- Live (T2): GPT-2 small, 8-bit ONNX, after consent. It keeps only the last 1,024 tokens.
+- Live (T2): GPT-2 small, 8-bit ONNX, once the visitor chooses the Small model tier. It keeps only the last 1,024 tokens.
 
 ## Decisions
 

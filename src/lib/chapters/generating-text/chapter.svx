@@ -121,8 +121,9 @@ with their own end-of-turn token.
 ## Run it live
 
 Everything above is recorded. To type your own beginning, pick any word, and change the temperature,
-press *Run it live* in the generator. It downloads a compressed copy of GPT-2 small (about 155 MB
-including the code that runs it) and runs it on your device. Nothing you type leaves your browser.
+choose the Small model tier on the Models page, linked from the top bar. It downloads a compressed
+copy of GPT-2 small, with a small embedding model and the code that runs them (about 179 MB), and
+runs it on your device. Nothing you type leaves your browser.
 
 <RecapCard>
 

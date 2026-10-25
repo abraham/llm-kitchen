@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { LiveOption } from '#lib/models/live.svelte.ts';
+	import Toggle from '../ui/Toggle.svelte';
 	import DataSourceBadge from './DataSourceBadge.svelte';
 	import type { DataSource } from './data-source.ts';
 
@@ -7,6 +9,7 @@
 		title,
 		label = 'Try it',
 		source,
+		live,
 		onreset,
 		controls,
 		children
@@ -14,6 +17,8 @@
 		title: string;
 		label?: string;
 		source?: DataSource;
+		/** The widget's live option: when a model runs it, a switch back to the recording. */
+		live?: LiveOption;
 		onreset?: () => void;
 		/** Step controls or other inputs, shown under the widget. */
 		controls?: Snippet;
@@ -36,6 +41,9 @@
 		<p class="title" id="{id}-title">{title}</p>
 		<span class="meta">
 			{#if source}<DataSourceBadge {source} />{/if}
+			{#if live?.state.state === 'live'}
+				<Toggle label="Show the recording" bind:checked={live.showRecording} />
+			{/if}
 			{#if onreset}
 				<button type="button" onclick={reset}>Reset</button>
 			{/if}

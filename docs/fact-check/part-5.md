@@ -13,21 +13,21 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 11. Generating text
 
-| Claim                                                                                               | Backing                                                                                                       |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep."               | Test (recorded trace)                                                                                         |
-| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"                       | Test (`the-cat-sat-bed`)                                                                                      |
-| Greedy decoding tends to repeat; sampling mostly avoids it                                          | Cite `holtzman2020`                                                                                           |
-| Each token costs a full run through all 124 million weights                                         | Model architecture (no caching is shown); `canonical.json`                                                    |
-| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                                             | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)                                                  |
-| The live copy is about 155 MB including the runtime                                                 | `canonical.json` `onnxMB` (128 at the pinned commit, `scripts.record check live`) + 27 MB runtime (unit test) |
-| The live 8-bit copy's percentages differ from the recorded ones                                     | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                                                     |
-| Simple: restates Standard in plainer words, with no new claims                                      | Reviewed against the Standard text                                                                            |
-| In depth: greedy takes the arg max; sampling draws from the tempered probabilities                  | Implementations (`sampling.ts`); Ch 2                                                                         |
-| In depth: " edge" 4.8%, then " of" 96%: " edge of" about 4.6%, over twice " floor," (2%)            | Test (recorded traces)                                                                                        |
-| In depth: beam search finds likelier texts, but the likeliest are often dull and repetitive         | Cite `holtzman2020`                                                                                           |
-| In depth: about 2 operations per weight per token: about 250 million per token, 124 billion for 500 | Cite `kaplan2020` (§2.1, C_forward ≈ 2N); test                                                                |
-| In depth: real systems keep earlier tokens' keys and values and run only the newest token           | Cite `pope2022`                                                                                               |
+| Claim                                                                                               | Backing                                                                                              |
+| --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Greedy continuation of "The cat sat on the" is "floor, and the cat was still asleep."               | Test (recorded trace)                                                                                |
+| Picking " bed" leads to the loop ", and the cat sat on the bed, and the cat…"                       | Test (`the-cat-sat-bed`)                                                                             |
+| Greedy decoding tends to repeat; sampling mostly avoids it                                          | Cite `holtzman2020`                                                                                  |
+| Each token costs a full run through all 124 million weights                                         | Model architecture (no caching is shown); `canonical.json`                                           |
+| `<\|endoftext\|>` is token 50,256 and GPT-2's end token                                             | Cite `gpt2-config` (`eos_token_id: 50256`); test (tokenizer)                                         |
+| The Small tier is about 179 MB with the runtime                                                     | `tierMB` (`tiers.test.ts`): `canonical.json` and `embedder.json` `onnxMB` (128 + 24) + 27 MB runtime |
+| The live 8-bit copy's percentages differ from the recorded ones                                     | Checked: " floor" 15.4% (8-bit) vs. 7.6% (full precision)                                            |
+| Simple: restates Standard in plainer words, with no new claims                                      | Reviewed against the Standard text                                                                   |
+| In depth: greedy takes the arg max; sampling draws from the tempered probabilities                  | Implementations (`sampling.ts`); Ch 2                                                                |
+| In depth: " edge" 4.8%, then " of" 96%: " edge of" about 4.6%, over twice " floor," (2%)            | Test (recorded traces)                                                                               |
+| In depth: beam search finds likelier texts, but the likeliest are often dull and repetitive         | Cite `holtzman2020`                                                                                  |
+| In depth: about 2 operations per weight per token: about 250 million per token, 124 billion for 500 | Cite `kaplan2020` (§2.1, C_forward ≈ 2N); test                                                       |
+| In depth: real systems keep earlier tokens' keys and values and run only the newest token           | Cite `pope2022`                                                                                      |
 
 ## Ch 12. Scale
 

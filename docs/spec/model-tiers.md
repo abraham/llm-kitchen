@@ -100,9 +100,10 @@ The page becomes **Models** ("Models and downloads" as its title), with the tier
    and what it needs. `Capability` is `'next-token' | 'embed' | 'fill-mask' | 'image-text' |
 'chat'`.
 2. **`stores/model-tier.svelte.ts`**: the chosen tier (`llm-kitchen:models` in `localStorage`, read
-   after hydration), its state (`recorded`, `downloading` with progress, `ready`, `error`), WebGPU
-   support, and `providerFor(capability)`. It downloads a tier through the inference worker's
-   `download` request, model by model.
+   after hydration), its state (`recorded`, `checking`, `downloading` with progress, `ready`,
+   `error`), and WebGPU support. It downloads a tier through the inference worker's `download`
+   request, model by model. Widgets get their provider from `useProvider(capability)` in
+   `models/live.svelte.ts`.
 3. **Providers**: `ModelProvider` gains optional `fillMask`, `embedText` (CLIP), and `chat`
    (messages in, a streamed reply out, using the model's chat template and the in-browser toy
    tools only). `RecordedProvider` keeps answering from recordings; `BrowserProvider` covers every
@@ -117,10 +118,10 @@ The page becomes **Models** ("Models and downloads" as its title), with the tier
 
 ## Phases
 
-1. **Plumbing, with today's two models.** `TIERS` with Small holding GPT-2 and MiniLM only, the
-   store, the Models link, the choice on the page, badges, and "Show the recording".
-   `GlassBoxGenerator`, `EmbeddingMap`, and `PromptVariants` move to `useProvider` and lose
-   `ModelConsent`. No new models.
+1. **Plumbing, with today's two models.** Built. [downloads.md](downloads.md) describes it: `TIERS`
+   with Small holding GPT-2 and MiniLM, the store, the Models link, the choice on the page,
+   badges, "Show the recording", and `useProvider` in `GlassBoxGenerator`, `EmbeddingMap`, and
+   `PromptVariants`. `ModelConsent` is gone.
 2. **Fill out Small.** BERT base and CLIP's text half, pinned and checked, and live options in
    [Reading both ways](chapters/encoders.md) and [Seeing pictures](chapters/seeing-pictures.md);
    more GPT-2 widgets go live, such as the visitor's own sentence in

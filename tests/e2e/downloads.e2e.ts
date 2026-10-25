@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { MODEL_CACHE, pinnedUrl } from '../../src/lib/models/model-cache.ts';
 import type { PinnedModel } from '../../src/lib/workers/verified-fetch.ts';
@@ -18,24 +18,47 @@ const DOWNLOADS = [
 	},
 	MINILM
 ];
+const RUNTIME_MB = 27;
+const SMALL_MB = DOWNLOADS.reduce((a, m) => a + m.onnxMB, RUNTIME_MB);
 
-test('the app bar links to the downloads page from every page', async ({ page }) => {
+const modelsLink = (page: Page, name: string | RegExp = 'Models: Recorded') =>
+	page.getByRole('banner').getByRole('link', { name });
+
+/** Placeholder files: enough for the cache check, without downloading the models. */
+async function seedCache(page: Page, models: PinnedModel[]) {
+	const urls = models.flatMap((m) => Object.keys(m.onnxFiles).map((path) => pinnedUrl(m, path)));
+	await page.evaluate(
+		async ({ name, urls }) => {
+			const cache = await caches.open(name);
+			await Promise.all(urls.map((url) => cache.put(url, new Response('placeholder'))));
+		},
+		{ name: MODEL_CACHE, urls }
+	);
+}
+
+const cachedFiles = (page: Page) =>
+	page.evaluate(
+		(name) => caches.open(name).then(async (c) => (await c.keys()).length),
+		MODEL_CACHE
+	);
+
+test('the app bar links to the Models page from every page, named by the tier', async ({
+	page
+}) => {
 	for (const path of ['/', '/guessing-game']) {
 		await gotoHydrated(page, path);
-		const link = page.getByRole('banner').getByRole('link', { name: 'Downloads' });
+		const link = modelsLink(page);
 		await expect(link).toHaveAttribute('href', '/downloads');
 		await expect(link).not.toHaveAttribute('aria-current');
 	}
-	await page.getByRole('banner').getByRole('link', { name: 'Downloads' }).click();
+	await modelsLink(page).click();
 	await expect(page).toHaveURL('/downloads');
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Downloads');
-	await expect(page.getByRole('banner').getByRole('link', { name: 'Downloads' })).toHaveAttribute(
-		'aria-current',
-		'page'
-	);
+	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Models');
+	await expect(page).toHaveTitle(/^Models and downloads/);
+	await expect(modelsLink(page)).toHaveAttribute('aria-current', 'page');
 });
 
-test('lists every model with its size, commit, chapters, state, and Hugging Face links', async ({
+test('offers the tiers and lists every model with its size, commit, chapters, and links', async ({
 	page
 }) => {
 	const offSite: string[] = [];
@@ -43,6 +66,11 @@ test('lists every model with its size, commit, chapters, state, and Hugging Face
 		if (r.url().includes('huggingface')) offSite.push(r.url());
 	});
 	await gotoHydrated(page, '/downloads');
+	await expect(page.getByRole('radio', { name: /^Show recordings \(default\)/ })).toBeChecked();
+	await expect(page.getByRole('radio', { name: /^Small/ })).toHaveAccessibleName(
+		new RegExp(`^Small: about ${SMALL_MB} MB`)
+	);
+	await expect(page.getByRole('heading', { level: 2, name: 'Small' })).toBeVisible();
 	for (const model of DOWNLOADS) {
 		const card = page.getByRole('region', { name: model.label });
 		await expect(card).toContainText(`${model.onnxMB} MB`);
@@ -59,48 +87,57 @@ test('lists every model with its size, commit, chapters, state, and Hugging Face
 		for (const slug of model.chapters) {
 			await expect(card.locator(`a[href="/${slug}"]`)).toHaveCount(1);
 		}
-		await expect(card.getByRole('button', { name: `Download ${model.label}` })).toBeEnabled();
+		// The tier choice is the only download button.
+		await expect(card.getByRole('button')).toHaveCount(0);
 	}
 	await expect(page.getByRole('region', { name: 'ONNX Runtime' })).toContainText('27 MB');
 	expect(offSite).toEqual([]);
 });
 
-test('a downloaded model shows as downloaded on the page and in its widget, until removed', async ({
+test('a downloaded tier holds across pages and reloads, until a model is removed', async ({
 	page
 }) => {
 	await gotoHydrated(page, '/downloads');
-	// Placeholder files: enough for the cache check, without downloading the model.
-	const urls = Object.keys(MINILM.onnxFiles).map((path) => pinnedUrl(MINILM, path));
-	await page.evaluate(
-		async ({ name, urls }) => {
-			const cache = await caches.open(name);
-			await Promise.all(urls.map((url) => cache.put(url, new Response('placeholder'))));
-		},
-		{ name: MODEL_CACHE, urls }
-	);
+	await seedCache(page, DOWNLOADS);
+	await gotoHydrated(page, '/downloads');
+
+	await page.getByRole('radio', { name: /^Small/ }).check();
+	await expect(page.getByText('The Small tier is ready')).toBeVisible();
+	await expect(modelsLink(page, 'Models: Small')).toBeVisible();
+	await expect(page.getByText(`Downloaded models use ${SMALL_MB - RUNTIME_MB} MB`)).toBeVisible();
+
+	await gotoHydrated(page, '/downloads');
+	await expect(page.getByRole('radio', { name: /^Small/ })).toBeChecked();
+	await gotoHydrated(page, '/guessing-game');
+	await expect(modelsLink(page, 'Models: Small')).toBeVisible();
 
 	await gotoHydrated(page, '/downloads');
 	const card = page.getByRole('region', { name: MINILM.label });
-	await expect(card.getByRole('status')).toHaveText('Downloaded');
-	await expect(page.getByText(`Downloaded models use ${MINILM.onnxMB} MB`)).toBeVisible();
-
-	await gotoHydrated(page, '/embeddings');
-	const map = page.getByRole('region', { name: 'A map of meaning' });
-	await map.getByRole('button', { name: 'Add your own words…' }).click();
-	await expect(map.getByRole('button', { name: 'Run it (already downloaded)' })).toBeVisible();
-
-	await map.getByRole('link', { name: 'Manage downloads' }).click();
-	await expect(page).toHaveURL('/downloads');
 	await card.getByRole('button', { name: `Remove ${MINILM.label}` }).click();
 	await expect(card.getByRole('status')).toHaveText('Not downloaded');
-	expect(
-		await page.evaluate(
-			(name) => caches.open(name).then(async (c) => (await c.keys()).length),
-			MODEL_CACHE
-		)
-	).toBe(0);
+	await expect(page.getByRole('radio', { name: /^Show recordings/ })).toBeChecked();
+	await expect(modelsLink(page)).toBeVisible();
+	expect(await cachedFiles(page)).toBe(Object.keys(canonical.onnxFiles).length);
 
+	await page.getByRole('button', { name: 'Remove all' }).click();
+	await expect.poll(() => cachedFiles(page)).toBe(0);
+});
+
+test('a failed tier download says so on the page, in the app bar, and in widgets', async ({
+	page
+}) => {
+	// On the context, so it covers the inference worker's requests too.
+	await page.context().route('https://huggingface.co/**', (route) => route.abort());
+	await gotoHydrated(page, '/downloads');
+	await page.getByRole('radio', { name: /^Small/ }).check();
+	await expect(page.getByRole('alert').first()).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Try again' }).first()).toBeVisible();
+	await expect(modelsLink(page, 'Models: Small, download failed')).toBeVisible();
+
+	// The choice stays, so the next page tries again, and its widgets stay on recordings.
 	await gotoHydrated(page, '/embeddings');
-	await map.getByRole('button', { name: 'Add your own words…' }).click();
-	await expect(map.getByRole('button', { name: /Download about 51 MB and run it/ })).toBeVisible();
+	const map = page.getByRole('region', { name: 'A map of meaning' });
+	await expect(map.getByText("Recorded · the Small tier didn't finish downloading")).toBeVisible();
+	await expect(map.getByRole('alert')).toContainText("The Small tier didn't finish downloading");
+	await expect(map.getByLabel('Your word')).toHaveCount(0);
 });

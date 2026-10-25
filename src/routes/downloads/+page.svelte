@@ -1,16 +1,42 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import Choice, { type Option } from '#lib/components/ui/Choice.svelte';
 	import PageMeta from '#lib/components/page/PageMeta.svelte';
 	import { chapter } from '#lib/curriculum/index.ts';
 	import { browserModel, type BrowserModel } from '#lib/models/browser-model.svelte.ts';
 	import { DOWNLOADS, filesUrl, originalUrl } from '#lib/models/downloads.ts';
 	import { RUNTIME_MB } from '#lib/models/onnx-runtime.ts';
+	import { TIERS, tier, tierMB, tierModels, type TierId } from '#lib/models/tiers.ts';
 	import { MENU_IMAGE, SITE_NAME } from '#lib/site.ts';
+	import { modelTier } from '#lib/stores/model-tier.svelte.ts';
 
 	const models = DOWNLOADS.map((spec) => browserModel(spec));
 	const keepsDownloads = $derived(models.every((m) => m.keepsDownloads));
 	const downloaded = $derived(models.filter((m) => m.cached));
 	const downloadedMB = $derived(downloaded.reduce((a, m) => a + m.spec.modelMB, 0));
+	const tierState = $derived(modelTier.state);
+
+	const OPTIONS: Option<TierId>[] = TIERS.map((t) => ({
+		value: t.id,
+		label: t.id === 'recorded' ? 'Show recordings (default)' : `${t.name}: about ${tierMB(t)} MB`
+	}));
+
+	/** Each tier's models that no earlier tier includes. */
+	const GROUPS = TIERS.map((t, i) => {
+		const earlier = new Set(TIERS.slice(0, i).flatMap((e) => tierModels(e)));
+		return {
+			tier: t,
+			models: tierModels(t)
+				.filter((m) => !earlier.has(m))
+				.map(browserModel)
+		};
+	}).filter((g) => g.models.length);
+
+	$effect(() => modelTier.load());
+
+	function inChosenTier(model: BrowserModel): boolean {
+		return modelTier.models.includes(model);
+	}
 
 	function stateText(model: BrowserModel): string {
 		const { status } = model;
@@ -18,7 +44,10 @@
 			case 'checking':
 				return 'Checking…';
 			case 'missing':
-				return model.keepsDownloads ? 'Not downloaded' : "This browser doesn't keep downloads";
+				if (!model.keepsDownloads) return "This browser doesn't keep downloads";
+				return inChosenTier(model) && tierState.state === 'downloading'
+					? 'Waiting to download'
+					: 'Not downloaded';
 			case 'downloading':
 				return `Downloading: ${Math.round(status.fraction * model.spec.modelMB)} of ${model.spec.modelMB} MB`;
 			case 'downloaded':
@@ -34,85 +63,129 @@
 		}
 	}
 
+	/** Removing a model of the chosen tier sets the choice back to Recorded. */
+	function remove(model: BrowserModel) {
+		if (inChosenTier(model)) modelTier.choose('recorded');
+		void model.remove();
+	}
+
 	function removeAll() {
+		modelTier.choose('recorded');
 		for (const model of downloaded) void model.remove();
 	}
 </script>
 
 <PageMeta
-	title="Downloads · {SITE_NAME}"
-	shareTitle="Downloads"
-	description="The models {SITE_NAME} can run in your browser: how big they are, whether they're downloaded, and where they come from."
+	title="Models and downloads · {SITE_NAME}"
+	shareTitle="Models"
+	description="Choose whether {SITE_NAME}'s widgets replay recordings or run real models in your browser: what each tier downloads, how big it is, and where the models come from."
 	path={resolve('/downloads')}
 	image={MENU_IMAGE}
-	imageAlt="{SITE_NAME}: downloads"
+	imageAlt="{SITE_NAME}: models"
 	type="website"
 />
 
 <main id="content" class="prose downloads">
-	<h1>Downloads</h1>
+	<h1>Models</h1>
 	<p class="lede">
-		Some widgets can run a real model in your browser instead of replaying recorded answers. Models
-		download only when you ask, from Hugging Face, and stay in this browser until you remove them or
-		it clears space.
+		Widgets replay real runs recorded ahead of time. Choose a tier to run real models in your
+		browser instead: its models download from Hugging Face and stay in this browser until you remove
+		them or it clears space.
 	</p>
 
-	{#each models as model (model.spec.onnxId)}
-		{@const spec = model.spec}
-		{@const id = `model-${spec.onnxId.replace('/', '-')}`}
-		<section class="card" aria-labelledby={id}>
-			<h2 {id}>{spec.label}</h2>
-			<p class="does">{spec.does}.</p>
-			<dl>
-				<dt>Size</dt>
-				<dd>{spec.modelMB} MB</dd>
-				<dt>Commit</dt>
-				<dd class="mono">{spec.onnxRevision.slice(0, 7)}</dd>
-				<dt>Used in</dt>
-				<dd class="chapters">
-					{#each spec.chapters as slug (slug)}
-						<a href={resolve('/[chapter]', { chapter: slug })}>{chapter(slug).title}</a>
-					{/each}
-				</dd>
-			</dl>
-			<div class="state">
-				<p class="status" role="status">{stateText(model)}</p>
-				{#if model.status.state === 'downloading'}
-					<progress
-						max="1"
-						value={model.status.fraction}
-						aria-label="Download progress for {spec.label}"
-					></progress>
-				{:else if model.status.state === 'error'}
-					<button type="button" onclick={() => model.download()}
-						>Try again<span class="visually-hidden"> to download {spec.label}</span></button
-					>
-				{:else if model.cached && model.status.state !== 'loading'}
-					<button type="button" onclick={() => model.remove()}
-						>Remove<span class="visually-hidden"> {spec.label}</span></button
-					>
-				{:else if model.status.state === 'checking' || (model.status.state === 'missing' && model.keepsDownloads)}
-					<button
-						type="button"
-						disabled={model.status.state === 'checking'}
-						onclick={() => model.download()}
-						>Download<span class="visually-hidden"> {spec.label}</span></button
-					>
-				{/if}
+	<div class="tiers">
+		<Choice
+			legend="Widgets"
+			layout="stack"
+			options={OPTIONS}
+			bind:value={() => modelTier.choice, (id) => modelTier.choose(id)}
+		>
+			{#snippet option(o)}
+				<span class="tier">
+					<strong>{o.label}</strong>
+					<span class="summary">{tier(o.value).summary}</span>
+				</span>
+			{/snippet}
+		</Choice>
+
+		{#if tierState.state === 'checking'}
+			<p class="status" role="status">Checking…</p>
+		{:else if tierState.state === 'downloading'}
+			<div class="state" role="status">
+				<p class="status">
+					Downloading the {modelTier.tier.name} tier: {Math.round(modelTier.doneMB)} of
+					{modelTier.totalMB} MB
+				</p>
+				<progress
+					max="1"
+					value={tierState.fraction}
+					aria-label="Download progress for the {modelTier.tier.name} tier"
+				></progress>
 			</div>
-			<p class="links">
-				<!-- Links to Hugging Face don't go through SvelteKit routing. -->
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={originalUrl(spec)} rel="noopener noreferrer" target="_blank">Original model</a>
-				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a href={filesUrl(spec)} rel="noopener noreferrer" target="_blank">Files used here</a>
+		{:else if tierState.state === 'error'}
+			<div class="state">
+				<p class="status error" role="alert">{tierState.message}</p>
+				<button type="button" onclick={() => modelTier.download()}>Try again</button>
+			</div>
+		{:else if tierState.state === 'ready'}
+			<p class="status" role="status">
+				The {modelTier.tier.name} tier is ready: the widgets it covers run live.
 			</p>
-		</section>
+		{/if}
+	</div>
+
+	{#each GROUPS as group (group.tier.id)}
+		<h2>{group.tier.name}</h2>
+		{#each group.models as model (model.spec.onnxId)}
+			{@const spec = model.spec}
+			{@const id = `model-${spec.onnxId.replace('/', '-')}`}
+			<section class="card" aria-labelledby={id}>
+				<h3 {id}>{spec.label}</h3>
+				<p class="does">{spec.does}.</p>
+				<dl>
+					<dt>Size</dt>
+					<dd>{spec.modelMB} MB</dd>
+					<dt>Commit</dt>
+					<dd class="mono">{spec.onnxRevision.slice(0, 7)}</dd>
+					<dt>Used in</dt>
+					<dd class="chapters">
+						{#each spec.chapters as slug (slug)}
+							<a href={resolve('/[chapter]', { chapter: slug })}>{chapter(slug).title}</a>
+						{/each}
+					</dd>
+				</dl>
+				<div class="state">
+					<p class="status" role="status">{stateText(model)}</p>
+					{#if model.status.state === 'downloading'}
+						<progress
+							max="1"
+							value={model.status.fraction}
+							aria-label="Download progress for {spec.label}"
+						></progress>
+					{:else if model.status.state === 'error' && inChosenTier(model)}
+						<button type="button" onclick={() => modelTier.download()}
+							>Try again<span class="visually-hidden"> to download {spec.label}</span></button
+						>
+					{:else if model.cached && model.status.state !== 'loading'}
+						<button type="button" onclick={() => remove(model)}
+							>Remove<span class="visually-hidden"> {spec.label}</span></button
+						>
+					{/if}
+				</div>
+				<p class="links">
+					<!-- Links to Hugging Face don't go through SvelteKit routing. -->
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a href={originalUrl(spec)} rel="noopener noreferrer" target="_blank">Original model</a>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
+					<a href={filesUrl(spec)} rel="noopener noreferrer" target="_blank">Files used here</a>
+				</p>
+			</section>
+		{/each}
 	{/each}
 
 	<section class="card" aria-labelledby="runtime">
-		<h2 id="runtime">ONNX Runtime</h2>
-		<p class="does">Runs either model.</p>
+		<h3 id="runtime">ONNX Runtime</h3>
+		<p class="does">Runs every model.</p>
 		<dl>
 			<dt>Size</dt>
 			<dd>{RUNTIME_MB} MB</dd>
@@ -130,9 +203,7 @@
 				<button type="button" onclick={removeAll}>Remove all</button>
 			{/if}
 		{:else}
-			<p>
-				This browser doesn't keep downloads, so the widgets download a model again on each visit.
-			</p>
+			<p>This browser doesn't keep downloads, so a chosen tier downloads again on each visit.</p>
 		{/if}
 	</footer>
 </main>
@@ -147,8 +218,36 @@
 		color: var(--ink-muted);
 	}
 
-	.card {
+	.tiers {
 		margin-block: var(--space-6);
+		font-family: var(--font-sans);
+	}
+
+	.tiers :global(fieldset) {
+		gap: var(--space-2);
+		font-size: 0.95rem;
+	}
+
+	.tiers :global(label) {
+		display: flex;
+		align-items: start;
+		gap: var(--space-2);
+	}
+
+	.tiers :global(input) {
+		margin-top: 0.3em;
+	}
+
+	.tier {
+		display: grid;
+	}
+
+	.summary {
+		color: var(--ink-muted);
+	}
+
+	.card {
+		margin-block: var(--space-4) var(--space-6);
 		padding: var(--space-4);
 		border: 1px solid var(--rule);
 		border-radius: var(--radius);
@@ -157,7 +256,7 @@
 		font-size: 0.95rem;
 	}
 
-	h2 {
+	h3 {
 		margin: 0;
 		font-size: 1.25rem;
 	}
@@ -205,6 +304,10 @@
 	.status {
 		margin: 0;
 		font-weight: 600;
+	}
+
+	.error {
+		color: var(--c-loss-ink);
 	}
 
 	progress {

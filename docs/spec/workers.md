@@ -43,8 +43,8 @@ only when a widget needs it.
 - **Crashes.** If a worker itself fails (its script doesn't load, or it runs out of memory), the
   helper rejects every waiting request and drops the worker; the next request starts a new one.
 - **Progress.** The helper hands `progress` messages to the callback of the request with the same
-  id. `BrowserModel` turns the inference worker's download progress into the fraction its consent
-  card shows.
+  id. `BrowserModel` turns the inference worker's download progress into the fraction the Models
+  page, the app bar, and the widgets show.
 - **Stale replies.** Workers don't cancel requests. A widget that asks again before an answer
   arrives ignores replies for input it no longer shows, as `SpellingBlindSpot` does.
 - **The trainer** is a stream rather than request–reply, so it doesn't use the helper: the widget

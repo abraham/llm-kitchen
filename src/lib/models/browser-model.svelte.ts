@@ -32,11 +32,6 @@ export class BrowserModel {
 		this.spec = spec;
 	}
 
-	/** Downloading, starting, or failed: a widget shows its card even before it's asked to. */
-	get active(): boolean {
-		return ['downloading', 'loading', 'error'].includes(this.status.state);
-	}
-
 	/** Reads the cache; only a model that isn't downloading, starting, running, or failed changes state. */
 	async check(): Promise<void> {
 		const cache = await openModelCache();

@@ -16,7 +16,10 @@ test('tokens become vectors, and the map shows neighbors and the analogy', async
 	await map.getByLabel('Show king − man + woman').check();
 	await expect(map.getByText(/lands closest to/)).toContainText('queen');
 
-	// The live option asks before downloading anything.
-	await map.getByRole('button', { name: 'Add your own words…' }).click();
-	await expect(map.getByRole('button', { name: /Download about 51 MB and run it/ })).toBeVisible();
+	// Under Recorded, the live option points to the Models page instead of downloading anything.
+	await expect(map.getByRole('link', { name: 'Choose a model tier' })).toHaveAttribute(
+		'href',
+		'/downloads'
+	);
+	await expect(map.getByLabel('Your word')).toHaveCount(0);
 });

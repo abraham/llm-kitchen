@@ -77,7 +77,7 @@ the trust boundary, so it stays limited to maintainers.
   [architecture.md](architecture.md#data)). Invalid data throws and the widget shows the error; it
   never renders unchecked.
 - **External links** come only from `references.json`, must be `https://` (`citations.test.ts`), and
-  open with `rel="noopener noreferrer"`. The one exception is the Downloads page's links to each
+  open with `rel="noopener noreferrer"`. The one exception is the Models page's links to each
   model on Hugging Face, built from `models/*.json` (`downloads.test.ts`).
 - **Workers** take typed messages from the page only. The inference worker downloads only the model
   and commit its message names, and those come from `canonical.json` and `embedder.json`, never
