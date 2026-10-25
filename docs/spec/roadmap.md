@@ -51,8 +51,6 @@ belongs to and remove it here.
   [Managing the context](chapters/managing-the-context.md).
 - **Agents that use a screen.** A model that sees screenshots and clicks, bridging
   [Seeing pictures](chapters/seeing-pictures.md) and [The agent loop](chapters/the-agent-loop.md).
-- **Dropout.** Not mentioned anywhere; it's used only in training, so one In depth line in
-  [Learning from mistakes](chapters/learning-from-mistakes.md).
 - **Attention views.** One attention grid switching between raw scores, masked scores, and
   softmax, and paging through all 144 heads, in [Attention](chapters/attention.md) once it's live.
 - **Localization:** the site is English only. Translating means deciding whether to also swap the

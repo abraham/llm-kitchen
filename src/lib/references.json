@@ -165,6 +165,20 @@
 		"url": "https://www.jmlr.org/papers/v3/bengio03a.html"
 	},
 	{
+		"id": "srivastava2014",
+		"authors": [
+			"Nitish Srivastava",
+			"Geoffrey Hinton",
+			"Alex Krizhevsky",
+			"Ilya Sutskever",
+			"Ruslan Salakhutdinov"
+		],
+		"title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+		"venue": "Journal of Machine Learning Research 15",
+		"year": 2014,
+		"url": "https://jmlr.org/papers/v15/srivastava14a.html"
+	},
+	{
 		"id": "kingma2015",
 		"authors": ["Diederik P. Kingma", "Jimmy Ba"],
 		"title": "Adam: A Method for Stochastic Optimization",

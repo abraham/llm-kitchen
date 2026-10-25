@@ -28,4 +28,5 @@ Computed in the browser. The MLP, backpropagation, and Adam optimizer are hand-w
 - [Levels](../levels.md): Simple keeps the loss, the downhill picture, and backpropagation's job,
   without the network sizes or the guessing line. In depth gives mean squared error, cross-entropy,
   and perplexity, the gradient descent step, backpropagation's chain rule for one neuron, and what
-  Adam does with its usual settings.
+  Adam does with its usual settings, and dropout: what it is, GPT-2's chance of 0.1, and that it's
+  only used in training.
