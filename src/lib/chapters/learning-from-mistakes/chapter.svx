@@ -22,6 +22,11 @@ question and the next word is the answer. The counting model learned from the sa
 in <ChapterRef to="predicting-by-counting" />, by filling in a table. A network has no table to
 fill in, so it starts from random weights and improves them a little at a time.
 
+Getting a program's numbers from examples, instead of writing its rules, is called <GlossaryPopover term="machine-learning">machine learning</GlossaryPopover>.
+Doing it with many stacked layers of neurons is <GlossaryPopover term="deep-learning">deep learning</GlossaryPopover>, and a large language model is
+a deep network trained on text. All of it is part of artificial intelligence, a field named in
+1955.<Cite id="mccarthy1955" />
+
 </At>
 <At levels="standard deep">
 
@@ -39,6 +44,15 @@ The counting model in <ChapterRef to="predicting-by-counting" /> learned from te
 Counting is a kind of training: read the text once and fill in a table. A network can't be filled
 in like that, because no single weight stands for one pair of words; each weight plays a part in
 many predictions. So it starts from random weights and improves them by trial and correction.
+
+This is what <GlossaryPopover term="machine-learning">machine learning</GlossaryPopover> means: a program's numbers come from examples
+instead of rules someone wrote. In 1959 Arthur Samuel described a checkers program that got better
+by playing, in a paper titled *Some Studies in Machine Learning Using the Game of
+Checkers*.<Cite id="samuel1959" /> Networks with many stacked layers of neurons, trained this
+way, are <GlossaryPopover term="deep-learning">deep learning</GlossaryPopover>; GPT-2 stacks 12 blocks of them. A large language model is a deep
+network trained on text to predict the next token. All of this sits inside the older, wider field
+of artificial intelligence, named in a 1955 proposal for a summer workshop at Dartmouth, which
+also covers programs that follow rules people wrote, with no learning at all.<Cite id="mccarthy1955" />
 
 </At>
 

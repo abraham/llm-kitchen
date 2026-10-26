@@ -1163,5 +1163,21 @@
 		"year": 2025,
 		"url": "https://epoch.ai/data-insights/llm-inference-price-trends",
 		"accessed": "2026-10-25"
+	},
+	{
+		"id": "samuel1959",
+		"authors": ["Arthur L. Samuel"],
+		"title": "Some Studies in Machine Learning Using the Game of Checkers",
+		"venue": "IBM Journal of Research and Development 3(3)",
+		"year": 1959,
+		"url": "https://doi.org/10.1147/rd.33.0210"
+	},
+	{
+		"id": "mccarthy1955",
+		"authors": ["John McCarthy", "Marvin L. Minsky", "Nathaniel Rochester", "Claude E. Shannon"],
+		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955",
+		"venue": "Reprinted in AI Magazine 27(4), 2006",
+		"year": 1955,
+		"url": "https://doi.org/10.1609/aimag.v27i4.1904"
 	}
 ]
