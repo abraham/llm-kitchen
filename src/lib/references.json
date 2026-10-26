@@ -1121,5 +1121,21 @@
 		"venue": "arXiv",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2405.20362"
+	},
+	{
+		"id": "kandpal2023",
+		"authors": ["Nikhil Kandpal", "Haikang Deng", "Adam Roberts", "Eric Wallace", "Colin Raffel"],
+		"title": "Large Language Models Struggle to Learn Long-Tail Knowledge",
+		"venue": "ICML 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2211.08411"
+	},
+	{
+		"id": "zhang2023snowball",
+		"authors": ["Muru Zhang", "Ofir Press", "William Merrill", "Alisa Liu", "Noah A. Smith"],
+		"title": "How Language Model Hallucinations Can Snowball",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.13534"
 	}
 ]

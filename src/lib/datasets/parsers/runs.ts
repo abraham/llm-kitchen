@@ -129,9 +129,8 @@ export const routingRecording: Check<RoutingRecording> = object({
 	generatedAt: string
 });
 
-const sampledAnswers = array(
-	object({ text: string, verdict: literal('right', 'wrong', 'declined') })
-);
+const sampledAnswer = object({ text: string, verdict: literal('right', 'wrong', 'declined') });
+const sampledAnswers = array(sampledAnswer);
 
 export const hallucinationSamples: Check<HallucinationSamples> = object({
 	version: literal(1),
@@ -146,7 +145,8 @@ export const hallucinationSamples: Check<HallucinationSamples> = object({
 			question: string,
 			accepted: array(string),
 			truth: nullable(string),
-			answers: object({ plain: sampledAnswers, allowed: sampledAnswers })
+			answers: object({ plain: sampledAnswers, allowed: sampledAnswers }),
+			greedy: object({ plain: sampledAnswer, allowed: sampledAnswer })
 		})
 	),
 	generatedAt: string

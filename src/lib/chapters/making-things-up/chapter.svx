@@ -61,6 +61,10 @@ the 5 wrong answers and none of the right ones. It misses the Tour de France: al
 Eddy Merckx, who won it five times, but not in 1987. Agreement shows the model is sure, not that
 it's right.
 
+A common tip is to turn the temperature down (<ChapterRef to="probability-and-sampling" />). At
+temperature 0 the model gets the same six right and the same five wrong. For the invented book it
+now says "Helen Macdonald" every time, and nothing shows that it's guessing.
+
 </At>
 <At levels="standard deep">
 
@@ -72,6 +76,13 @@ not in 1987, when Stephen Roche did. When a model has learned something wrong, i
 time, so agreement shows the model is sure, not that it's right. The check also costs ten calls
 instead of one; <ChapterRef to="routing" /> got a cheaper signal from the model's confidence in a
 single answer.
+
+A common tip is to turn the temperature down. At temperature 0, taking the likeliest token every
+time (<ChapterRef to="probability-and-sampling" />), the model gets the same six right and the same
+five wrong. For the invented book it says "Helen Macdonald", a name none of the ten samples gave,
+and it says it every time. A lower temperature doesn't make a guess true; it makes the guess
+repeatable, and hides the scatter that gave it away. The line under the table shows each answer
+at temperature 0.
 
 </At>
 <At levels="deep">
@@ -117,16 +128,23 @@ something in it registers that it doesn't know.
 
 <At levels="simple">
 
-Why do models guess at all? Training rewards likely text, true or not. And most tests of models are
-graded like school exams: a right answer scores a point, and a wrong answer or "I don't know" scores
-nothing. A guess never scores less than admitting doubt, so a model tuned to do well on those tests
-learns to guess.<Cite id="kalai2025" />
+Why do models guess at all? Training rewards likely text, true or not, and facts that appear in few
+training documents are the ones models most often get wrong.<Cite id="kandpal2023" /> And most
+tests of models are graded like school exams: a right answer scores a point, and a wrong answer or
+"I don't know" scores nothing. A guess never scores less than admitting doubt, so a model tuned to
+do well on those tests learns to guess.<Cite id="kalai2025" />
 
 </At>
 <At levels="standard deep">
 
 Part of the cause is training: as in <ChapterRef to="quirks-and-limits" />, the loss rewards likely
 text, true or not, and a fact the training text mentions only once leaves no pattern to learn from.
+Rarity matters well beyond once. Across several question sets and models up to 176 billion
+weights, accuracy on a question rose with the number of training documents about its subject, and
+retrieving documents at answer time made the count matter less.<Cite id="kandpal2023" />
+That fits the widget: all four well-known answers come back right, and two of the four less
+well-known ones do.
+
 Researchers at OpenAI and Georgia Tech argue that the rest comes from how models are tested. Most
 benchmarks grade
 like a multiple-choice exam: 1 point for a right answer and 0 for a wrong one, and "I don't know"
@@ -191,6 +209,9 @@ under a name a model invented, and wait for a person, or an agent running instal
   up cases before answering still made things up 17% to 33% of the time.<Cite id="magesh2024" />
 - **Let it decline**, as the box above does.
 - **Ask more than once** when a wrong answer would be costly.
+- **Check one claim at a time, in a new chat.** A model that has given a wrong answer tends to
+  defend it with more wrong claims, but asked about each claim on its own, it often spots the
+  mistake.<Cite id="zhang2023snowball" />
 - **Check what can be checked**, with code or a person: that a court case exists, that a package is
   real.
 
@@ -207,6 +228,11 @@ No single fix removes the problem, but several help:
 - **Let it decline**, as the system prompt above does, and when you test it
   (<ChapterRef to="testing-agents" />), don't score "I don't know" like a wrong answer.
 - **Ask more than once** when a wrong answer would be costly, and treat disagreement as a warning.
+  Don't turn the temperature down to make answers look consistent.
+- **Check claims one at a time, in a fresh call.** Once a model has committed to a wrong answer, it
+  tends to justify it with more false claims, ones it can recognize as false on their own: shown its
+  own wrong claims in a separate session, ChatGPT spotted 67% of them and GPT-4 87%.<Cite id="zhang2023snowball" />
+  So an explanation the model writes after its answer defends the answer more than it checks it.
 - **Check what can be checked with code**: that a cited case is in a court database, that a package
   is in the registry, that a number matches a tool's result (<ChapterRef to="tools" />).
 
@@ -216,7 +242,8 @@ No single fix removes the problem, but several help:
 
 - A model states a made-up answer as confidently as a true one, and nothing in the reply marks it.
 - Asking several times catches many guesses, because real knowledge agrees with itself and guesses
-  scatter. It misses things the model learned wrong.
+  scatter. It misses things the model learned wrong, and a lower temperature only hides the
+  scatter.
 - Allowing "I don't know" helps, but tests that score it like a wrong answer teach models to guess.
 - Made-up names, like software packages, can be registered by attackers. Check facts that matter
   with code, sources, or a person.

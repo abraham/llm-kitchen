@@ -14,7 +14,7 @@ facts that matter get checked with code, sources, or a person.
 - `SampleCheck`: pick one of 11 questions (four well-known, four less well-known, three about a
   book, a chemist, and a town invented for the chapter). A table groups the ten sampled answers,
   counts each, and marks it right, wrong (made up, for invented questions), or declined, as graded
-  by code. A toggle switches to a system prompt that allows "I don't know". A status line says
+  by code. A line under the table gives the answer at temperature 0. A toggle switches to a system prompt that allows "I don't know". A status line says
   whether the consistency check (at least 8 of 10 the same) passes the top answer on, flags it, or
   reports that the model declined; readouts total right, wrong, and declined across all questions
   and how many of each the check flags.
@@ -22,7 +22,7 @@ facts that matter get checked with code, sources, or a person.
 ## Data
 
 `scripts/record/hallucination.py` (`static/data/hallucination/samples.json`): Qwen2.5-1.5B-Instruct
-answers each question ten times, sampled with its generation settings (temperature 0.7, top-p 0.8,
+answers each question once greedily (temperature 0) and ten times, sampled with its generation settings (temperature 0.7, top-p 0.8,
 top-k 20) and seed 1, under two system prompts: a short-answer prompt, and the same with "If you
 are not sure of the answer, say "I don't know"." Code grades each answer against accepted answers
 and a pattern for declining. Grouping, the check, and the entropy are computed in the browser

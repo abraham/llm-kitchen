@@ -127,6 +127,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Canberra",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "Canberra",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -222,6 +232,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Jane Austen",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "Jane Austen",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -317,6 +337,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "1945",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "1945",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -412,6 +442,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Mount Everest",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "Mount Everest",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -507,6 +547,16 @@
 							"verdict": "declined"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Saul Bellow",
+						"verdict": "wrong"
+					},
+					"allowed": {
+						"text": "It is not possible to definitively state who won the Nobel Prize in Literature in 1995 without additional context or information about specific winners from that year. The Nobel Committee for Literature typically announces",
+						"verdict": "declined"
+					}
 				}
 			},
 			{
@@ -602,6 +652,16 @@
 							"verdict": "wrong"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Eddy Merckx",
+						"verdict": "wrong"
+					},
+					"allowed": {
+						"text": "Eddy Merckx",
+						"verdict": "wrong"
+					}
 				}
 			},
 			{
@@ -697,6 +757,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "1088",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "1088",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -792,6 +862,16 @@
 							"verdict": "right"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Ouagadougou",
+						"verdict": "right"
+					},
+					"allowed": {
+						"text": "Ouagadougou",
+						"verdict": "right"
+					}
 				}
 			},
 			{
@@ -885,6 +965,16 @@
 							"verdict": "declined"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "Helen Macdonald",
+						"verdict": "wrong"
+					},
+					"allowed": {
+						"text": "I don't know.",
+						"verdict": "declined"
+					}
 				}
 			},
 			{
@@ -978,6 +1068,16 @@
 							"verdict": "wrong"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "1927",
+						"verdict": "wrong"
+					},
+					"allowed": {
+						"text": "1927",
+						"verdict": "wrong"
+					}
 				}
 			},
 			{
@@ -1071,6 +1171,16 @@
 							"verdict": "declined"
 						}
 					]
+				},
+				"greedy": {
+					"plain": {
+						"text": "500",
+						"verdict": "wrong"
+					},
+					"allowed": {
+						"text": "I don't know.",
+						"verdict": "declined"
+					}
 				}
 			}
 		],

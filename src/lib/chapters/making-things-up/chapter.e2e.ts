@@ -10,6 +10,7 @@ test('ten samples scatter on an invented book and agree on a wrong Tour de Franc
 	await expect(rows).toHaveCount(9);
 	await expect(widget.getByRole('status')).toContainText('flags the answer as a likely guess');
 	await expect(widget.locator('.readouts')).toContainText('4 of the 5 wrong answers');
+	await expect(widget.locator('.greedy')).toContainText('Helen Macdonald');
 
 	await widget
 		.getByLabel('Question')

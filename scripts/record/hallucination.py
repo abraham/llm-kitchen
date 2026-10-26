@@ -3,7 +3,7 @@
 Usage: scripts/.venv/bin/python -m scripts.record hallucination
 
 Asks Qwen2.5-1.5B-Instruct each question 10 times, sampled with the model card's settings and a
-fixed seed, under two system prompts: one that asks for a short answer, and one that also allows
+fixed seed, and once greedily (temperature 0), under two system prompts: one that asks for a short answer, and one that also allows
 "I don't know". Some questions have well-known answers, some are harder, and some ask about a book
 or a person invented for this chapter. Writes static/data/hallucination/samples.json with every
 answer and a verdict from code: right, wrong, or declined.
@@ -73,19 +73,18 @@ def main() -> None:
     model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).to(device).eval()
     stops = {tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|im_end|>")}
 
-    def sample(system: str, question: str) -> list[str]:
+    def sample(system: str, question: str, greedy: bool = False) -> list[str]:
         messages = [{"role": "system", "content": system}, {"role": "user", "content": question}]
         prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
         torch.manual_seed(SEED)
+        settings = {"do_sample": False, "max_new_tokens": SETTINGS["max_new_tokens"]} if greedy else {
+            "do_sample": True,
+            "num_return_sequences": SAMPLES,
+            **SETTINGS,
+        }
         with torch.no_grad():
-            out = model.generate(
-                ids,
-                do_sample=True,
-                num_return_sequences=SAMPLES,
-                pad_token_id=tokenizer.eos_token_id,
-                **SETTINGS,
-            )
+            out = model.generate(ids, pad_token_id=tokenizer.eos_token_id, **settings)
         answers = []
         for row in out[:, ids.shape[1] :].tolist():
             kept = []
@@ -105,11 +104,14 @@ def main() -> None:
             "accepted": accepted,
             "truth": truth,
             "answers": {},
+            "greedy": {},
         }
         for key, system in PROMPTS:
             answers = sample(system, question)
             entry["answers"][key] = [{"text": a, "verdict": verdict(a, accepted)} for a in answers]
-            print(f"{qid:12} {key:7}", [a[:40] for a in answers])
+            [greedy] = sample(system, question, greedy=True)
+            entry["greedy"][key] = {"text": greedy, "verdict": verdict(greedy, accepted)}
+            print(f"{qid:12} {key:7}", greedy, [a[:40] for a in answers])
         questions.append(entry)
 
     write_dataset("hallucination/samples", {

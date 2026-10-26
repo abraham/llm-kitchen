@@ -27,6 +27,8 @@ export interface SampledQuestion {
 	/** The right answer to show, or null for a question about something invented. */
 	truth: string | null;
 	answers: Record<PromptId, SampledAnswer[]>;
+	/** The answer with sampling off (temperature 0): the likeliest token at every step. */
+	greedy: Record<PromptId, SampledAnswer>;
 }
 
 /** The harness trusts an answer when at least this many of the samples say the same thing. */

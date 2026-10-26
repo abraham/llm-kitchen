@@ -86,6 +86,28 @@ describe('making things up', () => {
 		expect(round(merged)).toBe(0.67);
 	});
 
+	it('at temperature 0: the same six right and five wrong; "Helen Macdonald", a name no sample gave', () => {
+		const greedy = rec.questions.map((x) => x.greedy.plain.verdict);
+		expect(greedy.filter((v) => v === 'right')).toHaveLength(6);
+		expect(greedy.filter((v) => v === 'wrong')).toHaveLength(5);
+		for (const x of rec.questions) {
+			expect(x.greedy.plain.verdict).toBe(consistencyCheck(x.answers.plain).top.verdict);
+		}
+		expect(q('velmora').greedy.plain.text).toBe('Helen Macdonald');
+		expect(q('velmora').answers.plain.map((a) => a.text)).not.toContain('Helen Macdonald');
+		expect(q('roche').greedy.plain.text).toBe('Eddy Merckx');
+	});
+
+	it('two of the four less well-known answers come back right', () => {
+		const obscure = rec.questions.filter((x) => x.kind === 'obscure');
+		expect(obscure.map((x) => consistencyCheck(x.answers.plain).top.verdict)).toEqual([
+			'wrong',
+			'wrong',
+			'right',
+			'right'
+		]);
+	});
+
 	it('In depth: answering is worth p − (1 − p)·t/(1 − t), zero at p = t; t = 0.9 costs 9 points', () => {
 		const worth = (p: number, t: number) => p - ((1 - p) * t) / (1 - t);
 		for (const t of [0.5, 0.75, 0.9]) {

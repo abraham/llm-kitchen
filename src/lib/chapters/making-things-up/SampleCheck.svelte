@@ -89,6 +89,12 @@
 				</tbody>
 			</table>
 
+			<p class="greedy">
+				At temperature 0 it gives one answer every time:
+				<strong>{q.greedy[prompt].text}</strong>
+				<span class="mark {q.greedy[prompt].verdict}">{markOf(q.greedy[prompt].verdict, q)}</span>
+			</p>
+
 			<Status>
 				{#if check.outcome === 'declined'}
 					Most answers decline, so the harness tells you the model doesn’t know.
@@ -122,9 +128,15 @@
 
 <style>
 	.system,
-	.truth {
+	.truth,
+	.greedy {
 		margin: 0 0 var(--space-2);
 		font-size: 0.9rem;
+	}
+
+	.greedy {
+		margin-top: var(--space-2);
+		overflow-wrap: anywhere;
 	}
 
 	.system .label {
