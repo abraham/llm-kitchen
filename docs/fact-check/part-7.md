@@ -10,17 +10,18 @@ Qwen2.5-1.5B-Instruct by `scripts/record/routing.py`, written to `static/data/ro
 
 ## Ch 23. The model is not the product
 
-| Claim                                                                                                         | Backing                                                                                                 |
-| ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| The prompt contains a system prompt, tool descriptions, earlier turns, and chat markers                       | Recorded prompt; segmenter test labels each part                                                        |
-| A 31-character message became a 400-token prompt, then 493 on the second call                                 | Test (recorded token counts, Qwen tokenizer)                                                            |
-| The model has no memory; the harness re-sends the conversation                                                | Each recorded prompt contains the full history (harness code)                                           |
-| The earlier assistant turn is the model's own reply                                                           | `record/agent.py` generates it                                                                          |
-| Qwen2.5 model family                                                                                          | Cite `qwen2024`                                                                                         |
-| Simple: restates Standard in plainer words, with no new claims                                                | Reviewed against the Standard text                                                                      |
-| In depth: tool descriptions 295 of 400 tokens; instructions 53, earlier exchange 22, message 8                | Qwen tokenizer, per part (record environment); test checks the tools part is over 70% of the characters |
-| In depth: Qwen's template puts the descriptions in `<tools>` tags with calling instructions                   | Recorded prompt                                                                                         |
-| In depth: the second call added 93 tokens: the call as the model's turn, the result in `<tool_response>` tags | Test                                                                                                    |
+| Claim                                                                                                                                             | Backing                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| The prompt contains a system prompt, tool descriptions, earlier turns, and chat markers                                                           | Recorded prompt; segmenter test labels each part                                                                       |
+| A 31-character message became a 400-token prompt, then 493 on the second call                                                                     | Test (recorded token counts, Qwen tokenizer)                                                                           |
+| The model has no memory; the harness re-sends the conversation                                                                                    | Each recorded prompt contains the full history (harness code)                                                          |
+| The earlier assistant turn is the model's own reply                                                                                               | `record/agent.py` generates it                                                                                         |
+| Qwen2.5 model family                                                                                                                              | Cite `qwen2024`                                                                                                        |
+| Standard: a 2015 Google paper drew the model code as a small black box among data collection and verification, configuration, serving, monitoring | Cite `sculley2015` (Figure 1 and caption: "Only a small fraction of real-world ML systems is composed of the ML code") |
+| Simple: restates Standard in plainer words, with no new claims                                                                                    | Reviewed against the Standard text                                                                                     |
+| In depth: tool descriptions 295 of 400 tokens; instructions 53, earlier exchange 22, message 8                                                    | Qwen tokenizer, per part (record environment); test checks the tools part is over 70% of the characters                |
+| In depth: Qwen's template puts the descriptions in `<tools>` tags with calling instructions                                                       | Recorded prompt                                                                                                        |
+| In depth: the second call added 93 tokens: the call as the model's turn, the result in `<tool_response>` tags                                     | Test                                                                                                                   |
 
 ## Ch 24. Managing the context
 
@@ -111,19 +112,21 @@ against the accepted answers in the script, and its confidence is the geometric 
 probabilities the model gave its answer tokens. The cascade is replayed in the browser
 (`src/lib/harness/routing.ts`).
 
-| Claim                                                                                                | Backing                                                       |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
-| Apps use several models; the harness decides which answers                                           | Cite `chen2023frugal`, `ong2024`                              |
-| A router picks a model before answering; a cascade asks the small model first                        | Cite `ong2024` (routers), `chen2023frugal` (cascades)         |
-| Bigger models do better                                                                              | Ch 12                                                         |
-| The big model is about three times the small one's size                                              | Qwen2.5 sizes, cite `qwen2024`; test (parameter counts)       |
-| The small model got 26 of 40 right, the big one 37                                                   | Test                                                          |
-| At 60%: 15 passed on, 34 right, 70% of the cost; at 80%: 25 passed on, 37 right, 95%                 | Test (`cascade`)                                              |
-| All 14 wrong small answers had confidence ≤ 79%, and so did 11 of the 26 right ones                  | Test                                                          |
-| Sydney at 79% (wrong); Ankara at 25% (right)                                                         | Test                                                          |
-| Cascades matched the best single model at a small fraction of its cost                               | Cite `chen2023frugal` (abstract: up to 98% cost reduction)    |
-| Trained routers cut costs by more than half in some tests without lowering quality                   | Cite `ong2024` (abstract: "by over 2 times in certain cases") |
-| Real prices are per token and set by providers; a cascade adds a wait                                | Labeled as simplified in the text                             |
-| Simple: restates Standard in plainer words, with no new claims                                       | Reviewed against the Standard text                            |
-| In depth: confidence is the geometric mean of the answer tokens' probabilities                       | `routing.py` (mean log probability)                           |
-| In depth: 0.49 and 1.54 billion weights, r ≈ 3.12; cost (n + m r)/(n r): 32% at m = 0, 70% at m = 15 | Test                                                          |
+| Claim                                                                                                                                        | Backing                                                                                                 |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Apps use several models; the harness decides which answers                                                                                   | Cite `chen2023frugal`, `ong2024`                                                                        |
+| A router picks a model before answering; a cascade asks the small model first                                                                | Cite `ong2024` (routers), `chen2023frugal` (cascades)                                                   |
+| Bigger models do better                                                                                                                      | Ch 12                                                                                                   |
+| The big model is about three times the small one's size                                                                                      | Qwen2.5 sizes, cite `qwen2024`; test (parameter counts)                                                 |
+| The small model got 26 of 40 right, the big one 37                                                                                           | Test                                                                                                    |
+| At 60%: 15 passed on, 34 right, 70% of the cost; at 80%: 25 passed on, 37 right, 95%                                                         | Test (`cascade`)                                                                                        |
+| All 14 wrong small answers had confidence ≤ 79%, and so did 11 of the 26 right ones                                                          | Test                                                                                                    |
+| Sydney at 79% (wrong); Ankara at 25% (right)                                                                                                 | Test                                                                                                    |
+| Cascades matched the best single model at a small fraction of its cost                                                                       | Cite `chen2023frugal` (abstract: up to 98% cost reduction)                                              |
+| Trained routers cut costs by more than half in some tests without lowering quality                                                           | Cite `ong2024` (abstract: "by over 2 times in certain cases")                                           |
+| Real prices are per token and set by providers; a cascade adds a wait                                                                        | Labeled as simplified in the text                                                                       |
+| Answers to predictable questions can be made ahead of time and checked before use; unpredicted questions still need a model                  | Cite `google-mlcc-inference` (static inference: cached predictions, post-verification, uncommon inputs) |
+| MUM found over 800 vaccine names in more than 50 languages in seconds, versus hundreds of human hours; validated, then used in Search (2021) | Cite `google-mum-vaccines`                                                                              |
+| Simple: restates Standard in plainer words, with no new claims                                                                               | Reviewed against the Standard text                                                                      |
+| In depth: confidence is the geometric mean of the answer tokens' probabilities                                                               | `routing.py` (mean log probability)                                                                     |
+| In depth: 0.49 and 1.54 billion weights, r ≈ 3.12; cost (n + m r)/(n r): 32% at m = 0, 70% at m = 15                                         | Test                                                                                                    |

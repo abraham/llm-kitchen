@@ -1179,5 +1179,102 @@
 		"venue": "Reprinted in AI Magazine 27(4), 2006",
 		"year": 1955,
 		"url": "https://doi.org/10.1609/aimag.v27i4.1904"
+	},
+	{
+		"id": "zhang2024gsm1k",
+		"authors": [
+			"Hugh Zhang",
+			"Jeff Da",
+			"Dean Lee",
+			"Vaughn Robinson",
+			"Catherine Wu",
+			"Will Song",
+			"Tiffany Zhao",
+			"Pranav Raja",
+			"Charlotte Zhuang",
+			"Dylan Slack",
+			"Qin Lyu",
+			"Sean Hendryx",
+			"Russell Kaplan",
+			"Michele Lunati",
+			"Summer Yue"
+		],
+		"title": "A Careful Examination of Large Language Model Performance on Grade School Arithmetic",
+		"venue": "NeurIPS 2024 Datasets and Benchmarks Track",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.00332"
+	},
+	{
+		"id": "muennighoff2023",
+		"authors": [
+			"Niklas Muennighoff",
+			"Alexander M. Rush",
+			"Boaz Barak",
+			"Teven Le Scao",
+			"Aleksandra Piktus",
+			"Nouamane Tazi",
+			"Sampo Pyysalo",
+			"Thomas Wolf",
+			"Colin Raffel"
+		],
+		"title": "Scaling Data-Constrained Language Models",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.16264"
+	},
+	{
+		"id": "sculley2015",
+		"authors": [
+			"D. Sculley",
+			"Gary Holt",
+			"Daniel Golovin",
+			"Eugene Davydov",
+			"Todd Phillips",
+			"Dietmar Ebner",
+			"Vinay Chaudhary",
+			"Michael Young",
+			"Jean-François Crespo",
+			"Dan Dennison"
+		],
+		"title": "Hidden Technical Debt in Machine Learning Systems",
+		"venue": "Advances in Neural Information Processing Systems 28 (NIPS 2015)",
+		"year": 2015,
+		"url": "https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+	},
+	{
+		"id": "google-mum-vaccines",
+		"authors": ["Pandu Nayak"],
+		"title": "How MUM improved Google Searches for vaccine information",
+		"venue": "Google blog",
+		"year": 2021,
+		"url": "https://blog.google/products/search/how-mum-improved-google-searches-vaccine-information/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-overfitting",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Overfitting",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/overfitting/overfitting",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-datasets",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Dividing the original dataset",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-inference",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Static versus dynamic inference",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/production-ml-systems/static-vs-dynamic-inference",
+		"accessed": "2026-10-25"
 	}
 ]

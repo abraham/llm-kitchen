@@ -89,8 +89,11 @@ different harness. The chapters ahead look at its jobs one by one.
 
 The reply you see is also the harness's work: it reads what the model wrote, spots tool calls,
 runs them, and shows you only the final answer. The same model can feel very different depending
-on the harness around it: its instructions, its tools, and the rules it enforces. The chapters
-ahead look at each job in turn.
+on the harness around it: its instructions, its tools, and the rules it enforces. This holds well
+beyond chat. In a 2015 paper on the hidden costs of machine learning systems, Google engineers drew
+the model's code as a small black box in the middle of everything else a real system needs:
+collecting and checking data, configuration, serving, and monitoring.<Cite id="sculley2015" /> The
+chapters ahead look at each job in turn.
 
 </At>
 

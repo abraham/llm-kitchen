@@ -250,9 +250,23 @@ likely.<Cite id="radford2019" />
 </At>
 <At levels="deep">
 
+### Overfitting
+
+A network can keep getting better at its training text while getting worse at text it hasn't
+seen, by memorizing the examples instead of learning their patterns. This is called <GlossaryPopover term="overfitting">overfitting</GlossaryPopover>.
+To catch it, trainers set
+aside some text the network never learns from and track the loss on that too: when the training
+loss keeps falling but the loss on the set-aside text starts to rise, the network has begun to
+memorize.<Cite id="google-mlcc-overfitting" />
+
+Seeing the same text again and again makes memorizing easier, and the biggest models may soon run
+short of new text to learn from. So researchers tested repeating it. With models of up to 9 billion
+weights, training on the same text up to 4 times did about as well as the same amount of new text.
+With more repeats, each extra pass helped less, until more training added nothing.<Cite id="muennighoff2023" />
+
 ### Dropout
 
-Training GPT-2 also used **dropout**: at each step, some of the numbers flowing through the network
+Training GPT-2 also used **dropout**, a guard against overfitting: at each step, some of the numbers flowing through the network
 are set to zero at random, each with a chance of 0.1, a different tenth every step.<Cite id="gpt2-config" />
 The network can't rely on any one neuron, so it memorizes its training text less and does better on
 text it hasn't seen.<Cite id="srivastava2014" /> Dropout is only for training: when the model is used,
@@ -303,6 +317,8 @@ text that's true, which is one reason models make things up (<ChapterRef to="qui
 
 - Each step moves every weight by $-\eta\,\partial L / \partial w$; a language model's loss is the
   average of $-\ln p$ for the real next tokens.
+- Overfitting: the training loss falls while the loss on set-aside text rises. Dropout guards
+  against it.
 
 </At>
 </RecapCard>
