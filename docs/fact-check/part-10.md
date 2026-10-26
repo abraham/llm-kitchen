@@ -50,22 +50,26 @@ Data: real runs recorded offline, with each model's pinned revision in its file:
 
 ## Ch 37. Remembering without attention
 
-| Claim                                                                                                                  | Backing                                         |
-| ---------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Recurrent networks predate transformers                                                                                | Cite `elman1990`                                |
-| The tiny model's memory is 32 numbers however much it has read                                                         | `CharRNN` test                                  |
-| After the widget's 1,500 training steps, it expects _u_ after "humpty d"                                               | Test (same seed and batches as the widget)      |
-| GPT-2 keeps 2 × 12 × 768 = 18,432 numbers per token, up to 1,024 tokens                                                | `canonical.json`; test; widget computes from it |
-| The LSTM added gates that learn what to keep and forget                                                                | Cite `hochreiter1997`                           |
-| Transformers replaced recurrence                                                                                       | Cite `vaswani2017`                              |
-| Mamba's state update depends on the input; cost grows linearly with length                                             | Cite `gu2023` (abstract)                        |
-| Fixed-state models struggle to copy long passages that transformers copy                                               | Cite `jelassi2024` (abstract)                   |
-| Simple: restates Standard in plainer words, with no new claims                                                         | Reviewed against the Standard text              |
-| In depth: h_t = tanh(W_h h_{t−1} + W_x x_t + b), p = softmax(W_y h_t + c), as in the tiny model                        | Implementation (`rnn.ts`); cite `elman1990`     |
-| In depth: tanh keeps the memory between −1 and 1; trained by backpropagation through the steps                         | `rnn.ts`; test                                  |
-| In depth: the error passes through W_h and tanh's slope (at most 1) at every step, so it fades or blows up             | Cite `hochreiter1997` (abstract and §3)         |
-| In depth: the LSTM's cell is carried forward by addition (constant error carousel), with gates for writing and reading | Cite `hochreiter1997` (abstract)                |
-| In depth: GPT-2 at 1,024 tokens keeps 18,874,368 numbers; the tiny model 32                                            | Test (`canonical.json`)                         |
+| Claim                                                                                                                                                         | Backing                                                                                                 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Recurrent networks predate transformers                                                                                                                       | Cite `elman1990`                                                                                        |
+| The tiny model's memory is 32 numbers however much it has read                                                                                                | `CharRNN` test                                                                                          |
+| After the widget's 1,500 training steps, it expects _u_ after "humpty d"                                                                                      | Test (same seed and batches as the widget)                                                              |
+| GPT-2 keeps 2 × 12 × 768 = 18,432 numbers per token, up to 1,024 tokens                                                                                       | `canonical.json`; test; widget computes from it                                                         |
+| The LSTM added gates that learn what to keep and forget                                                                                                       | Cite `hochreiter1997`                                                                                   |
+| Transformers replaced recurrence                                                                                                                              | Cite `vaswani2017`                                                                                      |
+| Recurrent models read even training text one token at a time; transformers handle every position at once, so they train faster                                | Cite `vaswani2017` (§1, abstract: "more parallelizable and requiring significantly less time to train") |
+| The first transformer set a single-model record on English-to-French after 3.5 days on eight GPUs, a small fraction of the best earlier models' training cost | Cite `vaswani2017` (abstract: 41.8 BLEU, WMT 2014)                                                      |
+| Generation still goes one token at a time; training is what runs in parallel                                                                                  | Ch 11 (one run per token); causal mask lets every position train at once                                |
+| Mamba's state update depends on the input; cost grows linearly with length                                                                                    | Cite `gu2023` (abstract)                                                                                |
+| Fixed-state models struggle to copy long passages that transformers copy                                                                                      | Cite `jelassi2024` (abstract)                                                                           |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                | Reviewed against the Standard text                                                                      |
+| In depth: h_t = tanh(W_h h_{t−1} + W_x x_t + b), p = softmax(W_y h_t + c), as in the tiny model                                                               | Implementation (`rnn.ts`); cite `elman1990`                                                             |
+| In depth: tanh keeps the memory between −1 and 1; trained by backpropagation through the steps                                                                | `rnn.ts`; test                                                                                          |
+| In depth: the error passes through W_h and tanh's slope (at most 1) at every step, so it fades or blows up                                                    | Cite `hochreiter1997` (abstract and §3)                                                                 |
+| In depth: the LSTM's cell is carried forward by addition (constant error carousel), with gates for writing and reading                                        | Cite `hochreiter1997` (abstract)                                                                        |
+| In depth: per layer, recurrence needs n sequential steps and a path of n between tokens n apart; self-attention needs 1 and 1, at the cost of n² comparisons  | Cite `vaswani2017` (Table 1: sequential operations, maximum path length, complexity per layer)          |
+| In depth: GPT-2 at 1,024 tokens keeps 18,874,368 numbers; the tiny model 32                                                                                   | Test (`canonical.json`)                                                                                 |
 
 ## Ch 38. Seeing pictures
 
