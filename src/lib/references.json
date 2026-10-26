@@ -965,5 +965,316 @@
 		"venue": "arXiv",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2406.18665"
+	},
+	{
+		"id": "lindsey2025biology",
+		"authors": ["Jack Lindsey", "Wes Gurnee", "Emmanuel Ameisen", "Joshua Batson"],
+		"title": "On the Biology of a Large Language Model",
+		"venue": "Transformer Circuits Thread",
+		"year": 2025,
+		"url": "https://transformer-circuits.pub/2025/attribution-graphs/biology.html",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "he2025nondeterminism",
+		"authors": ["Horace He", "Thinking Machines Lab"],
+		"title": "Defeating Nondeterminism in LLM Inference",
+		"venue": "Thinking Machines Lab: Connectionism",
+		"year": 2025,
+		"url": "https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "carlini2021",
+		"authors": ["Nicholas Carlini", "Florian Tramèr", "Eric Wallace", "Matthew Jagielski"],
+		"title": "Extracting Training Data from Large Language Models",
+		"venue": "USENIX Security 2021",
+		"year": 2021,
+		"url": "https://arxiv.org/abs/2012.07805"
+	},
+	{
+		"id": "anthropic-context-windows",
+		"authors": ["Anthropic"],
+		"title": "Context windows",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "hsieh2024ruler",
+		"authors": ["Cheng-Ping Hsieh", "Simeng Sun", "Samuel Kriman", "Shantanu Acharya"],
+		"title": "RULER: What's the Real Context Size of Your Long-Context Language Models?",
+		"venue": "COLM 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.06654"
+	},
+	{
+		"id": "petrov2023",
+		"authors": ["Aleksandar Petrov", "Emanuele La Malfa", "Philip H. S. Torr", "Adel Bibi"],
+		"title": "Language Model Tokenizers Introduce Unfairness Between Languages",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.15425"
+	},
+	{
+		"id": "anthropic-pricing",
+		"authors": ["Anthropic"],
+		"title": "Pricing",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/about-claude/pricing",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "cottier2024",
+		"authors": [
+			"Ben Cottier",
+			"Robi Rahman",
+			"Loredana Fattorini",
+			"Nestor Maslej",
+			"Tamay Besiroglu",
+			"David Owen"
+		],
+		"title": "The rising costs of training frontier AI models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.21015"
+	},
+	{
+		"id": "llmc-gpt2-124m",
+		"authors": ["Andrej Karpathy"],
+		"title": "Reproducing GPT-2 (124M) in llm.c in 90 minutes for $20",
+		"venue": "GitHub (karpathy/llm.c discussion #481)",
+		"year": 2024,
+		"url": "https://github.com/karpathy/llm.c/discussions/481",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "llmc-gpt2-1558m",
+		"authors": ["Andrej Karpathy"],
+		"title": "Let's reproduce GPT-2 (1.6B): one 8XH100 node, 24 hours, $672, in llm.c",
+		"venue": "GitHub (karpathy/llm.c discussion #677)",
+		"year": 2024,
+		"url": "https://github.com/karpathy/llm.c/discussions/677",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "mata2023",
+		"authors": ["P. Kevin Castel (U.S. District Court, S.D.N.Y.)"],
+		"title": "Mata v. Avianca, Inc., No. 22-cv-1461: Opinion and Order on Sanctions",
+		"venue": "U.S. District Court for the Southern District of New York",
+		"year": 2023,
+		"url": "https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "manakul2023",
+		"authors": ["Potsawee Manakul", "Adian Liusie", "Mark J. F. Gales"],
+		"title": "SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models",
+		"venue": "EMNLP 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2303.08896"
+	},
+	{
+		"id": "kuhn2023",
+		"authors": ["Lorenz Kuhn", "Yarin Gal", "Sebastian Farquhar"],
+		"title": "Semantic Uncertainty: Linguistic Invariances for Uncertainty Estimation in Natural Language Generation",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.09664"
+	},
+	{
+		"id": "kalai2025",
+		"authors": ["Adam Tauman Kalai", "Ofir Nachum", "Santosh S. Vempala", "Edwin Zhang"],
+		"title": "Why Language Models Hallucinate",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2509.04664"
+	},
+	{
+		"id": "spracklen2025",
+		"authors": [
+			"Joseph Spracklen",
+			"Raveen Wijewickrama",
+			"A H M Nazmus Sakib",
+			"Anindya Maiti",
+			"Bimal Viswanath",
+			"Murtuza Jadliwala"
+		],
+		"title": "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs",
+		"venue": "USENIX Security 2025",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2406.10279"
+	},
+	{
+		"id": "magesh2024",
+		"authors": [
+			"Varun Magesh",
+			"Faiz Surani",
+			"Matthew Dahl",
+			"Mirac Suzgun",
+			"Christopher D. Manning",
+			"Daniel E. Ho"
+		],
+		"title": "Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.20362"
+	},
+	{
+		"id": "kandpal2023",
+		"authors": ["Nikhil Kandpal", "Haikang Deng", "Adam Roberts", "Eric Wallace", "Colin Raffel"],
+		"title": "Large Language Models Struggle to Learn Long-Tail Knowledge",
+		"venue": "ICML 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2211.08411"
+	},
+	{
+		"id": "zhang2023snowball",
+		"authors": ["Muru Zhang", "Ofir Press", "William Merrill", "Alisa Liu", "Noah A. Smith"],
+		"title": "How Language Model Hallucinations Can Snowball",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.13534"
+	},
+	{
+		"id": "bai2024",
+		"authors": ["Xuechunzi Bai", "Angelina Wang", "Ilia Sucholutsky", "Thomas L. Griffiths"],
+		"title": "Measuring Implicit Bias in Explicitly Unbiased Large Language Models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.04105"
+	},
+	{
+		"id": "anthropic-extended-thinking",
+		"authors": ["Anthropic"],
+		"title": "Extended thinking",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "epoch-inference-prices",
+		"authors": ["Ben Cottier", "Ben Snodin", "David Owen", "Tom Adamczewski"],
+		"title": "LLM inference prices have fallen rapidly but unequally across tasks",
+		"venue": "Epoch AI",
+		"year": 2025,
+		"url": "https://epoch.ai/data-insights/llm-inference-price-trends",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "samuel1959",
+		"authors": ["Arthur L. Samuel"],
+		"title": "Some Studies in Machine Learning Using the Game of Checkers",
+		"venue": "IBM Journal of Research and Development 3(3)",
+		"year": 1959,
+		"url": "https://doi.org/10.1147/rd.33.0210"
+	},
+	{
+		"id": "mccarthy1955",
+		"authors": ["John McCarthy", "Marvin L. Minsky", "Nathaniel Rochester", "Claude E. Shannon"],
+		"title": "A Proposal for the Dartmouth Summer Research Project on Artificial Intelligence, August 31, 1955",
+		"venue": "Reprinted in AI Magazine 27(4), 2006",
+		"year": 1955,
+		"url": "https://doi.org/10.1609/aimag.v27i4.1904"
+	},
+	{
+		"id": "zhang2024gsm1k",
+		"authors": [
+			"Hugh Zhang",
+			"Jeff Da",
+			"Dean Lee",
+			"Vaughn Robinson",
+			"Catherine Wu",
+			"Will Song",
+			"Tiffany Zhao",
+			"Pranav Raja",
+			"Charlotte Zhuang",
+			"Dylan Slack",
+			"Qin Lyu",
+			"Sean Hendryx",
+			"Russell Kaplan",
+			"Michele Lunati",
+			"Summer Yue"
+		],
+		"title": "A Careful Examination of Large Language Model Performance on Grade School Arithmetic",
+		"venue": "NeurIPS 2024 Datasets and Benchmarks Track",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.00332"
+	},
+	{
+		"id": "muennighoff2023",
+		"authors": [
+			"Niklas Muennighoff",
+			"Alexander M. Rush",
+			"Boaz Barak",
+			"Teven Le Scao",
+			"Aleksandra Piktus",
+			"Nouamane Tazi",
+			"Sampo Pyysalo",
+			"Thomas Wolf",
+			"Colin Raffel"
+		],
+		"title": "Scaling Data-Constrained Language Models",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.16264"
+	},
+	{
+		"id": "sculley2015",
+		"authors": [
+			"D. Sculley",
+			"Gary Holt",
+			"Daniel Golovin",
+			"Eugene Davydov",
+			"Todd Phillips",
+			"Dietmar Ebner",
+			"Vinay Chaudhary",
+			"Michael Young",
+			"Jean-François Crespo",
+			"Dan Dennison"
+		],
+		"title": "Hidden Technical Debt in Machine Learning Systems",
+		"venue": "Advances in Neural Information Processing Systems 28 (NIPS 2015)",
+		"year": 2015,
+		"url": "https://papers.nips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+	},
+	{
+		"id": "google-mum-vaccines",
+		"authors": ["Pandu Nayak"],
+		"title": "How MUM improved Google Searches for vaccine information",
+		"venue": "Google blog",
+		"year": 2021,
+		"url": "https://blog.google/products/search/how-mum-improved-google-searches-vaccine-information/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-overfitting",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Overfitting",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/overfitting/overfitting",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-datasets",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Dividing the original dataset",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/overfitting/dividing-datasets",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "google-mlcc-inference",
+		"authors": ["Google"],
+		"title": "Machine Learning Crash Course: Static versus dynamic inference",
+		"venue": "Google for Developers",
+		"year": 2025,
+		"url": "https://developers.google.com/machine-learning/crash-course/production-ml-systems/static-vs-dynamic-inference",
+		"accessed": "2026-10-25"
 	}
 ]

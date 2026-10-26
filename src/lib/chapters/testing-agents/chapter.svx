@@ -160,6 +160,14 @@ are simple for people but need web browsing and tools. People got 92% right; GPT
 15%.<Cite id="mialon2023gaia" /> A benchmark score says how a model does on those tasks, not on
 yours, which is why <ChapterRef to="picking-a-model" /> suggests trying your own prompts.
 
+A benchmark also only works if the model hasn't already seen its questions, and models learn from
+text on the web, where benchmarks are published. Researchers wrote 1,205 new math problems like
+those in GSM8k, a popular benchmark, and kept them private. Some models scored up to 8 points lower
+on the new problems, a sign they had partly memorized the old ones. The strongest models scored
+about the same.<Cite id="zhang2024gsm1k" /> Your own tests can wear out the same way
+if you keep changing the prompt until they pass, so keep a few aside for a final
+check.<Cite id="google-mlcc-datasets" />
+
 </At>
 <At levels="standard deep">
 
@@ -169,7 +177,19 @@ Its authors found people got 92% right and GPT-4 with plugins 15%.<Cite id="mial
 A benchmark says how an agent does on its tasks, with its tools, graded its way. Your own
 tasks may differ on all three, which is why <ChapterRef to="picking-a-model" /> ends with trying
 your own prompts, and why teams keep an eval of their own.
+A benchmark also assumes the model hasn't seen its questions, and models learn from web text,
+where benchmarks are published. To test this, Scale AI had people write 1,205 new grade-school
+math problems to match GSM8k, a widely used benchmark, and kept them private. Some models scored
+up to 8 percentage points lower on the new problems, and the Phi and Mistral families did worse on
+them at almost every size, while GPT-4, Claude, and Gemini scored about the same on both. Models
+more likely to write out GSM8k's own questions tended to drop more, a sign that they had partly
+memorized them.<Cite id="zhang2024gsm1k" /> A model fitted to its test rather than to the task is
+called <GlossaryPopover term="overfitting">overfit</GlossaryPopover> (<ChapterRef to="learning-from-mistakes" />).
 
+Your own eval can wear out the same way. Change the prompt until every test passes, and the tests
+start to measure how well the prompt fits them rather than how it does on new tasks. Machine
+learning practice keeps a second set of tests aside, used only to check the final version, and
+refreshes both sets with new examples from time to time.<Cite id="google-mlcc-datasets" />
 </At>
 <At levels="deep">
 
@@ -202,6 +222,8 @@ unit tests.
   need checking against people.
 - Real use finds failures tests miss, the same task can pass once and fail the next time, and a
   benchmark score is only about the benchmark's tasks.
+- A benchmark's questions can leak into a model's training text, and a prompt tuned until every
+  test passes can overfit the tests: keep some tests aside for a final check.
 
 <At levels="deep">
 

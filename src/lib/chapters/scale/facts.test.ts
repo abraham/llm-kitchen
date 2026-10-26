@@ -38,6 +38,12 @@ describe('scale', () => {
 		expect(by('GPT-3').flops).toBeCloseTo(3.14e23, -21);
 	});
 
+	it('In depth: GPT-2 small on 10 billion tokens is about 7.5 × 10¹⁸, about 5 million times fewer than Llama 3', () => {
+		const c = 6 * canonical.parameters * 10e9;
+		expect(Math.round(c / 1e17) / 10).toBe(7.5);
+		expect(Math.round(by('Llama 3 (largest)').flops! / c / 1e6)).toBe(5);
+	});
+
 	it('In depth: ten times the weights multiplies the loss by about 0.84, "about 16% lower"', () => {
 		expect(Math.round(10 ** -0.076 * 100) / 100).toBe(0.84);
 		expect(Math.round((1 - 10 ** -0.076) * 100)).toBe(16);

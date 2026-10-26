@@ -19,6 +19,7 @@ import {
 	wording
 } from './parsers/prompts.ts';
 import {
+	hallucinationSamples,
 	injectionLab,
 	kvCacheRun,
 	quantizeRun,
@@ -64,6 +65,8 @@ export const DATASETS = {
 	'traces/quirk-france-qa': traceFile('quirk-france-qa'),
 	'traces/quirk-iphone': traceFile('quirk-iphone'),
 	'traces/quirk-loop': traceFile('quirk-loop'),
+	'traces/quirk-nurse': traceFile('quirk-nurse'),
+	'traces/quirk-engineer': traceFile('quirk-engineer'),
 	'traces/quirk-math': traceFile('quirk-math'),
 	'traces/quirk-moon': traceFile('quirk-moon'),
 	'traces/quirk-painter': traceFile('quirk-painter'),
@@ -85,6 +88,11 @@ export const DATASETS = {
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),
 	'routing/cascade': dataset('routing/cascade.json', routingRecording, 'routing'),
+	'hallucination/samples': dataset(
+		'hallucination/samples.json',
+		hallucinationSamples,
+		'hallucination'
+	),
 	'agent/chat': dataset('agent/chat.json', agentRun, 'agent'),
 	'agent/math-no-tools': dataset('agent/math-no-tools.json', agentRun, 'agent'),
 	'agent/math-tools': dataset('agent/math-tools.json', agentRun, 'agent'),

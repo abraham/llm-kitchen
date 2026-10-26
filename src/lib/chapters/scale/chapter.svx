@@ -34,6 +34,13 @@ published their numbers:
 The bars use a log scale: each step is ten times the one before. The companies behind the
 biggest commercial models mostly don't publish these numbers.
 
+Training the biggest models costs tens of millions of dollars, and the price has grown about 2.4
+times every year.<Cite id="cottier2024" /> Small models have gone the other way: in 2024, a model
+the size of GPT-2 small, the one on this site, was trained from scratch for about
+&#36;20.<Cite id="llmc-gpt2-124m" /> Using models has gotten cheaper fast as well: the lowest price
+for a model that reaches a given test score has fallen between 9 and 900 times a year, depending on
+the test.<Cite id="epoch-inference-prices" />
+
 </At>
 <At levels="standard deep">
 
@@ -41,6 +48,21 @@ The bars use a log scale: each step is ten times the one before, or the big mode
 the screen. Compute is counted in arithmetic operations; the largest Llama 3 model took about
 3.8 × 10²⁵ of them.<Cite id="grattafiori2024" /> The companies behind the biggest commercial models
 mostly don't publish these numbers.
+
+In dollars, training the most compute-hungry models has gotten about 2.4 times more expensive each
+year since 2016. For GPT-4 and Gemini, the chips and the staff each cost tens of millions of
+dollars, and if the trend holds, the largest runs will cost more than a billion dollars by
+2027.<Cite id="cottier2024" /> Small models have gone the other way. In 2024, a model with GPT-2
+small's design and size, the one on this site, was trained from scratch in about 90 minutes on one
+machine with 8 GPUs, for about &#36;20, and did slightly better than the original on a common-sense
+test.<Cite id="llmc-gpt2-124m" /> The full 1.5-billion-weight GPT-2 took 24 hours and &#36;672; in
+2019, training it had been a project for a whole team.<Cite id="llmc-gpt2-1558m" />
+
+Using a model at a given level has gotten cheaper fast too. Over the three years to early 2025,
+the lowest price for a model that reached a given benchmark score fell between 9 and 900 times a
+year, depending on the benchmark and the score. Reaching GPT-4's score on a set of PhD-level
+science questions got about 40 times cheaper each year. The fastest drops came in the last year of
+that span, so they may not last.<Cite id="epoch-inference-prices" />
 
 </At>
 <At levels="deep">
@@ -56,7 +78,10 @@ $$
 operations, where $N$ is the number of weights and $D$ the number of training tokens: about 2 per
 weight for each token going forward through the model, and 4 more for backpropagation.<Cite id="kaplan2020" />
 For GPT-3, $6 \times 175 \times 10^{9} \times 300 \times 10^{9} \approx 3.15 \times 10^{23}$,
-next to the paper's own count of 3.14 × 10²³.<Cite id="brown2020" />
+next to the paper's own count of 3.14 × 10²³.<Cite id="brown2020" /> The &#36;20 copy of GPT-2 small
+read about 10 billion tokens, so it took about
+$6 \times 124 \times 10^{6} \times 10^{10} \approx 7.5 \times 10^{18}$ operations, about 5 million
+times fewer than the largest Llama 3.<Cite id="llmc-gpt2-124m" />
 
 </At>
 

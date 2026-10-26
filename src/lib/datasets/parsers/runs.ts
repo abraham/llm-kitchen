@@ -1,4 +1,5 @@
 import type { KVCacheRun } from '../../harness/cache.ts';
+import type { HallucinationSamples } from '../../harness/hallucination.ts';
 import type { InjectionLab } from '../../harness/injection.ts';
 import type { RoutingRecording } from '../../harness/routing.ts';
 import type { QuantizeRun } from '../../math/quantize.ts';
@@ -124,6 +125,29 @@ export const routingRecording: Check<RoutingRecording> = object({
 	big: routingModel,
 	questions: array(
 		object({ question: string, accepted: array(string), small: routingAnswer, big: routingAnswer })
+	),
+	generatedAt: string
+});
+
+const sampledAnswer = object({ text: string, verdict: literal('right', 'wrong', 'declined') });
+const sampledAnswers = array(sampledAnswer);
+
+export const hallucinationSamples: Check<HallucinationSamples> = object({
+	version: literal(1),
+	model: modelRef,
+	settings: dictionary(number),
+	seed: integer,
+	prompts: array(object({ id: literal('plain', 'allowed'), system: string })),
+	questions: array(
+		object({
+			id: string,
+			kind: literal('known', 'obscure', 'invented'),
+			question: string,
+			accepted: array(string),
+			truth: nullable(string),
+			answers: object({ plain: sampledAnswers, allowed: sampledAnswers }),
+			greedy: object({ plain: sampledAnswer, allowed: sampledAnswer })
+		})
 	),
 	generatedAt: string
 });

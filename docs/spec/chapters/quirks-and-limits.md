@@ -11,7 +11,8 @@ anything outside the context window is forgotten.
 
 - `GlassBoxGenerator` as a "quirks lab", with recorded presets: made-up facts (the first person on
   the moon, a painter who doesn't exist), an out-of-date answer (the latest iPhone), arithmetic
-  (2 + 2), wording (the capital of France, as a sentence and as Q/A), and a repetition loop. The
+  (2 + 2), wording (the capital of France, as a sentence and as Q/A), a repetition loop, and learned
+  stereotypes ("The nurse said that", "The engineer said that"). The
   visitor can switch to live GPT-2 to run their own experiments.
 - `SpellingBlindSpot`: how words like "strawberry" split into tokens (`TokenChip`).
 

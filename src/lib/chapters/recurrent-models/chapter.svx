@@ -77,6 +77,8 @@ stays the same size however long the text gets:
 The catch is the index card: whatever the model doesn't note down is gone for good. Early
 recurrent networks forgot quickly; the LSTM added *gates* that learn what to keep.<Cite id="hochreiter1997" />
 LSTMs were the standard for language until the transformer replaced them.<Cite id="vaswani2017" />
+It trained much faster: a recurrent model reads even its training text one token at a time, while a
+transformer takes in every position at once.<Cite id="vaswani2017" />
 
 </At>
 <At levels="standard deep">
@@ -86,6 +88,13 @@ numbers as it reads, and whatever it doesn't note down is gone for good. Early r
 were bad at keeping information for long; the LSTM added *gates* that learn what to keep and what
 to forget.<Cite id="hochreiter1997" /> For years, LSTMs were the standard way to model language,
 until the transformer, which needs no recurrence at all, replaced them.<Cite id="vaswani2017" />
+
+The main reason was training speed. A recurrent model can't work out its memory at step 10 before
+step 9, so even in training, where the whole text is known in advance, it reads one token at a
+time. A transformer handles every position of a training text at once, which suits GPUs. (Writing
+a reply still goes one token at a time; it's training that runs in parallel.) The first transformer
+set a new record for a single model on English-to-French translation after 3.5 days on eight GPUs,
+at a small fraction of the training cost of the best earlier models.<Cite id="vaswani2017" />
 
 </At>
 <At levels="deep">
@@ -98,6 +107,11 @@ Over many steps it usually shrinks to almost nothing, or now and then blows up. 
 a separate cell carried forward by adding to it rather than squashing it, which its authors called
 a *constant error carousel*, with gates that learn when to write to it and when to read from
 it.<Cite id="hochreiter1997" />
+
+Attention avoids the long chain altogether. For a text of $n$ tokens, a recurrent layer needs $n$
+steps one after another, and information from a token $n$ places back passes through $n$ updates
+to arrive; a self-attention layer needs 1 step, and any earlier token is 1 step away. The price is
+comparing every pair of tokens, $n^2$ comparisons instead of $n$ updates.<Cite id="vaswani2017" />
 
 The size difference is large. At its full 1,024 tokens, GPT-2 small keeps 18,432 numbers per
 token, 18,874,368 in all; the tiny model here keeps 32.
@@ -131,6 +145,8 @@ memory.<Cite id="jelassi2024" />
   forget.
 - Attention keeps every earlier token around, which costs more but lets the model look anything up
   again.
+- Transformers replaced recurrent models mainly because they train on every position of a text at
+  once.
 
 <At levels="deep">
 

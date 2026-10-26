@@ -22,6 +22,11 @@ question and the next word is the answer. The counting model learned from the sa
 in <ChapterRef to="predicting-by-counting" />, by filling in a table. A network has no table to
 fill in, so it starts from random weights and improves them a little at a time.
 
+Getting a program's numbers from examples, instead of writing its rules, is called <GlossaryPopover term="machine-learning">machine learning</GlossaryPopover>.
+Doing it with many stacked layers of neurons is <GlossaryPopover term="deep-learning">deep learning</GlossaryPopover>, and a large language model is
+a deep network trained on text. All of it is part of artificial intelligence, a field named in
+1955.<Cite id="mccarthy1955" />
+
 </At>
 <At levels="standard deep">
 
@@ -39,6 +44,15 @@ The counting model in <ChapterRef to="predicting-by-counting" /> learned from te
 Counting is a kind of training: read the text once and fill in a table. A network can't be filled
 in like that, because no single weight stands for one pair of words; each weight plays a part in
 many predictions. So it starts from random weights and improves them by trial and correction.
+
+This is what <GlossaryPopover term="machine-learning">machine learning</GlossaryPopover> means: a program's numbers come from examples
+instead of rules someone wrote. In 1959 Arthur Samuel described a checkers program that got better
+by playing, in a paper titled *Some Studies in Machine Learning Using the Game of
+Checkers*.<Cite id="samuel1959" /> Networks with many stacked layers of neurons, trained this
+way, are <GlossaryPopover term="deep-learning">deep learning</GlossaryPopover>; GPT-2 stacks 12 blocks of them. A large language model is a deep
+network trained on text to predict the next token. All of this sits inside the older, wider field
+of artificial intelligence, named in a 1955 proposal for a summer workshop at Dartmouth, which
+also covers programs that follow rules people wrote, with no learning at all.<Cite id="mccarthy1955" />
 
 </At>
 
@@ -236,9 +250,23 @@ likely.<Cite id="radford2019" />
 </At>
 <At levels="deep">
 
+### Overfitting
+
+A network can keep getting better at its training text while getting worse at text it hasn't
+seen, by memorizing the examples instead of learning their patterns. This is called <GlossaryPopover term="overfitting">overfitting</GlossaryPopover>.
+To catch it, trainers set
+aside some text the network never learns from and track the loss on that too: when the training
+loss keeps falling but the loss on the set-aside text starts to rise, the network has begun to
+memorize.<Cite id="google-mlcc-overfitting" />
+
+Seeing the same text again and again makes memorizing easier, and the biggest models may soon run
+short of new text to learn from. So researchers tested repeating it. With models of up to 9 billion
+weights, training on the same text up to 4 times did about as well as the same amount of new text.
+With more repeats, each extra pass helped less, until more training added nothing.<Cite id="muennighoff2023" />
+
 ### Dropout
 
-Training GPT-2 also used **dropout**: at each step, some of the numbers flowing through the network
+Training GPT-2 also used **dropout**, a guard against overfitting: at each step, some of the numbers flowing through the network
 are set to zero at random, each with a chance of 0.1, a different tenth every step.<Cite id="gpt2-config" />
 The network can't rely on any one neuron, so it memorizes its training text less and does better on
 text it hasn't seen.<Cite id="srivastava2014" /> Dropout is only for training: when the model is used,
@@ -289,6 +317,8 @@ text that's true, which is one reason models make things up (<ChapterRef to="qui
 
 - Each step moves every weight by $-\eta\,\partial L / \partial w$; a language model's loss is the
   average of $-\ln p$ for the real next tokens.
+- Overfitting: the training loss falls while the loss on set-aside text rises. Dropout guards
+  against it.
 
 </At>
 </RecapCard>

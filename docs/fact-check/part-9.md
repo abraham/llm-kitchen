@@ -1,4 +1,4 @@
-# Fact-check: Part IX, Safety (Ch 32–34)
+# Fact-check: Part IX, Safety (Ch 32–35)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts`, `src/lib/harness/agent.test.ts` (the browser's toy tools give
@@ -8,7 +8,38 @@ Data: real runs of Qwen2.5-1.5B-Instruct (greedy, pinned revision recorded in ea
 harness in `scripts/record/agent.py`, written to `static/data/agent/`. The harness stops the model
 after its first tool call, runs the tool, and calls the model again, up to 8 calls.
 
-## Ch 32. Prompt injection
+## Ch 32. Making things up
+
+Data: `scripts/record/hallucination.py` samples Qwen2.5-1.5B-Instruct (temperature 0.7, top-p 0.8,
+top-k 20, the model's own generation settings, seed 1) ten times on each of 11 questions, and asks
+once greedily (temperature 0), under two system prompts, written to `static/data/hallucination/samples.json`. Code grades each answer right,
+wrong, or declined; every answer was read to check the grading. The book, the chemist, and the town
+were invented for the chapter.
+
+| Claim                                                                                                                                                                          | Backing                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| In 2023 two New York lawyers cited six decisions ChatGPT invented; asked, it said they were real; fined $5,000 and ordered to write to each judge falsely named as an author   | Cite `mata2023` (order on sanctions, June 22, 2023: the six fake opinions, letters to each judge, $5,000 penalty) |
+| Sampled answers agree when a model knows a fact and scatter when it makes one up                                                                                               | Cite `manakul2023` (abstract)                                                                                     |
+| The model names nine different authors for the invented book in ten tries                                                                                                      | Test (`making-things-up/facts.test.ts`)                                                                           |
+| The six right answers agree 10 of 10; with at least 8 of 10 required, the check flags 4 of the 5 wrong answers and none of the right ones                                      | Test (`summarize`, `AGREE`)                                                                                       |
+| All ten samples say Eddy Merckx for 1987; Stephen Roche won in 1987, Merckx won five times                                                                                     | Test (recorded answers); Tour de France winners (Merckx 1969–72, 1974; Roche 1987)                                |
+| At temperature 0 the model gets the same six right and five wrong; the book gets "Helen Macdonald", a name none of the ten samples gave; a lower temperature hides the scatter | Test (greedy answers recorded with the samples)                                                                   |
+| Routing got a cheaper signal from one answer's confidence                                                                                                                      | Ch 27 (recorded confidence)                                                                                       |
+| Allowing "I don't know": declines 10 of 10 for the book and town, 5 of 10 for the Nobel Prize, never for the chemist; keeps all six right answers; still says Merckx           | Test                                                                                                              |
+| Training rewards likely text; most benchmarks give no credit for "I don't know", so guessing pays; nine of the ten benchmarks they reviewed give none                          | Cite `kalai2025` (abstract; §4.1, Table 2: WildBench alone gives partial credit)                                  |
+| Accuracy on a question rises with the number of training documents about its subject (several QA sets, models up to 176B); retrieval reduces that dependence                   | Cite `kandpal2023` (abstract)                                                                                     |
+| All four well-known answers come back right, two of the four less well-known ones                                                                                              | Test                                                                                                              |
+| A model defends a wrong answer with more false claims it can recognize separately: ChatGPT 67%, GPT-4 87%                                                                      | Cite `zhang2023snowball` (abstract)                                                                               |
+| Package hallucinations: 16 models, 576,000 samples, at least 5.2% (commercial) and 21.7% (open-source), 205,474 unique names                                                   | Cite `spracklen2025` (abstract)                                                                                   |
+| Anyone can publish a package under an unused name                                                                                                                              | How public registries such as PyPI and npm work; the attack the paper describes                                   |
+| Legal research tools that retrieve cases, some advertised as hallucination-free, made things up 17% to 33% of the time                                                         | Cite `magesh2024` (abstract; preregistered)                                                                       |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                 | Reviewed against the Standard text                                                                                |
+| In depth: answer entropy is 0 when all agree, ln 10 ≈ 2.30 when all differ; 2.16 for the book; 0.90 for the Nobel Prize (6, 3, 1); 0.67 with the two spellings merged          | Test                                                                                                              |
+| In depth: semantic entropy groups samples by meaning, judged by a second model, before taking the entropy                                                                      | Cite `kuhn2023`                                                                                                   |
+| In depth: a mistake costs t/(1 − t), so answering is worth p − (1 − p)·t/(1 − t), above 0 exactly when p > t; t = 0.9 costs 9 points; exam grading is t = 0                    | Cite `kalai2025` (§4.2); test checks the algebra                                                                  |
+| In depth: for arbitrary facts like birthdays, a base model errs on at least the share that appear once in training (20% → 20%)                                                 | Cite `kalai2025` (§1.1, §3.3.1 singleton rate)                                                                    |
+
+## Ch 33. Prompt injection
 
 Data: `scripts/record/injection.py` runs Qwen2.5-1.5B-Instruct (greedy) on 3 documents × 5 attacks
 (including none) × 6 defenses, written to `static/data/injection/lab.json`. The injected goal is a false
@@ -34,7 +65,7 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 | In depth: marking stopped every fake notice, only one of three plain instructions                           | Test                                                          |
 | In depth: a known delimiter can be forged; space-only marking misses attacks without spaces                 | Cite `hines2024` (§V-D)                                       |
 
-## Ch 33. Trust and guardrails
+## Ch 34. Trust and guardrails
 
 | Claim                                                                                                                    | Backing                                                                   |
 | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
@@ -51,31 +82,35 @@ hand to check the grading ("four out of five stars", the real rating, doesn't co
 | In depth: MCP says a person should always be able to deny a tool call                                                    | Cite `mcp-spec` (User Interaction Model)                                  |
 | In depth: none of the three runs produced the summary                                                                    | Test                                                                      |
 
-## Ch 34. Did it work?
+## Ch 35. Did it work?
 
 Grades: Qwen2.5-1.5B-Instruct (greedy) grading each finished run's final answer, alone and with a
 correct answer, in `scripts/record/grading.py`, written to `static/data/agent/grades.json`.
 
-| Claim                                                                                                                                                    | Backing                                                                          |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| The traces are the recorded runs of the Tools, agent loop, guardrails, and harness chapters                                                              | `TEST_CASES` in `harness/evals.ts`; test                                         |
-| No guardrails: 8 calls read 4,179 tokens; three deletions, a second fetch, a fourth deletion attempt; no answer                                          | Test                                                                             |
-| In τ-bench, prompts were 95.9% of a GPT-4o agent's price                                                                                                 | Cite `yao2024taubench` (§5.1, cost analysis)                                     |
-| Full production tracing let Anthropic diagnose why agents failed to find obvious information                                                             | Cite `anthropic-multi-agent` ("Debugging benefits from new approaches")          |
-| Anthropic started with about 20 queries from real use; early changes had large effects                                                                   | Cite `anthropic-multi-agent` ("Start evaluating immediately")                    |
-| Judge agents that change things by their end state, not their exact steps                                                                                | Cite `anthropic-multi-agent` (Appendix, end-state evaluation)                    |
-| Code checks: answer contains the expected text (numbers without commas, whole words); all files kept                                                     | `answerCheck`, `filesKept`; test                                                 |
-| Only 2 of the 7 runs pass both code checks; which runs fail which check                                                                                  | Test                                                                             |
-| The grader alone passes all five answers: agrees with the code check on 2 of 5                                                                           | Test (recorded verdicts)                                                         |
-| Given a correct answer: fails the wrong product with the numbers the wrong way round; still passes the unfinished sentence and the empty summary; 3 of 5 | Test; recorded replies                                                           |
-| GPT-4 as judge agreed with people over 80% of the time, as often as people agree; position, verbosity, self-enhancement biases                           | Cite `zheng2023judge` (abstract)                                                 |
-| Anthropic's judge: one call, a rubric (accuracy, citations, completeness, sources, tool use), pass or fail                                               | Cite `anthropic-multi-agent` ("LLM-as-judge evaluation scales")                  |
-| People caught agents choosing SEO content farms over better sources                                                                                      | Cite `anthropic-multi-agent` ("Human evaluation catches what automation misses") |
-| Anthropic monitors decision patterns and interaction structures without reading individual conversations                                                 | Cite `anthropic-multi-agent` ("Debugging…")                                      |
-| The recordings are greedy, so reruns match                                                                                                               | `scripts/record/agent.py`, `grading.py` (`do_sample=False`)                      |
-| τ-bench checks a database's end state; GPT-4o pass^1 about 61% in retail, pass^8 under 25%                                                               | Cite `yao2024taubench` (abstract, §1, Table 2)                                   |
-| GAIA: 466 questions; people 92%, GPT-4 with plugins 15%                                                                                                  | Cite `mialon2023gaia` (abstract)                                                 |
-| Simple: restates Standard in plainer words, with no new claims                                                                                           | Reviewed against the Standard text                                               |
-| In depth: all of k tries succeed with chance pᵏ; 0.6⁸ ≈ 1.7%                                                                                             | Arithmetic; test                                                                 |
-| In depth: varied task difficulty makes the measured drop gentler than pᵏ                                                                                 | Jensen's inequality (the mean of pᵏ is at least (mean p)ᵏ)                       |
-| In depth: pass^k = C(c,k)/C(n,k) averaged over tasks; pass@k is at least one success                                                                     | Cite `yao2024taubench` (§3, pass^k metric)                                       |
+| Claim                                                                                                                                                                                        | Backing                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| The traces are the recorded runs of the Tools, agent loop, guardrails, and harness chapters                                                                                                  | `TEST_CASES` in `harness/evals.ts`; test                                             |
+| No guardrails: 8 calls read 4,179 tokens; three deletions, a second fetch, a fourth deletion attempt; no answer                                                                              | Test                                                                                 |
+| In τ-bench, prompts were 95.9% of a GPT-4o agent's price                                                                                                                                     | Cite `yao2024taubench` (§5.1, cost analysis)                                         |
+| Full production tracing let Anthropic diagnose why agents failed to find obvious information                                                                                                 | Cite `anthropic-multi-agent` ("Debugging benefits from new approaches")              |
+| Anthropic started with about 20 queries from real use; early changes had large effects                                                                                                       | Cite `anthropic-multi-agent` ("Start evaluating immediately")                        |
+| Judge agents that change things by their end state, not their exact steps                                                                                                                    | Cite `anthropic-multi-agent` (Appendix, end-state evaluation)                        |
+| Code checks: answer contains the expected text (numbers without commas, whole words); all files kept                                                                                         | `answerCheck`, `filesKept`; test                                                     |
+| Only 2 of the 7 runs pass both code checks; which runs fail which check                                                                                                                      | Test                                                                                 |
+| The grader alone passes all five answers: agrees with the code check on 2 of 5                                                                                                               | Test (recorded verdicts)                                                             |
+| Given a correct answer: fails the wrong product with the numbers the wrong way round; still passes the unfinished sentence and the empty summary; 3 of 5                                     | Test; recorded replies                                                               |
+| GPT-4 as judge agreed with people over 80% of the time, as often as people agree; position, verbosity, self-enhancement biases                                                               | Cite `zheng2023judge` (abstract)                                                     |
+| Anthropic's judge: one call, a rubric (accuracy, citations, completeness, sources, tool use), pass or fail                                                                                   | Cite `anthropic-multi-agent` ("LLM-as-judge evaluation scales")                      |
+| People caught agents choosing SEO content farms over better sources                                                                                                                          | Cite `anthropic-multi-agent` ("Human evaluation catches what automation misses")     |
+| Anthropic monitors decision patterns and interaction structures without reading individual conversations                                                                                     | Cite `anthropic-multi-agent` ("Debugging…")                                          |
+| The recordings are greedy, so reruns match                                                                                                                                                   | `scripts/record/agent.py`, `grading.py` (`do_sample=False`)                          |
+| τ-bench checks a database's end state; GPT-4o pass^1 about 61% in retail, pass^8 under 25%                                                                                                   | Cite `yao2024taubench` (abstract, §1, Table 2)                                       |
+| GAIA: 466 questions; people 92%, GPT-4 with plugins 15%                                                                                                                                      | Cite `mialon2023gaia` (abstract)                                                     |
+| GSM1k: Scale AI, 1,205 new human-written problems matching GSM8k, kept private; drops of up to 8 points; Phi and Mistral families at almost every size; GPT-4, Claude, Gemini about the same | Cite `zhang2024gsm1k` (v4: abstract, §1, §3, §5.1–5.2, Figure 1)                     |
+| Models more likely to generate GSM8k examples dropped more, suggesting partial memorization                                                                                                  | Cite `zhang2024gsm1k` (abstract, §5.4: Spearman r² = 0.36)                           |
+| Overfitting                                                                                                                                                                                  | Ch 7                                                                                 |
+| Tuning against the same tests wears them out; keep a separate set for the final check and refresh both                                                                                       | Cite `google-mlcc-datasets` (validation and test sets; "wear out" with repeated use) |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                               | Reviewed against the Standard text                                                   |
+| In depth: all of k tries succeed with chance pᵏ; 0.6⁸ ≈ 1.7%                                                                                                                                 | Arithmetic; test                                                                     |
+| In depth: varied task difficulty makes the measured drop gentler than pᵏ                                                                                                                     | Jensen's inequality (the mean of pᵏ is at least (mean p)ᵏ)                           |
+| In depth: pass^k = C(c,k)/C(n,k) averaged over tasks; pass@k is at least one success                                                                                                         | Cite `yao2024taubench` (§3, pass^k metric)                                           |

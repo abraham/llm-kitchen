@@ -77,6 +77,22 @@ export const GLOSSARY = {
 			'Training by repeatedly nudging every weight in the direction that lowers the loss.',
 		chapter: 'learning-from-mistakes'
 	},
+	'machine-learning': {
+		term: 'machine learning',
+		definition: 'Getting a program’s numbers from examples instead of writing its rules by hand.',
+		chapter: 'learning-from-mistakes'
+	},
+	'deep-learning': {
+		term: 'deep learning',
+		definition: 'Machine learning with networks of many stacked layers of neurons.',
+		chapter: 'learning-from-mistakes'
+	},
+	overfitting: {
+		term: 'overfitting',
+		definition:
+			'Fitting the training examples so closely, often by memorizing them, that a model does worse on new ones.',
+		chapter: 'learning-from-mistakes'
+	},
 	'context-window': {
 		term: 'context window',
 		definition: 'The maximum number of tokens a model can look at at once.',

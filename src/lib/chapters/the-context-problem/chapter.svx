@@ -125,6 +125,10 @@ $$
 so a full Llama 3 window needs about 15,600 times as many attention scores per head as a full
 GPT-2 window.
 
+Prices don't always follow that work. On Anthropic's price list, Claude Haiku 5.5 charges five
+times as much per token, input and output, once a prompt is longer than 100,000 tokens, while its
+other recent models charge one rate across a million-token window.<Cite id="anthropic-pricing" />
+
 </At>
 
 <RecapCard>

@@ -20,27 +20,32 @@ Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.m
 
 ## Ch 4. Tokens
 
-| Claim                                                                                 | Backing                                                                           |
-| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| " cat" (with the space) is token 3797                                                 | Recorded trace + tokenizer test                                                   |
-| "tokenization" splits into "token" + "ization"                                        | Live tokenizer output (shown, not asserted in prose)                              |
-| GPT-2 knows exactly 50,257 tokens                                                     | Cite `radford2019`; `canonical.json` checked by record/traces.py                  |
-| BPE was first used for language/translation models by Sennrich et al. 2016            | Cite `sennrich2016`                                                               |
-| BPE: start from characters, repeatedly merge the most frequent pair                   | Cite `sennrich2016`; test reproduces the paper's toy merges                       |
-| The toy example is the one from their paper (low, lower, newest, widest)              | Cite `sennrich2016` (Algorithm 1); test                                           |
-| GPT-2 ran BPE on bytes over web text                                                  | Cite `radford2019` (§2.1–2.2)                                                     |
-| "strawberry" → st + raw + berry; " strawberry" is one token, 41236                    | Test (`tokenizers.test.ts`), e2e                                                  |
-| The model never sees the letters inside a token                                       | Follows from the input being token IDs                                            |
-| GPT-4 uses cl100k_base, GPT-4o uses o200k_base                                        | Cite `tiktoken` (`model.py`)                                                      |
-| Newer, bigger vocabularies usually need fewer tokens for the same text                | Hedged ("usually"); widget shows the counts                                       |
-| The browser GPT-2 tokenizer matches the real model's tokens                           | Test against the recorded trace                                                   |
-| Simple: restates Standard in plainer words, with no new claims                        | Reviewed against the Standard text                                                |
-| In depth: the vocabulary starts from the 256 byte values, so any text can be written  | Cite `radford2019` (§2.2)                                                         |
-| In depth: 50,000 merges and the end-of-text token (50,256): 256 + 50,000 + 1 = 50,257 | Test (`tokens/facts.test.ts`, GPT-2's rank table); `gpt2-config` (`eos_token_id`) |
-| In depth: each merge takes the most frequent pair of neighbors (arg max of the count) | Cite `sennrich2016` (Algorithm 1); test reproduces the toy merges                 |
-| In depth: GPT-2's first merge was " t"                                                | Test (rank table)                                                                 |
-| In depth: no merges across kinds of characters except spaces; avoids dog. dog! dog?   | Cite `radford2019` (§2.2)                                                         |
-| In depth: new text is split by applying the learned merges, earliest first            | Cite `sennrich2016` (§3.2); the rank table orders the merges                      |
+| Claim                                                                                                                                         | Backing                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| " cat" (with the space) is token 3797                                                                                                         | Recorded trace + tokenizer test                                                   |
+| "tokenization" splits into "token" + "ization"                                                                                                | Live tokenizer output (shown, not asserted in prose)                              |
+| GPT-2 knows exactly 50,257 tokens                                                                                                             | Cite `radford2019`; `canonical.json` checked by record/traces.py                  |
+| BPE was first used for language/translation models by Sennrich et al. 2016                                                                    | Cite `sennrich2016`                                                               |
+| BPE: start from characters, repeatedly merge the most frequent pair                                                                           | Cite `sennrich2016`; test reproduces the paper's toy merges                       |
+| The toy example is the one from their paper (low, lower, newest, widest)                                                                      | Cite `sennrich2016` (Algorithm 1); test                                           |
+| GPT-2 ran BPE on bytes over web text                                                                                                          | Cite `radford2019` (§2.1–2.2)                                                     |
+| "strawberry" → st + raw + berry; " strawberry" is one token, 41236                                                                            | Test (`tokenizers.test.ts`), e2e                                                  |
+| The model never sees the letters inside a token                                                                                               | Follows from the input being token IDs                                            |
+| GPT-4 uses cl100k_base, GPT-4o uses o200k_base                                                                                                | Cite `tiktoken` (`model.py`)                                                      |
+| Newer, bigger vocabularies usually need fewer tokens for the same text                                                                        | Hedged ("usually"); widget shows the counts                                       |
+| A five-line Python function is 44 GPT-2 tokens vs 26 (GPT-4, GPT-4o); the cat sentence is 20 in all three; `        return 0` is 9 vs 4       | Test (`tokens/facts.test.ts`)                                                     |
+| Simple: code can take almost twice as many GPT-2 tokens as GPT-4 tokens                                                                       | Same test (44 / 26 ≈ 1.7)                                                         |
+| Claude 4.7 and later produce about 30% more tokens for the same text                                                                          | Cite `anthropic-pricing`                                                          |
+| The browser GPT-2 tokenizer matches the real model's tokens                                                                                   | Test against the recorded trace                                                   |
+| Simple: restates Standard in plainer words, with no new claims                                                                                | Reviewed against the Standard text                                                |
+| In depth: the vocabulary starts from the 256 byte values, so any text can be written                                                          | Cite `radford2019` (§2.2)                                                         |
+| In depth: 50,000 merges and the end-of-text token (50,256): 256 + 50,000 + 1 = 50,257                                                         | Test (`tokens/facts.test.ts`, GPT-2's rank table); `gpt2-config` (`eos_token_id`) |
+| In depth: each merge takes the most frequent pair of neighbors (arg max of the count)                                                         | Cite `sennrich2016` (Algorithm 1); test reproduces the toy merges                 |
+| In depth: GPT-2's first merge was " t"                                                                                                        | Test (rank table)                                                                 |
+| In depth: no merges across kinds of characters except spaces; avoids dog. dog! dog?                                                           | Cite `radford2019` (§2.2)                                                         |
+| In depth: new text is split by applying the learned merges, earliest first                                                                    | Cite `sennrich2016` (§3.2); the rank table orders the merges                      |
+| Limits and prices are counted in tokens; the six rhymes are 145 words and 195 GPT-2 tokens (about 1.3 per word); punctuation is its own token | Test (`tokens/facts.test.ts`, r50k_base)                                          |
+| The same text can take up to 15 times as many tokens in some languages as in others                                                           | Cite `petrov2023` (abstract)                                                      |
 
 ## Ch 5. Embeddings
 

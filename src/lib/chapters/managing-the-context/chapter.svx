@@ -82,12 +82,41 @@ assistants that search your documents: they don't read everything, they look up 
 relevant and copy it into the prompt. Memory features work the same way: notes saved outside the
 model and put back into the prompt later.
 
+## Smaller than it looks
+
+<At levels="simple">
+
+The window isn't all room for the prompt: the reply has to fit in it too, so the harness leaves
+space for it. And models don't use a full window well. In one test, only half of the models that
+claimed to read 32,000 tokens still did well at that length on harder tasks.<Cite id="hsieh2024ruler" />
+So a shorter prompt can be better even when everything fits.
+
+</At>
+<At levels="standard deep">
+
+The window isn't all room for the prompt. The reply is written into the same window, and so is any
+thinking the model does first, so the harness has to leave space for them. Anthropic's API, for
+example, counts the system prompt, every message, the tool definitions and results, and the output.
+If the prompt alone is too long, the API refuses it with an error, "prompt is too long"; chat apps
+instead drop the oldest turns for you, the first of the three ways above.<Cite id="anthropic-context-windows" />
+The 600-token budget here counts only the prompt, to keep the example small.
+
+A window that fits everything isn't always used well, either. RULER tested 17 models that each
+claimed to read at least 32,000 tokens. Nearly all of them found a single fact hidden in a long text,
+but on harder tasks, such as following a chain of references or counting things across the text,
+only half still did well at 32,000.<Cite id="hsieh2024ruler" /> Anthropic calls this decline
+"context rot": as the token count grows, accuracy and recall get worse.<Cite id="anthropic-context-windows" />
+So trimming the context can help even when everything fits.
+
+</At>
+
 <RecapCard>
 
 - The model only knows what's in its prompt, and the prompt has a limit.
 - When it fills up, the harness drops, summarizes, or retrieves text.
 - Whatever is left out is simply gone for the model: it may say it doesn't know, or fill the gap
   with a guess.
+- The reply has to fit in the window too, and models use long contexts less well than short ones.
 
 <At levels="deep">
 

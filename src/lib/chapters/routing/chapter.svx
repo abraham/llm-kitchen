@@ -81,12 +81,21 @@ wins; such routers have cut costs by more than half in some tests without loweri
 the answers.<Cite id="ong2024" /> Either way, it's the harness, not either model, that does the
 choosing.
 
+A harness can also skip the wait altogether. When it can predict the questions, it can have a big
+model answer them ahead of time and keep the answers, so no model runs while someone waits, and
+people can check the answers first; a question nobody predicted still needs a
+model.<Cite id="google-mlcc-inference" /> In 2021, Google used its MUM model to find over 800
+names for the COVID-19 vaccines in more than 50 languages, in seconds rather than the hundreds of
+hours it would have taken people. After people checked the list, Google Search used it to show
+up-to-date information about the vaccines.<Cite id="google-mum-vaccines" />
+
 <RecapCard>
 
 - An app can use several models, and the harness decides which one answers.
 - A router picks a model up front; a cascade asks a small model first and passes the question on
   when its confidence is low.
 - The threshold trades cost against quality, and confidence is a useful hint, not proof.
+- Answers to questions you can predict can be worked out ahead of time and checked first.
 
 <At levels="deep">
 

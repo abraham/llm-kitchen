@@ -136,6 +136,5 @@ slow helper holds up the rest.<Cite id="anthropic-multi-agent" />
 </At>
 </RecapCard>
 
-**Next question:** every tool result and every helper's summary is text the harness pastes into
-a prompt: search results, web pages, files. What if some of that text gives the model instructions
-of its own?
+**Next question:** an agent acts on whatever its model writes. What happens when the model states
+something false just as confidently as something true?
