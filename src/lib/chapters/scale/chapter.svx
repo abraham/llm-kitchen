@@ -37,7 +37,9 @@ biggest commercial models mostly don't publish these numbers.
 Training the biggest models costs tens of millions of dollars, and the price has grown about 2.4
 times every year.<Cite id="cottier2024" /> Small models have gone the other way: in 2024, a model
 the size of GPT-2 small, the one on this site, was trained from scratch for about
-&#36;20.<Cite id="llmc-gpt2-124m" />
+&#36;20.<Cite id="llmc-gpt2-124m" /> Using models has gotten cheaper fast as well: the lowest price
+for a model that reaches a given test score has fallen between 9 and 900 times a year, depending on
+the test.<Cite id="epoch-inference-prices" />
 
 </At>
 <At levels="standard deep">
@@ -55,6 +57,12 @@ small's design and size, the one on this site, was trained from scratch in about
 machine with 8 GPUs, for about &#36;20, and did slightly better than the original on a common-sense
 test.<Cite id="llmc-gpt2-124m" /> The full 1.5-billion-weight GPT-2 took 24 hours and &#36;672; in
 2019, training it had been a project for a whole team.<Cite id="llmc-gpt2-1558m" />
+
+Using a model at a given level has gotten cheaper fast too. Over the three years to early 2025,
+the lowest price for a model that reached a given benchmark score fell between 9 and 900 times a
+year, depending on the benchmark and the score. Reaching GPT-4's score on a set of PhD-level
+science questions got about 40 times cheaper each year. The fastest drops came in the last year of
+that span, so they may not last.<Cite id="epoch-inference-prices" />
 
 </At>
 <At levels="deep">

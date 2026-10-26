@@ -120,6 +120,8 @@ The cache for one reply is thrown away when the reply is done. But a chat's next
 the same text as the last, plus a little more. So model providers keep the cache for the start
 of a prompt for a while, and reuse it when a new prompt starts the same way. This is <GlossaryPopover term="prompt-caching">prompt caching</GlossaryPopover>,
 and it makes those tokens much cheaper.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+Work that can wait is cheaper too: Anthropic charges half price for requests sent in a batch and
+answered later instead of straight away.<Cite id="anthropic-pricing" />
 
 </At>
 <At levels="standard deep">
@@ -131,7 +133,9 @@ token, picks up from there. This is <GlossaryPopover term="prompt-caching">promp
 Providers charge a tenth of the normal price or less for tokens read from the cache, and the reply
 starts sooner, because there is less to work through first.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
 Cached tokens still count toward the context window, though: caching changes what they cost, not
-how much room they take.<Cite id="anthropic-context-windows" />
+how much room they take.<Cite id="anthropic-context-windows" /> Work that can wait is cheaper too:
+Anthropic's Batch API, which answers requests later instead of straight away, charges half price
+for both input and output tokens.<Cite id="anthropic-pricing" />
 
 </At>
 

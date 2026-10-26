@@ -78,29 +78,30 @@ after "The cat sat on the", with and without its KV cache, three times each (med
 written to `static/data/caching/kv-cache.json`. The prompt-cache view is computed in the browser
 (`src/lib/harness/cache.ts`) from the Ch 24 chat's recorded token counts, with a 400-token budget.
 
-| Claim                                                                                                                    | Backing                                                         |
-| ------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| A token's key and value depend only on earlier text (causal mask), so they can be kept                                   | Ch 9 mask; the cached and uncached runs pick the same tokens    |
-| Without the cache, 24 to 139 ms per token; with it about 20; 43.2 s against 10.0 s                                       | Test (measured, this machine; labeled in the widget)            |
-| Both runs picked the same 500 tokens; scores differed by at most 0.01                                                    | Script asserts equal tokens; test checks the difference         |
-| 2 × 12 × 768 = 18,432 cached numbers per token for GPT-2 small                                                           | Test against `models/canonical.json`                            |
-| Large models' caches run to gigabytes; keeping them small matters for serving                                            | Cite `pope2022`                                                 |
-| Providers keep the KV cache for a prompt's exact start, for minutes to hours                                             | Cite `openai-prompt-caching`, `anthropic-prompt-caching`        |
-| Cached tokens cost a tenth of the normal price or less; replies start sooner                                             | Cite both provider docs (0.1× reads, lower on some models)      |
-| The match must be exact from the first token; any early change breaks the rest                                           | Cite both provider docs                                         |
-| Put stable content first, append only; trimming or summarizing changes the prefix                                        | Cite `openai-prompt-caching` (optimization guidance)            |
-| Appending reuses 2,342 of 2,975 tokens (79%); the time at the top reuses none                                            | Test (`cacheCalls`)                                             |
-| Dropping sends 2,189 tokens but costs more than appending; summarizing costs least                                       | Test                                                            |
-| Caching doesn't change the answer and isn't memory                                                                       | Cite both provider docs                                         |
-| Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra                                     | Cite both provider docs; labeled as simplified in the widget    |
-| Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                              |
-| In depth: without the cache, n·p + n(n−1)/2 passes: 127,250 against 504 (252×), yet 4.3× the time                        | Test (`positionsProcessed`, recorded times)                     |
-| In depth: one-token passes are mostly loading weights from memory, so extra tokens in a pass are cheap                   | Cite `pope2022`                                                 |
-| In depth: with the cache the time per token crept from about 19 to 20 ms                                                 | Test                                                            |
-| In depth: Qwen2.5-1.5B: 28 layers, 12 query heads sharing 2 key/value heads of 128: 14,336 numbers per token, not 86,016 | Cite `qwen2024` (Table 1, GQA); config `hidden_size` 1536; test |
-| In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                       |
-| In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                    |
-| Cached tokens still count toward the context window; caching changes the price, not the room                             | Cite `anthropic-context-windows` (compaction section)           |
+| Claim                                                                                                                    | Backing                                                           |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
+| A token's key and value depend only on earlier text (causal mask), so they can be kept                                   | Ch 9 mask; the cached and uncached runs pick the same tokens      |
+| Without the cache, 24 to 139 ms per token; with it about 20; 43.2 s against 10.0 s                                       | Test (measured, this machine; labeled in the widget)              |
+| Both runs picked the same 500 tokens; scores differed by at most 0.01                                                    | Script asserts equal tokens; test checks the difference           |
+| 2 × 12 × 768 = 18,432 cached numbers per token for GPT-2 small                                                           | Test against `models/canonical.json`                              |
+| Large models' caches run to gigabytes; keeping them small matters for serving                                            | Cite `pope2022`                                                   |
+| Providers keep the KV cache for a prompt's exact start, for minutes to hours                                             | Cite `openai-prompt-caching`, `anthropic-prompt-caching`          |
+| Cached tokens cost a tenth of the normal price or less; replies start sooner                                             | Cite both provider docs (0.1× reads, lower on some models)        |
+| Anthropic's Batch API charges half price for input and output on requests answered later                                 | Cite `anthropic-pricing` (Batch processing: 50% discount on both) |
+| The match must be exact from the first token; any early change breaks the rest                                           | Cite both provider docs                                           |
+| Put stable content first, append only; trimming or summarizing changes the prefix                                        | Cite `openai-prompt-caching` (optimization guidance)              |
+| Appending reuses 2,342 of 2,975 tokens (79%); the time at the top reuses none                                            | Test (`cacheCalls`)                                               |
+| Dropping sends 2,189 tokens but costs more than appending; summarizing costs least                                       | Test                                                              |
+| Caching doesn't change the answer and isn't memory                                                                       | Cite both provider docs                                           |
+| Minimum cacheable length (a few hundred to a few thousand tokens); writes cost extra                                     | Cite both provider docs; labeled as simplified in the widget      |
+| Simple: restates Standard in plainer words, with no new claims                                                           | Reviewed against the Standard text                                |
+| In depth: without the cache, n·p + n(n−1)/2 passes: 127,250 against 504 (252×), yet 4.3× the time                        | Test (`positionsProcessed`, recorded times)                       |
+| In depth: one-token passes are mostly loading weights from memory, so extra tokens in a pass are cheap                   | Cite `pope2022`                                                   |
+| In depth: with the cache the time per token crept from about 19 to 20 ms                                                 | Test                                                              |
+| In depth: Qwen2.5-1.5B: 28 layers, 12 query heads sharing 2 key/value heads of 128: 14,336 numbers per token, not 86,016 | Cite `qwen2024` (Table 1, GQA); config `hidden_size` 1536; test   |
+| In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                         |
+| In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                      |
+| Cached tokens still count toward the context window; caching changes the price, not the room                             | Cite `anthropic-context-windows` (compaction section)             |
 
 ## Ch 27. Which model answers?
 

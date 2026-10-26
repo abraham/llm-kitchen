@@ -53,7 +53,11 @@ thinking on, it spells the word out letter by letter, S-T-R-A-W-B-E-R-R-Y, count
 again. Spelling the word out turns tokens it can't see inside (<ChapterRef to="tokens" />) into letters it can count.
 
 **It costs many more tokens.** With thinking on, the model wrote about 24 times as many tokens on
-average, mostly scratch work that you never see in the reply.
+average, mostly scratch work that you never see in the reply. Hosted models bill that scratch work
+as output, the expensive kind of token: Anthropic counts thinking tokens among the output tokens
+you pay for, and on its newer models earlier turns' thinking stays in the prompt and is billed
+again as input.<Cite id="anthropic-extended-thinking" /> On its price list, an output token costs
+five times as much as an input token.<Cite id="anthropic-pricing" />
 
 **It isn't magic, especially in a small model.** Both ways, it got 4 of the 6 right. On two puzzles
 the thinking went around in circles, full of "Wait, …", until it hit the limit of 6,000 tokens

@@ -11,19 +11,20 @@ GPT-2 revision): `static/data/traces/gpt2/attn-*.json` and `logitLens` in
 
 ## Ch 8. The context problem
 
-| Claim                                                                                               | Backing                                                                                          |
-| --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| The trophy/suitcase sentence is a Winograd schema; the challenge tests this kind of reasoning       | Cite `levesque2012` (the paper's first example: "The trophy doesn't fit in the brown suitcase…") |
-| The Ch 1 model sees one word; the Ch 7 model sees 3 characters                                      | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
-| About 2.5 billion possible token pairs and 127 trillion triples for GPT-2's vocabulary              | Test (50,257² and 50,257³)                                                                       |
-| Most long n-grams never appear in training text                                                     | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
-| Neural models share what they learn across similar words                                            | Cite `bengio2003`                                                                                |
-| GPT-2 can look at up to 1,024 tokens                                                                | Cite `radford2019`; `canonical.json`, checked against the model config                           |
-| Llama 3 (2024) can look at up to 128K tokens, more than 100 times GPT-2's                           | Cite `grattafiori2024` (abstract: "context window of up to 128K tokens"); 128,000 / 1,024 = 125  |
-| Simple: restates Standard in plainer words, with no new claims                                      | Reviewed against the Standard text                                                               |
-| In depth: a window model feeds the last n vectors side by side, each slot with its own columns of W | Cite `bengio2003`                                                                                |
-| In depth: the tiny model has 3 × 8 = 24 inputs to 64 neurons; each extra character adds 512 weights | Test (`CharModel`, trainer config)                                                               |
-| In depth: attention's work grows with the square of the window; 128,000² / 1,024² = 15,625          | Arithmetic, test; the score grid from Ch 9                                                       |
+| Claim                                                                                                                                                                    | Backing                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| The trophy/suitcase sentence is a Winograd schema; the challenge tests this kind of reasoning                                                                            | Cite `levesque2012` (the paper's first example: "The trophy doesn't fit in the brown suitcase…") |
+| The Ch 1 model sees one word; the Ch 7 model sees 3 characters                                                                                                           | Implementations (`bigram.ts`, `mlp.ts`)                                                          |
+| About 2.5 billion possible token pairs and 127 trillion triples for GPT-2's vocabulary                                                                                   | Test (50,257² and 50,257³)                                                                       |
+| Most long n-grams never appear in training text                                                                                                                          | Cite `jurafsky-martin-ngrams` (sparsity)                                                         |
+| Neural models share what they learn across similar words                                                                                                                 | Cite `bengio2003`                                                                                |
+| GPT-2 can look at up to 1,024 tokens                                                                                                                                     | Cite `radford2019`; `canonical.json`, checked against the model config                           |
+| Llama 3 (2024) can look at up to 128K tokens, more than 100 times GPT-2's                                                                                                | Cite `grattafiori2024` (abstract: "context window of up to 128K tokens"); 128,000 / 1,024 = 125  |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                           | Reviewed against the Standard text                                                               |
+| In depth: a window model feeds the last n vectors side by side, each slot with its own columns of W                                                                      | Cite `bengio2003`                                                                                |
+| In depth: the tiny model has 3 × 8 = 24 inputs to 64 neurons; each extra character adds 512 weights                                                                      | Test (`CharModel`, trainer config)                                                               |
+| In depth: attention's work grows with the square of the window; 128,000² / 1,024² = 15,625                                                                               | Arithmetic, test; the score grid from Ch 9                                                       |
+| In depth: Claude Haiku 5.5 charges 5× per token (input and output) for prompts over 100,000 tokens; Anthropic's other recent models charge one rate across the 1M window | Cite `anthropic-pricing` (model pricing; long context pricing)                                   |
 
 ## Ch 9. Attention
 

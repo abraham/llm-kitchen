@@ -1145,5 +1145,23 @@
 		"venue": "arXiv",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2402.04105"
+	},
+	{
+		"id": "anthropic-extended-thinking",
+		"authors": ["Anthropic"],
+		"title": "Extended thinking",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/extended-thinking",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "epoch-inference-prices",
+		"authors": ["Ben Cottier", "Ben Snodin", "David Owen", "Tom Adamczewski"],
+		"title": "LLM inference prices have fallen rapidly but unequally across tasks",
+		"venue": "Epoch AI",
+		"year": 2025,
+		"url": "https://epoch.ai/data-insights/llm-inference-price-trends",
+		"accessed": "2026-10-25"
 	}
 ]
