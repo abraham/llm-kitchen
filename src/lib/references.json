@@ -1025,5 +1025,38 @@
 		"year": 2026,
 		"url": "https://platform.claude.com/docs/en/about-claude/pricing",
 		"accessed": "2026-10-25"
+	},
+	{
+		"id": "cottier2024",
+		"authors": [
+			"Ben Cottier",
+			"Robi Rahman",
+			"Loredana Fattorini",
+			"Nestor Maslej",
+			"Tamay Besiroglu",
+			"David Owen"
+		],
+		"title": "The rising costs of training frontier AI models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.21015"
+	},
+	{
+		"id": "llmc-gpt2-124m",
+		"authors": ["Andrej Karpathy"],
+		"title": "Reproducing GPT-2 (124M) in llm.c in 90 minutes for $20",
+		"venue": "GitHub (karpathy/llm.c discussion #481)",
+		"year": 2024,
+		"url": "https://github.com/karpathy/llm.c/discussions/481",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "llmc-gpt2-1558m",
+		"authors": ["Andrej Karpathy"],
+		"title": "Let's reproduce GPT-2 (1.6B): one 8XH100 node, 24 hours, $672, in llm.c",
+		"venue": "GitHub (karpathy/llm.c discussion #677)",
+		"year": 2024,
+		"url": "https://github.com/karpathy/llm.c/discussions/677",
+		"accessed": "2026-10-25"
 	}
 ]

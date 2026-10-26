@@ -34,27 +34,31 @@ last `\boxed{}`, which the prompt asks for.
 
 ## Ch 12. Scale
 
-| Claim                                                                                                     | Backing                                                    |
-| --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| GPT-3: 175 billion weights, 300 billion training tokens, 3.14 × 10²³ FLOPs                                | Cite `brown2020` (§2, Table D.1)                           |
-| GPT-3 is more than 1,000 times GPT-2 small                                                                | Test (1,406×)                                              |
-| Llama 3 405B: 15.6T tokens, 3.8 × 10²⁵ FLOPs; about 39 tokens per weight                                  | Cite `grattafiori2024` (§1, §3.2); test                    |
-| Chinchilla 70B on 1.4T tokens, same compute as Gopher (280B, 300B tokens), and better                     | Cite `hoffmann2022` (abstract, Table 1; 5.76 × 10²³ FLOPs) |
-| Chinchilla is about 20 tokens per weight                                                                  | Test                                                       |
-| GPT-2 small read about 8 million web pages, about 40 GB                                                   | Cite `radford2019` §2.1                                    |
-| The site's toy models: word-pair counts, 3,790 weights, 192,000 training characters                       | Test (computed from the same code as the widgets)          |
-| Tiny model compute ≈ 6 × weights × tokens                                                                 | The standard estimate (Kaplan et al. 2020 §2.1, C ≈ 6NE)   |
-| Loss falls smoothly with size, data, and compute                                                          | Cite `kaplan2020`                                          |
-| L(N) = (8.8 × 10¹³ / N)^0.076, N = non-embedding weights, fit on 768 to 1.5 billion                       | Cite `kaplan2020` eq. 1.1, §3; test (`kaplanLoss`)         |
-| GPT-2 sizes' non-embedding counts; released totals 124M/355M/774M/1.56B                                   | Test (`GPT2_FAMILY` totals equal the released checkpoints) |
-| e^(−loss) is the average (geometric mean) probability of the right token                                  | Definition of cross-entropy                                |
-| Bigger models were much better at learning a task from a few examples in the prompt                       | Cite `brown2020`                                           |
-| Simple: restates Standard in plainer words, with no new claims                                            | Reviewed against the Standard text                         |
-| In depth: training compute is about 6ND (2 forward, 4 backward per weight per token)                      | Cite `kaplan2020` (§2.1)                                   |
-| In depth: 6 × 175B × 300B ≈ 3.15 × 10²³, next to the reported 3.14 × 10²³                                 | Test; cite `brown2020`                                     |
-| In depth: ten times the weights multiplies the loss by about 0.84 (16% lower)                             | Test (10^−0.076)                                           |
-| In depth: Chinchilla fit L = E + A/N^α + B/D^β with E 1.69, A 406.4, B 410.7, α 0.34, β 0.28              | Cite `hoffmann2022` (§3.3, eq. 10)                         |
-| In depth: the fit predicts 1.94 for Chinchilla and 1.99 for Gopher; optimal is about 20 tokens per weight | Test; cite `hoffmann2022`                                  |
+| Claim                                                                                                                                                                                     | Backing                                                               |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| GPT-3: 175 billion weights, 300 billion training tokens, 3.14 × 10²³ FLOPs                                                                                                                | Cite `brown2020` (§2, Table D.1)                                      |
+| GPT-3 is more than 1,000 times GPT-2 small                                                                                                                                                | Test (1,406×)                                                         |
+| Llama 3 405B: 15.6T tokens, 3.8 × 10²⁵ FLOPs; about 39 tokens per weight                                                                                                                  | Cite `grattafiori2024` (§1, §3.2); test                               |
+| Chinchilla 70B on 1.4T tokens, same compute as Gopher (280B, 300B tokens), and better                                                                                                     | Cite `hoffmann2022` (abstract, Table 1; 5.76 × 10²³ FLOPs)            |
+| Chinchilla is about 20 tokens per weight                                                                                                                                                  | Test                                                                  |
+| GPT-2 small read about 8 million web pages, about 40 GB                                                                                                                                   | Cite `radford2019` §2.1                                               |
+| The site's toy models: word-pair counts, 3,790 weights, 192,000 training characters                                                                                                       | Test (computed from the same code as the widgets)                     |
+| Tiny model compute ≈ 6 × weights × tokens                                                                                                                                                 | The standard estimate (Kaplan et al. 2020 §2.1, C ≈ 6NE)              |
+| Loss falls smoothly with size, data, and compute                                                                                                                                          | Cite `kaplan2020`                                                     |
+| L(N) = (8.8 × 10¹³ / N)^0.076, N = non-embedding weights, fit on 768 to 1.5 billion                                                                                                       | Cite `kaplan2020` eq. 1.1, §3; test (`kaplanLoss`)                    |
+| GPT-2 sizes' non-embedding counts; released totals 124M/355M/774M/1.56B                                                                                                                   | Test (`GPT2_FAMILY` totals equal the released checkpoints)            |
+| e^(−loss) is the average (geometric mean) probability of the right token                                                                                                                  | Definition of cross-entropy                                           |
+| Bigger models were much better at learning a task from a few examples in the prompt                                                                                                       | Cite `brown2020`                                                      |
+| Training cost of the most compute-heavy models grew about 2.4× a year since 2016; GPT-4 and Gemini: chips and staff each tens of millions of dollars; over $1B by 2027 if the trend holds | Cite `cottier2024` (abstract)                                         |
+| In 2024 a GPT-2-small-sized model was trained from scratch in about 90 minutes on one 8-GPU machine for about $20, slightly beating the original on a common-sense test                   | Cite `llmc-gpt2-124m` (8× A100 at ~$14/hour; HellaSwag 29.9 vs. 29.4) |
+| The 1.5B GPT-2 took 24 hours and $672; in 2019 it was a project for a whole team                                                                                                          | Cite `llmc-gpt2-1558m` ("an involved project from an entire team")    |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                            | Reviewed against the Standard text                                    |
+| In depth: training compute is about 6ND (2 forward, 4 backward per weight per token)                                                                                                      | Cite `kaplan2020` (§2.1)                                              |
+| In depth: 6 × 175B × 300B ≈ 3.15 × 10²³, next to the reported 3.14 × 10²³                                                                                                                 | Test; cite `brown2020`                                                |
+| In depth: the $20 run read about 10 billion tokens: 6 × 124M × 10¹⁰ ≈ 7.5 × 10¹⁸, about 5 million times fewer than Llama 3                                                                | Cite `llmc-gpt2-124m` (one epoch of FineWeb 10B); test                |
+| In depth: ten times the weights multiplies the loss by about 0.84 (16% lower)                                                                                                             | Test (10^−0.076)                                                      |
+| In depth: Chinchilla fit L = E + A/N^α + B/D^β with E 1.69, A 406.4, B 410.7, α 0.34, β 0.28                                                                                              | Cite `hoffmann2022` (§3.3, eq. 10)                                    |
+| In depth: the fit predicts 1.94 for Chinchilla and 1.99 for Gopher; optimal is about 20 tokens per weight                                                                                 | Test; cite `hoffmann2022`                                             |
 
 ## Ch 13. Fewer bits per number
 
