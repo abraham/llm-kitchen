@@ -1137,5 +1137,13 @@
 		"venue": "arXiv",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2305.13534"
+	},
+	{
+		"id": "bai2024",
+		"authors": ["Xuechunzi Bai", "Angelina Wang", "Ilia Sucholutsky", "Thomas L. Griffiths"],
+		"title": "Measuring Implicit Bias in Explicitly Unbiased Large Language Models",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.04105"
 	}
 ]

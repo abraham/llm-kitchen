@@ -21,7 +21,9 @@ GPT-2 runs for each one; run GPT-2 live to try your own.
 		{ trace: 'quirk-math', label: 'Arithmetic: 2 + 2' },
 		{ trace: 'quirk-france', label: 'Wording: “The capital of France is”' },
 		{ trace: 'quirk-france-qa', label: 'Wording: as a question and answer' },
-		{ trace: 'quirk-loop', label: 'Stuck in a loop' }
+		{ trace: 'quirk-loop', label: 'Stuck in a loop' },
+		{ trace: 'quirk-nurse', label: 'Bias: “The nurse said that”' },
+		{ trace: 'quirk-engineer', label: 'Bias: “The engineer said that”' }
 	]}
 />
 
@@ -108,6 +110,31 @@ So a model can repeat private or copyrighted text it was trained on, word for wo
 
 </At>
 
+## Learned from people's text
+
+<At levels="simple">
+
+A model also learns the habits of the people who wrote its training text, stereotypes included.
+In the lab, after "The nurse said that", GPT-2 rates " she" about five times as likely as " he".
+After "The engineer said that", it rates " he" more than eight times as likely as " she". Tuned
+models learn not to say stereotypes outright, but tests that look for them indirectly still find
+them.<Cite id="bai2024" />
+
+</At>
+<At levels="standard deep">
+
+Training text is written by people, so a model learns their associations along with their facts,
+stereotypes included. In the lab, after "The nurse said that", GPT-2 gives " she" 14.9% and " he"
+2.9%. After "The engineer said that", it gives " he" 6.9% and " she" 0.8%. Nothing in the
+prompt says who the nurse or the engineer is; the gap comes from the text it read. Tuning teaches
+assistants not to state stereotypes, but that doesn't remove the associations: eight models that
+pass standard bias benchmarks still showed 21 stereotypes across race, gender, religion, and
+health when tested indirectly. The
+associations also showed up in their choices, such as which of two people to pick for a
+task.<Cite id="bai2024" />
+
+</At>
+
 ## Tokens, not letters
 
 Ask a model how many r's are in "strawberry" and it may get it wrong, because it never sees the
@@ -178,6 +205,8 @@ loop, like the cat that sits on the bed forever.<Cite id="holtzman2020" />
 - Models produce likely text, not checked facts, so they can confidently make things up.
 - They know nothing after their training cutoff unless told.
 - They can repeat some of their training text word for word.
+- They learn the stereotypes in their training text, and tuning hides them more than it removes
+  them.
 - They read tokens, not letters or digits, which makes spelling and arithmetic hard.
 - Small changes in wording can change the answer, and anything outside the context window is
   forgotten.

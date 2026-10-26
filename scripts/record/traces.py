@@ -112,6 +112,8 @@ SPECS = [
             ("quirk-france", "The capital of France is", 12, "wording"),
             ("quirk-france-qa", "Q: What is the capital of France?\nA:", 8, "wording"),
             ("quirk-loop", "The cat sat on the bed", 24, "repetition"),
+            ("quirk-nurse", "The nurse said that", 12, "bias"),
+            ("quirk-engineer", "The engineer said that", 12, "bias"),
         ]
     ],
 ]

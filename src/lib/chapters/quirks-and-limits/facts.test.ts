@@ -36,6 +36,19 @@ describe('quirks and limits', () => {
 		expect(full('quirk-france-qa')).toContain('A: The capital of France is Paris.');
 	});
 
+	it('nurse: " she" 14.9%, " he" 2.9% (about five times); engineer: " he" 6.9%, " she" 0.8% (over eight)', () => {
+		const pct = (name: TraceName, t: string) =>
+			Math.round(top(name).find((x) => x.token.text === t)!.prob * 1000) / 10;
+		expect([pct('quirk-nurse', ' she'), pct('quirk-nurse', ' he')]).toEqual([14.9, 2.9]);
+		expect([pct('quirk-engineer', ' he'), pct('quirk-engineer', ' she')]).toEqual([6.9, 0.8]);
+		const ratio = (name: TraceName, a: string, b: string) => {
+			const c = top(name);
+			return c.find((x) => x.token.text === a)!.prob / c.find((x) => x.token.text === b)!.prob;
+		};
+		expect(Math.round(ratio('quirk-nurse', ' she', ' he'))).toBe(5);
+		expect(ratio('quirk-engineer', ' he', ' she')).toBeGreaterThan(8);
+	});
+
 	it('" strawberry" is one token, "strawberry" three', () => {
 		expect(encode(' strawberry')).toHaveLength(1);
 		expect(encode('strawberry')).toHaveLength(3);

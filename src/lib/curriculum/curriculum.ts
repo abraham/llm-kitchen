@@ -46,7 +46,7 @@ export const ROWS = [
 	['predictor-to-assistant', 'From predictor to assistant', 'together', ['generating-text'],
 		'A base model only continues text. See how a chat template and further tuning turn a text predictor into an assistant.'],
 	['quirks-and-limits', 'Quirks and limits', 'together', ['tokens', 'predictor-to-assistant'],
-		'Made-up facts, knowledge frozen in time, trouble with letters, and answers that shift with wording all follow from predicting tokens.'],
+		'Made-up facts, knowledge frozen in time, learned stereotypes, trouble with letters, and answers that shift with wording all follow from predicting tokens.'],
 	['reasoning-models', 'Thinking before answering', 'together', ['generating-text', 'predictor-to-assistant', 'quirks-and-limits'],
 		'Reasoning models write out their working before they answer, using their own output as scrap paper. See when that helps.'],
 	['prompts-as-documents', 'A prompt is the start of a document', 'prompting', ['probability-and-sampling', 'the-context-problem', 'attention', 'predictor-to-assistant'],

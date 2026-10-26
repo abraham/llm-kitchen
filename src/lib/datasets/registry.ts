@@ -65,6 +65,8 @@ export const DATASETS = {
 	'traces/quirk-france-qa': traceFile('quirk-france-qa'),
 	'traces/quirk-iphone': traceFile('quirk-iphone'),
 	'traces/quirk-loop': traceFile('quirk-loop'),
+	'traces/quirk-nurse': traceFile('quirk-nurse'),
+	'traces/quirk-engineer': traceFile('quirk-engineer'),
 	'traces/quirk-math': traceFile('quirk-math'),
 	'traces/quirk-moon': traceFile('quirk-moon'),
 	'traces/quirk-painter': traceFile('quirk-painter'),
