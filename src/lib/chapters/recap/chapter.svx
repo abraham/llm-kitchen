@@ -39,7 +39,7 @@ models are tuned to write their working first (<ChapterRef to="reasoning-models"
 continues: the wording, examples, instructions, and layout all shift what comes next, often in ways
 you have to test to find out (<ChapterRef to="prompts-as-documents" through="where-prompts-break" />). A **harness** wraps the model with prompts, context management, caching,
 and a choice of which model answers (<ChapterRef to="the-model-is-not-the-product" through="routing" />). It can also give the model **tools** and run it in an agent
-loop, with guardrails against prompt injection (<ChapterRef to="tools" through="trust-and-guardrails" />). Other kinds
+loop, check its answers for made-up facts, and guard against prompt injection (<ChapterRef to="tools" through="trust-and-guardrails" />). Other kinds
 of models change one piece and keep the rest: encoders read both ways, mixtures of experts use part
 of themselves per token, recurrent models keep a fixed memory, vision models read patches,
 diffusion models paint from noise, and decision models predict moves instead of words (<ChapterRef to="encoders" through="decision-models" />).

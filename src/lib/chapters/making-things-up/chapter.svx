@@ -1,0 +1,234 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import SampleCheck from './SampleCheck.svelte';
+</script>
+
+## Wrong, and just as sure
+
+<At levels="simple">
+
+As <ChapterRef to="quirks-and-limits" /> showed, a model can make up a fact and state it as
+confidently as a true one. Bigger models do it less, but nothing in a reply marks the made-up
+parts. In 2023, two New York lawyers filed a court brief citing six court decisions that ChatGPT
+had invented. When they asked it whether the cases were real, it said they were. The judge fined
+them &#36;5,000.<Cite id="mata2023" />
+
+</At>
+<At levels="standard deep">
+
+As <ChapterRef to="quirks-and-limits" /> showed, a model writes likely text, not checked facts.
+When it doesn't know an answer, it can still write a confident one: a <GlossaryPopover term="hallucination">hallucination</GlossaryPopover>. Bigger,
+tuned models do this less often, but nothing in a reply marks which parts are made up. In 2023, two
+New York lawyers filed a court brief citing six decisions that ChatGPT had invented, quotes and
+all. When they asked it whether the cases were real, it said they were. The judge fined them
+&#36;5,000 and ordered them to write to each judge falsely named as an author.<Cite id="mata2023" />
+
+</At>
+
+## Ask it ten times
+
+<At levels="simple">
+
+One way to catch a guess is to ask the same question several times. If the model knows the answer,
+it gives the same one each time; if it's guessing, the answers scatter.<Cite id="manakul2023" />
+Below, a small chat model answered each of 11 questions ten times. Three of them ask about a book,
+a chemist, and a town invented for this chapter.
+
+</At>
+<At levels="standard deep">
+
+With sampling on (<ChapterRef to="probability-and-sampling" />), the same question can get a
+different answer each time, and that is useful. When a model knows a fact, most of its probability
+sits on one answer, so the samples agree. When it's guessing, the probability is spread thin, so
+they scatter. SelfCheckGPT turned this into a check that needs nothing but the model itself: sample
+several answers and see whether they agree.<Cite id="manakul2023" /> Below, Qwen2.5-1.5B-Instruct
+answered each of 11 questions ten times, sampled with its usual settings. Three of them ask about a
+book, a chemist, and a town invented for this chapter.
+
+</At>
+
+<SampleCheck />
+
+<At levels="simple">
+
+Asked who wrote a book that doesn't exist, the model names nine different authors. On the questions
+it knows, all ten answers match. A check that trusts an answer only when 8 of 10 agree flags 4 of
+the 5 wrong answers and none of the right ones. It misses the Tour de France: all ten answers say
+Eddy Merckx, who won it five times, but not in 1987. Agreement shows the model is sure, not that
+it's right.
+
+</At>
+<At levels="standard deep">
+
+Asked who wrote a book that doesn't exist, the model names nine different authors in ten tries. On
+the six questions it gets right, all ten samples agree. A harness that passes an answer on only
+when at least 8 of 10 samples agree flags 4 of the 5 wrong answers and none of the right ones. The
+one it misses is the Tour de France: all ten samples say Eddy Merckx, who won it five times, but
+not in 1987, when Stephen Roche did. When a model has learned something wrong, it says it every
+time, so agreement shows the model is sure, not that it's right. The check also costs ten calls
+instead of one; <ChapterRef to="routing" /> got a cheaper signal from the model's confidence in a
+single answer.
+
+</At>
+<At levels="deep">
+
+### Measuring the scatter
+
+The spread can be put in one number: the entropy of the answers. If $n_i$ of the $N$ samples give
+answer $i$,
+
+$$
+H = -\sum_i \frac{n_i}{N} \ln \frac{n_i}{N}
+$$
+
+which is 0 when all ten agree and $\ln 10 \approx 2.30$ when all ten differ. The invented book
+scores 2.16; the 1995 Nobel Prize, with 6 votes for Saul Bellow, 3 for Svetlana Alexievich, and 1
+for "Aleksievich", scores 0.90. Counting the two spellings as one answer brings it down to 0.67.
+*Semantic entropy* does exactly that: it groups the samples by meaning, using a second model to
+judge whether two answers say the same thing, before taking the entropy.<Cite id="kuhn2023" /> The
+widget only groups answers that match word for word.
+
+</At>
+
+## Letting it say "I don't know"
+
+<At levels="simple">
+
+Tick the box to add one sentence to the system prompt: if you're not sure, say "I don't know". Now
+the model declines every time for the invented book and town, and keeps all its right answers. But
+it still makes up a year for the invented chemist, and it still says Merckx.
+
+</At>
+<At levels="standard deep">
+
+Tick the box to add one sentence to the system prompt: if you are not sure of the answer, say "I
+don't know". The model now declines all ten times for the invented book and the invented town, and
+half the time for the 1995 Nobel Prize. It keeps all six right answers. But it still makes up a
+prize year for the invented chemist, and it still says Merckx: a model can only decline when
+something in it registers that it doesn't know.
+
+</At>
+
+## Why guessing pays
+
+<At levels="simple">
+
+Why do models guess at all? Training rewards likely text, true or not. And most tests of models are
+graded like school exams: a right answer scores a point, and a wrong answer or "I don't know" scores
+nothing. A guess never scores less than admitting doubt, so a model tuned to do well on those tests
+learns to guess.<Cite id="kalai2025" />
+
+</At>
+<At levels="standard deep">
+
+Part of the cause is training: as in <ChapterRef to="quirks-and-limits" />, the loss rewards likely
+text, true or not, and a fact the training text mentions only once leaves no pattern to learn from.
+Researchers at OpenAI and Georgia Tech argue that the rest comes from how models are tested. Most
+benchmarks grade
+like a multiple-choice exam: 1 point for a right answer and 0 for a wrong one, and "I don't know"
+also scores 0. Under that scoring a guess never does worse than admitting doubt, so a model tuned to
+climb those leaderboards learns to guess. Of the ten widely reported benchmarks they looked at, nine
+gave no credit at all for "I don't know".<Cite id="kalai2025" /> Their proposed fix is to score
+mistakes below "I don't know", and to say so in the instructions.
+
+</At>
+<At levels="deep">
+
+### Where guessing stops paying
+
+Their proposal tells the model: answer only if you are more than $t$ confident, since a mistake
+costs $t/(1-t)$ points, a right answer earns 1, and "I don't know" earns 0. If the model's chance
+of being right is $p$, answering is worth
+
+$$
+p - (1 - p)\,\frac{t}{1 - t}
+$$
+
+points on average, which is above 0 exactly when $p > t$. With $t = 0.9$ a mistake costs 9 points,
+so only an answer that is more than 90% likely to be right is worth giving. Ordinary exam grading
+is $t = 0$, where any guess beats "I don't know".<Cite id="kalai2025" />
+
+They give a bound for training too. For facts with no pattern to them, like people's birthdays, a
+base model should be expected to get at least as large a share wrong as the share of those facts
+that appear exactly once in its training text: if 20% of birthdays appear once, expect at least
+20% of its answers about birthdays to be wrong.<Cite id="kalai2025" />
+
+</At>
+
+## Made-up names that attackers can use
+
+<At levels="simple">
+
+Made-up answers can also open a door for attackers. Models that write code sometimes tell you to
+install software packages that don't exist: in one study, at least 5% of the packages suggested by
+commercial models and 22% from open models were made up.<Cite id="spracklen2025" /> Anyone can
+publish a package under an unused name, so an attacker can publish harmful code under a name a model
+invented, and wait for someone to install it.
+
+</At>
+<At levels="standard deep">
+
+Made-up answers can also open a door for attackers. When models that write code suggest software
+packages to install, some of the packages don't exist. Across 16 models and 576,000 code samples,
+on average at least 5.2% of the packages suggested by commercial models and 21.7% of those from
+open-source models were made up: 205,474 different invented names in all.<Cite id="spracklen2025" />
+Package registries let anyone publish under an unused name. So an attacker can publish harmful code
+under a name a model invented, and wait for a person, or an agent running install commands
+(<ChapterRef to="the-agent-loop" />), to install it.
+
+</At>
+
+## What helps
+
+<At levels="simple">
+
+- **Give it the facts.** A model that answers from text put into its prompt
+  (<ChapterRef to="search-and-memory" />) has less to guess. Even so, legal research tools that look
+  up cases before answering still made things up 17% to 33% of the time.<Cite id="magesh2024" />
+- **Let it decline**, as the box above does.
+- **Ask more than once** when a wrong answer would be costly.
+- **Check what can be checked**, with code or a person: that a court case exists, that a package is
+  real.
+
+</At>
+<At levels="standard deep">
+
+No single fix removes the problem, but several help:
+
+- **Put the facts in the prompt.** A model answering from text the harness retrieved
+  (<ChapterRef to="search-and-memory" />) has less to guess. It still isn't immune: in a
+  preregistered study, legal research tools from LexisNexis and Thomson Reuters that retrieve cases
+  before answering, some advertised as free of hallucinations, made things up 17% to 33% of the
+  time.<Cite id="magesh2024" />
+- **Let it decline**, as the system prompt above does, and when you test it
+  (<ChapterRef to="testing-agents" />), don't score "I don't know" like a wrong answer.
+- **Ask more than once** when a wrong answer would be costly, and treat disagreement as a warning.
+- **Check what can be checked with code**: that a cited case is in a court database, that a package
+  is in the registry, that a number matches a tool's result (<ChapterRef to="tools" />).
+
+</At>
+
+<RecapCard>
+
+- A model states a made-up answer as confidently as a true one, and nothing in the reply marks it.
+- Asking several times catches many guesses, because real knowledge agrees with itself and guesses
+  scatter. It misses things the model learned wrong.
+- Allowing "I don't know" helps, but tests that score it like a wrong answer teach models to guess.
+- Made-up names, like software packages, can be registered by attackers. Check facts that matter
+  with code, sources, or a person.
+
+<At levels="deep">
+
+- The entropy of the sampled answers measures the scatter. Answering beats "I don't know" when
+  $p - (1-p)\,t/(1-t) > 0$, that is, when $p > t$.
+
+</At>
+</RecapCard>
+
+**Next question:** a model can mislead you all on its own. But every tool result and every
+helper's summary is text the harness pastes into a prompt: search results, web pages, files. What
+if some of that text gives the model instructions of its own?

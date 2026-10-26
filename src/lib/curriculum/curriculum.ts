@@ -77,6 +77,8 @@ export const ROWS = [
 		'Who should choose the next step, code or the model? Compare a loop, a program the model writes, and a plan made up front on the same task.'],
 	['splitting-the-work', 'Splitting the work', 'agents', ['managing-the-context', 'the-agent-loop'],
 		'One agent keeps every step in one growing prompt. See a lead agent hand subtasks to helpers that each start fresh, and what that costs.'],
+	['making-things-up', 'Making things up', 'safety', ['probability-and-sampling', 'quirks-and-limits', 'search-and-memory', 'routing'],
+		'A model states a made-up answer as confidently as a true one. Ask a small model the same question ten times, and see what its disagreement gives away.'],
 	['prompt-injection', 'Prompt injection', 'safety', ['instructions-and-roles', 'where-prompts-break', 'tools'],
 		'Text a model reads can carry instructions of its own. See why a model follows them, and how well defenses written into the prompt hold up.'],
 	['trust-and-guardrails', 'Trust and guardrails', 'safety', ['the-agent-loop', 'prompt-injection'],

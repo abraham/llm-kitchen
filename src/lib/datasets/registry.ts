@@ -19,6 +19,7 @@ import {
 	wording
 } from './parsers/prompts.ts';
 import {
+	hallucinationSamples,
 	injectionLab,
 	kvCacheRun,
 	quantizeRun,
@@ -85,6 +86,11 @@ export const DATASETS = {
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),
 	'routing/cascade': dataset('routing/cascade.json', routingRecording, 'routing'),
+	'hallucination/samples': dataset(
+		'hallucination/samples.json',
+		hallucinationSamples,
+		'hallucination'
+	),
 	'agent/chat': dataset('agent/chat.json', agentRun, 'agent'),
 	'agent/math-no-tools': dataset('agent/math-no-tools.json', agentRun, 'agent'),
 	'agent/math-tools': dataset('agent/math-tools.json', agentRun, 'agent'),

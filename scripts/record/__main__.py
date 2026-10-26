@@ -25,6 +25,7 @@ MODULES = [
     "search",
     "memory",
     "routing",
+    "hallucination",
     "caching",
     "injection",
     "encoder",

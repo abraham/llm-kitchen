@@ -122,13 +122,14 @@ _How does a model act?_
 
 ### Part IX — Safety
 
-_How do you keep an agent safe, and know it did the job?_
+_Can you trust what a model says and does, and know it did the job?_
 
-| Ch  | Title                | Slug                   | Builds on  |
-| --- | -------------------- | ---------------------- | ---------- |
-| 32  | Prompt injection     | `prompt-injection`     | 20, 22, 28 |
-| 33  | Trust and guardrails | `trust-and-guardrails` | 29, 32     |
-| 34  | Did it work?         | `testing-agents`       | 28, 29, 33 |
+| Ch  | Title                | Slug                   | Builds on     |
+| --- | -------------------- | ---------------------- | ------------- |
+| 32  | Making things up     | `making-things-up`     | 2, 16, 25, 27 |
+| 33  | Prompt injection     | `prompt-injection`     | 20, 22, 28    |
+| 34  | Trust and guardrails | `trust-and-guardrails` | 29, 33        |
+| 35  | Did it work?         | `testing-agents`       | 28, 29, 34    |
 
 ### Part X — Other kinds of models
 
@@ -136,12 +137,12 @@ _What else is built from the same pieces?_
 
 | Ch  | Title                         | Slug                 | Builds on |
 | --- | ----------------------------- | -------------------- | --------- |
-| 35  | Reading both ways             | `encoders`           | 5, 9      |
-| 36  | Many experts                  | `mixture-of-experts` | 6, 10     |
-| 37  | Remembering without attention | `recurrent-models`   | 7, 8, 26  |
-| 38  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
-| 39  | Painting from noise           | `diffusion`          | 7, 11     |
-| 40  | Choosing actions              | `decision-models`    | 7, 11, 29 |
+| 36  | Reading both ways             | `encoders`           | 5, 9      |
+| 37  | Many experts                  | `mixture-of-experts` | 6, 10     |
+| 38  | Remembering without attention | `recurrent-models`   | 7, 8, 26  |
+| 39  | Seeing pictures               | `seeing-pictures`    | 5, 10     |
+| 40  | Painting from noise           | `diffusion`          | 7, 11     |
+| 41  | Choosing actions              | `decision-models`    | 7, 11, 29 |
 
 ### Wrap-up
 
@@ -149,10 +150,10 @@ _How does it all fit together?_ Unnumbered Part.
 
 | Ch  | Title                    | Slug              | Builds on                  |
 | --- | ------------------------ | ----------------- | -------------------------- |
-| 41  | Recap: the whole picture | `recap`           | —                          |
-| 42  | From message to reply    | `end-to-end`      | —                          |
-| 43  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 26, 36, 38 |
-| 44  | Check yourself           | `quiz`            | —                          |
+| 42  | Recap: the whole picture | `recap`           | —                          |
+| 43  | From message to reply    | `end-to-end`      | —                          |
+| 44  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 26, 37, 39 |
+| 45  | Check yourself           | `quiz`            | —                          |
 
 ## Why this order
 
@@ -174,13 +175,14 @@ _How does it all fit together?_ Unnumbered Part.
 - **Prompt engineering comes before Harnesses.** Prompting needs only the model and its chat
   template. Learning it first means the system prompt (Ch 20) and structured output (Ch 21) are
   familiar when the harness puts a system prompt in front of every chat (Ch 23) and parses tool calls
-  (Ch 28). Prompt injection (Ch 32) then reads as prompting by an attacker.
+  (Ch 28). Prompt injection (Ch 33) then reads as prompting by an attacker.
 - **Harnesses before Agents.** What an app adds around one model call, the prompt it
   builds, how it trims and caches it, and which model gets it, needs only a chat. Tools, the agent
   loop, and the ways to design one follow as their own Part.
 - **Safety follows Agents.** A model that acts raises a different question:
-  how do you keep it safe, and how do you know it did the job? Attacks, guardrails, and testing all
-  need the loop and the designs from the Part before.
+  can you trust what it says and does, and how do you know it did the job? Made-up answers come
+  first, since they need only sampling and a harness; attacks, guardrails, and testing need the
+  loop and the designs from the Part before.
 - **Search and memory follows Managing the context.** It answers that chapter's question about
   retrieval with keyword search and notes kept between chats, which need no tools.
 - **Designing an agent follows the agent loop.** Once the loop is familiar, the chapter compares it

@@ -1058,5 +1058,68 @@
 		"year": 2024,
 		"url": "https://github.com/karpathy/llm.c/discussions/677",
 		"accessed": "2026-10-25"
+	},
+	{
+		"id": "mata2023",
+		"authors": ["P. Kevin Castel (U.S. District Court, S.D.N.Y.)"],
+		"title": "Mata v. Avianca, Inc., No. 22-cv-1461: Opinion and Order on Sanctions",
+		"venue": "U.S. District Court for the Southern District of New York",
+		"year": 2023,
+		"url": "https://law.justia.com/cases/federal/district-courts/new-york/nysdce/1:2022cv01461/575368/54/",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "manakul2023",
+		"authors": ["Potsawee Manakul", "Adian Liusie", "Mark J. F. Gales"],
+		"title": "SelfCheckGPT: Zero-Resource Black-Box Hallucination Detection for Generative Large Language Models",
+		"venue": "EMNLP 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2303.08896"
+	},
+	{
+		"id": "kuhn2023",
+		"authors": ["Lorenz Kuhn", "Yarin Gal", "Sebastian Farquhar"],
+		"title": "Semantic Uncertainty: Linguistic Invariances for Uncertainty Estimation in Natural Language Generation",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.09664"
+	},
+	{
+		"id": "kalai2025",
+		"authors": ["Adam Tauman Kalai", "Ofir Nachum", "Santosh S. Vempala", "Edwin Zhang"],
+		"title": "Why Language Models Hallucinate",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2509.04664"
+	},
+	{
+		"id": "spracklen2025",
+		"authors": [
+			"Joseph Spracklen",
+			"Raveen Wijewickrama",
+			"A H M Nazmus Sakib",
+			"Anindya Maiti",
+			"Bimal Viswanath",
+			"Murtuza Jadliwala"
+		],
+		"title": "We Have a Package for You! A Comprehensive Analysis of Package Hallucinations by Code Generating LLMs",
+		"venue": "USENIX Security 2025",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2406.10279"
+	},
+	{
+		"id": "magesh2024",
+		"authors": [
+			"Varun Magesh",
+			"Faiz Surani",
+			"Matthew Dahl",
+			"Mirac Suzgun",
+			"Christopher D. Manning",
+			"Daniel E. Ho"
+		],
+		"title": "Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2405.20362"
 	}
 ]
