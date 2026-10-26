@@ -142,12 +142,37 @@ Tick *GPT-4* and *GPT-4o* in the tokenizer to compare. Newer models learned bigg
 tokens, so the same text usually takes fewer of them. A token number only makes sense to the model
 it belongs to.
 
+The difference is biggest for code. GPT-2 uses a token for nearly every space at the start of a
+line, so a short program can take almost twice as many GPT-2 tokens as GPT-4 tokens. Even one
+company's models can count differently: Anthropic says its newer Claude models use about 30% more
+tokens for the same text.<Cite id="anthropic-pricing" /> So a price per token only tells you so
+much; count your own text.
+
 </At>
 <At levels="standard deep">
 
 Tick *GPT-4* and *GPT-4o* in the tokenizer to compare. Newer models learned bigger vocabularies
 (called `cl100k_base` and `o200k_base`), so the same text usually takes fewer
 tokens.<Cite id="tiktoken" /> A token ID only makes sense to the model that uses that tokenizer.
+
+The difference is biggest for code. Paste this five-line function into the tokenizer:
+
+```python
+def count_words(text):
+    words = text.split()
+    if not words:
+        return 0
+    return len(words)
+```
+
+It takes 44 GPT-2 tokens but 26 with GPT-4's tokenizer, while the sentence *The cat sat on the
+mat. It looked out of the window and watched the birds fly by.* takes 20 in all three. GPT-2 spends
+a token on nearly every space of indentation, so `        return 0` alone is 9 tokens; GPT-4's
+tokenizer has tokens for runs of spaces and needs 4.
+Even one company's models can count differently: Anthropic says its Claude 4.7 and later models
+produce about 30% more tokens for the same text than earlier ones.<Cite id="anthropic-pricing" />
+So a price per token only compares models that share a tokenizer. To compare costs, count your own
+text.
 
 </At>
 

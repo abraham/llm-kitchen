@@ -1,5 +1,7 @@
 import ranks from 'gpt-tokenizer/bpeRanks/r50k_base';
 import { decode, encode } from 'gpt-tokenizer/encoding/r50k_base';
+import { encode as encodeGpt4 } from 'gpt-tokenizer/encoding/cl100k_base';
+import { encode as encodeGpt4o } from 'gpt-tokenizer/encoding/o200k_base';
 import { describe, expect, it } from 'vitest';
 import { RHYMES } from '#lib/data/rhymes.ts';
 import canonical from '../../../../models/canonical.json';
@@ -25,5 +27,16 @@ describe('tokens', () => {
 
 	it("\"GPT-2's first merge was ' t'\"", () => {
 		expect(ranks[256]).toBe(' t');
+	});
+
+	it('"44 GPT-2 tokens but 26 with GPT-4\'s tokenizer", while a sentence takes 20 in all three', () => {
+		const count = (text: string) => [encode, encodeGpt4, encodeGpt4o].map((e) => e(text).length);
+		const code =
+			'def count_words(text):\n    words = text.split()\n    if not words:\n        return 0\n    return len(words)';
+		expect(count(code)).toEqual([44, 26, 26]);
+		const prose =
+			'The cat sat on the mat. It looked out of the window and watched the birds fly by.';
+		expect(count(prose)).toEqual([20, 20, 20]);
+		expect(count('        return 0')).toEqual([9, 4, 4]);
 	});
 });

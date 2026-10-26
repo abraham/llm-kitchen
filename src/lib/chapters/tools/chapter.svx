@@ -120,6 +120,10 @@ The model never sees MCP. It still reads tool descriptions and writes tool calls
 format; the harness translates in both directions. Connecting a server means its descriptions and
 results end up in the prompt, so it has to be trusted like any other tool.
 
+Those descriptions take up tokens on every call, and so does more you never see: when tools are on,
+Anthropic's API adds its own system prompt for tool use, a few hundred tokens depending on the
+model, before counting the tools' own descriptions.<Cite id="anthropic-pricing" />
+
 <At levels="deep">
 
 ### MCP on the wire

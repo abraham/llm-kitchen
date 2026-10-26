@@ -1016,5 +1016,14 @@
 		"venue": "NeurIPS 2023",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2305.15425"
+	},
+	{
+		"id": "anthropic-pricing",
+		"authors": ["Anthropic"],
+		"title": "Pricing",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/about-claude/pricing",
+		"accessed": "2026-10-25"
 	}
 ]
