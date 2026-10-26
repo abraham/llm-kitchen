@@ -28,20 +28,25 @@ Data: `record_context` in `scripts/record/agent.py`: a chat with no tools, six t
 a named child, and "What happens in it?"), then "Which child in my class loves the rhyme about the
 cat?" answered under each strategy, written to `static/data/agent/context.json`.
 
-| Claim                                                                                                     | Backing                                                        |
-| --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Six turns overflow a 600-token budget; each strategy fits                                                 | Test                                                           |
-| The budget is deliberately small; the model can read far more                                             | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768 |
-| With everything kept, the model names Lily                                                                | Test (recorded answer)                                         |
-| Dropping the oldest: the model says the conversation doesn't mention it                                   | Test (recorded answer)                                         |
-| A model can as easily fill a gap with a confident guess                                                   | Ch 16 (hallucination)                                          |
-| The summary kept "Lily" and the answer was right                                                          | Test                                                           |
-| Retrieval by embedding similarity (MiniLM) picked the cat rhyme, and the answer was right                 | Test; cite `lewis2020`                                         |
-| The map uses the Ch 5 projection                                                                          | `ContextBudget` projects with `minilm-map.json`'s PCA basis    |
-| Simple: restates Standard in plainer words, with no new claims                                            | Reviewed against the Standard text                             |
-| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.49, the others 0.35–0.45           | Test (recomputed from the stored vectors)                      |
-| In depth: the summary shrank the 149-token first exchange to a 30-token note                              | Test                                                           |
-| In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it | Test (recorded reply and summary against the rhyme text)       |
+| Claim                                                                                                           | Backing                                                                     |
+| --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Six turns overflow a 600-token budget; each strategy fits                                                       | Test                                                                        |
+| The budget is deliberately small; the model can read far more                                                   | Qwen2.5-1.5B-Instruct config: `max_position_embeddings` 32,768              |
+| With everything kept, the model names Lily                                                                      | Test (recorded answer)                                                      |
+| Dropping the oldest: the model says the conversation doesn't mention it                                         | Test (recorded answer)                                                      |
+| A model can as easily fill a gap with a confident guess                                                         | Ch 16 (hallucination)                                                       |
+| The summary kept "Lily" and the answer was right                                                                | Test                                                                        |
+| Retrieval by embedding similarity (MiniLM) picked the cat rhyme, and the answer was right                       | Test; cite `lewis2020`                                                      |
+| The map uses the Ch 5 projection                                                                                | `ContextBudget` projects with `minilm-map.json`'s PCA basis                 |
+| Simple: restates Standard in plainer words, with no new claims                                                  | Reviewed against the Standard text                                          |
+| In depth: similarity is the cosine of 384-number MiniLM vectors; cat 0.49, the others 0.35–0.45                 | Test (recomputed from the stored vectors)                                   |
+| In depth: the summary shrank the 149-token first exchange to a 30-token note                                    | Test                                                                        |
+| In depth: the first reply says a cat catches a mouse, which the rhyme doesn't, and the summary repeats it       | Test (recorded reply and summary against the rhyme text)                    |
+| The reply and any thinking share the window; system prompt, messages, tool definitions and results all count    | Cite `anthropic-context-windows`                                            |
+| A prompt that alone is too long is refused with "prompt is too long"; chat apps drop the oldest turns           | Cite `anthropic-context-windows` (overflow behavior; first in, first out)   |
+| The 600-token budget counts only the prompt                                                                     | `record_context` in `scripts/record/agent.py` (turn sizes against `BUDGET`) |
+| RULER: 17 models claiming 32K or more; nearly perfect on the simple hidden-fact test, only half did well at 32K | Cite `hsieh2024ruler` (abstract)                                            |
+| "Context rot": accuracy and recall degrade as the token count grows                                             | Cite `anthropic-context-windows`                                            |
 
 ## Ch 25. Search and memory
 
@@ -95,6 +100,7 @@ written to `static/data/caching/kv-cache.json`. The prompt-cache view is compute
 | In depth: Qwen2.5-1.5B: 28 layers, 12 query heads sharing 2 key/value heads of 128: 14,336 numbers per token, not 86,016 | Cite `qwen2024` (Table 1, GQA); config `hidden_size` 1536; test |
 | In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                       |
 | In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                    |
+| Cached tokens still count toward the context window; caching changes the price, not the room                             | Cite `anthropic-context-windows` (compaction section)           |
 
 ## Ch 27. Which model answers?
 

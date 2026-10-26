@@ -130,6 +130,8 @@ a prompt for a while, from minutes to hours, and a later prompt that starts the 
 token, picks up from there. This is <GlossaryPopover term="prompt-caching">prompt caching</GlossaryPopover>.
 Providers charge a tenth of the normal price or less for tokens read from the cache, and the reply
 starts sooner, because there is less to work through first.<Cite id="openai-prompt-caching" /><Cite id="anthropic-prompt-caching" />
+Cached tokens still count toward the context window, though: caching changes what they cost, not
+how much room they take.<Cite id="anthropic-context-windows" />
 
 </At>
 

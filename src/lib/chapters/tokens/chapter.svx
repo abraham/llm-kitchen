@@ -1,5 +1,6 @@
 <script lang="ts">
 	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
@@ -150,12 +151,34 @@ tokens.<Cite id="tiktoken" /> A token ID only makes sense to the model that uses
 
 </At>
 
+## Counting in tokens
+
+<At levels="simple">
+
+How much a model can read at once, and what it costs to use, are counted in tokens, not words. The
+six nursery rhymes from <ChapterRef to="predicting-by-counting" /> are 145 words but 195 GPT-2
+tokens. Other languages often need many more tokens for the same text.<Cite id="petrov2023" />
+
+</At>
+<At levels="standard deep">
+
+How much a model can read at once, and what it costs to use, are counted in tokens, not words. The
+six nursery rhymes from <ChapterRef to="predicting-by-counting" /> are 145 words and 195 GPT-2
+tokens, about 1.3 tokens per word: punctuation marks are tokens of their own, and rarer words take
+more than one. Other
+languages often need many more tokens for the same meaning. In one study, the same text took up to
+15 times as many tokens in some languages as in others.<Cite id="petrov2023" /> That leaves less
+room in the model's window and costs more.
+
+</At>
+
 <RecapCard>
 
 - Models read tokens: chunks of text between single characters and whole words, each with an ID.
 - Byte pair encoding builds the vocabulary by repeatedly merging the most common pair.
 - Frequent words become one token; rare words are split into pieces. The model doesn't see letters
   inside a token.
+- Limits and prices are counted in tokens, and other languages often need more of them.
 
 <At levels="deep">
 

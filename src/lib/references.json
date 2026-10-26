@@ -991,5 +991,30 @@
 		"venue": "USENIX Security 2021",
 		"year": 2021,
 		"url": "https://arxiv.org/abs/2012.07805"
+	},
+	{
+		"id": "anthropic-context-windows",
+		"authors": ["Anthropic"],
+		"title": "Context windows",
+		"venue": "Claude Developer Platform documentation",
+		"year": 2026,
+		"url": "https://platform.claude.com/docs/en/build-with-claude/context-windows",
+		"accessed": "2026-10-25"
+	},
+	{
+		"id": "hsieh2024ruler",
+		"authors": ["Cheng-Ping Hsieh", "Simeng Sun", "Samuel Kriman", "Shantanu Acharya"],
+		"title": "RULER: What's the Real Context Size of Your Long-Context Language Models?",
+		"venue": "COLM 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2404.06654"
+	},
+	{
+		"id": "petrov2023",
+		"authors": ["Aleksandar Petrov", "Emanuele La Malfa", "Philip H. S. Torr", "Adel Bibi"],
+		"title": "Language Model Tokenizers Introduce Unfairness Between Languages",
+		"venue": "NeurIPS 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2305.15425"
 	}
 ]
