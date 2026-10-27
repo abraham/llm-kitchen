@@ -1,10 +1,12 @@
 <script lang="ts">
 	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import FewShot from './FewShot.svelte';
 	import InductionHead from './InductionHead.svelte';
+	import LabelsDemo from './LabelsDemo.svelte';
 </script>
 
 ## Show, don't tell
@@ -73,6 +75,55 @@ For "horse ->" after four examples, that's 0.69 × over 0.99, about 0.69: once G
 
 </At>
 
+## Do the labels have to be right?
+
+<At levels="simple">
+
+You might expect wrong examples to teach a wrong rule. A study of 12 models found that mixing up
+the examples' labels at random barely mattered: what the examples taught was which labels to use
+and what the answer should look like.<Cite id="min2022" /> But bigger models do follow labels that
+are wrong in a consistent way.<Cite id="wei2023larger" /> Here, eight short reviews are labeled
+*positive* or *negative* before 24 new ones. Pick how the eight are labeled:
+
+</At>
+<At levels="standard deep">
+
+If examples teach a rule, wrong examples should teach a wrong one. A study of 12 models, GPT-3
+among them, found otherwise: swapping the examples' labels at random barely hurt. What mattered was
+that the examples showed which labels to use, what the inputs look like, and the layout of the
+answers.<Cite id="min2022" /> A later study found that size changes this. Given examples with every
+label flipped, small models stuck to what they had learned in training, while the largest flipped
+their answers too, and mainly large models could learn labels with no meaning, like *foo* and *bar*
+for positive and negative.<Cite id="wei2023larger" /> Here, eight short reviews are labeled before
+24 new ones. Pick how the eight are labeled:
+
+</At>
+
+<LabelsDemo />
+
+<At levels="simple">
+
+Without examples, Qwen2.5-1.5B-Instruct gives *positive* or *negative* only about a quarter of its
+chances; with any eight examples, nearly all of them. That is the format at work. With half the labels wrong, it
+still labels all 24 reviews correctly. But flip every label and it follows the flipped labels for
+23 of 24 reviews. GPT-2 small gets 21 right with the right labels, and with flipped or made-up
+labels it gives every review the same one.
+
+</At>
+<At levels="standard deep">
+
+Without examples, Qwen2.5-1.5B-Instruct puts only 27% of its probability on " positive" or
+" negative", and GPT-2 almost none; with any eight examples, Qwen puts over 99% there and GPT-2
+over 90%. That is the label set and the format at work. With half the labels wrong, Qwen still
+labels all 24 reviews by their real sentiment: labels that contradict each other teach it nothing,
+so it falls back on what it knows. Flip every label, though, and it follows the flipped labels for
+23 of 24 reviews, and with *foo* and *bar* it uses the made-up labels correctly 23 times. In that
+study, it took far larger models to follow flipped labels; Qwen is a much newer model, on a much
+easier task. GPT-2 small gets 21 right with the right labels and 17 with half wrong, and with
+flipped or made-up labels it gives every review the same label.
+
+</At>
+
 ## How the model copies a pattern
 
 <At levels="simple">
@@ -97,7 +148,9 @@ works.<Cite id="olsson2022" /> GPT-2 small has one doing exactly this on the pro
 
 From the final arrow, it looks almost entirely at the earlier answers, the words that followed the
 earlier arrows. The rest of the network can then use what it found to write an answer of the same
-kind.
+kind. Copying is also why examples can work too well: a model can pick up their exact words,
+length, or quirks along with the rule, so examples that differ from each other in everything but
+the rule teach the rule best.
 
 <At levels="deep">
 
@@ -114,9 +167,30 @@ opposites, rising from 5% on the first to 35% on the last.
 
 </At>
 
+## Show or tell?
+
+<At levels="simple">
+
+You can also just say what you want, with no examples. For a familiar task, that is often enough.
+Examples help most when the answer has to look a certain way, or uses labels or a style the model
+can't guess. They make every prompt longer, though.
+
+</At>
+<At levels="standard deep">
+
+Instructions alone, called *zero-shot* prompting, are often enough for familiar tasks like
+summarizing or translating. Examples earn their place when the answer has to follow an exact
+format, or uses labels or a style the model can't guess from a description, as the reviews above
+showed. They also cost tokens on every call, though a fixed set at the start of the prompt can be
+cached (<ChapterRef to="caching" />). The next chapter is about the other half: telling the model what to do.
+
+</At>
+
 <RecapCard>
 
 - A few examples in the prompt can teach a model a new task, with no change to its weights.
+- Examples teach the label set and the format; with labels that contradict each other, a model
+  falls back on what it knows, while consistently wrong labels can pull a capable model along.
 - Attention heads that look at "what came after this token last time" help copy the pattern.
 - Bigger models learn from examples much better; small ones often just repeat the last answer.
 

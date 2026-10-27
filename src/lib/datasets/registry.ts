@@ -12,6 +12,7 @@ import { clip, clipImages, decisionRecording, fillMask } from './parsers/models.
 import {
 	baseVsInstruct,
 	fewShot,
+	fewShotLabels,
 	fragile,
 	steps,
 	systemPrompts,
@@ -87,6 +88,7 @@ export const DATASETS = {
 	'reasoning/thinking': dataset('reasoning/thinking.json', thinking, 'reasoning'),
 	'prompts/wording': dataset('prompts/wording.json', wording, 'prompts'),
 	'prompts/fewshot': dataset('prompts/fewshot.json', fewShot, 'prompts'),
+	'prompts/labels': dataset('prompts/labels.json', fewShotLabels, 'prompts'),
 	'prompts/system': dataset('prompts/system.json', systemPrompts, 'prompts'),
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),

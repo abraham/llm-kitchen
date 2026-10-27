@@ -26,20 +26,28 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 
 ## Ch 19. Learning from examples in the prompt
 
-| Claim                                                                                                                                        | Backing                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Qwen: _sad_ for "happy ->" about 1% with no examples, 96% with four                                                                          | Test                                                                 |
-| Made-up labels: almost nothing with no examples, 22–78% with four                                                                            | Test                                                                 |
-| "light -> dark" got less likely as examples were added                                                                                       | Test                                                                 |
-| GPT-2 repeats the word for opposites and says "zork" for every made-up-label test                                                            | Test (its top guess)                                                 |
-| In-context learning improves with model size                                                                                                 | Cite `brown2020`                                                     |
-| Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it | Cite `olsson2022` (abstract)                                         |
-| GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                          | Test (recorded attention)                                            |
-| Simple: restates Standard in plainer words, with no new claims                                                                               | Reviewed against the Standard text                                   |
-| In depth: "blip" is " bl" + "ip" and "zork" is " z" + "ork"; an answer's chance is the product of its tokens'                                | Test (recorded tokens); implementation (`answer_prob` in the script) |
-| In depth: "horse ->" after four examples: about 0.69, with "ork" after " z" over 99%                                                         | Test                                                                 |
-| In depth: an induction head relies on an earlier previous-token head, so it needs two layers                                                 | Cite `olsson2022`                                                    |
-| In depth: head 5.0 sends 98% to the four opposites answers, rising from 5% to 35%                                                            | Test                                                                 |
+| Claim                                                                                                                                              | Backing                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Qwen: _sad_ for "happy ->" about 1% with no examples, 96% with four                                                                                | Test                                                                                 |
+| Made-up labels: almost nothing with no examples, 22–78% with four                                                                                  | Test                                                                                 |
+| "light -> dark" got less likely as examples were added                                                                                             | Test                                                                                 |
+| GPT-2 repeats the word for opposites and says "zork" for every made-up-label test                                                                  | Test (its top guess)                                                                 |
+| In-context learning improves with model size                                                                                                       | Cite `brown2020`                                                                     |
+| Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it       | Cite `olsson2022` (abstract)                                                         |
+| GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                                | Test (recorded attention)                                                            |
+| Randomly replacing the examples' labels barely hurt, over 12 models including GPT-3; label space, input distribution, and format drive performance | Cite `min2022` (abstract)                                                            |
+| Small models ignore flipped labels; large models follow them; learning meaningless labels emerges mainly with scale                                | Cite `wei2023larger` (abstract)                                                      |
+| Reviews: 8 examples, 24 tests; right, 4 of 8 wrong, all 8 flipped, or foo/bar                                                                      | Test (`prompts/labels`, `record/prompts.py` `labels`)                                |
+| Qwen puts 27% on the two labels without examples, over 99% with any; GPT-2 under 1% and over 90%                                                   | Test                                                                                 |
+| Qwen: 24 of 24 by real sentiment with right or half-wrong labels; follows flipped labels 23 times; foo/bar 23                                      | Test                                                                                 |
+| GPT-2: 21 with right labels, 17 half wrong, one label for every review when flipped or made up                                                     | Test                                                                                 |
+| Copying explains why examples' exact words and quirks carry over; varied examples teach the rule best                                              | Follows from the induction-head mechanism above; stated as advice, not a measurement |
+| Zero-shot instructions often suffice for familiar tasks; examples cost tokens on every call; a fixed set at the start can be cached                | Ch 20, Ch 26 (prompt caching)                                                        |
+| Simple: restates Standard in plainer words, with no new claims                                                                                     | Reviewed against the Standard text                                                   |
+| In depth: "blip" is " bl" + "ip" and "zork" is " z" + "ork"; an answer's chance is the product of its tokens'                                      | Test (recorded tokens); implementation (`answer_prob` in the script)                 |
+| In depth: "horse ->" after four examples: about 0.69, with "ork" after " z" over 99%                                                               | Test                                                                                 |
+| In depth: an induction head relies on an earlier previous-token head, so it needs two layers                                                       | Cite `olsson2022`                                                                    |
+| In depth: head 5.0 sends 98% to the four opposites answers, rising from 5% to 35%                                                                  | Test                                                                                 |
 
 ## Ch 20. Instructions, roles, and the system prompt
 

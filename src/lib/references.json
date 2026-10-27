@@ -1293,5 +1293,21 @@
 		"year": 2026,
 		"url": "https://developers.openai.com/api/reference/resources/chat",
 		"accessed": "2026-10-26"
+	},
+	{
+		"id": "min2022",
+		"authors": ["Sewon Min", "Xinxi Lyu", "Ari Holtzman", "Mikel Artetxe"],
+		"title": "Rethinking the Role of Demonstrations: What Makes In-Context Learning Work?",
+		"venue": "EMNLP 2022",
+		"year": 2022,
+		"url": "https://arxiv.org/abs/2202.12837"
+	},
+	{
+		"id": "wei2023larger",
+		"authors": ["Jerry Wei", "Jason Wei", "Yi Tay", "Dustin Tran"],
+		"title": "Larger language models do in-context learning differently",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2303.03846"
 	}
 ]

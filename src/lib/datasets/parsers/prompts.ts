@@ -111,6 +111,20 @@ export const fewShot = object({
 });
 export type FewShot = Infer<typeof fewShot>;
 
+const labeled = object({ text: string, label: string });
+
+export const fewShotLabels = object({
+	models: record(['gpt2', 'qwen'], modelRef),
+	examples: array(labeled),
+	conditions: array(
+		object({ id: string, name: string, shown: array(string), labels: tuple(string, string) })
+	),
+	tests: array(labeled),
+	/** results[model][condition][test]: the chance of each of the condition's two labels. */
+	results: record(['gpt2', 'qwen'], dictionary(array(tuple(number, number))))
+});
+export type FewShotLabels = Infer<typeof fewShotLabels>;
+
 const answer = object({ text: string, correct: boolean });
 
 export const systemPrompts = object({

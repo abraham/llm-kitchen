@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
+import { summarizeLabels, type LabelsModel } from './labels.ts';
 
 describe('few-shot', () => {
 	const d = readDataset('prompts/fewshot');
@@ -60,5 +61,50 @@ describe('few-shot', () => {
 		expect(answers.reduce((a, b) => a + b)).toBeCloseTo(0.98, 2);
 		expect(answers[0]).toBeCloseTo(0.05, 2);
 		expect(answers[3]).toBeCloseTo(0.35, 2);
+	});
+});
+
+describe('few-shot: do the labels have to be right?', () => {
+	const rec = readDataset('prompts/labels');
+	const s = (model: LabelsModel, condition: string) => summarizeLabels(rec, model, condition);
+
+	it('eight examples, 24 new reviews, five ways to label the examples', () => {
+		expect(rec.examples).toHaveLength(8);
+		expect(rec.tests).toHaveLength(24);
+		expect(rec.conditions.map((c) => c.id)).toEqual([
+			'none',
+			'correct',
+			'half-wrong',
+			'flipped',
+			'made-up'
+		]);
+		const wrong = (id: string) => {
+			const c = rec.conditions.find((x) => x.id === id)!;
+			return c.shown.filter((l, i) => l !== rec.examples[i].label).length;
+		};
+		expect([wrong('correct'), wrong('half-wrong'), wrong('flipped')]).toEqual([0, 4, 8]);
+	});
+
+	it('label share: Qwen 27% and GPT-2 almost none without examples; over 99% and 90% with any', () => {
+		expect(Math.round(s('qwen', 'none').labelShare * 100)).toBe(27);
+		expect(s('gpt2', 'none').labelShare).toBeLessThan(0.01);
+		for (const c of ['correct', 'half-wrong', 'flipped', 'made-up']) {
+			expect(s('qwen', c).labelShare).toBeGreaterThan(0.99);
+			expect(s('gpt2', c).labelShare).toBeGreaterThan(0.9);
+		}
+	});
+
+	it('Qwen: all 24 by real sentiment with right or half-wrong labels; follows flipped 23; made-up 23', () => {
+		expect(s('qwen', 'correct').realSentiment).toBe(24);
+		expect(s('qwen', 'half-wrong').realSentiment).toBe(24);
+		expect(24 - s('qwen', 'flipped').realSentiment).toBe(23);
+		expect(s('qwen', 'made-up').realSentiment).toBe(23);
+	});
+
+	it('GPT-2: 21 right, 17 with half wrong, and one label for every review when flipped or made up', () => {
+		expect(s('gpt2', 'correct').realSentiment).toBe(21);
+		expect(s('gpt2', 'half-wrong').realSentiment).toBe(17);
+		expect(s('gpt2', 'flipped').sameForAll).toBe(true);
+		expect(s('gpt2', 'made-up').sameForAll).toBe(true);
 	});
 });

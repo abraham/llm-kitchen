@@ -7,6 +7,7 @@ Qwen2.5-1.5B-Instruct (the Harnesses chapters). Greedy decoding throughout, so r
 static/data/prompts/:
   wording.json  `prompts-as-documents`: GPT-2's next-token guesses for prompt variants, and where its last token looks
   fewshot.json  `few-shot`: GPT-2 on made-up tasks with 0-4 examples, and its strongest induction head
+  labels.json   `few-shot`: GPT-2 and Qwen on reviews when the examples' labels are right, half wrong, flipped, or made up
   system.json   `instructions-and-roles`: Qwen with different system prompts
   steps.json    `steps-and-structure`: Qwen on the `reasoning-models` puzzles, plain, step by step, and with a fixed format
   fragile.json  `where-prompts-break`: example order and format (GPT-2), and a fact's position in a long prompt (Qwen)
@@ -236,6 +237,92 @@ def qwen_answer_prob(prompt: str, answer: str) -> float:
     return answer_prob(qwen, qwen_tok, prompt, answer)
 
 
+# --- `few-shot`: do the examples' labels matter? (after Min et al. 2022 and Wei et al. 2023) -----------------------
+
+REVIEWS = [
+    ("I loved every minute of it.", "positive"),
+    ("The food was cold and bland.", "negative"),
+    ("What a wonderful surprise!", "positive"),
+    ("It broke after one day.", "negative"),
+    ("The staff were kind and helpful.", "positive"),
+    ("I want my money back.", "negative"),
+    ("Best concert I have ever been to.", "positive"),
+    ("The room smelled awful.", "negative"),
+]
+REVIEW_TESTS = [
+    ("This made my whole week.", "positive"),
+    ("Never buying from them again.", "negative"),
+    ("A delightful little book.", "positive"),
+    ("The screen cracked straight away.", "negative"),
+    ("Everyone at the party had a great time.", "positive"),
+    ("The train was late and dirty.", "negative"),
+    ("I would happily go back.", "positive"),
+    ("Boring from start to finish.", "negative"),
+    ("The puppy is adorable.", "positive"),
+    ("My order arrived damaged.", "negative"),
+    ("The view from the top was stunning.", "positive"),
+    ("The instructions made no sense.", "negative"),
+    ("Thank you for such a lovely evening.", "positive"),
+    ("The battery died within an hour.", "negative"),
+    ("The garden looks beautiful this spring.", "positive"),
+    ("Nobody answered my emails.", "negative"),
+    ("Our guide was funny and clever.", "positive"),
+    ("The soup tasted like dishwater.", "negative"),
+    ("I laughed so hard I cried.", "positive"),
+    ("The hotel lost our booking.", "negative"),
+    ("Fresh, tasty, and cheap.", "positive"),
+    ("The sequel was a huge letdown.", "negative"),
+    ("She sang beautifully.", "positive"),
+    ("The app keeps crashing.", "negative"),
+]
+FLIPPED = {"positive": "negative", "negative": "positive"}
+MADE_UP = {"positive": "foo", "negative": "bar"}
+# Half the examples' labels swapped (examples 2, 3, 6, and 7), so the labels say nothing.
+HALF_WRONG = [0, 1, 1, 0, 0, 1, 1, 0]
+
+
+def review_prompt(examples, review: str) -> str:
+    return "".join(f"Review: {t}\nSentiment: {l}\n\n" for t, l in examples) + f"Review: {review}\nSentiment:"
+
+
+def labels() -> None:
+    conditions = [
+        ("none", "No examples", [], ["positive", "negative"]),
+        ("correct", "Right labels", [l for _, l in REVIEWS], ["positive", "negative"]),
+        (
+            "half-wrong",
+            "Half the labels wrong",
+            [FLIPPED[l] if w else l for (_, l), w in zip(REVIEWS, HALF_WRONG)],
+            ["positive", "negative"],
+        ),
+        ("flipped", "Every label flipped", [FLIPPED[l] for _, l in REVIEWS], ["positive", "negative"]),
+        ("made-up", "Made-up labels", [MADE_UP[l] for _, l in REVIEWS], ["foo", "bar"]),
+    ]
+    results: dict[str, dict[str, list[list[float]]]] = {"gpt2": {}, "qwen": {}}
+    for cid, _, shown, words in conditions:
+        examples = list(zip([t for t, _ in REVIEWS], shown))
+        for name, model, tok in [("gpt2", gpt, gpt_tok), ("qwen", qwen, qwen_tok)]:
+            rows = []
+            for review, _ in REVIEW_TESTS:
+                text = review_prompt(examples, review)
+                rows.append([round(answer_prob(model, tok, text, " " + w), 5) for w in words])
+            results[name][cid] = rows
+            print(cid, name, [r[0] > r[1] for r in rows].count(True), round(sum(sum(r) for r in rows) / len(rows), 3))
+    write(
+        "labels.json",
+        {
+            "version": 1,
+            "models": {"gpt2": GPT2_INFO, "qwen": QWEN_INFO},
+            "examples": [{"text": t, "label": l} for t, l in REVIEWS],
+            "conditions": [
+                {"id": cid, "name": name, "shown": shown, "labels": words} for cid, name, shown, words in conditions
+            ],
+            "tests": [{"text": t, "label": l} for t, l in REVIEW_TESTS],
+            "results": results,
+        },
+    )
+
+
 # --- `instructions-and-roles`: system prompts ------------------------------------------------------------------------
 
 QWEN_DEFAULT = "You are Qwen, created by Alibaba Cloud. You are a helpful assistant."
@@ -432,7 +519,14 @@ def fragile() -> None:
 
 
 def main(names: list[str]) -> None:
-    jobs = {"wording": wording, "fewshot": fewshot, "system": system, "steps": steps, "fragile": fragile}
+    jobs = {
+        "wording": wording,
+        "fewshot": fewshot,
+        "labels": labels,
+        "system": system,
+        "steps": steps,
+        "fragile": fragile,
+    }
     for name in names or jobs:
         jobs[name]()
 
