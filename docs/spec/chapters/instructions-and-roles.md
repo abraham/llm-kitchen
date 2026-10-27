@@ -12,14 +12,22 @@ reliably than correctness; "you never make mistakes" doesn't make it so.
 
 - `SystemPrompts`: the same questions with different system prompts (none, a persona, specific
   instructions) side by side, with the chat template showing where the system prompt goes.
+- `RuleCount`: 12 short notes, each written under 1, 2, 4, 6, 8, and 10 rules a program can check.
+  A table of rules kept and of notes that kept every rule, and one note's rules (kept or missed)
+  with its reply.
 
 ## Data
 
 Recorded by `scripts/record/prompts.py` (`static/data/prompts/system.json`): Qwen2.5-1.5B-Instruct,
-greedy.
+greedy. `static/data/prompts/rules.json` (the `rules` job): the same model, greedy, with each rule
+checked by code; `facts.test.ts` re-runs the checks on the stored replies.
 
 ## Decisions
 
+- The rules can all be kept at once, so every miss is the model's. Each note starts the list at a
+  different rule, so no rule is always first or last.
+- The text reports what the recording shows: the share of rules kept didn't fall with more rules,
+  but the chance of keeping all of them did. In depth explains why with $p^k$.
 - This chapter introduces the system prompt itself, from the system slot in
   [From predictor to assistant](predictor-to-assistant.md)'s chat template.
   [The model is not the product](the-model-is-not-the-product.md) refers back to it.

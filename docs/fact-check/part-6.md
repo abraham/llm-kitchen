@@ -51,16 +51,20 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 
 ## Ch 20. Instructions, roles, and the system prompt
 
-| Claim                                                                                                                                                                            | Backing                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| Chat models were tuned on instruction-following examples and human ratings                                                                                                       | Cite `ouyang2022`                         |
-| The widget's template matches the text the model read                                                                                                                            | Test (`chatTemplate` vs. recorded prompt) |
-| Specific instructions gave a shorter answer; the persona more than doubled it and added a muddled claim                                                                          | Test (token counts, quoted phrase)        |
-| "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                                                                                                | Test                                      |
-| Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random                                                                                | Cite `zheng2024` (abstract)               |
-| Simple: restates Standard in plainer words, with no new claims                                                                                                                   | Reviewed against the Standard text        |
-| In depth: with no system prompt, Qwen's template fills in "You are Qwen, created by Alibaba Cloud. …"                                                                            | Test (site template vs recorded prompt)   |
-| In depth: treating system prompts and untrusted text alike underlies prompt injection; training on an instruction hierarchy made GPT-3.5 much harder to attack, with little loss | Cite `wallace2024` (abstract)             |
+| Claim                                                                                                                                                                            | Backing                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Chat models were tuned on instruction-following examples and human ratings                                                                                                       | Cite `ouyang2022`                                            |
+| The widget's template matches the text the model read                                                                                                                            | Test (`chatTemplate` vs. recorded prompt)                    |
+| Specific instructions gave a shorter answer; the persona more than doubled it and added a muddled claim                                                                          | Test (token counts, quoted phrase)                           |
+| "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                                                                                                | Test                                                         |
+| Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random                                                                                | Cite `zheng2024` (abstract)                                  |
+| 12 notes under 1 to 10 checkable rules: one rule kept in 7 of 12; ten rules, 88 of 120 kept and no note kept all; every rule kept in 7, 7, 3, 4, 1, 0 of 12                      | Test (verdicts re-checked in TypeScript against the replies) |
+| With ten rules, most misses were no "the" (7), a question (7), or a number (6), at every position in the list                                                                    | Test                                                         |
+| IFScale: 500 keyword rules, 20 models; the best reached 68% at 500; bias toward earlier rules                                                                                    | Cite `jaroslawicz2025` (abstract)                            |
+| In depth: independent rules kept with chance p are all kept with chance p^k; 0.73^10 ≈ 4%, about half a note in 12; 0.9^10 ≈ 35%                                                 | Test checks the arithmetic                                   |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                   | Reviewed against the Standard text                           |
+| In depth: with no system prompt, Qwen's template fills in "You are Qwen, created by Alibaba Cloud. …"                                                                            | Test (site template vs recorded prompt)                      |
+| In depth: treating system prompts and untrusted text alike underlies prompt injection; training on an instruction hierarchy made GPT-3.5 much harder to attack, with little loss | Cite `wallace2024` (abstract)                                |
 
 ## Ch 21. Asking for steps and structure
 

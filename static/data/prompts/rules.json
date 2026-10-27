@@ -1,0 +1,1426 @@
+{
+	"dataset": "prompts/rules",
+	"version": 1,
+	"script": "record/prompts.py",
+	"models": [
+		{
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		}
+	],
+	"generatedAt": "2026-10-26",
+	"data": {
+		"version": 1,
+		"model": {
+			"id": "Qwen/Qwen2.5-1.5B-Instruct",
+			"displayName": "Qwen2.5-1.5B-Instruct",
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+		},
+		"rules": [
+			"Start with the word \"hello\".",
+			"Mention the word \"harbor\".",
+			"Use fewer than 60 words.",
+			"Don't use any commas.",
+			"Write everything in lowercase letters.",
+			"Include a number written in digits.",
+			"End with the words \"see you soon\".",
+			"Don't use the word \"the\".",
+			"Include a question.",
+			"Mention the word \"lemonade\"."
+		],
+		"counts": [
+			1,
+			2,
+			4,
+			6,
+			8,
+			10
+		],
+		"notes": [
+			{
+				"task": "Write a short note inviting a friend to a picnic on Saturday.",
+				"runs": [
+					{
+						"rules": [
+							0
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".",
+						"reply": "Hello! I hope this message finds you well and in good spirits. As we approach the weekend, I have an exciting invitation for you that I believe will be both enjoyable and memorable.\n\nI am planning a delightful picnic at our local park on Saturday afternoon. The weather is looking great, so there's no better time than now to enjoy some fresh air and delicious food under the sun. We'll have everything set up: plenty of seating, a variety of refreshments, and even some games planned for those who want to join in.\n\nIf you're interested in joining me, please let me know as soon as possible. This way, we can coordinate any necessary arrangements and ensure everyone has a fantastic day out together.\n\nLooking forward to seeing you soon!\n\nBest regards,\n[Your Name]",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".",
+						"reply": "Hello dear friend,\n\nI hope this message finds you well! I am writing to invite you to join me for a delightful picnic on Saturday. The weather is looking great, and we have been planning this event for quite some time now.\n\nThe harbor area offers a serene setting where we can enjoy our meal while taking in the beautiful scenery. We will be having a variety of delicious foods, including sandwiches, fruits, and perhaps even some homemade desserts. There will also be plenty of space for games and conversation.\n\nPlease let me know if you would like to come along so that we can finalize the details and make sure everything runs smoothly. Looking forward to seeing you soon!\n\nWarm regards,\n[Your Name]",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.",
+						"reply": "Hello! I hope this message finds you well. I'm planning a fun picnic at the harbor on Saturday. It would be great if you could join us for some delicious food and fresh air. Let's meet there around noon. Looking forward to seeing you soon!",
+						"followed": [
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.",
+						"reply": "hello there! i hope this message finds you well. would love to invite you to our family's harbor picnic on saturday. it promises to be a delightful day filled with laughter and delicious food. see you then!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.\n7. End with the words \"see you soon\".\n8. Don't use the word \"the\".",
+						"reply": "hello there! i hope this message finds you well. would love to invite you to our family's harbor picnic on saturday. it promises to be a delightful day filled with laughter and delicious food. see you soon!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9
+						],
+						"prompt": "Write a short note inviting a friend to a picnic on Saturday. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.\n7. End with the words \"see you soon\".\n8. Don't use the word \"the\".\n9. Include a question.\n10. Mention the word \"lemonade\".",
+						"reply": "hello there! i hope this message finds you well. would love to invite you to our family's harbor picnic on saturday. it promises to be a delightful day filled with laughter and delicious lemonade. see you soon!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note thanking a neighbor for watering your plants.",
+				"runs": [
+					{
+						"rules": [
+							1
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".",
+						"reply": "Dear Neighbor,\n\nI hope this message finds you well. I wanted to take a moment to express my gratitude for all the care and attention you've shown in nurturing our shared garden.\n\nYour kindness in regularly watering our plants has been truly appreciated. It's wonderful to see them thrive under your watchful eye. Your harbor of generosity is greatly valued, and it makes me feel fortunate to have such a supportive community around us.\n\nThank you once again for your efforts and for making our little corner of the world more beautiful with each passing day.\n\nWarm regards,\n[Your Name]",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							1,
+							2
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.",
+						"reply": "Dear neighbor,\n\nThank you so much for sharing your water with my plants! Your harbor of kindness has made our little corner of the world greener and more vibrant.\n\nWarm regards,\n[Your Name]",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.",
+						"reply": "thank you so much for harboring my plants with such care and attention. your kindness means a lot to me. i appreciate it greatly.",
+						"followed": [
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".",
+						"reply": "thank you so much for harboring my plants all summer long. they're growing like crazy! see you soon. 7",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".\n7. Don't use the word \"the\".\n8. Include a question.",
+						"reply": "thank you so much for harboring my plants all day long. they look great now! see you soon. 9",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0
+						],
+						"prompt": "Write a short note thanking a neighbor for watering your plants. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".\n7. Don't use the word \"the\".\n8. Include a question.\n9. Mention the word \"lemonade\".\n10. Start with the word \"hello\".",
+						"reply": "hello there! thank you so much for harboring my plants all summer long. i appreciate it very much and will definitely make lemonade to show my gratitude. see you soon! 🍋",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							true,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note asking a coworker to swap shifts with you.",
+				"runs": [
+					{
+						"rules": [
+							2
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.",
+						"reply": "Hi [Coworker's Name],\n\nI'm looking forward to our shift change next week but I need to take over early due to an urgent project. Could we possibly swap so that I can handle the first part of my shift? Thanks! - [Your Name]",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							2,
+							3
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.\n2. Don't use any commas.",
+						"reply": "Hi [Coworker's Name],\n\nCould we please swap shifts? I'm feeling more energetic today and would like to help out.\n\nThanks!",
+						"followed": [
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							2,
+							3,
+							4,
+							5
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.\n2. Don't use any commas.\n3. Write everything in lowercase letters.\n4. Include a number written in digits.",
+						"reply": "could i please swap shifts with you? i'm feeling sick today and need some rest. thanks!",
+						"followed": [
+							true,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							2,
+							3,
+							4,
+							5,
+							6,
+							7
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.\n2. Don't use any commas.\n3. Write everything in lowercase letters.\n4. Include a number written in digits.\n5. End with the words \"see you soon\".\n6. Don't use the word \"the\".",
+						"reply": "hi [coworker's name], could we please switch shifts? i'm feeling extra tired today and would appreciate some help. see you soon! 7pm",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							false,
+							true
+						]
+					},
+					{
+						"rules": [
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.\n2. Don't use any commas.\n3. Write everything in lowercase letters.\n4. Include a number written in digits.\n5. End with the words \"see you soon\".\n6. Don't use the word \"the\".\n7. Include a question.\n8. Mention the word \"lemonade\".",
+						"reply": "could i please swap shifts with you? it's time for me to take a break and recharge. see you soon! lemonade is calling my name.",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							false,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1
+						],
+						"prompt": "Write a short note asking a coworker to swap shifts with you. Follow these rules:\n1. Use fewer than 60 words.\n2. Don't use any commas.\n3. Write everything in lowercase letters.\n4. Include a number written in digits.\n5. End with the words \"see you soon\".\n6. Don't use the word \"the\".\n7. Include a question.\n8. Mention the word \"lemonade\".\n9. Start with the word \"hello\".\n10. Mention the word \"harbor\".",
+						"reply": "hello there! i was thinking of swapping shifts with you today. it would be great if we could do that. see you soon! lemonade at the harbor?",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							false,
+							false,
+							true,
+							true,
+							true,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note telling your team that a meeting has moved.",
+				"runs": [
+					{
+						"rules": [
+							3
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.",
+						"reply": "Subject: Meeting Rescheduled\n\nDear Team,\n\nI hope this message finds you well.\n\nUnfortunately, due to unforeseen circumstances, the scheduled meeting on [insert date and time] has been rescheduled. The new meeting details will be provided shortly.\n\nPlease ensure all necessary preparations for the rescheduled meeting are made in advance.\n\nThank you for your understanding and cooperation.\n\nBest regards,\n[Your Name]",
+						"followed": [
+							false
+						]
+					},
+					{
+						"rules": [
+							3,
+							4
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.\n2. Write everything in lowercase letters.",
+						"reply": "everyone,\n\nthe meeting has been rescheduled for tomorrow at 3 pm.\n\nthanks,\n[Your Name]",
+						"followed": [
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							3,
+							4,
+							5,
+							6
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.\n2. Write everything in lowercase letters.\n3. Include a number written in digits.\n4. End with the words \"see you soon\".",
+						"reply": "meeting has been rescheduled to tomorrow at 10 am. see you soon.",
+						"followed": [
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							3,
+							4,
+							5,
+							6,
+							7,
+							8
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.\n2. Write everything in lowercase letters.\n3. Include a number written in digits.\n4. End with the words \"see you soon\".\n5. Don't use the word \"the\".\n6. Include a question.",
+						"reply": "meeting time changed to 9:00 am instead of 8:30 am. see you soon?",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.\n2. Write everything in lowercase letters.\n3. Include a number written in digits.\n4. End with the words \"see you soon\".\n5. Don't use the word \"the\".\n6. Include a question.\n7. Mention the word \"lemonade\".\n8. Start with the word \"hello\".",
+						"reply": "hello team,\n\nthe meeting has moved to 2pm instead of 1pm.\n\nsee you soon.\n\nlemonade\n\n9:00am",
+						"followed": [
+							false,
+							true,
+							true,
+							false,
+							false,
+							false,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2
+						],
+						"prompt": "Write a short note telling your team that a meeting has moved. Follow these rules:\n1. Don't use any commas.\n2. Write everything in lowercase letters.\n3. Include a number written in digits.\n4. End with the words \"see you soon\".\n5. Don't use the word \"the\".\n6. Include a question.\n7. Mention the word \"lemonade\".\n8. Start with the word \"hello\".\n9. Mention the word \"harbor\".\n10. Use fewer than 60 words.",
+						"reply": "Hello team,\n\nThe meeting has been moved to tomorrow at 2 PM. See you then.\n\nWhat's up with the lemonade?\n\nSee you soon.",
+						"followed": [
+							false,
+							false,
+							true,
+							true,
+							false,
+							true,
+							true,
+							true,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note congratulating a friend on a new job.",
+				"runs": [
+					{
+						"rules": [
+							4
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.",
+						"reply": "congratulations to you on your new job! i'm so happy for you and excited to hear all about it. good luck with the new challenges ahead and may this opportunity bring you many successes. keep shining bright and remember that you're capable of achieving anything you set your mind to. here's to more adventures and achievements together!",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							4,
+							5
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.\n2. Include a number written in digits.",
+						"reply": "congratulations to you on your new job! i'm so happy for you and can't wait to see all the amazing things you'll accomplish there. this is an exciting time for you, and i'm here for you every step of the way. keep up the great work! 🎉✨",
+						"followed": [
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							4,
+							5,
+							6,
+							7
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.\n2. Include a number written in digits.\n3. End with the words \"see you soon\".\n4. Don't use the word \"the\".",
+						"reply": "congratulations! i'm so happy for you starting your new job at [company name]. it's great to see someone taking their career to the next level. good luck and have fun exploring this exciting opportunity! see you soon! 5 stars to you!",
+						"followed": [
+							true,
+							true,
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							4,
+							5,
+							6,
+							7,
+							8,
+							9
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.\n2. Include a number written in digits.\n3. End with the words \"see you soon\".\n4. Don't use the word \"the\".\n5. Include a question.\n6. Mention the word \"lemonade\".",
+						"reply": "happy birthday to my dear friend! i just heard about your new job at lemonade stand marketing company. congratulations for this exciting step forward in your career journey. see you soon! 🎉✨",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							false,
+							true
+						]
+					},
+					{
+						"rules": [
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.\n2. Include a number written in digits.\n3. End with the words \"see you soon\".\n4. Don't use the word \"the\".\n5. Include a question.\n6. Mention the word \"lemonade\".\n7. Start with the word \"hello\".\n8. Mention the word \"harbor\".",
+						"reply": "hello there! congratulations on your new job at [company name]! it's great to hear that you're taking this step forward. i'm sure you'll do amazing things and make a difference. see you soon over lemonade time!\n\nhow is the harbor coming along? any updates on your project?",
+						"followed": [
+							true,
+							false,
+							false,
+							false,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3
+						],
+						"prompt": "Write a short note congratulating a friend on a new job. Follow these rules:\n1. Write everything in lowercase letters.\n2. Include a number written in digits.\n3. End with the words \"see you soon\".\n4. Don't use the word \"the\".\n5. Include a question.\n6. Mention the word \"lemonade\".\n7. Start with the word \"hello\".\n8. Mention the word \"harbor\".\n9. Use fewer than 60 words.\n10. Don't use any commas.",
+						"reply": "hello there! congratulations on your new job at the harbor! it's exciting to see you thrive in this new role. lemonade always cheers up when we're feeling down. see you soon! 🌞✨",
+						"followed": [
+							true,
+							false,
+							true,
+							false,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note reminding your book club about the next meeting.",
+				"runs": [
+					{
+						"rules": [
+							5
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.",
+						"reply": "Dear Book Club Members,\n\nWe hope this message finds you well and looking forward to our upcoming discussion.\n\nOur next meeting is scheduled for [insert date] at [insert time]. Please ensure that you have brought any necessary materials or notes from previous discussions so we can continue where we left off.\n\nRemember to bring your thoughts and questions prepared as they will be valuable contributions to our exploration of the selected book.\n\nLooking forward to an engaging evening filled with insightful conversations and thoughtful insights.\n\nBest regards,\n[Your Name]\nBook Club Organizer",
+						"followed": [
+							false
+						]
+					},
+					{
+						"rules": [
+							5,
+							6
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.\n2. End with the words \"see you soon\".",
+						"reply": "Dear Book Club Members,\n\nWe hope this message finds you well and excited for our upcoming discussion! Our next meeting is scheduled for [insert date] at 7:00 PM sharp.\n\nPlease ensure to bring your favorite snacks or drinks as we'll be enjoying them together during our session. We look forward to exploring another captivating novel together!\n\nSee you soon,\n[Your Name]\nBook Club Organizer",
+						"followed": [
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							5,
+							6,
+							7,
+							8
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.\n2. End with the words \"see you soon\".\n3. Don't use the word \"the\".\n4. Include a question.",
+						"reply": "Dear Book Club Members,\n\nWe hope this message finds you well! Our next meeting is scheduled for [insert date and time]. Please ensure to arrive on time as we have some exciting topics lined up.\n\nSee you soon!\n\nBest regards,\n[Your Name]",
+						"followed": [
+							false,
+							false,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							5,
+							6,
+							7,
+							8,
+							9,
+							0
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.\n2. End with the words \"see you soon\".\n3. Don't use the word \"the\".\n4. Include a question.\n5. Mention the word \"lemonade\".\n6. Start with the word \"hello\".",
+						"reply": "Hello everyone,\n\nThis is our 7th meeting of the Book Club! We hope you've all enjoyed discussing our readings so far.\n\nPlease bring your favorite lemonade to share at this meeting. It will be refreshing and perfect for our discussions!\n\nSee you soon.\n\nBest regards,\n[Your Name]",
+						"followed": [
+							true,
+							false,
+							false,
+							false,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.\n2. End with the words \"see you soon\".\n3. Don't use the word \"the\".\n4. Include a question.\n5. Mention the word \"lemonade\".\n6. Start with the word \"hello\".\n7. Mention the word \"harbor\".\n8. Use fewer than 60 words.",
+						"reply": "Hello Book Club,\n\nNext meeting is on March 1st at 7 PM. See you soon!\n\nWhat's your favorite part of reading?\n\nLemonade stand will be set up outside our harbor.\n\nSee you then!",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							5,
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4
+						],
+						"prompt": "Write a short note reminding your book club about the next meeting. Follow these rules:\n1. Include a number written in digits.\n2. End with the words \"see you soon\".\n3. Don't use the word \"the\".\n4. Include a question.\n5. Mention the word \"lemonade\".\n6. Start with the word \"hello\".\n7. Mention the word \"harbor\".\n8. Use fewer than 60 words.\n9. Don't use any commas.\n10. Write everything in lowercase letters.",
+						"reply": "hello everyone,\n\nour next meeting is on april 1st at 7pm sharp.\n\nplease bring some lemonade to share!\n\nsee you soon!",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							true,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note asking a friend to return a book you lent them.",
+				"runs": [
+					{
+						"rules": [
+							6
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".",
+						"reply": "Hey [Friend's Name],\n\nI hope this message finds you well! I wanted to reach out because I've been meaning to return one of your books that I borrowed from you earlier.\n\nIt was such an enjoyable read and I really enjoyed spending time with it. Unfortunately, I haven't had the chance to finish reading it yet. Could you please let me know when would be best for you? If there's any specific date or time that works better for you, I'd appreciate knowing about it.\n\nThank you so much for lending me this book. It means a lot to me, and I'm looking forward to finishing it soon.\n\nSee you soon!\n\nBest regards,\n[Your Name]",
+						"followed": [
+							false
+						]
+					},
+					{
+						"rules": [
+							6,
+							7
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".\n2. Don't use the word \"the\".",
+						"reply": "Hey [Friend's Name],\n\nI hope this message finds you well! I was wondering if you could bring back the book I lent you last week. It’s been sitting on my shelf for quite some time now and I’m starting to wonder where it went.\n\nThanks so much for your understanding!\n\nSee you soon,\n[Your Name]",
+						"followed": [
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							6,
+							7,
+							8,
+							9
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".\n2. Don't use the word \"the\".\n3. Include a question.\n4. Mention the word \"lemonade\".",
+						"reply": "Hey [Friend's Name],\n\nI hope this message finds you well! I was wondering if you could bring back my book that I lent you last week. It’s due back today, and I’ve been meaning to ask for it.\n\nThanks so much!\n\nSee you soon,\n[Your Name]",
+						"followed": [
+							false,
+							true,
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							6,
+							7,
+							8,
+							9,
+							0,
+							1
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".\n2. Don't use the word \"the\".\n3. Include a question.\n4. Mention the word \"lemonade\".\n5. Start with the word \"hello\".\n6. Mention the word \"harbor\".",
+						"reply": "Hello! I hope this message finds you well. It's been quite some time since we last met at the harbor. I was wondering if you had a chance to return that book I lent you? Lemonade is always a refreshing treat after a long day of sailing through life. See you soon!",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".\n2. Don't use the word \"the\".\n3. Include a question.\n4. Mention the word \"lemonade\".\n5. Start with the word \"hello\".\n6. Mention the word \"harbor\".\n7. Use fewer than 60 words.\n8. Don't use any commas.",
+						"reply": "Hello! I hope this message finds you well. Could we please meet up at the harbor for some lemonade? It's been nice lending you that book; see you soon!",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							6,
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						],
+						"prompt": "Write a short note asking a friend to return a book you lent them. Follow these rules:\n1. End with the words \"see you soon\".\n2. Don't use the word \"the\".\n3. Include a question.\n4. Mention the word \"lemonade\".\n5. Start with the word \"hello\".\n6. Mention the word \"harbor\".\n7. Use fewer than 60 words.\n8. Don't use any commas.\n9. Write everything in lowercase letters.\n10. Include a number written in digits.",
+						"reply": "Hello! I hope this message finds you well. Could we please meet up at the harbor for some lemonade? It's been nice lending you that book; see you soon!",
+						"followed": [
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							false,
+							false
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note welcoming a new member to your running club.",
+				"runs": [
+					{
+						"rules": [
+							7
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".",
+						"reply": "Welcome to our running club! We're excited to have you join us on this fitness journey. Let's get started with some easy runs and see where it takes us together. Feel free to ask any questions or share tips as we all learn from each other. Running is not just about speed; it's also about enjoying the process and making friends along the way. Here’s to healthy living and happy runs!",
+						"followed": [
+							false
+						]
+					},
+					{
+						"rules": [
+							7,
+							8
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".\n2. Include a question.",
+						"reply": "Welcome to our running club! We're thrilled to have you join us on this exciting journey of fitness and camaraderie.\n\nWhat's your favorite part about running? Do you prefer long-distance runs or shorter sprints? Are there any specific trails or routes that you enjoy exploring?\n\nWe'd love to hear from you and learn more about what makes you tick as a runner. Your input will help us create a more inclusive and enjoyable experience for everyone in our club.",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							7,
+							8,
+							9,
+							0
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".\n2. Include a question.\n3. Mention the word \"lemonade\".\n4. Start with the word \"hello\".",
+						"reply": "Hello there! Welcome to our running club! I hope you're as excited about this adventure as we are. What's your favorite part of running? And don't forget to bring some lemonade for us to enjoy during our next meet-up!\n\nWhat do you think will be the best way to start off our first run together?",
+						"followed": [
+							false,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							7,
+							8,
+							9,
+							0,
+							1,
+							2
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".\n2. Include a question.\n3. Mention the word \"lemonade\".\n4. Start with the word \"hello\".\n5. Mention the word \"harbor\".\n6. Use fewer than 60 words.",
+						"reply": "Hello! Welcome to our running club! We're excited to have you join us in our harbor of fitness and camaraderie. What's your favorite flavor of lemonade? Let's make some together!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".\n2. Include a question.\n3. Mention the word \"lemonade\".\n4. Start with the word \"hello\".\n5. Mention the word \"harbor\".\n6. Use fewer than 60 words.\n7. Don't use any commas.\n8. Write everything in lowercase letters.",
+						"reply": "hello there! welcome to our running club. we're excited to have you join us on this journey of fitness and camaraderie. what's your favorite flavor of lemonade? let's share some refreshments while we run together. hello to all who harbor dreams of becoming faster runners!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							7,
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						],
+						"prompt": "Write a short note welcoming a new member to your running club. Follow these rules:\n1. Don't use the word \"the\".\n2. Include a question.\n3. Mention the word \"lemonade\".\n4. Start with the word \"hello\".\n5. Mention the word \"harbor\".\n6. Use fewer than 60 words.\n7. Don't use any commas.\n8. Write everything in lowercase letters.\n9. Include a number written in digits.\n10. End with the words \"see you soon\".",
+						"reply": "hello there! welcome to our running club. let's get started on our weekly run at the harbor. lemonade will be ready for us after the race. see you soon! (1)",
+						"followed": [
+							false,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note apologizing to a friend for missing their party.",
+				"runs": [
+					{
+						"rules": [
+							8
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.",
+						"reply": "Dear [Friend's Name],\n\nI hope this message finds you well. I wanted to reach out and apologize for not being able to make it to your party last night.\n\nCould you please tell me if there was anything specific that made the event so special? I'd love to hear more about what drew you all together and how much fun we had.\n\nThank you for understanding and allowing me to miss out on such an enjoyable evening with you guys.\n\nBest regards,\n\n[Your Name]",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							8,
+							9
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.\n2. Mention the word \"lemonade\".",
+						"reply": "Dear [Friend's Name],\n\nI hope this message finds you well. I wanted to reach out and apologize for not being able to make it to your party last night. It was such an exciting event, and I'm so sorry that I couldn't join in.\n\nCould you please tell me if there were any lemonade stands around? I'd love to bring some homemade lemonade to share with everyone. Maybe we could even have a lemonade-making contest! 😄\n\nThanks for understanding, and I look forward to catching up soon.\n\nWarm regards,\n[Your Name]",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							8,
+							9,
+							0,
+							1
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.\n2. Mention the word \"lemonade\".\n3. Start with the word \"hello\".\n4. Mention the word \"harbor\".",
+						"reply": "Hello! I'm so sorry I couldn't make it to your lemonade stand last night. My plans got a bit mixed up and I ended up at my own party instead. I hope you had a great time without me. Let's catch up soon!",
+						"followed": [
+							false,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							8,
+							9,
+							0,
+							1,
+							2,
+							3
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.\n2. Mention the word \"lemonade\".\n3. Start with the word \"hello\".\n4. Mention the word \"harbor\".\n5. Use fewer than 60 words.\n6. Don't use any commas.",
+						"reply": "Hello! I'm so sorry I couldn't make it to your lemonade stand last night. Harbor feels like such an empty place without you there. How was everything else?",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.\n2. Mention the word \"lemonade\".\n3. Start with the word \"hello\".\n4. Mention the word \"harbor\".\n5. Use fewer than 60 words.\n6. Don't use any commas.\n7. Write everything in lowercase letters.\n8. Include a number written in digits.",
+						"reply": "hello there! i'm so sorry i couldn't make it to your lemonade stand last night. my plans got a bit messy and i ended up at work instead. hope you had fun without me. - [number]",
+						"followed": [
+							false,
+							true,
+							true,
+							false,
+							true,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							8,
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7
+						],
+						"prompt": "Write a short note apologizing to a friend for missing their party. Follow these rules:\n1. Include a question.\n2. Mention the word \"lemonade\".\n3. Start with the word \"hello\".\n4. Mention the word \"harbor\".\n5. Use fewer than 60 words.\n6. Don't use any commas.\n7. Write everything in lowercase letters.\n8. Include a number written in digits.\n9. End with the words \"see you soon\".\n10. Don't use the word \"the\".",
+						"reply": "hello there! i'm so sorry i couldn't make it to your lemonade party. was there anything special happening? see you soon! 2nite",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note asking your landlord to fix a leaking tap.",
+				"runs": [
+					{
+						"rules": [
+							9
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".",
+						"reply": "Subject: Urgent Repair Request for Leaking Tap\n\nDear [Landlord's Name],\n\nI hope this message finds you well.\n\nI am writing to bring to your attention an issue with our kitchen faucet that has been causing us considerable inconvenience and frustration. The water pressure is consistently low, leading to frequent leaks in the sink area. This problem not only affects our daily cooking routine but also poses potential health risks due to the constant dripping of lemonade (water) into the sink.\n\nPlease let me know if there is any immediate action we can take or if you require further information from my end regarding the repair process. We value your prompt response and would appreciate it if you could arrange for the necessary repairs as soon as possible.\n\nThank you for your understanding and cooperation.\n\nBest regards,\n\n[Your Full Name]  \n[Your Contact Information]  \n[Apartment/Building Number]  \n[Address]",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							9,
+							0
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".\n2. Start with the word \"hello\".",
+						"reply": "Hello there! I hope this message finds you well. I'm writing to bring to your attention an issue that has been bothering me lately. Specifically, there seems to be a leaky tap in my apartment, which is causing quite a bit of inconvenience and affecting the overall comfort of living here.\n\nI would greatly appreciate it if you could take care of this promptly so we can get back to enjoying our lemonade time without any interruptions. Please let me know how soon you think it will be fixed or what steps need to be taken next.\n\nThank you for your understanding and assistance. Looking forward to resolving this matter soon!\n\nBest regards,\n[Your Name]",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							9,
+							0,
+							1,
+							2
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".\n2. Start with the word \"hello\".\n3. Mention the word \"harbor\".\n4. Use fewer than 60 words.",
+						"reply": "Hello there! I hope this message finds you well. The lemonade in my kitchen is running out due to a leaky tap. Could you please have it fixed soon? Thank you for your attention to this matter.",
+						"followed": [
+							true,
+							true,
+							false,
+							true
+						]
+					},
+					{
+						"rules": [
+							9,
+							0,
+							1,
+							2,
+							3,
+							4
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".\n2. Start with the word \"hello\".\n3. Mention the word \"harbor\".\n4. Use fewer than 60 words.\n5. Don't use any commas.\n6. Write everything in lowercase letters.",
+						"reply": "hello there! i hope this message finds you well. please could you kindly address and resolve the issue of the leaking tap in our shared space? it's causing quite a mess and affecting my lemonade stand here. thank you so much for your attention to this matter.",
+						"followed": [
+							true,
+							true,
+							false,
+							true,
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".\n2. Start with the word \"hello\".\n3. Mention the word \"harbor\".\n4. Use fewer than 60 words.\n5. Don't use any commas.\n6. Write everything in lowercase letters.\n7. Include a number written in digits.\n8. End with the words \"see you soon\".",
+						"reply": "Hello there! I hope this message finds you well. Please take care of the leaky tap as it's making my lemonade taste funny. Thanks for understanding and seeing you soon.",
+						"followed": [
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							9,
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8
+						],
+						"prompt": "Write a short note asking your landlord to fix a leaking tap. Follow these rules:\n1. Mention the word \"lemonade\".\n2. Start with the word \"hello\".\n3. Mention the word \"harbor\".\n4. Use fewer than 60 words.\n5. Don't use any commas.\n6. Write everything in lowercase letters.\n7. Include a number written in digits.\n8. End with the words \"see you soon\".\n9. Don't use the word \"the\".\n10. Include a question.",
+						"reply": "hello there! i hope this message finds you well. please could you kindly fix the leaky tap asap? it's making lemonade in my kitchen sink and is causing quite a mess. thanks so much for your help! see you soon. 2023-04-01",
+						"followed": [
+							true,
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note telling a friend about a good café you found.",
+				"runs": [
+					{
+						"rules": [
+							0
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".",
+						"reply": "Hello! I just wanted to share some great news with you - I stumbled upon this amazing café that's been making waves in our neighborhood. It's called The Beanery and it's not just any ordinary coffee shop; they've got a unique twist on everything from their menu to their ambiance.\n\nThe moment you walk in, you're greeted by an inviting aroma of freshly brewed coffee and baked goods. Their selection is diverse, offering something for everyone – whether you're looking for a quick caffeine fix or a leisurely afternoon treat. What sets them apart is their commitment to sustainability and ethical sourcing practices, which makes every sip feel like a small act of kindness.\n\nWhat really stands out is how they approach customer service. Staff members are friendly, knowledgeable, and genuinely passionate about what they do. They go above and beyond to ensure your experience is as enjoyable as possible, even going so far as to offer personalized recommendations based on your preferences.\n\nIf you ever find yourself craving a cozy spot to relax or simply",
+						"followed": [
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".",
+						"reply": "Hello! I just discovered a fantastic café that's been making waves in our neighborhood. It's called Harbor Bistro and it's not just any café; it's a hidden gem where every sip is a delightful adventure.\n\nThe ambiance here is as serene as its name suggests, with soft lighting and cozy seating areas that make for an ideal spot to unwind after a long day. The menu offers a variety of dishes that cater to all tastes, from light salads to hearty mains, ensuring there’s something for everyone.\n\nWhat really sets this place apart is their commitment to using locally sourced ingredients. From the fresh-baked bread to the artisanal coffee beans, everything they serve is crafted with care and passion. And let me tell you, the service is impeccable – friendly staff who go above and beyond to ensure your experience is top-notch.\n\nIf you're looking for a place to relax, grab a quick bite, or simply enjoy some quiet time, Harbor Bistro is definitely worth checking out. It's like",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.",
+						"reply": "Hello! I just discovered this amazing café called Harbor that's perfect for a relaxing afternoon. The ambiance is cozy and inviting, with soft lighting and comfortable seating. They serve delicious coffee and pastries made from fresh ingredients. It's like having a little slice of paradise in the middle of town. Highly recommend it!",
+						"followed": [
+							true,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.",
+						"reply": "hello! i just discovered this amazing café called harbor that's been popping up everywhere lately. it's not far from here and offers an incredible selection of coffee drinks and pastries. their ambiance is cozy and inviting, perfect for a quiet morning or afternoon break. i highly recommend giving them a try - they have something for everyone!",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.\n7. End with the words \"see you soon\".\n8. Don't use the word \"the\".",
+						"reply": "hello! i just discovered this amazing harbor cafe that's been hiding in plain sight. their pastries are to die for and they have an incredible selection of coffee drinks. it's like finding a hidden gem in the bustling city. come visit me soon! see you soon.",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9
+						],
+						"prompt": "Write a short note telling a friend about a good café you found. Follow these rules:\n1. Start with the word \"hello\".\n2. Mention the word \"harbor\".\n3. Use fewer than 60 words.\n4. Don't use any commas.\n5. Write everything in lowercase letters.\n6. Include a number written in digits.\n7. End with the words \"see you soon\".\n8. Don't use the word \"the\".\n9. Include a question.\n10. Mention the word \"lemonade\".",
+						"reply": "hello! i just discovered this amazing café called harbor that's right around the corner from my place. it has an array of delicious pastries and coffee, all made fresh daily. they also serve great lemonade on hot days. i highly recommend giving them a try! see you soon. 12:00 pm",
+						"followed": [
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							false,
+							false,
+							true
+						]
+					}
+				]
+			},
+			{
+				"task": "Write a short note inviting your neighbors to a garden party.",
+				"runs": [
+					{
+						"rules": [
+							1
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".",
+						"reply": "Dear Neighbors,\n\nWe invite you all to join us for a delightful garden party this weekend! The weather is perfect for enjoying nature and sharing some fun with our community.\n\nThe party will be held at our beautiful backyard garden, which we have carefully cultivated over many years. We hope it will provide a peaceful retreat from the hustle and bustle of daily life.\n\nPlease bring along some refreshments if you wish to share them with others. We also encourage you to bring your own chairs or blankets so that everyone can enjoy the outdoors comfortably.\n\nIf you're interested in joining us, please let us know by replying to this message. If you have any dietary restrictions or preferences, please inform us as well.\n\nWe look forward to seeing you there!\n\nBest regards,\n[Your Name]",
+						"followed": [
+							false
+						]
+					},
+					{
+						"rules": [
+							1,
+							2
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.",
+						"reply": "Dear neighbors,\n\nJoin us for our annual garden party! Enjoy refreshments and games under the beautiful trees in our shared harbor.\n\nDate: [Insert Date]\nTime: [Insert Time]\nLocation: [Insert Location]\n\nSee you there!\n\nWarm regards,\n[Your Name]",
+						"followed": [
+							true,
+							true
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.",
+						"reply": "hello neighborhood,\n\nwe invite you to our beautiful garden for a fun and relaxing evening of music, games, and delicious food. come share in the joy of nature with us.\n\ndate: [insert date]\ntime: [insert time]\nlocation: [insert location]\n\nbring a blanket or chair if you'd like to sit under the stars. we'll have drinks, snacks, and live entertainment. it's sure to be an unforgettable night!\n\nplease RSVP by [insert deadline] so we can plan accordingly.\n\nthank you for joining us! we look forward to seeing you there.\n\n[insert name]",
+						"followed": [
+							false,
+							false,
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".",
+						"reply": "hello neighborhood,\n\njoin us for our annual garden party at our shared harbor! come celebrate the beauty of nature and enjoy refreshments under the stars.\n\ndate: june 15th\n\ntime: 7pm - 10pm\n\nplease bring a blanket or chair if you plan on sitting outside.\n\nwe look forward to seeing you there!\n\nbest regards,\n[your name]",
+						"followed": [
+							true,
+							true,
+							false,
+							true,
+							true,
+							false
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".\n7. Don't use the word \"the\".\n8. Include a question.",
+						"reply": "hello neighborhood,\n\njoin us for our annual garden party at the harbor! come celebrate life's simple pleasures under the stars.\n\ndate: june 15th\n\ntime: 7pm - 10pm\n\naddress: [insert address]\n\nbring a blanket and enjoy live music, games, and delicious food. see you soon!\n\n[insert name]",
+						"followed": [
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							false,
+							false
+						]
+					},
+					{
+						"rules": [
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							0
+						],
+						"prompt": "Write a short note inviting your neighbors to a garden party. Follow these rules:\n1. Mention the word \"harbor\".\n2. Use fewer than 60 words.\n3. Don't use any commas.\n4. Write everything in lowercase letters.\n5. Include a number written in digits.\n6. End with the words \"see you soon\".\n7. Don't use the word \"the\".\n8. Include a question.\n9. Mention the word \"lemonade\".\n10. Start with the word \"hello\".",
+						"reply": "hello there! come join us for our annual garden party at our lovely harbor home. we'll have lemonade and plenty of fun activities. see you soon!",
+						"followed": [
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							true,
+							false,
+							true,
+							true
+						]
+					}
+				]
+			}
+		],
+		"generatedAt": "2026-10-26",
+		"source": {
+			"torch": "2.14.1"
+		}
+	}
+}

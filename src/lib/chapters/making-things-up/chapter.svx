@@ -17,6 +17,9 @@ parts. In 2023, two New York lawyers filed a court brief citing six court decisi
 had invented. When they asked it whether the cases were real, it said they were. The judge fined
 them &#36;5,000.<Cite id="mata2023" />
 
+References are a common place for this. Asked for short literature reviews, ChatGPT made up more
+than half of its references, and the newer GPT-4 made up about one in five.<Cite id="walters2023" />
+
 </At>
 <At levels="standard deep">
 
@@ -26,6 +29,11 @@ tuned models do this less often, but nothing in a reply marks which parts are ma
 New York lawyers filed a court brief citing six decisions that ChatGPT had invented, quotes and
 all. When they asked it whether the cases were real, it said they were. The judge fined them
 &#36;5,000 and ordered them to write to each judge falsely named as an author.<Cite id="mata2023" />
+
+References are a common place for this. Two researchers asked ChatGPT for short literature reviews
+on 42 topics and checked all 636 references in them: 55% of those from GPT-3.5 and 18% of those from
+GPT-4 didn't exist. Of the real ones, 43% and 24% had substantive errors.<Cite id="walters2023" />
+A reference list looks the same either way.
 
 </At>
 
@@ -212,8 +220,8 @@ under a name a model invented, and wait for a person, or an agent running instal
 - **Check one claim at a time, in a new chat.** A model that has given a wrong answer tends to
   defend it with more wrong claims, but asked about each claim on its own, it often spots the
   mistake.<Cite id="zhang2023snowball" />
-- **Check what can be checked**, with code or a person: that a court case exists, that a package is
-  real.
+- **Check what can be checked**, with code or a person: that a court case exists, that a paper is
+  real, that a package is real.
 
 </At>
 <At levels="standard deep">
@@ -233,8 +241,23 @@ No single fix removes the problem, but several help:
   tends to justify it with more false claims, ones it can recognize as false on their own: shown its
   own wrong claims in a separate session, ChatGPT spotted 67% of them and GPT-4 87%.<Cite id="zhang2023snowball" />
   So an explanation the model writes after its answer defends the answer more than it checks it.
-- **Check what can be checked with code**: that a cited case is in a court database, that a package
-  is in the registry, that a number matches a tool's result (<ChapterRef to="tools" />).
+- **Check what can be checked with code**: that a cited case is in a court database, that a cited
+  paper turns up in a library search, that a package is in the registry, that a number matches a
+  tool's result (<ChapterRef to="tools" />).
+
+</At>
+<At levels="deep">
+
+### Scoring a long answer
+
+A long answer is rarely all right or all wrong, so one verdict for the whole thing hides most of
+what matters. FActScore splits an answer into atomic facts, short claims that can each be checked,
+and reports the share that a reliable source supports. People checked biographies written by
+commercial models this way, and only 58% of ChatGPT's facts were supported. Checking every claim
+by hand is slow, so the authors also built an automatic version, which retrieves from a knowledge
+source and asks a strong model about each claim, and estimated the score with less than a 2%
+error.<Cite id="min2023factscore" /> It's the same advice as above, made into a measurement: check
+claims one at a time.
 
 </At>
 
@@ -252,6 +275,7 @@ No single fix removes the problem, but several help:
 
 - The entropy of the sampled answers measures the scatter. Answering beats "I don't know" when
   $p - (1-p)\,t/(1-t) > 0$, that is, when $p > t$.
+- A long answer is scored by the share of its single claims that a source supports.
 
 </At>
 </RecapCard>

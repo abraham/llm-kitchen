@@ -10,3 +10,12 @@ test('a persona does not help with sums', async ({ page }) => {
 	);
 	await expect(widget.getByRole('row', { name: /Right 5 of 8 3 of 8/ })).toBeVisible();
 });
+
+test('many rules at once', async ({ page }) => {
+	await gotoHydrated(page, '/instructions-and-roles');
+	const widget = page.getByRole('region', { name: 'How many rules at once?' });
+	await expect(widget.getByRole('listitem')).toHaveCount(10);
+	await widget.getByLabel('1', { exact: true }).check();
+	await expect(widget.getByRole('listitem')).toHaveCount(1);
+	await expect(widget.getByText(/It kept [01] of 1\s+rule\./)).toBeVisible();
+});

@@ -13,6 +13,7 @@ static/data/prompts/:
   fragile.json  `where-prompts-break`: example order and format (GPT-2), and a fact's position in a long prompt (Qwen)
   problems.json `where-prompts-break`: Qwen on word problems with a distracting sentence, and with details spread over turns
   pushback.json `quirks-and-limits`: Qwen told "Are you sure?" after a right answer, and given a wrong guess up front
+  rules.json    `instructions-and-roles`: Qwen writing short notes under 1 to 10 rules a program can check
 """
 
 from __future__ import annotations
@@ -695,6 +696,61 @@ def pushback() -> None:
     )
 
 
+# --- `instructions-and-roles`: many rules at once (after Jaroslawicz et al. 2025) ---------------------------------
+# Rules a program can check, chosen so that all ten can be kept at once.
+RULES = [
+    ('Start with the word "hello".', lambda t: t.strip().lower().startswith("hello")),
+    ('Mention the word "harbor".', lambda t: "harbor" in t.lower()),
+    ("Use fewer than 60 words.", lambda t: len(t.split()) < 60),
+    ("Don't use any commas.", lambda t: "," not in t),
+    ("Write everything in lowercase letters.", lambda t: t == t.lower()),
+    ("Include a number written in digits.", lambda t: bool(re.search(r"\d", t))),
+    ('End with the words "see you soon".', lambda t: re.sub(r"[^a-z ]", "", t.lower()).strip().endswith("see you soon")),
+    ('Don\'t use the word "the".', lambda t: not re.search(r"\bthe\b", t, re.IGNORECASE)),
+    ("Include a question.", lambda t: "?" in t),
+    ('Mention the word "lemonade".', lambda t: "lemonade" in t.lower()),
+]
+NOTES = [
+    "Write a short note inviting a friend to a picnic on Saturday.",
+    "Write a short note thanking a neighbor for watering your plants.",
+    "Write a short note asking a coworker to swap shifts with you.",
+    "Write a short note telling your team that a meeting has moved.",
+    "Write a short note congratulating a friend on a new job.",
+    "Write a short note reminding your book club about the next meeting.",
+    "Write a short note asking a friend to return a book you lent them.",
+    "Write a short note welcoming a new member to your running club.",
+    "Write a short note apologizing to a friend for missing their party.",
+    "Write a short note asking your landlord to fix a leaking tap.",
+    "Write a short note telling a friend about a good café you found.",
+    "Write a short note inviting your neighbors to a garden party.",
+]
+RULE_COUNTS = [1, 2, 4, 6, 8, 10]
+
+
+def rules() -> None:
+    notes = []
+    for i, task in enumerate(NOTES):
+        # Each note starts the list at a different rule, so every rule appears early and late.
+        order = [(i + j) % len(RULES) for j in range(len(RULES))]
+        runs = []
+        for k in RULE_COUNTS:
+            picked = order[:k]
+            prompt = task + " Follow these rules:\n" + "\n".join(f"{n + 1}. {RULES[r][0]}" for n, r in enumerate(picked))
+            reply = qwen_reply(chat(prompt), 200)
+            followed = [RULES[r][1](reply["text"]) for r in picked]
+            runs.append({"rules": picked, "prompt": prompt, "reply": reply["text"], "followed": followed})
+            print(i, k, f"{sum(followed)}/{k}", repr(reply["text"][:80]))
+        notes.append({"task": task, "runs": runs})
+    for j, k in enumerate(RULE_COUNTS):
+        kept = sum(sum(n["runs"][j]["followed"]) for n in notes)
+        every = sum(all(n["runs"][j]["followed"]) for n in notes)
+        print(f"{k:2} rules: kept {kept} of {k * len(notes)}, every rule kept in {every} of {len(notes)}")
+    write(
+        "rules.json",
+        {"version": 1, "model": QWEN_INFO, "rules": [r for r, _ in RULES], "counts": RULE_COUNTS, "notes": notes},
+    )
+
+
 def main(names: list[str]) -> None:
     jobs = {
         "wording": wording,
@@ -705,6 +761,7 @@ def main(names: list[str]) -> None:
         "fragile": fragile,
         "problems": problems,
         "pushback": pushback,
+        "rules": rules,
     }
     for name in names or jobs:
         jobs[name]()

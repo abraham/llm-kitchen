@@ -4,6 +4,7 @@
 	import Cite from '#lib/components/page/Cite.svelte';
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import RuleCount from './RuleCount.svelte';
 	import SystemPrompts from './SystemPrompts.svelte';
 </script>
 
@@ -72,6 +73,64 @@ tone, length, and vocabulary. It doesn't add knowledge or skill the model lacks.
 say what you actually want (who the reader is, how long, what format) give the model something it
 can follow.
 
+## Many rules at once
+
+<At levels="simple">
+
+Real system prompts often hold dozens of rules. Here Qwen2.5-1.5B-Instruct wrote 12 short notes,
+each under 1, 2, 4, 6, 8, and then 10 rules that a program can check, like "Don't use any
+commas":
+
+</At>
+<At levels="standard deep">
+
+System prompts in real apps often hold dozens of rules. Here Qwen2.5-1.5B-Instruct wrote 12 short
+notes, each under 1, 2, 4, 6, 8, and then 10 rules, all of which can be kept at once and checked by
+a program: start with "hello", use no commas, end with "see you soon", and so on. Each note starts
+the list at a different rule, so every rule comes both early and late:
+
+</At>
+
+<RuleCount />
+
+<At levels="simple">
+
+More rules didn't make it worse at each one: with ten rules it kept 88 of 120, about three in four.
+But every rule it misses spoils the note. With one rule, 7 of the 12 notes kept it; with ten, not
+one note kept them all. Much larger models slip too as rules pile up: the best of 20 kept only about
+two thirds of 500 rules.<Cite id="jaroslawicz2025" /> So check every rule that matters, and split a
+long list into steps (<ChapterRef to="splitting-the-work" />).
+
+</At>
+<At levels="standard deep">
+
+More rules didn't make the model worse at each one: with a single rule it kept it in 7 of the 12
+notes, and with ten it kept 88 of 120, about three in four. What fell is the chance that a note
+kept *every* rule: 7 of 12 with one rule, 3 with four, 1 with eight, and none with ten. The misses
+were mostly in rules that fight the model's habits, like using no "the" or adding a question, and
+they came from all over the list. A benchmark of 500 rules found that much larger models slip too
+as rules pile up: the best of 20 kept only 68% at the full 500, and models favored rules near the
+start of the list.<Cite id="jaroslawicz2025" /> So a long list of rules needs checking, one rule at a
+time, and it often works better split into steps (<ChapterRef to="splitting-the-work" />).
+
+</At>
+<At levels="deep">
+
+### Why "all of them" falls so fast
+
+If each rule is kept with chance $p$, and the rules are kept or missed independently, all $k$ are
+kept with chance
+
+$$
+p^k
+$$
+
+With $p = 88/120 \approx 0.73$, ten rules give $0.73^{10} \approx 4\%$: about half a note in 12, and
+the recording got none. A rule that's kept 90% of the time still leaves only $0.9^{10} \approx 35\%$
+of outputs with all ten right.
+
+</At>
+
 <At levels="deep">
 
 ### One sequence, ranked by training
@@ -96,6 +155,7 @@ tasks.<Cite id="wallace2024" />
 
 - The system prompt is text in a slot at the start of the chat, read like any other text.
 - Clear, specific instructions about audience, length, and format are followed well.
+- Each extra rule is another chance to miss one: with ten, no note kept them all.
 - A persona changes style, not ability; "you never make mistakes" doesn't make it so.
 
 <At levels="deep">

@@ -171,6 +171,21 @@ export const pushback = object({
 });
 export type Pushback = Infer<typeof pushback>;
 
+export const manyRules = object({
+	model: modelRef,
+	rules: array(string),
+	counts: array(integer),
+	notes: array(
+		object({
+			task: string,
+			runs: array(
+				object({ rules: array(integer), prompt: string, reply: string, followed: array(boolean) })
+			)
+		})
+	)
+});
+export type ManyRules = Infer<typeof manyRules>;
+
 const answer = object({ text: string, correct: boolean });
 
 export const systemPrompts = object({
