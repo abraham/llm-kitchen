@@ -1370,5 +1370,13 @@
 		"venue": "arXiv",
 		"year": 2025,
 		"url": "https://arxiv.org/abs/2507.11538"
+	},
+	{
+		"id": "chen2023drift",
+		"authors": ["Lingjiao Chen", "Matei Zaharia", "James Zou"],
+		"title": "How is ChatGPT's behavior changing over time?",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2307.09009"
 	}
 ]

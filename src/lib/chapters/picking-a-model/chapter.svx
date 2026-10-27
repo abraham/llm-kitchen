@@ -136,6 +136,13 @@ The choice doesn't stay made: new models come out every few months. Keep a handf
 tasks, each with a way to check the result, an eval like the one in <ChapterRef to="testing-agents" />, and run it again
 when a new model comes out.
 
+Even a model under the same name can change. Researchers asked the March and June 2023 versions of
+GPT-4 the same questions: in March it told prime numbers from others 84% of the time, in June 51%,
+partly because it had become worse at following step-by-step prompts. GPT-3.5 got better at the
+same task over the same months.<Cite id="chen2023drift" /> A prompt that works today may not work
+after an update, so when a provider offers fixed, dated versions of a model, use one, and run your
+eval before moving to the next.
+
 You don't have to pick only one. An app can ask a small model first and pass only the questions it
 is unsure of to a bigger one (<ChapterRef to="routing" />).
 
@@ -147,7 +154,7 @@ is unsure of to a bigger one (<ChapterRef to="routing" />).
 - `it` means instruction-tuned, `assistant` a drafter, and `qat` trained to survive 4-bit rounding.
 - Memory for the weights is about weights × bits ÷ 8, plus the KV cache and the runtime.
 - Narrow by task, inputs, where it runs, speed, cost, context, and license, then test on your own
-  prompts, and test again when new models come out.
+  prompts, and test again when new models come out, or when the one you use is updated.
 
 <At levels="deep">
 
