@@ -1,0 +1,95 @@
+{
+	"prompts/fewshot": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/fewshot"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/fragile": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/fragile"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/labels": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/labels"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/problems": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/problems"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/pushback": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/pushback"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/rules": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/rules"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/steps": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/steps"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/system": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/system"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": []
+	},
+	"prompts/wording": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/wording"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": []
+	}
+}

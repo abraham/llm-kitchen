@@ -9,6 +9,7 @@ package-lock.json
 
 # Generated data (scripts/record writes it)
 /static/data/
+/scripts/record/jobs.json
 
 # mdsvex chapters: Prettier has no mdsvex parser and would mangle the Svelte syntax.
 *.svx

@@ -29,6 +29,26 @@ describe('recorded datasets', () => {
 		expect(head.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}/);
 	});
 
+	it('names, in each file a job wrote, the job that declares it in scripts/record/jobs.json', () => {
+		const manifest: Record<string, { module: string; outputs: string[] }> = JSON.parse(
+			readFileSync('scripts/record/jobs.json', 'utf8')
+		);
+		for (const [name, job] of Object.entries(manifest)) {
+			for (const id of job.outputs) {
+				expect(ids, `${name} writes ${id}`).toContain(id);
+				const head = JSON.parse(
+					readFileSync(`static/data/${DATASETS[id as DatasetId].file}`, 'utf8')
+				);
+				expect(head.job, id).toBe(name);
+				expect(head.script, id).toBe(`record/${job.module}.py`);
+			}
+		}
+		for (const id of ids) {
+			const head = JSON.parse(readFileSync(`static/data/${DATASETS[id].file}`, 'utf8'));
+			if (head.job) expect(manifest[head.job]?.outputs, id).toContain(id);
+		}
+	});
+
 	it('every dataset is used by the site', () => {
 		const traceNames = (ids.filter((id) => id.startsWith('traces/')) as string[]).map((id) =>
 			id.slice('traces/'.length)

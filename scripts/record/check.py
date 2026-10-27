@@ -2,7 +2,7 @@
 models' pinned downloads.
 
 Usage, from the repository root:
-    scripts/.venv/bin/python -m scripts.record check <module> [args]   # e.g. check traces the-cat-sat
+    scripts/.venv/bin/python -m scripts.record check <job|module> [names]   # e.g. check traces the-cat-sat
     scripts/.venv/bin/python -m scripts.record check live
 
 `check clip` also redraws its pictures in static/vision/ in place; git shows any change.
@@ -15,37 +15,79 @@ import json
 import tempfile
 import urllib.request
 from pathlib import Path
+from typing import Any, Callable
 
 from . import common
 
 
 def _comparable(path: Path) -> dict:
-    """A dataset without its recording dates, which change on every run."""
+    """A dataset without what changes from run to run or machine to machine: the recording date,
+    the job's name, package versions, and the device and dtype each model ran with."""
     envelope = json.loads(path.read_text())
-    envelope.pop("generatedAt", None)
+    for key in ("generatedAt", "job", "source"):
+        envelope.pop(key, None)
+    for m in envelope.get("models", []):
+        m.pop("device", None)
+        m.pop("dtype", None)
     if isinstance(envelope.get("data"), dict):
         envelope["data"].pop("generatedAt", None)
+        envelope["data"].pop("source", None)
     return envelope
 
 
-def recordings(run, name: str, args: list[str]) -> None:
-    """Re-run one module into a temporary folder and compare each file it writes."""
+def _differences(old: Any, new: Any, path: str = "", found: list[str] | None = None, limit: int = 5) -> list[str]:
+    """The first few paths where two JSON values differ, with both values."""
+    found = [] if found is None else found
+    if len(found) >= limit:
+        return found
+    if isinstance(old, dict) and isinstance(new, dict):
+        for key in [*old, *(k for k in new if k not in old)]:
+            if key not in new or key not in old:
+                found.append(f"{path}.{key}: {'only in the committed file' if key in old else 'only in the new one'}")
+            else:
+                _differences(old[key], new[key], f"{path}.{key}", found, limit)
+            if len(found) >= limit:
+                break
+    elif isinstance(old, list) and isinstance(new, list) and len(old) == len(new):
+        for i, (a, b) in enumerate(zip(old, new)):
+            _differences(a, b, f"{path}[{i}]", found, limit)
+            if len(found) >= limit:
+                break
+    elif old != new:
+        found.append(f"{path}: {json.dumps(old, ensure_ascii=False)[:120]} → {json.dumps(new, ensure_ascii=False)[:120]}")
+    return found
+
+
+def _provenance(path: Path) -> dict:
+    envelope = json.loads(path.read_text())
+    devices = {m["id"]: (m.get("device"), m.get("dtype")) for m in envelope.get("models", []) if "device" in m}
+    return {"source": envelope.get("source"), "devices": devices}
+
+
+def recordings(record: Callable[[], None], label: str) -> None:
+    """Re-record into a temporary folder and compare each file written with the committed one."""
     with tempfile.TemporaryDirectory() as tmp:
         common.OUTPUT = Path(tmp)
         try:
-            run(name, args)
+            record()
         finally:
             common.OUTPUT = common.DATA
         written = sorted(Path(tmp).rglob("*.json"))
         if not written:
-            raise SystemExit(f"{name} wrote no datasets")
+            raise SystemExit(f"{label} wrote no datasets")
         differ = []
         for new in written:
             old = common.DATA / new.relative_to(tmp)
             same = old.exists() and _comparable(old) == _comparable(new)
-            print(("same     " if same else "DIFFERS  ") + str(old.relative_to(common.ROOT)))
+            print(("same     " if same else "DIFFERS  ") + str(old.relative_to(common.ROOT)), flush=True)
             if not same:
                 differ.append(old)
+            if old.exists() and not same:
+                for line in _differences(_comparable(old), _comparable(new)):
+                    print("         " + line, flush=True)
+                was, now = _provenance(old), _provenance(new)
+                if was["source"] and was != now:
+                    print(f"         recorded with {was}, now {now}", flush=True)
     if differ:
         raise SystemExit(f"{len(differ)} of {len(written)} datasets differ from the committed files")
 

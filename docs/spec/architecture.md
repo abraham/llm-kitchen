@@ -164,6 +164,8 @@ conventions every shared component follows, are in [components.md](components.md
   `scripts/record` module that writes it, and its version.
 - Every file has the same envelope:
   `{ "dataset": id, "version": n, "script": "record/<module>.py", "models": [{ "id", "revision" }], "generatedAt", "data": … }`.
+  Datasets written by jobs also have `job`, `source` (the `torch` and `transformers` versions),
+  and each model's `device` and `dtype`.
   `parseDataset` checks the id and version, then the shape of `data`, and returns typed data;
   fields the parser doesn't list are dropped. Widgets never declare their own types for recorded
   data or cast JSON; they import types from `datasets/parsers/`.
@@ -176,7 +178,11 @@ conventions every shared component follows, are in [components.md](components.md
 ### Recording scripts
 
 - `scripts/record/` is one Python package, run from the repository root as
-  `scripts/.venv/bin/python -m scripts.record <module>` (or `all`).
+  `scripts/.venv/bin/python -m scripts.record run <job|module|all>`; `status` lists what's recorded
+  and `check` re-records and compares ([models-and-data.md](models-and-data.md#recording-scripts)).
+- `runtime.py` declares jobs (`@job`), loads each model once on first use, picks devices, keeps the
+  runner offline unless `--download`, logs progress, and writes `jobs.json`, the committed list of
+  jobs and the datasets each writes. `status.py` and `check.py` hold those commands.
 - `common.py` writes the envelope (finding each model and its revision in the data), looks up the
   revision of cached model files, reads datasets other modules recorded, and checks
   `models/canonical.json` against GPT-2's config.

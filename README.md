@@ -48,17 +48,23 @@ derived from it. `.svx` files are not formatted by Prettier. See
 
 The site ships pre-computed runs of real models in `static/data/`, each file checked against its
 parser in `src/lib/datasets/`. To regenerate them, set up the Python environment once, then run a
-recording module (the first run downloads its models):
+recording module. The runner is offline unless you add `--download`, which the first run of each
+model needs; it refuses a download that would leave less than 10 GB free unless you add `--force`:
 
 ```sh
 python3 -m venv scripts/.venv
 scripts/.venv/bin/pip install -r scripts/requirements.txt
-scripts/.venv/bin/python -m scripts.record traces          # GPT-2 small traces, about 550 MB
-scripts/.venv/bin/python -m scripts.record traces the-cat-sat   # just one trace
-scripts/.venv/bin/python -m scripts.record all             # everything
-scripts/.venv/bin/python -m scripts.record check encoder   # re-record into a temp folder and compare
-scripts/.venv/bin/python -m scripts.record check live      # the live models' pinned downloads
+scripts/.venv/bin/python -m scripts.record run traces --download   # GPT-2 small traces, about 550 MB
+scripts/.venv/bin/python -m scripts.record run traces the-cat-sat  # just one trace
+scripts/.venv/bin/python -m scripts.record run prompts/pushback    # one job
+scripts/.venv/bin/python -m scripts.record run all                 # everything
+scripts/.venv/bin/python -m scripts.record status                  # what's recorded, and from what
+scripts/.venv/bin/python -m scripts.record check encoder           # re-record into a temp folder and compare
+scripts/.venv/bin/python -m scripts.record check live              # the live models' pinned downloads
 ```
+
+Progress prints as it goes, even through a pipe, and is also logged to `scripts/.logs/`. Add
+`--device cpu` or `--device mps` to run every model on one device.
 
 `traces` checks `models/canonical.json` against the model's own config before writing anything.
 
@@ -84,8 +90,8 @@ The other modules, in the same environment:
 - `reasoning`: the thinking off/on runs (`static/data/reasoning/`; downloads Qwen3-0.6B, about
   1.5 GB).
 - `prompts`: the Prompt engineering experiments (`static/data/prompts/`; reuses GPT-2 small and
-  Qwen2.5-1.5B-Instruct, and reads the reasoning puzzles). Pass job names (`wording`, `fewshot`,
-  `system`, `steps`, `fragile`) to rerun only some.
+  Qwen2.5-1.5B-Instruct, and reads the reasoning puzzles). Each dataset is a job, such as
+  `prompts/pushback`; run one to rerun only it.
 
 ### Citations and fact-checks
 

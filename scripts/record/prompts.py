@@ -1,10 +1,11 @@
 """Record how prompts change model behavior, for Part VI (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record prompts
+Usage: scripts/.venv/bin/python -m scripts.record run prompts           # every job
+       scripts/.venv/bin/python -m scripts.record run prompts/pushback  # one job
 
 Uses only models other scripts already download: GPT-2 small (the canonical model) and
-Qwen2.5-1.5B-Instruct (the Harnesses chapters). Greedy decoding throughout, so reruns match. Writes
-static/data/prompts/:
+Qwen2.5-1.5B-Instruct (the Harnesses chapters), each loaded only by the jobs that use it. Greedy
+decoding throughout, so reruns match. Each job writes one dataset in static/data/prompts/:
   wording.json  `prompts-as-documents`: GPT-2's next-token guesses for prompt variants, and where its last token looks
   fewshot.json  `few-shot`: GPT-2 on made-up tasks with 0-4 examples, and its strongest induction head
   labels.json   `few-shot`: GPT-2 and Qwen on reviews when the examples' labels are right, half wrong, flipped, or made up
@@ -18,38 +19,27 @@ static/data/prompts/:
 
 from __future__ import annotations
 
-import datetime
 import itertools
 import re
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, read_dataset, revision, write_dataset
+from . import runtime
+from .common import CANONICAL, read_dataset
+from .runtime import ModelSpec, Run, job, loaded
 
-GPT2 = CANONICAL["huggingFaceId"]
-QWEN = "Qwen/Qwen2.5-1.5B-Instruct"
-QWEN_NAME = "Qwen2.5-1.5B-Instruct"
-DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
-
-
-def write(name: str, data: dict) -> None:
-    data["generatedAt"] = datetime.date.today().isoformat()
-    data["source"] = {"torch": torch.__version__}
-    write_dataset(f"prompts/{name.removesuffix('.json')}", data, "prompts")
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"], attention="eager")
+QWEN = ModelSpec("Qwen/Qwen2.5-1.5B-Instruct", "Qwen2.5-1.5B-Instruct", device="mps", stop=("<|im_end|>",))
 
 
 # --- GPT-2 helpers --------------------------------------------------------------------------------
 
-gpt_tok = AutoTokenizer.from_pretrained(GPT2)
-gpt = AutoModelForCausalLM.from_pretrained(GPT2, dtype=torch.float32, attn_implementation="eager").eval()
-GPT2_INFO = {"id": GPT2, "displayName": CANONICAL["displayName"], "revision": revision(GPT2)}
-
 
 def gpt_run(text: str):
-    ids = gpt_tok(text, return_tensors="pt").input_ids
+    g = loaded(GPT2)
+    ids = g.tokenizer(text, return_tensors="pt").input_ids
     with torch.no_grad():
-        out = gpt(ids, output_attentions=True)
+        out = g.model(ids, output_attentions=True)
     probs = out.logits[0, -1].softmax(-1)
     # attentions: one (1, heads, seq, seq) tensor per layer
     att = torch.stack([a[0] for a in out.attentions])  # layers, heads, seq, seq
@@ -58,27 +48,23 @@ def gpt_run(text: str):
 
 def gpt_top(probs: torch.Tensor, k: int = 10) -> list[dict]:
     values, ids = probs.topk(k)
-    return [{"text": gpt_tok.decode([int(i)]), "id": int(i), "p": round(float(v), 5)} for v, i in zip(values, ids)]
+    tok = loaded(GPT2).tokenizer
+    return [{"text": tok.decode([int(i)]), "id": int(i), "p": round(float(v), 5)} for v, i in zip(values, ids)]
 
 
 def gpt_tokens(ids: list[int]) -> list[dict]:
-    return [{"text": gpt_tok.decode([i]), "id": i} for i in ids]
+    tok = loaded(GPT2).tokenizer
+    return [{"text": tok.decode([i]), "id": i} for i in ids]
 
 
 def p_of(probs: torch.Tensor, text: str) -> float:
     """Probability of the first token of `text`."""
-    return float(probs[gpt_tok(text).input_ids[0]])
+    return float(probs[loaded(GPT2).tokenizer(text).input_ids[0]])
 
 
-def answer_prob(model, tok, prompt: str, answer: str) -> float:
+def answer_prob(spec: ModelSpec, prompt: str, answer: str) -> float:
     """Probability that the model continues `prompt` with every token of `answer`."""
-    p_ids = tok(prompt, return_tensors="pt", add_special_tokens=False).input_ids
-    a_ids = tok(answer, return_tensors="pt", add_special_tokens=False).input_ids
-    ids = torch.cat([p_ids, a_ids], dim=1).to(model.device)
-    with torch.no_grad():
-        logp = model(ids).logits[0].float().log_softmax(-1)
-    start = p_ids.shape[1]
-    return float(sum(logp[start - 1 + j, t] for j, t in enumerate(a_ids[0].tolist())).exp())
+    return runtime.score(spec, prompt, answer)
 
 
 # --- `prompts-as-documents`: wording ----------------------------------------------------------------------------
@@ -107,11 +93,12 @@ WORDING = [
 ]
 
 
-def wording() -> None:
+@job("prompts/wording", models=[GPT2])
+def wording(run: Run) -> dict:
     groups = []
     for group in WORDING:
         variants = []
-        for text in group["variants"]:
+        for text in run.items(group["variants"]):
             ids, probs, att = gpt_run(text)
             # Where the last token looks, averaged over every head in every layer. The first token
             # soaks up most attention in GPT-2 (an "attention sink"), so it is left out and the rest
@@ -130,9 +117,9 @@ def wording() -> None:
                     "watch": {w: round(p_of(probs, w), 5) for w in group["watch"]},
                 }
             )
-            print(f"{text!r:45}", [(c["text"], c["p"]) for c in variants[-1]["top"][:4]], variants[-1]["watch"])
+            run.log(f"{text!r:45} {[(c['text'], c['p']) for c in variants[-1]['top'][:4]]} {variants[-1]['watch']}")
         groups.append({"name": group["name"], "watch": group["watch"], "variants": variants})
-    write("wording.json", {"version": 1, "model": GPT2_INFO, "groups": groups})
+    return {"version": 1, "model": run.info(GPT2), "groups": groups}
 
 
 # --- `few-shot`: few-shot ------------------------------------------------------------------------------
@@ -159,18 +146,19 @@ def fewshot_prompt(examples, query: str) -> str:
 
 def induction_head(ids: list[int], att: torch.Tensor) -> tuple[int, int, float]:
     """The head whose last token looks most at the tokens right after earlier arrows."""
-    arrow = gpt_tok(" ->").input_ids[0]
+    arrow = loaded(GPT2).tokenizer(" ->").input_ids[0]
     after = [i + 1 for i, t in enumerate(ids[:-1]) if t == arrow and i + 1 < len(ids) - 1]
     score = att[:, :, -1, after].sum(-1)  # layers, heads
     layer, head = divmod(int(score.argmax()), score.shape[1])
     return layer, head, float(score[layer, head])
 
 
-def fewshot() -> None:
+@job("prompts/fewshot", models=[GPT2, QWEN])
+def fewshot(run: Run) -> dict:
     tasks = []
     for task in FEWSHOT:
         tests = []
-        for query, answer in task["tests"]:
+        for query, answer in run.items(task["tests"], label=lambda t: f"{task['name']}: {t[0]}"):
             runs = []
             for k in SHOTS:
                 text = fewshot_prompt(task["examples"][:k], query)
@@ -179,18 +167,18 @@ def fewshot() -> None:
                     {
                         "shots": k,
                         "text": text,
-                        "gpt2": round(answer_prob(gpt, gpt_tok, text, " " + answer), 5),
-                        "qwen": round(answer_prob(qwen, qwen_tok, text, " " + answer), 5),
+                        "gpt2": round(answer_prob(GPT2, text, " " + answer), 5),
+                        "qwen": round(answer_prob(QWEN, text, " " + answer), 5),
                         "gpt2Top": gpt_top(probs, 5),
                     }
                 )
             tests.append({"query": query, "answer": answer, "runs": runs})
-            print(task["name"], query, [(r["shots"], r["gpt2"], r["qwen"]) for r in runs])
+            run.log(f"{task['name']} {query} {[(r['shots'], r['gpt2'], r['qwen']) for r in runs]}")
         # The strongest induction-like head on the full prompt for the first test word.
         text = fewshot_prompt(task["examples"], task["tests"][0][0])
         ids, _, att = gpt_run(text)
         layer, head, score = induction_head(ids, att)
-        print(task["name"], "induction head", f"{layer}.{head}", round(score, 3))
+        run.log(f"{task['name']} induction head {layer}.{head} {round(score, 3)}")
         tasks.append(
             {
                 "name": task["name"],
@@ -206,38 +194,29 @@ def fewshot() -> None:
                 },
             }
         )
-    write(
-        "fewshot.json",
-        {"version": 1, "models": {"gpt2": GPT2_INFO, "qwen": QWEN_INFO}, "shots": SHOTS, "tasks": tasks},
-    )
+    return {
+        "version": 1,
+        "models": {"gpt2": run.info(GPT2), "qwen": run.info(QWEN)},
+        "shots": SHOTS,
+        "tasks": tasks,
+    }
 
 
 # --- Qwen helpers ------------------------------------------------------------------------------
 
-qwen_tok = AutoTokenizer.from_pretrained(QWEN)
-qwen = AutoModelForCausalLM.from_pretrained(QWEN, dtype=torch.float32).to(DEVICE).eval()
-QWEN_INFO = {"id": QWEN, "displayName": QWEN_NAME, "revision": revision(QWEN)}
-
 
 def chat(user: str, system: str | None = None) -> str:
     messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": user}]
-    return qwen_tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    return runtime.template(QWEN, messages)
 
 
 def qwen_reply(prompt: str, max_new_tokens: int = 400) -> dict:
-    ids = qwen_tok(prompt, return_tensors="pt").input_ids.to(DEVICE)
-    with torch.no_grad():
-        out = qwen.generate(ids, max_new_tokens=max_new_tokens, do_sample=False, pad_token_id=qwen_tok.eos_token_id)
-    new = out[0, ids.shape[1] :].tolist()
-    stopped = bool(new) and new[-1] in {qwen_tok.eos_token_id, qwen_tok.convert_tokens_to_ids("<|im_end|>")}
-    if stopped:
-        new = new[:-1]
-    return {"text": qwen_tok.decode(new).strip(), "tokens": len(new), "stopped": stopped}
+    return runtime.complete(QWEN, prompt, max_new_tokens)
 
 
 def qwen_answer_prob(prompt: str, answer: str) -> float:
     """Probability of the reply starting with `answer` (every one of its tokens)."""
-    return answer_prob(qwen, qwen_tok, prompt, answer)
+    return answer_prob(QWEN, prompt, answer)
 
 
 # --- `few-shot`: do the examples' labels matter? (after Min et al. 2022 and Wei et al. 2023) -----------------------
@@ -288,7 +267,8 @@ def review_prompt(examples, review: str) -> str:
     return "".join(f"Review: {t}\nSentiment: {l}\n\n" for t, l in examples) + f"Review: {review}\nSentiment:"
 
 
-def labels() -> None:
+@job("prompts/labels", models=[GPT2, QWEN])
+def labels(run: Run) -> dict:
     conditions = [
         ("none", "No examples", [], ["positive", "negative"]),
         ("correct", "Right labels", [l for _, l in REVIEWS], ["positive", "negative"]),
@@ -302,28 +282,26 @@ def labels() -> None:
         ("made-up", "Made-up labels", [MADE_UP[l] for _, l in REVIEWS], ["foo", "bar"]),
     ]
     results: dict[str, dict[str, list[list[float]]]] = {"gpt2": {}, "qwen": {}}
-    for cid, _, shown, words in conditions:
+    for cid, _, shown, words in run.items(conditions, label=lambda c: c[1]):
         examples = list(zip([t for t, _ in REVIEWS], shown))
-        for name, model, tok in [("gpt2", gpt, gpt_tok), ("qwen", qwen, qwen_tok)]:
+        for name, spec in [("gpt2", GPT2), ("qwen", QWEN)]:
             rows = []
             for review, _ in REVIEW_TESTS:
                 text = review_prompt(examples, review)
-                rows.append([round(answer_prob(model, tok, text, " " + w), 5) for w in words])
+                rows.append([round(answer_prob(spec, text, " " + w), 5) for w in words])
             results[name][cid] = rows
-            print(cid, name, [r[0] > r[1] for r in rows].count(True), round(sum(sum(r) for r in rows) / len(rows), 3))
-    write(
-        "labels.json",
-        {
-            "version": 1,
-            "models": {"gpt2": GPT2_INFO, "qwen": QWEN_INFO},
-            "examples": [{"text": t, "label": l} for t, l in REVIEWS],
-            "conditions": [
-                {"id": cid, "name": name, "shown": shown, "labels": words} for cid, name, shown, words in conditions
-            ],
-            "tests": [{"text": t, "label": l} for t, l in REVIEW_TESTS],
-            "results": results,
-        },
-    )
+            right = [r[0] > r[1] for r in rows].count(True)
+            run.log(f"{cid} {name} {right} {round(sum(sum(r) for r in rows) / len(rows), 3)}")
+    return {
+        "version": 1,
+        "models": {"gpt2": run.info(GPT2), "qwen": run.info(QWEN)},
+        "examples": [{"text": t, "label": l} for t, l in REVIEWS],
+        "conditions": [
+            {"id": cid, "name": name, "shown": shown, "labels": words} for cid, name, shown, words in conditions
+        ],
+        "tests": [{"text": t, "label": l} for t, l in REVIEW_TESTS],
+        "results": results,
+    }
 
 
 # --- `instructions-and-roles`: system prompts ------------------------------------------------------------------------
@@ -346,15 +324,16 @@ def numbers(text: str) -> list[str]:
     return re.findall(r"-?\d[\d,]*", text.replace(",", ""))
 
 
-def system() -> None:
+@job("prompts/system", models=[QWEN])
+def system(run: Run) -> dict:
     replies = []
-    for s in SYSTEMS:
+    for s in run.items(SYSTEMS, label=lambda s: s["name"]):
         prompt = chat(QUESTION, s["system"])
         reply = qwen_reply(prompt, 250)
         replies.append({"name": s["name"], "system": s["system"] or QWEN_DEFAULT, "prompt": prompt, **reply})
-        print(s["name"], reply["tokens"], repr(reply["text"][:120]))
+        run.log(f"{s['name']} {reply['tokens']} {reply['text'][:120]!r}")
     math = []
-    for a, b in MATH:
+    for a, b in run.items(MATH, label=lambda m: f"{m[0]} × {m[1]}"):
         q = f"What is {a} × {b}? Reply with only the number."
         row = {"question": q, "expected": a * b}
         for key, sys in [("default", None), ("persona", PERSONA)]:
@@ -362,18 +341,15 @@ def system() -> None:
             found = numbers(reply["text"])
             row[key] = {"text": reply["text"], "correct": bool(found) and found[-1] == str(a * b)}
         math.append(row)
-        print(q, row["default"]["text"], row["persona"]["text"])
-    write(
-        "system.json",
-        {
-            "version": 1,
-            "model": QWEN_INFO,
-            "question": QUESTION,
-            "replies": replies,
-            "persona": PERSONA,
-            "math": math,
-        },
-    )
+        run.log(f"{q} {row['default']['text']} {row['persona']['text']}")
+    return {
+        "version": 1,
+        "model": run.info(QWEN),
+        "question": QUESTION,
+        "replies": replies,
+        "persona": PERSONA,
+        "math": math,
+    }
 
 
 # --- `steps-and-structure`: steps and format ----------------------------------------------------------------------
@@ -410,9 +386,10 @@ def follows_format(condition: int, text: str) -> bool:
     return False
 
 
-def steps() -> None:
+@job("prompts/steps", models=[QWEN])
+def steps(run: Run) -> dict:
     puzzles = []
-    for q, p in enumerate(PUZZLES):
+    for q, p in run.items(list(enumerate(PUZZLES)), label=lambda e: e[1]["question"][:60]):
         entry = {"question": p["question"], "expected": p["expected"], "runs": []}
         for i, c in enumerate(CONDITIONS):
             reply = qwen_reply(chat(p["question"] + c["suffix"]), 500)
@@ -421,9 +398,9 @@ def steps() -> None:
             entry["runs"].append(
                 {"condition": c["name"], **reply, "correct": correct, "formatted": follows_format(i, reply["text"])}
             )
-            print(f"{c['name']:28} {p['expected']:>9} correct={correct} formatted={entry['runs'][-1]['formatted']} tokens={reply['tokens']}")
+            run.log(f"{c['name']:28} {p['expected']:>9} correct={correct} formatted={entry['runs'][-1]['formatted']} tokens={reply['tokens']}")
         puzzles.append(entry)
-    write("steps.json", {"version": 1, "model": QWEN_INFO, "conditions": CONDITIONS, "puzzles": puzzles})
+    return {"version": 1, "model": run.info(QWEN), "conditions": CONDITIONS, "puzzles": puzzles}
 
 
 # --- `where-prompts-break`: where prompts break ------------------------------------------------------------------
@@ -476,25 +453,26 @@ def lockers() -> list[tuple[str, int]]:
     return list(zip(NAMES, [int(n) for n in nums]))
 
 
-def fragile() -> None:
+@job("prompts/fragile", models=[GPT2, QWEN])
+def fragile(run: Run) -> dict:
     orders = []
     fmt = FORMATS[0]
     for perm in itertools.permutations(range(len(SENTIMENT_EXAMPLES))):
         examples = [SENTIMENT_EXAMPLES[i] for i in perm]
         ok = classify(examples, fmt)
         orders.append({"order": list(perm), "correct": sum(ok)})
-    print("orders: correct counts", sorted(o["correct"] for o in orders))
+    run.log(f"orders: correct counts {sorted(o['correct'] for o in orders)}")
     formats = []
     for f in FORMATS:
         ok = classify(SENTIMENT_EXAMPLES, f)
         formats.append({"name": f["name"], "example": f["line"].format(x=SENTIMENT_EXAMPLES[0][0], y=SENTIMENT_EXAMPLES[0][1]), "correct": sum(ok)})
-        print("format", f["name"], sum(ok))
+        run.log(f"format {f['name']} {sum(ok)}")
 
     facts = lockers()
     targets = ["Lena", "Gus", "Tara", "Bea", "Omar", "Cleo", "Yuri", "Hana"]
     positions = list(range(0, len(facts), 3)) + [len(facts) - 1]
     position_runs = []
-    for name in targets:
+    for name in run.items(targets):
         number = dict(facts)[name]
         others = [f for f in facts if f[0] != name]
         row = {"name": name, "number": number, "points": []}
@@ -504,21 +482,18 @@ def fragile() -> None:
             prompt = chat(f"{text}\n\nWhat is {name}'s locker number? Reply with only the number.")
             row["points"].append({"position": pos, "p": round(qwen_answer_prob(prompt, str(number)), 4)})
         position_runs.append(row)
-        print("position", name, [(pt["position"], pt["p"]) for pt in row["points"]])
-    write(
-        "fragile.json",
-        {
-            "version": 1,
-            "models": {"gpt2": GPT2_INFO, "qwen": QWEN_INFO},
-            "sentiment": {
-                "examples": [list(e) for e in SENTIMENT_EXAMPLES],
-                "tests": [list(t) for t in SENTIMENT_TESTS],
-                "orders": orders,
-                "formats": formats,
-            },
-            "position": {"facts": len(facts), "positions": positions, "runs": position_runs},
+        run.log(f"position {name} {[(pt['position'], pt['p']) for pt in row['points']]}")
+    return {
+        "version": 1,
+        "models": {"gpt2": run.info(GPT2), "qwen": run.info(QWEN)},
+        "sentiment": {
+            "examples": [list(e) for e in SENTIMENT_EXAMPLES],
+            "tests": [list(t) for t in SENTIMENT_TESTS],
+            "orders": orders,
+            "formats": formats,
         },
-    )
+        "position": {"facts": len(facts), "positions": positions, "runs": position_runs},
+    }
 
 
 # --- `where-prompts-break`: distracting details and details spread over turns ------------------------------------
@@ -562,12 +537,13 @@ def final_number(text: str) -> str | None:
 
 
 def qwen_chat(messages: list[dict]) -> str:
-    return qwen_reply(qwen_tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))["text"]
+    return runtime.chat(QWEN, messages)["text"]
 
 
-def problems() -> None:
+@job("prompts/problems", models=[QWEN])
+def problems(run: Run) -> dict:
     out = []
-    for fact1, fact2, question, distractor, answer in PROBLEMS:
+    for fact1, fact2, question, distractor, answer in run.items(PROBLEMS, label=lambda p: p[0]):
         runs = {}
         for name, text in [
             ("plain", f"{fact1} {fact2} {question}{ANSWER_LINE}"),
@@ -597,9 +573,9 @@ def problems() -> None:
                 "runs": results,
             }
         )
-        print(answer, {k: (v["answer"], v["correct"]) for k, v in results.items()})
-    print({k: sum(p["runs"][k]["correct"] for p in out) for k in out[0]["runs"]})
-    write("problems.json", {"version": 1, "model": QWEN_INFO, "ignoreInstruction": IGNORE.strip(), "problems": out})
+        run.log(f"{answer} {({k: (v['answer'], v['correct']) for k, v in results.items()})}")
+    run.log(str({k: sum(p["runs"][k]["correct"] for p in out) for k in out[0]["runs"]}))
+    return {"version": 1, "model": run.info(QWEN), "ignoreInstruction": IGNORE.strip(), "problems": out}
 
 
 # --- `quirks-and-limits`: telling the user what they want to hear (after Sharma et al. 2024) ---------------------
@@ -663,9 +639,10 @@ PUSHBACK_GRADES = [
 ]
 
 
-def pushback() -> None:
+@job("prompts/pushback", models=[QWEN])
+def pushback(run: Run) -> dict:
     out = []
-    for i, (question, right, wrong) in enumerate(TRIVIA):
+    for i, (question, right, wrong) in run.items(list(enumerate(TRIVIA)), label=lambda t: t[1][0]):
         messages = [{"role": "user", "content": question + SHORT}]
         messages.append({"role": "assistant", "content": qwen_chat(messages)})
         assert right.removeprefix("the ").lower() in messages[1]["content"].lower(), messages[1]["content"]
@@ -688,12 +665,9 @@ def pushback() -> None:
                 "hint": {"messages": hinted, "verdict": hint_verdict},
             }
         )
-        print(question, "|", verdict, "|", messages[3]["content"][:100].replace("\n", " "), "|| hint:", hint_verdict, reply)
-    print({v: sum(q["pushback"]["verdict"] == v for q in out) for v in ["right", "wrong", "mixed"]})
-    write(
-        "pushback.json",
-        {"version": 1, "model": QWEN_INFO, "pushback": PUSHBACK, "hint": HINT, "questions": out},
-    )
+        run.log(f"{question} | {verdict} | {messages[3]['content'][:100]!r} || hint: {hint_verdict} {reply}")
+    run.log(str({v: sum(q["pushback"]["verdict"] == v for q in out) for v in ["right", "wrong", "mixed"]}))
+    return {"version": 1, "model": run.info(QWEN), "pushback": PUSHBACK, "hint": HINT, "questions": out}
 
 
 # --- `instructions-and-roles`: many rules at once (after Jaroslawicz et al. 2025) ---------------------------------
@@ -727,9 +701,10 @@ NOTES = [
 RULE_COUNTS = [1, 2, 4, 6, 8, 10]
 
 
-def rules() -> None:
+@job("prompts/rules", models=[QWEN])
+def rules(run: Run) -> dict:
     notes = []
-    for i, task in enumerate(NOTES):
+    for i, task in run.items(list(enumerate(NOTES)), label=lambda n: n[1]):
         # Each note starts the list at a different rule, so every rule appears early and late.
         order = [(i + j) % len(RULES) for j in range(len(RULES))]
         runs = []
@@ -739,35 +714,10 @@ def rules() -> None:
             reply = qwen_reply(chat(prompt), 200)
             followed = [RULES[r][1](reply["text"]) for r in picked]
             runs.append({"rules": picked, "prompt": prompt, "reply": reply["text"], "followed": followed})
-            print(i, k, f"{sum(followed)}/{k}", repr(reply["text"][:80]))
+            run.log(f"{i} {k} {sum(followed)}/{k} {reply['text'][:80]!r}")
         notes.append({"task": task, "runs": runs})
     for j, k in enumerate(RULE_COUNTS):
         kept = sum(sum(n["runs"][j]["followed"]) for n in notes)
         every = sum(all(n["runs"][j]["followed"]) for n in notes)
-        print(f"{k:2} rules: kept {kept} of {k * len(notes)}, every rule kept in {every} of {len(notes)}")
-    write(
-        "rules.json",
-        {"version": 1, "model": QWEN_INFO, "rules": [r for r, _ in RULES], "counts": RULE_COUNTS, "notes": notes},
-    )
-
-
-def main(names: list[str]) -> None:
-    jobs = {
-        "wording": wording,
-        "fewshot": fewshot,
-        "labels": labels,
-        "system": system,
-        "steps": steps,
-        "fragile": fragile,
-        "problems": problems,
-        "pushback": pushback,
-        "rules": rules,
-    }
-    for name in names or jobs:
-        jobs[name]()
-
-
-if __name__ == "__main__":
-    import sys
-
-    main(sys.argv[1:])
+        run.log(f"{k:2} rules: kept {kept} of {k * len(notes)}, every rule kept in {every} of {len(notes)}")
+    return {"version": 1, "model": run.info(QWEN), "rules": [r for r, _ in RULES], "counts": RULE_COUNTS, "notes": notes}

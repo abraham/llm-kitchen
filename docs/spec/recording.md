@@ -8,6 +8,11 @@ files are made: faster to iterate on, cheaper to rerun, and with grading that ca
 text it grades. [roadmap.md](roadmap.md) points here. When a phase lands, its part moves into the
 spec it belongs to ([Specs that change](#specs-that-change)) and leaves this file.
 
+Phase 1 is built: jobs, lazily loaded models, devices, offline mode with the disk check, progress
+and logs, `status`, the job manifest, the envelope's `job` and `source`, and `check` showing where
+files differ, with `prompts` ported. [models-and-data.md](models-and-data.md#recording-scripts)
+describes them. What follows is the rest.
+
 ## Goals
 
 - **Widgets don't notice.** Every dataset keeps its id, file, shape, and parser. Porting a module
@@ -28,75 +33,21 @@ spec it belongs to ([Specs that change](#specs-that-change)) and leaves this fil
 - **Still reproducible by anyone.** Greedy decoding or fixed seeds, pinned packages, and pinned
   model commits stay; the cache only skips work, and `check` always runs without it.
 
-## Today
+## Jobs for the other modules
 
-Each of the 19 modules in `scripts/record/` is a script with a `main()`. `common.write_dataset`
-writes the envelope, and `python -m scripts.record check <module>` re-records a module into a
-temporary folder and compares the files. That part works and stays. The rest has costs that show
-up on every new demo:
+The other modules move to jobs in phases 2 and 4. They need model kinds besides the causal models
+`prompts` uses:
 
-- Modules load their models when imported: running one `prompts` job loads GPT-2 and
-  Qwen2.5-1.5B-Instruct whatever the job uses, and a scratch experiment that imports a helper
-  loads them too.
-- Nothing is cached. A demo is usually tried in a scratch script, then recorded for real, which
-  generates every reply a second time, and fixing a typo in one prompt reruns the whole job. A
-  job of a few dozen Qwen replies takes from minutes to tens of minutes on Apple silicon.
-- Hand grades live in the script as a list of verdicts, each with a phrase the reply must contain,
-  so they have to be written before the run that produces the replies, usually from a scratch run's
-  truncated printout.
-- Code verdicts (the right number, a rule kept) are computed in Python and stored, and where a test
-  needs to trust them, the same check is written again in TypeScript.
-- Output is printed with `print`, which Python buffers when piped through `grep` or `tail`, so a
-  long run shows nothing until it ends.
-- Device and offline mode are chosen per module or per command line (`HF_HUB_OFFLINE=1`,
-  `"mps" if available`), and nothing records which device made a file.
-- `check` reports only that a file differs, not where.
-
-## Jobs
-
-A **job** makes one or more datasets. A module holds the jobs for one area (`prompts`, `agent`,
-`traces`, ...) and declares them, instead of a `main()`:
-
-```python
-@job("prompts/pushback", models=[QWEN_15B], device="mps")
-def pushback(run: Run) -> dict:
-    out = []
-    for question, right, wrong in run.items(TRIVIA, label=lambda t: t[0]):
-        first = run.chat(QWEN_15B, [user(question + SHORT)])
-        ...
-    return {"model": run.info(QWEN_15B), "questions": out}
-```
-
-- **Declared outputs.** The decorator names the datasets the job writes (the id that
-  `src/lib/datasets/registry.ts` uses) and the models it needs. `run.write(id, data)` covers jobs
-  that write several files, like `traces`, and refuses an id the job didn't declare.
-- **Inputs stay in the module,** as now: the prompts, questions, and settings, each a constant a
-  reader of the module can find.
-- **Order and dependencies.** A job that reads another's output (`grading` reads the agent runs,
-  `search` the context run) names it with `needs=[...]`; `all` runs jobs in dependency order and
-  fails on a cycle.
-- **Model kinds.** `run.chat`, `run.complete`, `run.score` (the probability of a continuation), and
-  `run.forward` (logits, attention, or hidden states for one input) cover what modules do today.
-  Embedding and image models get `run.embed` and `run.embed_image`. A module that needs something
-  else, like the quantizer or the Decision Transformer's training loop, uses the loaded model
-  directly through `run.model(id)`.
-
-## Models
-
-- **Defined once.** Each model the pipeline runs is a `ModelSpec`: Hugging Face id, display name,
-  class (causal LM, masked LM, sentence embedder, CLIP), dtype, and, for the models the site also
-  runs live, the entry in `models/*.json` it comes from. The revision is read from the cached
-  files, as `common.revision` does now, and must be a 40-character commit.
-- **Loaded lazily, once.** `run.model(spec)` loads on first use and keeps the model for the rest of
-  the process, so `all` loads each model once and a job that needs only Qwen never loads GPT-2.
-- **Device.** Each job declares its device: `cpu` where exact probabilities are the point (traces,
-  attention, quantization, caching times), `mps` (falling back to `cpu`) for long Qwen generation.
-  `--device` overrides it for one run. The envelope records the device, dtype, and the `torch` and
-  `transformers` versions, so a difference `check` finds can be traced to one of them.
-- **Offline by default.** The runner sets `HF_HUB_OFFLINE=1`, so a missing model fails at once with
-  the command that downloads it. `--download` allows downloads; before each one it prints the
-  model's size and the free disk space, and stops if less than 10 GB would be left, unless
-  `--force`.
+- `ModelSpec` gains a class (causal LM, masked LM, sentence embedder, CLIP), and the runtime loads
+  each with the right Transformers class.
+- `run.forward` (logits, attention, or hidden states for one input), `run.embed`, and
+  `run.embed_image` join `chat`, `complete`, and `score`. A module that needs something else, like
+  the quantizer or the Decision Transformer's training loop, keeps using the loaded model directly
+  through `run.model(spec)`.
+- `traces` writes one dataset per trace, so its job declares them all and writes each with
+  `run.write(id, data)`; `run traces/the-cat-sat` keeps rerunning one.
+- `grading` and `search` read other jobs' datasets, so they declare `needs=[...]`, and `all` runs
+  jobs in that order.
 
 ## The generation cache
 
@@ -121,30 +72,10 @@ def pushback(run: Run) -> dict:
 - **Pruning:** `cache prune` deletes entries no job asked for in its last full run, and entries
   for package versions or revisions no longer pinned.
 
-## Running
+## Status
 
-```sh
-scripts/.venv/bin/python -m scripts.record run prompts/pushback          # one job
-scripts/.venv/bin/python -m scripts.record run prompts                   # every job in a module
-scripts/.venv/bin/python -m scripts.record run all                       # everything, in order
-scripts/.venv/bin/python -m scripts.record try prompts/pushback --limit 5
-scripts/.venv/bin/python -m scripts.record check prompts/pushback
-scripts/.venv/bin/python -m scripts.record status
-```
-
-- **Names.** A job is named by its module and first dataset (`prompts/pushback`), or by its module
-  alone for all of them. `traces` accepts trace names as today (`run traces/the-cat-sat`). The old
-  form, `python -m scripts.record <module> [names]`, keeps working until every module is ported.
-- **Progress.** The runner logs unbuffered, one line per item:
-  `[12/24] prompts/pushback  What is the capital of Brazil?  3 calls, 2 cached  4.1 s`, and ends
-  with a summary: items, calls made, calls cached, time, and the files written. `run.items(...)`
-  supplies the counter, so a job only labels its items. The same lines go to
-  `scripts/.logs/<job>-<date>.log` (git-ignored).
-- **Resuming.** A run that stops part-way writes nothing to `static/data/`, but every call it made
-  is cached, so running it again picks up where it stopped.
-- **Status.** `status` lists every job with its datasets, when each was last recorded, its models
-  and revisions, whether a run now would be fully cached (that is, nothing it depends on has
-  changed), and whether any hand grade is missing or stale.
+`status` gains two columns once the cache and hand grades exist: whether a run now would be fully
+cached (nothing the job depends on has changed), and whether any hand grade is missing or stale.
 
 ## Trying an idea
 
@@ -196,26 +127,12 @@ text)`. If any text lacks a current grade, the job writes nothing to `static/dat
 
 ## Output
 
-- **Envelope.** Unchanged except for two fields: `job` (the job's name) and `source`
-  (`device`, `dtype`, `torch`, `transformers`), which replaces the `source` some datasets keep in
-  `data` today. The envelope parser in `registry.ts` adds both as optional until every module is
-  ported, then required.
-- **Writing.** `write_dataset` stays the only writer, with the same formatting, so a ported job's
-  files differ from today's only in `generatedAt` and the new envelope fields. `check` ignores
-  `generatedAt`, as now.
-- **Plumbing stays manual and tested.** Adding a dataset still means a parser, a registry entry,
-  and the chapter's `datasets` list; `tests/unit/datasets.test.ts` keeps failing on any file
-  without a registry entry, any entry without a file, and any dataset nothing uses. It also checks
-  that each file's `job` is the job that declares its id, from a `scripts/record/jobs.json`
-  manifest the runner writes on every run and commits.
+The envelope's `job` and `source`, and each model's `device` and `dtype`, are optional in the
+parser in `registry.ts` until every module is ported, then required.
 
 ## Checks
 
-- `check <job>` re-records into a temporary folder without the cache and compares each file. For a
-  file that differs, it prints the first five differing paths inside `data` with both values (such
-  as `data.questions[2].pushback.messages[3].content`), and whether the device or a package version
-  in `source` differs too.
-- `check live` stays as it is.
+- `check` runs without the cache, so it always proves the files can be made again from the models.
 - **Python tests in CI.** `scripts/tests/` runs with `pytest` in a CI job that downloads no model:
   the cache key (every field changes it; key order doesn't), cache hits and `--fresh`, grade hashes
   and stale grades, dependency order, `try` writing only to the scratch folder, and the envelope.
@@ -227,9 +144,7 @@ text)`. If any text lacks a current grade, the job writes nothing to `static/dat
 One pull request per phase; each passes every check in [quality.md](quality.md), and `check` shows
 each ported module's files unchanged.
 
-1. **Runtime.** `Run`, `@job`, lazy models, devices, offline mode and the disk check, progress and
-   logs, `status`, the manifest, the envelope's new fields, and the old command form. Port
-   `prompts`, the module with the most jobs and the one new demos go into.
+1. **Runtime.** Built.
 2. **Cache and trying.** The generation cache, `--fresh`, `cache prune`, `try`, and options. Port
    the other Qwen modules: `agent`, `grading`, `memory`, `routing`, `injection`, `chat`,
    `hallucination`, and `reasoning`.
@@ -243,10 +158,9 @@ each ported module's files unchanged.
 
 ## Specs that change
 
-- [models-and-data.md](models-and-data.md): Recording scripts (commands, the cache, devices,
-  offline mode, grading), and the table of modules gains the jobs.
-- [architecture.md](architecture.md): Recording scripts and the envelope under Datasets, and
-  `grade.ts` and `src/lib/grading/` in the source layout.
+- [models-and-data.md](models-and-data.md): Recording scripts (the cache, `try`, grading), and the
+  table of modules gains the jobs.
+- [architecture.md](architecture.md): `grade.ts` and `src/lib/grading/` in the source layout.
 - [sources.md](sources.md): hand grades and their reasons as backing for claims, and that `check`
   runs without the cache.
 - [quality.md](quality.md): the Python test job.
