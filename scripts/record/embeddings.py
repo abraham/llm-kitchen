@@ -1,6 +1,6 @@
 """Pre-compute the `embeddings` embedding map with all-MiniLM-L6-v2 (the model the live option runs).
 
-Usage: scripts/.venv/bin/python -m scripts.record embeddings
+Usage: scripts/.venv/bin/python -m scripts.record run embeddings
 
 Writes:
   static/data/embeddings/minilm-map.json      words, 3D PCA positions, nearest neighbors (full 384-D),
@@ -13,11 +13,13 @@ from __future__ import annotations
 import datetime
 
 import torch
-from transformers import AutoModel, AutoTokenizer
 
-from .common import EMBEDDER, revision, write_dataset
+from . import runtime
+from .common import EMBEDDER, revision
+from .runtime import ModelSpec, Run, job
 
-MODEL = EMBEDDER["huggingFaceId"]
+MINILM = ModelSpec(EMBEDDER["huggingFaceId"], EMBEDDER["displayName"], kind="encoder")
+MODEL = MINILM.id
 
 GROUPS = {
     "animals": ["cat", "kitten", "dog", "puppy", "cow", "horse", "mouse", "lion", "tiger", "fish", "bird"],
@@ -33,30 +35,20 @@ GROUPS = {
 }
 
 
-def embed(words: list[str], tokenizer, model) -> torch.Tensor:
-    """Mean-pooled, L2-normalized sentence embeddings (the model card's recipe)."""
-    batch = tokenizer(words, padding=True, return_tensors="pt")
-    with torch.no_grad():
-        hidden = model(**batch).last_hidden_state
-    mask = batch.attention_mask.unsqueeze(-1).float()
-    pooled = (hidden * mask).sum(1) / mask.sum(1)
-    return torch.nn.functional.normalize(pooled, dim=-1)
-
-
 def nearest(query: torch.Tensor, vectors: torch.Tensor, words: list[str], exclude: set[str], k: int):
     sims = vectors @ query
     order = torch.argsort(sims, descending=True).tolist()
     return [(words[i], round(float(sims[i]), 4)) for i in order if words[i] not in exclude][:k]
 
 
-def main() -> None:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModel.from_pretrained(MODEL).eval()
+@job("embeddings/minilm-map", "embeddings/minilm-vectors", models=[MINILM], compact=True)
+def minilm(run: Run) -> None:
     model_revision = revision(MODEL)
 
     words = [w for group in GROUPS.values() for w in group]
     group_of = {w: g for g, ws in GROUPS.items() for w in ws}
-    vectors = embed(words, tokenizer, model)
+    # Mean-pooled, L2-normalized sentence embeddings (the model card's recipe).
+    vectors = torch.tensor(runtime.embed(MINILM, words))
 
     mean = vectors.mean(0)
     centered = vectors - mean
@@ -99,8 +91,8 @@ def main() -> None:
             "components": [[round(float(x), 6) for x in row] for row in components],
         },
     }
-    write_dataset("embeddings/minilm-map", data, "embeddings", compact=True)
-    write_dataset(
+    run.write("embeddings/minilm-map", data)
+    run.write(
         "embeddings/minilm-vectors",
         {
             "model": MODEL,
@@ -108,13 +100,7 @@ def main() -> None:
             "words": words,
             "vectors": [[round(float(x), 5) for x in row] for row in vectors],
         },
-        "embeddings",
-        compact=True,
     )
-    print("analogy:", analogy)
-    print("explained variance (3D):", explained)
-    print("cat neighbors:", data["words"][0]["neighbors"])
-
-
-if __name__ == "__main__":
-    main()
+    run.log(f"analogy: {analogy}")
+    run.log(f"explained variance (3D): {explained}")
+    run.log(f"cat neighbors: {data['words'][0]['neighbors']}")

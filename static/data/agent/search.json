@@ -2,13 +2,20 @@
 	"dataset": "agent/search",
 	"version": 1,
 	"script": "record/search.py",
+	"job": "agent/search",
 	"models": [
 		{
 			"id": "sentence-transformers/all-MiniLM-L6-v2",
-			"revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41"
+			"revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-25",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"embedder": {
@@ -1967,6 +1974,6 @@
 				]
 			}
 		],
-		"generatedAt": "2026-10-25"
+		"generatedAt": "2026-10-27"
 	}
 }

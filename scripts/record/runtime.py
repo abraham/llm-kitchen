@@ -26,8 +26,6 @@ from . import common
 
 T = TypeVar("T")
 
-# Modules whose recordings are jobs; the others still have a main().
-JOB_MODULES = ("chat", "reasoning", "prompts", "agent", "grading", "memory", "routing", "hallucination", "injection")
 MANIFEST = Path(__file__).with_name("jobs.json")
 LOGS = common.ROOT / "scripts" / ".logs"
 CACHE = common.ROOT / "scripts" / ".cache"
@@ -52,7 +50,8 @@ class ModelSpec:
     attention: str | None = None
     # Tokens besides the tokenizer's end-of-sequence token that mean the reply ended.
     stop: tuple[str, ...] = ()
-    # "causal" for text generators, "encoder" for models whose hidden states are pooled into vectors.
+    # "causal" for text generators, "encoder" for models whose hidden states are pooled into vectors,
+    # "masked" for fill-in-the-blank models (BERT), "clip" for CLIP's text and image halves.
     kind: str = "causal"
 
 
@@ -65,6 +64,7 @@ class Job:
     device: str | None
     needs: tuple[str, ...]
     options: dict[str, Any]
+    compact: bool
     fn: Callable[[Run], dict | None]
 
 
@@ -77,15 +77,19 @@ def job(
     device: str | None = None,
     needs: Iterable[str] = (),
     options: dict[str, Any] | None = None,
+    compact: bool = False,
 ) -> Callable[[Callable[[Run], dict | None]], Callable[[Run], dict | None]]:
     """Declare a job that writes the datasets `outputs`; it's named after the first one. `options` are
-    settings `try` can change for a trial with --set name=value."""
+    settings `try` can change for a trial with --set name=value. `compact` writes the datasets
+    without indentation, for the large ones."""
     if not outputs:
         raise ValueError("a job writes at least one dataset")
 
     def register(fn: Callable[[Run], dict | None]) -> Callable[[Run], dict | None]:
         module = fn.__module__.rsplit(".", 1)[-1]
-        declared = Job(outputs[0], module, outputs, tuple(models), device, tuple(needs), dict(options or {}), fn)
+        declared = Job(
+            outputs[0], module, outputs, tuple(models), device, tuple(needs), dict(options or {}), compact, fn
+        )
         JOBS[declared.name] = declared
         return fn
 
@@ -248,13 +252,13 @@ def loaded(spec: ModelSpec) -> Loaded:
     if key not in _LOADED:
         tok = tokenizer(spec)
         import torch
-        from transformers import AutoModel, AutoModelForCausalLM
+        from transformers import AutoModel, AutoModelForCausalLM, AutoModelForMaskedLM, CLIPModel
 
         started = time.time()
         options: dict[str, Any] = {"dtype": getattr(torch, spec.dtype)}
         if spec.attention:
             options["attn_implementation"] = spec.attention
-        cls = AutoModel if spec.kind == "encoder" else AutoModelForCausalLM
+        cls = {"encoder": AutoModel, "masked": AutoModelForMaskedLM, "clip": CLIPModel}.get(spec.kind, AutoModelForCausalLM)
         try:
             model = cls.from_pretrained(spec.id, **options).to(device).eval()
         except OSError as error:
@@ -630,7 +634,9 @@ def run_job(declared: Job) -> list[Path]:
             )
         devices = {**run.devices, **{i: {"device": m.device, "dtype": m.spec.dtype} for i, m in run.used.items()}}
         written = [
-            common.write_dataset(i, d, declared.module, job=declared.name, source=_versions(), devices=devices)
+            common.write_dataset(
+                i, d, declared.module, job=declared.name, source=_versions(), devices=devices, compact=declared.compact
+            )
             for i, d in run.pending
         ]
         if not SETTINGS.trial:

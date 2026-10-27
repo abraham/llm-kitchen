@@ -7,14 +7,19 @@ import {
 	dictionary,
 	integer,
 	literal,
-	nullable,
 	number,
 	object,
 	record,
 	string,
 	tuple
 } from '../check.ts';
-import { finalNumber, lastNumberIs, namesAnswer } from '../../grading/answers.ts';
+import {
+	boxed,
+	finalNumber,
+	lastNumberIs,
+	namesAnswer,
+	puzzleAnswerIs
+} from '../../grading/answers.ts';
 import { RULES, followsFormat } from '../../grading/checks.ts';
 import { guess, modelRef } from './common.ts';
 
@@ -44,11 +49,15 @@ const thinkingRun = object({
 	thinkingTokens: integer,
 	answer: string,
 	answerTokens: integer,
-	final: nullable(string),
-	correct: boolean,
 	stopped: boolean
 });
-export type ThinkingRun = Infer<typeof thinkingRun>;
+
+/** A run with its boxed answer, and whether that answer is right. */
+const graded = (run: Infer<typeof thinkingRun>, expected: string) => {
+	const final = boxed(run.answer);
+	return { ...run, final, correct: puzzleAnswerIs(final, expected) };
+};
+export type ThinkingRun = ReturnType<typeof graded>;
 
 const sampling = object({
 	temperature: number,
@@ -60,7 +69,12 @@ const sampling = object({
 export const thinking = object({
 	model: modelRef,
 	settings: object({ off: sampling, on: sampling, seed: integer, suffix: string }),
-	puzzles: array(object({ question: string, expected: string, off: thinkingRun, on: thinkingRun }))
+	puzzles: array(
+		derive(
+			object({ question: string, expected: string, off: thinkingRun, on: thinkingRun }),
+			(p) => ({ ...p, off: graded(p.off, p.expected), on: graded(p.on, p.expected) })
+		)
+	)
 });
 export type Thinking = Infer<typeof thinking>;
 

@@ -52,3 +52,28 @@ export function finalNumber(text: string): string | null {
 export function namesAnswer(reply: string, right: string): boolean {
 	return reply.toLowerCase().includes(right.replace(/^the /, '').toLowerCase());
 }
+
+/** The contents of the last `\boxed{...}` (one level of nested braces allowed), with `\text{}`
+ * unwrapped and backslashes, dollar signs, and spaces removed. */
+export function boxed(text: string): string | null {
+	const found = [...text.matchAll(/\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}/g)].at(-1)?.[1];
+	if (found === undefined) return null;
+	return found.replace(/\\text\{([^}]*)\}|[\\$ ]/g, (_, inner?: string) => inner ?? '').trim();
+}
+
+/** The forms of each `reasoning/thinking` puzzle's answer that count, read from the start of the
+ * boxed answer, by the puzzle's expected answer. */
+const PUZZLE_ANSWERS: Record<string, RegExp> = {
+	'5 cents': /^\$?0?\.05|^5\s*(cents)?$|^five cents/i,
+	'5 minutes': /^5\b(?!0)|^five/i,
+	'3': /^3\b|^three/i,
+	'408': /^408\b/i,
+	'1': /^1\b|^one/i
+};
+
+/** Whether a boxed answer to a `reasoning/thinking` puzzle is right. */
+export function puzzleAnswerIs(final: string | null, expected: string): boolean {
+	const pattern = PUZZLE_ANSWERS[expected];
+	if (!pattern) throw new Error(`no accepted answers for the puzzle answer ${expected}`);
+	return !!final && pattern.test(final);
+}

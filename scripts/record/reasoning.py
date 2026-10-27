@@ -3,12 +3,11 @@
 Usage: scripts/.venv/bin/python -m scripts.record run reasoning
 
 Writes static/data/reasoning/thinking.json: for each puzzle, the model's reply with thinking off, and its
-thinking plus reply with thinking on. Sampled with Qwen's recommended settings and a fixed seed.
+thinking plus reply with thinking on. Sampled with Qwen's recommended settings and a fixed seed. The
+site reads each boxed answer and grades it (src/lib/grading/answers.ts).
 """
 
 from __future__ import annotations
-
-import re
 
 from . import runtime
 from .runtime import ModelSpec, Run, job
@@ -26,42 +25,28 @@ PUZZLES = [
     {
         "question": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
         "answer": "5 cents",
-        "pattern": r"^\$?0?\.05|^5\s*(cents)?$|^five cents",
     },
     {
         "question": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
         "answer": "5 minutes",
-        "pattern": r"^5\b(?!0)|^five",
     },
     {
         "question": "How many times does the letter r appear in the word strawberry?",
         "answer": "3",
-        "pattern": r"^3\b|^three",
     },
     {
         "question": "What is 17 × 24?",
         "answer": "408",
-        "pattern": r"^408\b",
     },
     {
         "question": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have?",
         "answer": "1",
-        "pattern": r"^1\b|^one",
     },
     {
         "question": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now?",
         "answer": "3",
-        "pattern": r"^3\b|^three",
     },
 ]
-
-
-def boxed(text: str) -> str | None:
-    """The contents of the last \\boxed{...}, allowing one level of nested braces."""
-    found = re.findall(r"\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}", text)
-    if not found:
-        return None
-    return re.sub(r"\\text\{([^}]*)\}|[\\$ ]", lambda m: m.group(1) or "", found[-1]).strip()
 
 
 @job("reasoning/thinking", models=[MODEL])
@@ -92,7 +77,6 @@ def record_thinking(run: Run) -> dict:
             "thinkingTokens": len(think_ids),
             "answer": answer,
             "answerTokens": len(answer_ids),
-            "final": boxed(answer),
             "stopped": stopped,
         }
 
@@ -101,12 +85,9 @@ def record_thinking(run: Run) -> dict:
         entry = {"question": puzzle["question"], "expected": puzzle["answer"]}
         for key, thinking in [("off", False), ("on", True)]:
             result = answer(puzzle["question"], thinking)
-            result["correct"] = bool(
-                result["final"] and re.search(puzzle["pattern"], result["final"], re.IGNORECASE)
-            )
             entry[key] = result
             run.log(
-                f"{key:3} {puzzle['answer']:>9} final={result['final']!r} correct={result['correct']}"
+                f"{key:3} {puzzle['answer']:>9} answer ends {result['answer'][-40:]!r}"
                 f" think={result['thinkingTokens']} answer={result['answerTokens']} stopped={result['stopped']}"
             )
         puzzles.append(entry)

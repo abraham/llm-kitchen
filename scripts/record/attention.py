@@ -1,7 +1,7 @@
 """Record GPT-2's attention scores before the mask and softmax, for `attention` (tier T0).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record attention
+    scripts/.venv/bin/python -m scripts.record run attention
 
 For the name-mover sentence the attention viewer starts on, writes every head's raw scores
 (query · key / √64, for every pair of tokens, later ones included) to
@@ -15,18 +15,18 @@ import datetime
 import math
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, check_canonical, revision, write_dataset
+from .common import CANONICAL, check_canonical, revision
+from .runtime import ModelSpec, Run, job
 
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"], attention="eager")
 PROMPT = "When Mary and John went to the store, John gave a drink to"
 
 
-def main() -> None:
-    tokenizer = AutoTokenizer.from_pretrained(CANONICAL["huggingFaceId"])
-    model = AutoModelForCausalLM.from_pretrained(
-        CANONICAL["huggingFaceId"], attn_implementation="eager"
-    ).eval()
+@job("attention/ioi-scores", models=[GPT2], compact=True)
+def ioi_scores(run: Run) -> dict:
+    loaded = run.model(GPT2)
+    model, tokenizer = loaded.model, loaded.tokenizer
     check_canonical(model)
     heads = model.config.n_head
     head_size = model.config.n_embd // heads
@@ -57,9 +57,9 @@ def main() -> None:
         scores.append([[[round(float(v), 2) for v in row] for row in head] for head in s])
     if worst > 1e-4:
         raise SystemExit(f"recomputed weights differ from GPT-2's by {worst}")
-    print("max difference from GPT-2's own weights:", worst)
+    run.log(f"max difference from GPT-2's own weights: {worst}")
 
-    write_dataset("attention/ioi-scores", {
+    return {
         "model": CANONICAL["id"],
         "modelDisplayName": CANONICAL["displayName"],
         "prompt": PROMPT,
@@ -68,8 +68,4 @@ def main() -> None:
         "scores": scores,
         "generatedAt": datetime.date.today().isoformat(),
         "source": {"huggingFaceId": CANONICAL["huggingFaceId"], "revision": revision(CANONICAL["huggingFaceId"])},
-    }, "attention", compact=True)
-
-
-if __name__ == "__main__":
-    main()
+    }

@@ -3,24 +3,24 @@
 Usage:
     python3 -m venv scripts/.venv
     scripts/.venv/bin/pip install -r scripts/requirements.txt
-    scripts/.venv/bin/python -m scripts.record traces            # all traces
-    scripts/.venv/bin/python -m scripts.record traces the-cat-sat  # one trace
+    scripts/.venv/bin/python -m scripts.record run traces              # all traces
+    scripts/.venv/bin/python -m scripts.record run traces/the-cat-sat  # one trace
 
-Writes static/data/traces/<model-id>/<name>.json (validated in the browser by parseTrace in
-src/lib/models/trace.ts) and an index.json listing them.
+Each trace is a job that writes static/data/traces/<model-id>/<name>.json (validated in the browser
+by parseTrace in src/lib/models/trace.ts); `vectors/the-cat-sat` writes the vectors.
 """
 
 from __future__ import annotations
 
 import datetime
-import sys
 from dataclasses import dataclass, field
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, check_canonical, revision, write_dataset
+from .common import CANONICAL, check_canonical, revision
+from .runtime import ModelSpec, Run, job
 
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"], attention="eager")
 
 
 @dataclass
@@ -137,7 +137,7 @@ def token(tokenizer, token_id: int) -> dict:
     return {"id": int(token_id), "text": tokenizer.decode([int(token_id)])}
 
 
-def run(spec: Spec, model, tokenizer) -> dict:
+def trace(spec: Spec, model, tokenizer) -> dict:
     ids = tokenizer(spec.prompt, return_tensors="pt").input_ids[0].tolist()
     prompt_tokens = [token(tokenizer, i) for i in ids]
     generator = torch.Generator().manual_seed(spec.seed)
@@ -205,7 +205,7 @@ def run(spec: Spec, model, tokenizer) -> dict:
     return trace
 
 
-def export_vectors(prompt: str, name: str, model, tokenizer) -> None:
+def export_vectors(prompt: str, model, tokenizer) -> dict:
     """Token embeddings, position embeddings, and the last token's vector after every block."""
     ids = tokenizer(prompt, return_tensors="pt").input_ids
     with torch.no_grad():
@@ -243,28 +243,27 @@ def export_vectors(prompt: str, name: str, model, tokenizer) -> None:
         "generatedAt": datetime.date.today().isoformat(),
         "source": {"huggingFaceId": CANONICAL["huggingFaceId"], "revision": revision(CANONICAL["huggingFaceId"])},
     }
-    write_dataset(f"vectors/{name}", data, "traces", compact=True)
+    return data
 
 
-def main(names: list[str]) -> None:
-    tokenizer = AutoTokenizer.from_pretrained(CANONICAL["huggingFaceId"])
-    model = AutoModelForCausalLM.from_pretrained(
-        CANONICAL["huggingFaceId"], attn_implementation="eager"
-    ).eval()
-    check_canonical(model)
-
-    specs = [s for s in SPECS if not names or s.name in names]
-    if names and len(specs) != len(names):
-        raise SystemExit(f"Unknown trace names: {set(names) - {s.name for s in SPECS}}")
-
-    for spec in specs:
-        trace = run(spec, model, tokenizer)
-        write_dataset(f"traces/{spec.name}", trace, "traces", compact=True)
-        print(repr(spec.prompt + "".join(s["chosen"]["text"] for s in trace["steps"])))
-
-    if not names:
-        export_vectors("The cat sat on the", "the-cat-sat", model, tokenizer)
+def gpt2(run: Run):
+    loaded = run.model(GPT2)
+    check_canonical(loaded.model)
+    return loaded.model, loaded.tokenizer
 
 
-if __name__ == "__main__":
-    main(sys.argv[1:])
+def declare(spec: Spec) -> None:
+    @job(f"traces/{spec.name}", models=[GPT2], compact=True)
+    def record_trace(run: Run) -> dict:
+        recorded = trace(spec, *gpt2(run))
+        run.log(repr(spec.prompt + "".join(s["chosen"]["text"] for s in recorded["steps"])))
+        return recorded
+
+
+for _spec in SPECS:
+    declare(_spec)
+
+
+@job("vectors/the-cat-sat", models=[GPT2], compact=True)
+def record_vectors(run: Run) -> dict:
+    return export_vectors("The cat sat on the", *gpt2(run))

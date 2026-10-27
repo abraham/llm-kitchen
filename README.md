@@ -69,7 +69,7 @@ scripts/.venv/bin/python -m scripts.record grade prompts/steps     # hand-grade 
 Progress prints as it goes, even through a pipe, and is also logged to `scripts/.logs/`. Add
 `--device cpu` or `--device mps` to run every model on one device.
 
-Every model call the ported modules make is cached in `scripts/.cache/`, so a rerun only computes
+Every call that generates, scores, or embeds is cached in `scripts/.cache/`, so a rerun only computes
 what changed; `--fresh` ignores the cache, and `check` always does. `try` runs a job on a few items
 (`--limit`, `--only`) into `scripts/.scratch/`, printing each reply, and `--set` changes one of the
 job's options for the trial; a later `run` reuses the replies the trial made.

@@ -1,7 +1,7 @@
 """Train the toy Decision Transformer for `decision-models` (computed, no downloaded model).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record decisions
+    scripts/.venv/bin/python -m scripts.record run decisions
 
 Plays a small grid world with a mix of random and scripted players, trains a tiny transformer to
 predict each move from the reward still to earn, the cell, and the step (Chen et al. 2021), and
@@ -21,8 +21,9 @@ from pathlib import Path
 import torch
 from torch import nn
 
-from .common import write_dataset
+from .runtime import Run, job
 
+TOY = "llm-kitchen/toy-decision-transformer"
 SIZE = 5
 START = (4, 0)
 GOAL = (0, 4)
@@ -201,9 +202,18 @@ def weights(model: DecisionTransformer) -> dict:
     return {name: rounded(p.detach().tolist()) for name, p in model.state_dict().items()}
 
 
-def main() -> None:
-    torch.manual_seed(0)
+@job("decisions/grid", compact=True)
+def grid(run: Run) -> dict:
+    threads = torch.get_num_threads()
     torch.set_num_threads(1)
+    try:
+        return train(run)
+    finally:
+        torch.set_num_threads(threads)
+
+
+def train(recording: Run) -> dict:
+    torch.manual_seed(0)
     rng = random.Random(0)
     runs = []
     for _ in range(RUNS):
@@ -222,7 +232,7 @@ def main() -> None:
         loss.backward()
         optimizer.step()
         if i % 500 == 0 or i == TRAIN_STEPS - 1:
-            print(f"step {i} loss {loss.item():.3f}")
+            recording.log(f"step {i} loss {loss.item():.3f}")
 
     shipped = weights(model)
     model.load_state_dict({k: torch.tensor(v) for k, v in shipped.items()})
@@ -239,38 +249,30 @@ def main() -> None:
     }
     checks = [rollout(model, t) for t in CHECK_TARGETS]
     for c in checks:
-        print(c["target"], c["return"], c["actions"])
-    print(summary)
+        recording.log(f"{c['target']} {c['return']} {c['actions']}")
+    recording.log(str(summary))
 
-    write_dataset(
-        "decisions/grid",
-        {
-            "model": {"id": "llm-kitchen/toy-decision-transformer", "displayName": "Toy Decision Transformer", "revision": hashlib.sha1(Path(__file__).read_bytes()).hexdigest()},
-            "world": {
-                "size": SIZE,
-                "start": cell(START),
-                "goal": cell(GOAL),
-                "pits": [cell(p) for p in PITS],
-                "moves": [m[0] for m in MOVES],
-                "horizon": HORIZON,
-                "rewards": {"step": STEP_REWARD, "goal": GOAL_REWARD, "pit": PIT_REWARD},
-            },
-            "training": summary,
-            "net": {
-                "width": WIDTH,
-                "layers": LAYERS,
-                "heads": HEADS,
-                "returnScale": RETURN_SCALE,
-                "steps": TRAIN_STEPS,
-                "finalLoss": round(loss.item(), 3),
-                "weights": shipped,
-            },
-            "checks": checks,
+    recording.devices[TOY] = {"device": "cpu", "dtype": "float32"}
+    return {
+        "model": {"id": TOY, "displayName": "Toy Decision Transformer", "revision": hashlib.sha1(Path(__file__).read_bytes()).hexdigest()},
+        "world": {
+            "size": SIZE,
+            "start": cell(START),
+            "goal": cell(GOAL),
+            "pits": [cell(p) for p in PITS],
+            "moves": [m[0] for m in MOVES],
+            "horizon": HORIZON,
+            "rewards": {"step": STEP_REWARD, "goal": GOAL_REWARD, "pit": PIT_REWARD},
         },
-        "decisions",
-        compact=True,
-    )
-
-
-if __name__ == "__main__":
-    main()
+        "training": summary,
+        "net": {
+            "width": WIDTH,
+            "layers": LAYERS,
+            "heads": HEADS,
+            "returnScale": RETURN_SCALE,
+            "steps": TRAIN_STEPS,
+            "finalLoss": round(loss.item(), 3),
+            "weights": shipped,
+        },
+        "checks": checks,
+    }

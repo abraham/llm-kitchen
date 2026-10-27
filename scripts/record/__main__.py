@@ -15,11 +15,10 @@ Usage, from the repository root:
 Flags, anywhere: --device cpu|mps for every model, --download to allow downloads (the runner is
 offline otherwise), --force to download even when the disk is nearly full, --fresh to ignore the
 generation cache (scripts/.cache/) for one run. `try` also takes --limit N, --only LABEL (repeatable),
-and --set NAME=VALUE for the job's options. The old form, `python -m scripts.record <module> [names]`,
-still works.
+and --set NAME=VALUE for the job's options.
 
-Modules in runtime.JOB_MODULES declare jobs (runtime.py); the others still have a main(). Either way
-datasets are written to static/data/ through common.write_dataset.
+Each module declares its recordings as jobs (runtime.py), which write datasets to static/data/
+through common.write_dataset.
 """
 
 import importlib
@@ -49,8 +48,6 @@ MODULES = [
     "decisions",
 ]
 
-# Modules not yet ported to jobs whose main() takes names (traces: trace names) to rerun only some.
-TAKES_NAMES = {"traces"}
 USAGE = (
     "usage: python -m scripts.record run <job|module|all> [names] [--device cpu|mps] [--download] [--force] [--fresh]\n"
     "       python -m scripts.record try <job> [--limit N] [--only LABEL] [--set NAME=VALUE]\n"
@@ -63,7 +60,7 @@ USAGE = (
 
 
 def load_jobs() -> None:
-    for name in runtime.JOB_MODULES:
+    for name in MODULES:
         importlib.import_module(f"{__package__}.{name}")
 
 
@@ -76,40 +73,22 @@ def targets(first: str, rest: list[str]) -> list[str]:
 
 
 def record(names: list[str]) -> None:
-    """Run each target in order: a job, a module (all its jobs), a module/name, or `all`."""
+    """Run each target's jobs, each after the jobs it needs: a job, a module (all its jobs), or `all`."""
     load_jobs()
     runtime.write_manifest()
-    steps: list[tuple[str, list[str]]] = []  # ("jobs", job names) or (module, main() args)
+    jobs: list[str] = []
     for target in names:
-        module, _, name = target.partition("/")
+        module = target.partition("/")[0]
         if target == "all":
-            for m in MODULES:
-                steps.append(_step(m, ""))
-        elif module not in MODULES:
-            raise SystemExit(f"no module {module}\n{USAGE}")
+            jobs += runtime.JOBS
+        elif target in runtime.JOBS:
+            jobs.append(target)
+        elif target in MODULES:
+            jobs += [j.name for j in runtime.JOBS.values() if j.module == module]
         else:
-            steps.append(_step(module, name))
-    pending: list[str] = []
-    for kind, args in [*steps, ("end", [])]:
-        if kind == "jobs":
-            pending += args
-            continue
-        for j in runtime.ordered(pending):
-            runtime.run_job(j)
-        pending = []
-        if kind != "end":
-            main = importlib.import_module(f"{__package__}.{kind}").main
-            main(args) if kind in TAKES_NAMES else main()
-
-
-def _step(module: str, name: str) -> tuple[str, list[str]]:
-    if module in runtime.JOB_MODULES:
-        if name:
-            return ("jobs", [f"{module}/{name}"])
-        return ("jobs", [j.name for j in runtime.JOBS.values() if j.module == module])
-    if name and module not in TAKES_NAMES:
-        raise SystemExit(f"{module} records everything at once; run it without a name")
-    return (module, [name] if name else [])
+            raise SystemExit(f"no job or module {target}\n{USAGE}")
+    for j in runtime.ordered(jobs):
+        runtime.run_job(j)
 
 
 def main(argv: list[str]) -> None:
@@ -149,8 +128,6 @@ def main(argv: list[str]) -> None:
             names = targets(rest[0], rest[1:])
             runtime.SETTINGS.fresh = True
             check.recordings(lambda: record(names), " ".join(names))
-    elif command in MODULES or command == "all":
-        record(targets(command, rest))
     else:
         raise SystemExit(USAGE)
 

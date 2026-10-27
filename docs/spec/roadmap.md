@@ -35,10 +35,8 @@ belongs to and remove it here.
 
 ## Tooling
 
-- **Recording pipeline.** Jobs instead of scripts, models loaded only when a job needs them, a
-  cache of every model call so reruns and trials generate only what changed, and grading written
-  once: code verdicts in TypeScript, hand grades tied to the text they judge. The plan is in
-  [recording.md](recording.md).
+- **Recording pipeline.** A `status` column for whether a run would be fully cached, and the
+  recording package's Python tests in CI. The plan is in [recording.md](recording.md).
 
 ## Open questions
 

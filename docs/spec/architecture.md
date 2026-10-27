@@ -166,9 +166,7 @@ conventions every shared component follows, are in [components.md](components.md
   `agent/chat`, ...), its file under `static/data/`, the parser that checks and types it, the
   `scripts/record` module that writes it, and its version.
 - Every file has the same envelope:
-  `{ "dataset": id, "version": n, "script": "record/<module>.py", "models": [{ "id", "revision" }], "generatedAt", "data": … }`.
-  Datasets written by jobs also have `job`, `source` (the `torch` and `transformers` versions),
-  and each model's `device` and `dtype`.
+  `{ "dataset": id, "version": n, "script": "record/<module>.py", "job", "models": [{ "id", "revision", "device", "dtype" }], "generatedAt", "source": { "torch", "transformers" }, "data": … }`.
   `parseDataset` checks the id and version, then the shape of `data`, and returns typed data;
   fields the parser doesn't list are dropped. A verdict code can work out from the recorded text
   isn't stored: the parser adds it with `derive(check, add)`, calling a grader in `grading/`

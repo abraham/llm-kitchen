@@ -87,19 +87,24 @@ exact versions, since a new PyTorch or Transformers can change the numbers) with
 reruns match, and writes its datasets to `static/data/` in the envelope the site checks. Every
 dataset names each model's Hugging Face commit. The README has setup steps.
 
-- **Jobs.** Modules listed in `runtime.JOB_MODULES` (every module that runs a Qwen model, so far)
-  declare each recording as a job with `@job("prompts/pushback", models=[QWEN])`, named after the
-  first dataset it writes; `agent` is one job that writes all eight of its datasets. The job
-  receives a `Run` and returns its data; the runner writes it only when the whole job has
+- **Jobs.** Every module declares each recording as a job with
+  `@job("prompts/pushback", models=[QWEN])`, named after the first dataset it writes; `agent` is one
+  job that writes all eight of its datasets, and each GPT-2 trace is its own job
+  (`run traces/the-cat-sat`). The job receives a `Run` and returns its data, or writes several
+  datasets with `run.write(id, data)`; the runner writes them only when the whole job has
   finished, so a run that stops part-way leaves `static/data/` as it was. `needs=[...]` names jobs
-  that must run first (`grading` and `memory` need `agent/chat`). The other modules still have a
-  `main()`, and [recording.md](recording.md) plans their move.
-- **Models** are `ModelSpec`s (Hugging Face id, display name, dtype, default device, end-of-reply
-  tokens, and kind: a causal model or an encoder whose vectors are pooled), loaded on first use and
-  kept for the rest of the process, so a job that uses only GPT-2 never loads Qwen. Tokenizers load
-  on their own, so a run that's fully cached never loads a model. `runtime.generate` (token ids,
-  and optionally each chosen token's log-probability), `complete`, `chat`, `score` (the
-  probability of a continuation), and `embed` are the shared ways to call a model.
+  that must run first (`grading`, `memory`, and `search` need `agent/chat`; `prompts/steps` needs
+  `reasoning/thinking`). `compact=True` writes a job's large datasets without indentation.
+- **Models** are `ModelSpec`s (Hugging Face id, display name, dtype, default device, attention
+  implementation, end-of-reply tokens, and kind: a causal model, an encoder whose vectors are
+  pooled, a masked LM like BERT, or CLIP), loaded on first use and kept for the rest of the
+  process, so a job that uses only GPT-2 never loads Qwen. Tokenizers load on their own, so a run
+  that's fully cached never loads a model. `runtime.generate` (token ids, and optionally each
+  chosen token's log-probability), `complete`, `chat`, `score` (the probability of a
+  continuation), and `embed` are the shared ways to call a model. Jobs that need more (logits at
+  every step, attention, hidden states, rewritten weights, CLIP's image half) use the loaded model
+  through `run.model(spec)`, uncached: those models are small and fast, and their outputs large. A
+  job that changes a shared model's weights (`quantize`) puts them back when it ends.
 - **The generation cache.** Every `generate`, `score`, and `embed` call is cached in
   `scripts/.cache/` (git-ignored), one JSON file per call in a folder per model and commit, keyed
   by a SHA-256 of the input token ids (or texts, for `embed`), the decoding settings and seed, the
@@ -125,8 +130,7 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   in `src/lib/grading/` (`answers.ts` for answers, `checks.ts` for rules, formats, and injections).
   So the widget, the live widget grading a reply in the browser, and `facts.test.ts` use one
   function and can't disagree. Where the job's input must match the grader's (`prompts/rules`
-  lists its rules' wording), the parser checks it and throws when they differ. `reasoning/thinking`
-  still stores `final` and `correct` from Python.
+  lists its rules' wording), the parser checks it and throws when they differ.
 - **Verdicts by hand.** Replies that don't share a format, so no rule reads them all fairly
   (`prompts/steps`, and the reply to the pushback in `prompts/pushback`), are graded by a person.
   Grades live in `scripts/record/grades/<dataset>.json`, committed: per reply, its label, a
@@ -139,12 +143,13 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   editor). Then `run` again, fully cached, writes the file. One person grades; the reason is shown
   so a reader can disagree. `tests/unit/datasets.test.ts` checks that every grade's hash and reason
   are in its dataset.
-- **Devices.** Each model has a default device: `cpu` for GPT-2, whose exact probabilities are the
-  point, and for the modules that recorded on it (`chat`, `agent`, `grading`, `memory`,
-  `routing`), and `mps` (Apple silicon, falling back to `cpu`) for the long generations in
-  `prompts`, `injection`, `hallucination`, and `reasoning`. A job's `device=` or `--device`
-  overrides it. The envelope records, for each model a job called, its device and dtype, and
-  `source` gives the `torch` and `transformers` versions.
+- **Devices.** Each model has a default device: `cpu` for GPT-2, BERT, CLIP, and MiniLM, whose
+  exact numbers are the point, and for the modules that recorded on it (`chat`, `agent`,
+  `grading`, `memory`, `routing`), and `mps` (Apple silicon, falling back to `cpu`) for the long
+  generations in `prompts`, `injection`, `hallucination`, and `reasoning`. A job's `device=` or
+  `--device` overrides it. The envelope records the job, each model's device and dtype (the toy
+  Decision Transformer trains on the CPU in float32), and in `source` the `torch` and
+  `transformers` versions; the site's parser requires them.
 - **Offline by default.** The runner sets `HF_HUB_OFFLINE=1`, so a model that isn't downloaded
   fails at once and says to add `--download`. With `--download`, it prints each download's size
   and the free disk space, and refuses one that would leave less than 10 GB free unless `--force`.

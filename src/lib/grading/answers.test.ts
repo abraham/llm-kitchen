@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
 	answerVerdict,
+	boxed,
 	finalNumber,
 	lastNumberIs,
 	matchesAccepted,
 	namesAnswer,
-	numbersIn
+	numbersIn,
+	puzzleAnswerIs
 } from './answers.ts';
 
 describe('matchesAccepted', () => {
@@ -48,5 +50,23 @@ describe('namesAnswer', () => {
 	it('drops a leading "the" from the right answer', () => {
 		expect(namesAnswer('It is the Pacific Ocean.', 'the Pacific')).toBe(true);
 		expect(namesAnswer('The Atlantic.', 'the Pacific')).toBe(false);
+	});
+});
+
+describe('boxed answers', () => {
+	it('reads the last \\boxed{}, unwrapping \\text{} and dropping $ and spaces', () => {
+		expect(boxed('first \\boxed{1}, then \\boxed{\\$0.05}')).toBe('0.05');
+		expect(boxed('\\boxed{5 \\text{ minutes}}')).toBe('5 minutes');
+		expect(boxed('\\boxed{\\frac{1}{20}}')).toBe('frac{1}{20}');
+		expect(boxed('no box')).toBeNull();
+	});
+
+	it('grades a puzzle by its expected answer', () => {
+		expect(puzzleAnswerIs('0.05', '5 cents')).toBe(true);
+		expect(puzzleAnswerIs('0.10', '5 cents')).toBe(false);
+		expect(puzzleAnswerIs('5 minutes', '5 minutes')).toBe(true);
+		expect(puzzleAnswerIs('50', '5 minutes')).toBe(false);
+		expect(puzzleAnswerIs(null, '3')).toBe(false);
+		expect(() => puzzleAnswerIs('7', '7')).toThrow();
 	});
 });

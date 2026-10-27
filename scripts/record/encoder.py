@@ -1,6 +1,6 @@
 """Record fill-in-the-blank guesses for `encoders` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record encoder
+Usage: scripts/.venv/bin/python -m scripts.record run encoder
 
 Writes static/data/encoders/fill-mask.json: for each sentence, BERT's top guesses for the blank (it reads
 the whole sentence) and GPT-2's top next tokens given only the words before the blank.
@@ -11,11 +11,13 @@ from __future__ import annotations
 import datetime
 
 import torch
-from transformers import AutoModelForCausalLM, AutoModelForMaskedLM, AutoTokenizer
 
-from .common import CANONICAL, ENCODER, revision, write_dataset
+from .common import CANONICAL, ENCODER, revision
+from .runtime import ModelSpec, Run, job
 
-BERT = ENCODER["huggingFaceId"]
+BERT_SPEC = ModelSpec(ENCODER["huggingFaceId"], ENCODER["displayName"], kind="masked")
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"])
+BERT = BERT_SPEC.id
 TOP = 10
 SENTENCES = [
     "The cat sat on the [MASK] of the fridge.",
@@ -33,11 +35,11 @@ def top(probs: torch.Tensor, decode) -> list[dict]:
     ]
 
 
-def main() -> None:
-    bert_tok = AutoTokenizer.from_pretrained(BERT)
-    bert = AutoModelForMaskedLM.from_pretrained(BERT, dtype=torch.float32).eval()
-    gpt_tok = AutoTokenizer.from_pretrained(CANONICAL["huggingFaceId"])
-    gpt = AutoModelForCausalLM.from_pretrained(CANONICAL["huggingFaceId"], dtype=torch.float32).eval()
+@job("encoders/fill-mask", models=[BERT_SPEC, GPT2])
+def fill_mask(run: Run) -> dict:
+    bert_loaded, gpt_loaded = run.model(BERT_SPEC), run.model(GPT2)
+    bert_tok, bert = bert_loaded.tokenizer, bert_loaded.model
+    gpt_tok, gpt = gpt_loaded.tokenizer, gpt_loaded.model
 
     sentences = []
     for sentence in SENTENCES:
@@ -78,12 +80,8 @@ def main() -> None:
         "generatedAt": datetime.date.today().isoformat(),
         "source": {"torch": torch.__version__},
     }
-    write_dataset("encoders/fill-mask", data, "encoder")
     for s in sentences:
-        print(s["sentence"])
-        print("  BERT:", [(c["text"], c["p"]) for c in s["bert"][:5]])
-        print("  GPT-2:", [(c["text"], c["p"]) for c in s["gpt2"][:5]])
-
-
-if __name__ == "__main__":
-    main()
+        run.log(s["sentence"])
+        run.log(f"  BERT: {[(c['text'], c['p']) for c in s['bert'][:5]]}")
+        run.log(f"  GPT-2: {[(c['text'], c['p']) for c in s['gpt2'][:5]]}")
+    return data

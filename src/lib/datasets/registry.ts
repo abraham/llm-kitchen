@@ -1,5 +1,5 @@
 import canonical from '../../../models/canonical.json';
-import { type Check, array, integer, nullable, object, optional, string } from './check.ts';
+import { type Check, array, integer, nullable, object, string } from './check.ts';
 import {
 	agentGrades,
 	agentRun,
@@ -139,18 +139,17 @@ const envelope = object({
 	dataset: string,
 	version: integer,
 	script: string,
-	// Written by recordings that are jobs (scripts/record/runtime.py); older recordings lack them.
-	job: optional(string),
+	job: string,
 	models: array(
 		object({
 			id: string,
 			revision: nullable(string),
-			device: optional(string),
-			dtype: optional(string)
+			device: string,
+			dtype: string
 		})
 	),
 	generatedAt: nullable(string),
-	source: optional(object({ torch: string, transformers: string }))
+	source: object({ torch: string, transformers: string })
 });
 
 /** Check a dataset file's envelope against the registry, then parse its data. */

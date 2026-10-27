@@ -25,14 +25,18 @@ def _envelopes() -> dict[str, dict]:
 
 
 def _models(envelope: dict) -> str:
+    downloaded = {s.id for j in runtime.JOBS.values() for s in j.models}
     parts = []
     for m in envelope.get("models", []):
-        recorded, cached = m.get("revision"), _cached_revision(m["id"])
+        recorded = m.get("revision")
         note = ""
-        if cached is None:
-            note = " (not downloaded)"
-        elif recorded != cached:
-            note = f" (downloaded: {cached[:7]})"
+        # Only Hugging Face models are downloaded; the toy Decision Transformer is trained by its job.
+        if m["id"] in downloaded:
+            cached = _cached_revision(m["id"])
+            if cached is None:
+                note = " (not downloaded)"
+            elif recorded != cached:
+                note = f" (downloaded: {cached[:7]})"
         parts.append(f"{m['id'].split('/')[-1]}@{(recorded or '?')[:7]}{note}")
     return ", ".join(parts)
 
@@ -45,19 +49,12 @@ def _waiting(dataset: str) -> str:
 
 def show(modules: list[str]) -> None:
     envelopes = _envelopes()
-    by_script: dict[str, list[str]] = {}
-    for dataset, envelope in envelopes.items():
-        by_script.setdefault(envelope["script"], []).append(dataset)
     for module in modules:
-        ported = module in runtime.JOB_MODULES
-        print(f"{module}{'' if ported else ' (not a job yet)'}")
-        if ported:
-            rows = [(j.name, o) for j in runtime.JOBS.values() if j.module == module for o in j.outputs]
-        else:
-            rows = [(None, d) for d in by_script.get(f"record/{module}.py", [])]
+        print(module)
+        rows = [(j.name, o) for j in runtime.JOBS.values() if j.module == module for o in j.outputs]
         for name, dataset in rows:
             envelope = envelopes.get(dataset)
-            label = dataset if name in (None, dataset) else f"{dataset} ({name})"
+            label = dataset if name == dataset else f"{dataset} ({name})"
             if not envelope:
                 print(f"  {label:34} not recorded{_waiting(dataset)}")
                 continue
