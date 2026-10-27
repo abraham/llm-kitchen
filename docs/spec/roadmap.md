@@ -33,6 +33,13 @@ belongs to and remove it here.
   instructions for training a small language model on Project Gutenberg books, the smaller
   models a harness relies on (such as a safety model for tool calls), and the harness itself, from one tested Python package. The plan is in [build-mode.md](build-mode.md).
 
+## Tooling
+
+- **Recording pipeline.** Jobs instead of scripts, models loaded only when a job needs them, a
+  cache of every model call so reruns and trials generate only what changed, and grading written
+  once: code verdicts in TypeScript, hand grades tied to the text they judge. The plan is in
+  [recording.md](recording.md).
+
 ## Open questions
 
 - None right now.
