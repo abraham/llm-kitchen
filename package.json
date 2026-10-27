@@ -19,6 +19,7 @@
 		"format:check": "prettier --check .",
 		"lint": "eslint .",
 		"test": "vitest run",
+		"test:python": "scripts/.venv/bin/python -m pytest -p no:cacheprovider scripts/tests",
 		"test:watch": "vitest",
 		"test:e2e": "playwright test",
 		"test:lighthouse": "playwright test --config playwright.lighthouse.config.ts",

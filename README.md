@@ -53,17 +53,18 @@ model needs; it refuses a download that would leave less than 10 GB free unless 
 
 ```sh
 python3 -m venv scripts/.venv
-scripts/.venv/bin/pip install -r scripts/requirements.txt
+scripts/.venv/bin/pip install -r scripts/requirements.txt -r scripts/requirements-dev.txt
 scripts/.venv/bin/python -m scripts.record run traces --download   # GPT-2 small traces, about 550 MB
 scripts/.venv/bin/python -m scripts.record run traces the-cat-sat  # just one trace
 scripts/.venv/bin/python -m scripts.record run prompts/pushback    # one job
 scripts/.venv/bin/python -m scripts.record run all                 # everything
 scripts/.venv/bin/python -m scripts.record try prompts/pushback --limit 3 --set "pushback=Are you certain?"
-scripts/.venv/bin/python -m scripts.record status                  # what's recorded, and from what
+scripts/.venv/bin/python -m scripts.record status                  # what's recorded, from what, and whether a rerun is cached
 scripts/.venv/bin/python -m scripts.record check encoder           # re-record into a temp folder and compare
 scripts/.venv/bin/python -m scripts.record check live              # the live models' pinned downloads
 scripts/.venv/bin/python -m scripts.record cache prune             # drop cached calls no job uses
 scripts/.venv/bin/python -m scripts.record grade prompts/steps     # hand-grade replies a run stopped on
+npm run test:python                                                # the runtime's tests (pytest, no downloads)
 ```
 
 Progress prints as it goes, even through a pipe, and is also logged to `scripts/.logs/`. Add

@@ -23,7 +23,6 @@ that spec in the same pull request. Work that isn't built yet goes in [roadmap.m
 | [model-tiers.md](model-tiers.md)         | Plan: one site-wide choice of Recorded, Small, or Large models, made on the Models page                                                |
 | [live-attention.md](live-attention.md)   | Plan: GPT-2's attention for the visitor's own sentence, from a GPT-2 export of our own                                                 |
 | [build-mode.md](build-mode.md)           | Plan: a Learn and Build toggle; Build steps make a small LLM from Project Gutenberg books, the models a harness needs, and the harness |
-| [recording.md](recording.md)             | Plan: what's left for the recording pipeline: a fully-cached column in `status`, and Python tests in CI                                |
 | [roadmap.md](roadmap.md)                 | What isn't built yet, and open questions                                                                                               |
 
 ## Rules

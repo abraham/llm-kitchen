@@ -33,11 +33,12 @@ belongs to and remove it here.
   instructions for training a small language model on Project Gutenberg books, the smaller
   models a harness relies on (such as a safety model for tool calls), and the harness itself, from one tested Python package. The plan is in [build-mode.md](build-mode.md).
 
-## Tooling
-
-- **Recording pipeline.** A `status` column for whether a run would be fully cached, and the
-  recording package's Python tests in CI. The plan is in [recording.md](recording.md).
-
 ## Open questions
 
-- None right now.
+- **Sharing the recording cache.** A cache committed or stored as a release artifact would let a
+  second machine rerun every recording job without a GPU. Proposal: no; it would hold several
+  hundred MB of replies nobody reviews, and `check` must regenerate anyway. Revisit if recording
+  moves to CI.
+- **A model as grader.** Hand grades for recorded replies could be drafted by a strong model and
+  confirmed by a person. Proposal: not yet; [Did it work?](chapters/testing-agents.md) shows why a
+  model's grades need checking, and the datasets are small enough to grade by hand.

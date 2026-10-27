@@ -158,7 +158,13 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   summary per job. The same lines go to `scripts/.logs/<job>-<date>.log` (git-ignored).
 - **Status.** `python -m scripts.record status` lists every module's datasets with when each was
   recorded and from which model commits, flags a model whose downloaded commit differs or that
-  isn't downloaded, and counts replies waiting for a hand grade.
+  isn't downloaded, and counts replies waiting for a hand grade. For each job it says whether a run
+  now would be fully cached: it runs the job with every model call read from the cache, loading no
+  model and writing nothing, and stops at the first call the cache doesn't hold ("not cached"),
+  or when the job loads its model directly or computes everything itself. That takes a few
+  seconds for every job together.
+- **Tests.** `npm run test:python` runs `scripts/tests/` with `pytest` against a tiny GPT-2 built
+  in the test; CI runs it too ([quality.md](quality.md#ci)).
 - **Manifest.** Every run writes `scripts/record/jobs.json`: each job, its module, the datasets it
   writes, its models, what it needs, and its options. It's committed, and `tests/unit/datasets.test.ts` checks
   that each file a job wrote names that job and that the job declares it.

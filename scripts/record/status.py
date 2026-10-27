@@ -1,4 +1,5 @@
-"""`status`: every module's datasets, when each was recorded, from which model commits, and any replies waiting for a hand grade."""
+"""`status`: every module's datasets, when each was recorded, whether a run now would be fully
+cached, from which model commits, and any replies waiting for a hand grade."""
 
 from __future__ import annotations
 
@@ -51,11 +52,11 @@ def show(modules: list[str]) -> None:
     envelopes = _envelopes()
     for module in modules:
         print(module)
-        rows = [(j.name, o) for j in runtime.JOBS.values() if j.module == module for o in j.outputs]
-        for name, dataset in rows:
-            envelope = envelopes.get(dataset)
-            label = dataset if name == dataset else f"{dataset} ({name})"
-            if not envelope:
-                print(f"  {label:34} not recorded{_waiting(dataset)}")
-                continue
-            print(f"  {label:34} {(envelope.get('generatedAt') or '?')[:10]}  {_models(envelope)}{_waiting(dataset)}")
+        for job in [j for j in runtime.JOBS.values() if j.module == module]:
+            cached = runtime.probe(job)
+            for dataset in job.outputs:
+                envelope = envelopes.get(dataset)
+                label = dataset if job.name == dataset else f"{dataset} ({job.name})"
+                recorded = (envelope.get("generatedAt") or "?")[:10] if envelope else "not recorded"
+                models = f"  {_models(envelope)}" if envelope else ""
+                print(f"  {label:34} {recorded:12} [{cached}]{models}{_waiting(dataset)}")

@@ -114,10 +114,23 @@ jobs:
           path: lighthouse-report/
           retention-days: 7
 
+  python:
+    name: Recording runtime tests (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      # The tests build a tiny model and download none, so the CPU-only PyTorch build is enough.
+      - run: python3 -m venv scripts/.venv
+      - run: scripts/.venv/bin/pip install --index-url https://download.pytorch.org/whl/cpu "$(grep '^torch==' scripts/requirements.txt)"
+      - run: scripts/.venv/bin/pip install -r scripts/requirements.txt -r scripts/requirements-dev.txt
+      - run: npm run test:python
+
   ci-success:
     name: ci-success
     if: always()
-    needs: [checks, build-e2e, lighthouse]
+    needs: [checks, python, build-e2e, lighthouse]
     runs-on: ubuntu-latest
     steps:
       - name: All CI jobs passed

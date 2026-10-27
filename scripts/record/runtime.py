@@ -10,8 +10,10 @@ what changed.
 
 from __future__ import annotations
 
+import contextlib
 import datetime
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -103,6 +105,8 @@ class Settings:
     force: bool = False
     fresh: bool = False
     trial: bool = False
+    # A probe runs a job only as far as the cache goes, to tell whether a run would be fully cached.
+    probe: bool = False
     limit: int | None = None
     only: list[str] = field(default_factory=list)
     sets: dict[str, Any] = field(default_factory=dict)
@@ -157,6 +161,10 @@ def configure(argv: list[str]) -> list[str]:
 
 
 # --- Models -----------------------------------------------------------------------------------
+
+
+class _Uncached(Exception):
+    """A probe reached work the cache doesn't hold."""
 
 
 @dataclass
@@ -247,6 +255,8 @@ def tokenizer(spec: ModelSpec) -> Any:
 
 def loaded(spec: ModelSpec) -> Loaded:
     """The model and tokenizer, loaded on first use and kept for the rest of the process."""
+    if SETTINGS.probe:
+        raise _Uncached("not cached: loads its model")
     device = _device(spec)
     key = (spec.id, device, spec.dtype, spec.attention, spec.kind)
     if key not in _LOADED:
@@ -313,6 +323,8 @@ def _cached(call: str, spec: ModelSpec, inputs: dict, compute: Callable[[], Any]
         if _CURRENT:
             _CURRENT.cached += 1
         return json.loads(path.read_text())["output"]
+    if SETTINGS.probe:
+        raise _Uncached("not cached")
     output = compute()
     path.parent.mkdir(parents=True, exist_ok=True)
     entry = {"key": key, "readable": readable or {}, "output": output}
@@ -648,6 +660,28 @@ def run_job(declared: Job) -> list[Path]:
     log(f"{declared.name}: {run.calls} model calls, {run.cached} cached, {len(written)} files, {took:.0f} s")
     _LOG_FILE = None
     return written
+
+
+def probe(declared: Job) -> str:
+    """Whether running the job now would be fully cached: its code runs with every model call read
+    from the cache, without loading a model or writing anything, until it needs something that isn't
+    there. Returns "cached", or why not."""
+    global _CURRENT
+    if not declared.models:
+        return "not cached: computed by the job"
+    SETTINGS.probe = True
+    _CURRENT = Run(declared)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            declared.fn(_CURRENT)
+        return "cached"
+    except _Uncached as reason:
+        return str(reason)
+    except (SystemExit, Exception) as error:
+        return f"stops: {str(error).splitlines()[0][:60]}"
+    finally:
+        SETTINGS.probe = False
+        _CURRENT = None
 
 
 def try_job(declared: Job) -> None:
