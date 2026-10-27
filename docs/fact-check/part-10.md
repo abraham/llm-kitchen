@@ -209,24 +209,29 @@ uses, as listed on 2026-10-23. Lineups
 and suffixes change often, so re-check the list in the final fact review. The unit test checks that
 every name splits into known parts that spell it back.
 
-| Claim                                                                                                                   | Backing                                                               |
-| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up              | Cite `gemma4-model-card` (Dense Models table and the note on "E")     |
-| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                    | Cite `gemma4-model-card` (MoE table and the note on "A")              |
-| 12B: 11.95B; 31B: 30.7B                                                                                                 | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4)    |
-| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0       | Cite `gemma4-model-card`                                              |
-| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM | Cite `gemma4-qat`                                                     |
-| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                         | Cite `gguf-quant-types`                                               |
-| `-assistant` models are speculative-decoding drafters                                                                   | Cite `gemma4-assistant` (Ch 14)                                       |
-| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                      | Cite `diffusiongemma-model-card`                                      |
-| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                | Collection listing, 2026-10-23                                        |
-| E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")                  |
-| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names            |
-| `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                            | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts) |
-| Simple: restates Standard in plainer words, with no new claims                                                          | Reviewed against the Standard text                                    |
-| In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                 | Cite `qwen25-model-card`; test (`weightBytes`)                        |
-| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 26 In depth (`qwen2024`, config); test                             |
-| In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
+| Claim                                                                                                                            | Backing                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up                       | Cite `gemma4-model-card` (Dense Models table and the note on "E")        |
+| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                             | Cite `gemma4-model-card` (MoE table and the note on "A")                 |
+| 12B: 11.95B; 31B: 30.7B                                                                                                          | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4)       |
+| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0                | Cite `gemma4-model-card`                                                 |
+| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM          | Cite `gemma4-qat`                                                        |
+| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                                  | Cite `gguf-quant-types`                                                  |
+| `-assistant` models are speculative-decoding drafters                                                                            | Cite `gemma4-assistant` (Ch 14)                                          |
+| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                               | Cite `diffusiongemma-model-card`                                         |
+| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                         | Collection listing, 2026-10-23                                           |
+| E models are built for phones and laptops                                                                                        | Cite `gemma4-model-card` ("Optimized for On-Device")                     |
+| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                              | `qwen2024`; `radford2019` and the Hugging Face model names               |
+| `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                                     | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts)    |
+| A hosted model sees every prompt and charges per token; a model you run yourself keeps prompts on your machine                   | Follows from where the model runs; prices per token as in Ch 4 and Ch 11 |
+| Tokenizers split text differently, so compare prices on your own text                                                            | Ch 4 (`anthropic-pricing`)                                               |
+| Reply tokens cost more than prompt tokens; a cached start costs a tenth or less; a cascade sends most questions to a cheap model | Ch 11, Ch 26, Ch 27                                                      |
+| At about 1.3 tokens a word (the rhymes in Ch 4), 128K tokens is about 100,000 words; the ratio depends on tokenizer and text     | Test (128,000 ÷ 1.3 ≈ 98,000); Ch 4 test; labeled as approximate         |
+| Keep your own eval and rerun it when a new model comes out                                                                       | Ch 35 (evals)                                                            |
+| Simple: restates Standard in plainer words, with no new claims                                                                   | Reviewed against the Standard text                                       |
+| In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                          | Cite `qwen25-model-card`; test (`weightBytes`)                           |
+| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                               | Ch 26 In depth (`qwen2024`, config); test                                |
+| In depth: at full context the cache outweighs the 4-bit weights                                                                  | Test                                                                     |
 
 ## Ch 46. Check yourself
 

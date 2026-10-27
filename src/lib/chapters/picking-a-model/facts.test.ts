@@ -63,4 +63,10 @@ describe('picking a model', () => {
 		expect(((kvPerToken * 32768) / 1e9).toFixed(2)).toBe('0.94');
 		expect(kvPerToken * 32768).toBeGreaterThan(weightBytes(1.54e9, 4));
 	});
+
+	it('at about 1.3 tokens a word, 128K tokens is about 100,000 words', () => {
+		const words = 128_000 / 1.3;
+		expect(Math.round(words / 1000)).toBe(98);
+		expect(Math.round(words / 10_000) * 10_000).toBe(100_000);
+	});
 });

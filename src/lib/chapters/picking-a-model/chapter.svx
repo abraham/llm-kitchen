@@ -113,15 +113,28 @@ A short list of questions narrows the choice:
 1. **What is it for?** Chatting and calling tools need an instruction-tuned model; training your
    own version often starts from a base model.
 2. **What goes in?** Text only, or images and audio too? Check the model card.
-3. **Where will it run?** The device's memory sets the largest size and the fewest bits you can
+3. **Your machine or a provider's?** A hosted model needs no hardware of your own, but it sees every
+   prompt you send and charges for each one. A model you run yourself keeps your prompts on your
+   machine; you pay for the hardware instead, and the license has to allow your use.
+4. **Where will it run?** The device's memory sets the largest size and the fewest bits you can
    use; 8 bits usually changes little, 4 bits needs a model made for it (<ChapterRef to="quantization" />).
-4. **How fast must it be?** Fewer active weights per token (<ChapterRef to="mixture-of-experts" />) and a drafter (<ChapterRef to="speculative-decoding" />) both help.
-5. **How much must it read at once?** Long documents need a long context.
-6. **What does the license allow?** It is on the model card too.
+5. **How fast must it be?** Fewer active weights per token (<ChapterRef to="mixture-of-experts" />) and a drafter (<ChapterRef to="speculative-decoding" />) both help.
+6. **What will it cost?** Hosted models charge per token, but each tokenizer splits text
+   differently, so compare prices on your own text (<ChapterRef to="tokens" />). Reply tokens cost more than prompt tokens
+   (<ChapterRef to="generating-text" />), a cached start costs a tenth or less (<ChapterRef to="caching" />), and a cascade sends most
+   questions to a cheap model (<ChapterRef to="routing" />).
+7. **How much must it read at once?** Long documents need a long context. If a word takes about
+   1.3 tokens, as the rhymes in <ChapterRef to="tokens" /> did, E2B's 128K tokens hold about 100,000 words, a long novel;
+   the real ratio depends on the tokenizer and the text.
+8. **What does the license allow?** It is on the model card too.
 
 Benchmarks on the model card narrow the list further. Your own prompts decide: as <ChapterRef to="where-prompts-break" /> showed, a
 model's answers can change with small differences in wording, so try the finalists on the tasks you
 care about.
+
+The choice doesn't stay made: new models come out every few months. Keep a handful of your own
+tasks, each with a way to check the result, an eval like the one in <ChapterRef to="testing-agents" />, and run it again
+when a new model comes out.
 
 You don't have to pick only one. An app can ask a small model first and pass only the questions it
 is unsure of to a bigger one (<ChapterRef to="routing" />).
@@ -133,7 +146,8 @@ is unsure of to a bigger one (<ChapterRef to="routing" />).
   token.
 - `it` means instruction-tuned, `assistant` a drafter, and `qat` trained to survive 4-bit rounding.
 - Memory for the weights is about weights × bits ÷ 8, plus the KV cache and the runtime.
-- Narrow by task, inputs, device, speed, context, and license, then test on your own prompts.
+- Narrow by task, inputs, where it runs, speed, cost, context, and license, then test on your own
+  prompts, and test again when new models come out.
 
 <At levels="deep">
 

@@ -55,5 +55,10 @@ suffixes change often, so the list is dated and re-checked when the site is revi
   global layers, so a per-token figure from the config couldn't be checked against a published
   number.
 - Sources are the model cards rather than the technical report.
+- "How to choose" covers hosted models too (who sees your prompts, and what a token costs), but
+  only through the mechanisms earlier chapters taught: no vendor tables or prices, which change too
+  fast. It ends by pointing at keeping your own eval, since rankings change within months.
+- Context lengths are turned into words with the 1.3 tokens a word from Tokens, labeled as
+  approximate because Gemma's tokenizer and other text differ.
 - [Levels](../levels.md): Simple shortens the list of name parts and what isn't in a name. In
   depth works out a full memory bill, weights plus KV cache, for Qwen2.5-1.5B-Instruct.
