@@ -88,5 +88,5 @@ thanks to the KV cache each run worked through just one new token.
 </At>
 </RecapCard>
 
-**Next question:** that is how one model works, end to end. With hundreds of models to choose from,
-how do you pick one?
+**Next question:** that is how one model works, end to end. When is it the right tool for a job, and
+when is something else better?

@@ -1,4 +1,4 @@
-# Fact-check: Part X, Other kinds of models (Ch 36–41), and the wrap-up (Ch 42–45)
+# Fact-check: Part X, Other kinds of models (Ch 36–41), and the wrap-up (Ch 42–46)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts` (the recorded data says what the prose says),
@@ -175,7 +175,33 @@ existing recordings, labeled in the widget:
       with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
       21 + 59 + the end-of-turn token.
 
-## Ch 44. Picking a model
+## Ch 44. Is a model the right tool?
+
+The four questions restate earlier chapters; each recorded example is quoted from an existing
+dataset, and `facts.test.ts` checks the widget's text (`src/lib/chapters/when-to-use/data.ts`)
+against it.
+
+| Claim                                                                                                                                 | Backing                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 453 college-educated professionals, occupation-specific writing tasks, half randomly given ChatGPT; 40% less time, quality 18% higher | Cite `noy2023` (abstract)                      |
+| A model writes likely tokens from its prompt and its weights                                                                          | Ch 11, 16, 23                                  |
+| Exact answers may not be the likely ones                                                                                              | Ch 16                                          |
+| Without a calculator, Qwen2.5-1.5B-Instruct got 7,050,952 for 1234 × 5678; the answer is 7,006,652                                    | Test (`agent/math-no-tools`), Ch 28            |
+| Nothing after its cutoff, little about rare topics                                                                                    | Ch 16; Ch 32 (`kandpal2023`)                   |
+| The made-up novel: nine different authors in ten tries                                                                                | Test (`hallucination/samples`), Ch 32          |
+| Dropped chat couldn't name the child; retrieved, it said Lily                                                                         | Test (`agent/context`), Ch 24                  |
+| Eddy Merckx ten times out of ten for 1987; it was Stephen Roche                                                                       | Test (`hallucination/samples`), Ch 32          |
+| The small model was 79% sure Sydney is Australia's capital                                                                            | Test (`routing/cascade`), Ch 27                |
+| Answers can change from call to call                                                                                                  | Ch 3                                           |
+| The short call read a 400-token prompt; 10,000 calls is four million tokens                                                           | Test (`agent/chat`), Ch 43                     |
+| Keep a person in the loop where mistakes are costly; test before relying on it                                                        | Ch 34, 35                                      |
+| The widget's preset tasks and verdicts                                                                                                | Illustrative; test checks each verdict         |
+| Simple: restates Standard in plainer words, with no new claims                                                                        | Reviewed against the Standard text             |
+| In depth: a + c + p f < T                                                                                                             | Illustrative; each term is defined in the text |
+| In depth: the consistency check trusts 8 of 10; flags 4 of 5 wrong, 0 of 6 right; misses Roche                                        | Test (`summarize`, `consistencyCheck`), Ch 32  |
+| In depth: weaker writers gained most; inequality between workers decreased                                                            | Cite `noy2023` (abstract and editor's summary) |
+
+## Ch 45. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
@@ -202,9 +228,9 @@ every name splits into known parts that spell it back.
 | In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 26 In depth (`qwen2024`, config); test                             |
 | In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
 
-## Ch 45. Check yourself
+## Ch 46. Check yourself
 
-Fifteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
+Sixteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
@@ -214,9 +240,11 @@ has at least one. Each answer restates its linked chapter:
 - [x] Speculative decoding writes exactly the big model's text in fewer passes (Ch 14; added in
       milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 26, 28, 33, 34,
-      31). The e2e test answers all fifteen and checks the revisit list.
+      31). The e2e test answers all sixteen and checks the revisit list.
 - [x] A Decision Transformer asked for more than any training run scored plays like the best runs
       it has seen (Ch 41; added with the chapter).
+- [x] Rewording an email you'll read suits a model on its own; the other options need one exact
+      answer (Ch 44; added with the chapter).
 - [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
       prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 25 with no new
       claims.

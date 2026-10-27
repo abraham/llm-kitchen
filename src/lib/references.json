@@ -1276,5 +1276,13 @@
 		"year": 2025,
 		"url": "https://developers.google.com/machine-learning/crash-course/production-ml-systems/static-vs-dynamic-inference",
 		"accessed": "2026-10-25"
+	},
+	{
+		"id": "noy2023",
+		"authors": ["Shakked Noy", "Whitney Zhang"],
+		"title": "Experimental evidence on the productivity effects of generative artificial intelligence",
+		"venue": "Science 381(6654)",
+		"year": 2023,
+		"url": "https://doi.org/10.1126/science.adh2586"
 	}
 ]

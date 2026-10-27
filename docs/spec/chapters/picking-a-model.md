@@ -1,7 +1,6 @@
 # Picking a model
 
-**Question:** That is how one model works, end to end. With hundreds of models to choose from, how
-do you pick one?
+**Question:** If a model is the right tool, which one? There are hundreds to choose from.
 
 **Key idea:** A model's name packs in its family, size, tuning, and often its bits per weight and
 file format. `E` means an effective size and `A` an active size; both store more weights than they
