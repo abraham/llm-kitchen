@@ -125,6 +125,30 @@ export const fewShotLabels = object({
 });
 export type FewShotLabels = Infer<typeof fewShotLabels>;
 
+export const PROBLEM_RUNS = ['plain', 'distracted', 'ignore', 'turns'] as const;
+export type ProblemRun = (typeof PROBLEM_RUNS)[number];
+
+const problemRun = object({
+	messages: array(object({ role: string, content: string })),
+	answer: nullable(string),
+	correct: boolean
+});
+
+export const wordProblems = object({
+	model: modelRef,
+	ignoreInstruction: string,
+	problems: array(
+		object({
+			facts: tuple(string, string),
+			question: string,
+			distractor: string,
+			answer: integer,
+			runs: record(PROBLEM_RUNS, problemRun)
+		})
+	)
+});
+export type WordProblems = Infer<typeof wordProblems>;
+
 const answer = object({ text: string, correct: boolean });
 
 export const systemPrompts = object({

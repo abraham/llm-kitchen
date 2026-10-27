@@ -1309,5 +1309,21 @@
 		"venue": "arXiv",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2303.03846"
+	},
+	{
+		"id": "shi2023",
+		"authors": ["Freda Shi", "Xinyun Chen", "Kanishka Misra", "Nathan Scales"],
+		"title": "Large Language Models Can Be Easily Distracted by Irrelevant Context",
+		"venue": "ICML 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2302.00093"
+	},
+	{
+		"id": "laban2025",
+		"authors": ["Philippe Laban", "Hiroaki Hayashi", "Yingbo Zhou", "Jennifer Neville"],
+		"title": "LLMs Get Lost In Multi-Turn Conversation",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2505.06120"
 	}
 ]

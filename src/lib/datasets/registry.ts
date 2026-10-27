@@ -17,6 +17,7 @@ import {
 	steps,
 	systemPrompts,
 	thinking,
+	wordProblems,
 	wording
 } from './parsers/prompts.ts';
 import {
@@ -89,6 +90,7 @@ export const DATASETS = {
 	'prompts/wording': dataset('prompts/wording.json', wording, 'prompts'),
 	'prompts/fewshot': dataset('prompts/fewshot.json', fewShot, 'prompts'),
 	'prompts/labels': dataset('prompts/labels.json', fewShotLabels, 'prompts'),
+	'prompts/problems': dataset('prompts/problems.json', wordProblems, 'prompts'),
 	'prompts/system': dataset('prompts/system.json', systemPrompts, 'prompts'),
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),

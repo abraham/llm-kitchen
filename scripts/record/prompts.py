@@ -11,6 +11,7 @@ static/data/prompts/:
   system.json   `instructions-and-roles`: Qwen with different system prompts
   steps.json    `steps-and-structure`: Qwen on the `reasoning-models` puzzles, plain, step by step, and with a fixed format
   fragile.json  `where-prompts-break`: example order and format (GPT-2), and a fact's position in a long prompt (Qwen)
+  problems.json `where-prompts-break`: Qwen on word problems with a distracting sentence, and with details spread over turns
 """
 
 from __future__ import annotations
@@ -518,6 +519,87 @@ def fragile() -> None:
     )
 
 
+# --- `where-prompts-break`: distracting details and details spread over turns ------------------------------------
+# After Shi et al. 2023 (an irrelevant sentence in a word problem) and Laban et al. 2025 (a task's details spread
+# over several turns). Each problem: two facts, the question, an irrelevant sentence, and the answer.
+PROBLEMS = [
+    ("Lena has 12 apples.", "She gives 5 to her brother and then buys 8 more.", "How many apples does Lena have now?", "Her neighbor Tom has 30 apples.", 15),
+    ("A bus has 40 seats.", "26 people get on at the first stop and 9 more at the second.", "How many empty seats are left?", "Yesterday the same bus carried 33 people.", 5),
+    ("Sam reads 15 pages a day.", "He reads for 6 days.", "How many pages does Sam read?", "His sister reads 20 pages a day.", 90),
+    ("A box holds 24 pencils.", "Mia uses 7 and gives 5 away.", "How many pencils are left in Mia's box?", "Her friend's box holds 36 pencils.", 12),
+    ("Tickets cost 8 dollars each.", "Raj buys 4 tickets and pays with a 50-dollar note.", "How much change does Raj get?", "His friend paid 35 dollars for a jacket.", 18),
+    ("A baker makes 60 rolls.", "He sells 3 bags of 12 rolls.", "How many of the baker's rolls are left?", "Another baker down the road makes 45 rolls.", 24),
+    ("Ana walks 3 kilometers to school and 3 kilometers back each day.", "She does this on 5 school days.", "How far does Ana walk in total?", "Her brother cycles 10 kilometers a day.", 30),
+    ("A hall has 9 rows of chairs with 7 chairs in each row.", "18 chairs are taken.", "How many chairs in the hall are free?", "The hall next door has 50 chairs.", 45),
+    ("Ben had 50 stickers.", "He gave half to his friend and then got 6 new ones.", "How many stickers does Ben have now?", "His friend already had 14 stickers.", 31),
+    ("A garden has 4 rows of 6 tulips.", "5 tulips are picked.", "How many tulips are left?", "The gardener also planted 9 roses.", 19),
+    ("Kim saves 7 dollars a week.", "She does this for 8 weeks.", "How much does Kim save?", "Her cousin saves 10 dollars a week.", 56),
+    ("Jo buys 3 packs of 6 eggs.", "She breaks 4 of them.", "How many unbroken eggs does Jo have?", "Her hens laid 11 eggs last week.", 14),
+    ("A shop has 80 shirts.", "It sells 25 on Monday and 30 on Tuesday.", "How many shirts does the shop have left?", "Another shop sold 40 shirts on Monday.", 25),
+    ("Omar runs laps of a 400-meter track.", "He runs 4 laps.", "How many meters does Omar run?", "His coach once ran 12 laps.", 1600),
+    ("A class has 28 students.", "13 of them are boys.", "How many girls are in the class?", "The class next door has 31 students.", 15),
+    ("Priya buys 5 notebooks at 3 dollars each.", "She also buys a pen for 2 dollars.", "How much does Priya spend?", "Her brother spent 20 dollars on books.", 17),
+    ("A farmer has 7 cows.", "Each cow gives 6 liters of milk a day.", "How many liters of milk do the farmer's cows give in a day?", "His neighbor has 12 cows.", 42),
+    ("Leo has 3 boxes with 9 marbles each.", "He loses 5 marbles.", "How many marbles does Leo have left?", "His sister has 20 marbles.", 22),
+    ("A tank holds 100 liters.", "It is filled with 35 liters in the morning and 40 in the evening.", "How many more liters are needed to fill the tank?", "A smaller tank holds 60 liters.", 25),
+    ("Nina bakes 4 trays of 12 cookies.", "She gives away 15 cookies.", "How many cookies does Nina have left?", "Her friend baked 30 cookies.", 33),
+    ("A library has 120 books and lends out 45.", "Then 20 are returned.", "How many books are in the library now?", "The school library has 300 books.", 95),
+    ("Tom earns 12 dollars an hour.", "He works 7 hours.", "How much does Tom earn?", "His boss earns 30 dollars an hour.", 84),
+    ("A pizza has 8 slices.", "Four friends order 3 pizzas and eat 19 slices.", "How many slices are left?", "Last week they ordered 2 pizzas.", 5),
+    ("Eva plants 6 rows of 8 carrots.", "Rabbits eat 11 carrots.", "How many carrots are left?", "Her neighbor planted 20 carrots.", 37),
+]
+ANSWER_LINE = " Give the final answer on the last line as 'Answer: <number>'."
+IGNORE = "Feel free to ignore irrelevant information in the problem. "
+
+
+def final_number(text: str) -> str | None:
+    """The number after the last "Answer:", or else the last number in the reply."""
+    tagged = re.findall(r"Answer:\s*\$?(-?\d[\d,]*)", text)
+    found = tagged or re.findall(r"-?\d[\d,]*", text)
+    return found[-1].replace(",", "") if found else None
+
+
+def qwen_chat(messages: list[dict]) -> str:
+    return qwen_reply(qwen_tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True))["text"]
+
+
+def problems() -> None:
+    out = []
+    for fact1, fact2, question, distractor, answer in PROBLEMS:
+        runs = {}
+        for name, text in [
+            ("plain", f"{fact1} {fact2} {question}{ANSWER_LINE}"),
+            ("distracted", f"{fact1} {fact2} {distractor} {question}{ANSWER_LINE}"),
+            ("ignore", f"{IGNORE}{fact1} {fact2} {distractor} {question}{ANSWER_LINE}"),
+        ]:
+            messages = [{"role": "user", "content": text}]
+            messages.append({"role": "assistant", "content": qwen_chat(messages)})
+            runs[name] = messages
+        # The question comes first, as people often ask, and the details follow in later turns.
+        messages = []
+        for turn in [f"{question}{ANSWER_LINE}", fact1, fact2]:
+            messages.append({"role": "user", "content": turn})
+            messages.append({"role": "assistant", "content": qwen_chat(messages)})
+        runs["turns"] = messages
+        results = {
+            name: {"messages": msgs, "answer": final_number(msgs[-1]["content"])} for name, msgs in runs.items()
+        }
+        for r in results.values():
+            r["correct"] = r["answer"] == str(answer)
+        out.append(
+            {
+                "facts": [fact1, fact2],
+                "question": question,
+                "distractor": distractor,
+                "answer": answer,
+                "runs": results,
+            }
+        )
+        print(answer, {k: (v["answer"], v["correct"]) for k, v in results.items()})
+    print({k: sum(p["runs"][k]["correct"] for p in out) for k in out[0]["runs"]})
+    write("problems.json", {"version": 1, "model": QWEN_INFO, "ignoreInstruction": IGNORE.strip(), "problems": out})
+
+
 def main(names: list[str]) -> None:
     jobs = {
         "wording": wording,
@@ -526,6 +608,7 @@ def main(names: list[str]) -> None:
         "system": system,
         "steps": steps,
         "fragile": fragile,
+        "problems": problems,
     }
     for name in names or jobs:
         jobs[name]()
