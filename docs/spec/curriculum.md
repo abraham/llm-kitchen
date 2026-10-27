@@ -148,12 +148,13 @@ _What else is built from the same pieces?_
 
 _How does it all fit together?_ Unnumbered Part.
 
-| Ch  | Title                    | Slug              | Builds on                  |
-| --- | ------------------------ | ----------------- | -------------------------- |
-| 42  | Recap: the whole picture | `recap`           | —                          |
-| 43  | From message to reply    | `end-to-end`      | —                          |
-| 44  | Picking a model          | `picking-a-model` | 12, 13, 14, 15, 26, 37, 39 |
-| 45  | Check yourself           | `quiz`            | —                          |
+| Ch  | Title                      | Slug              | Builds on                  |
+| --- | -------------------------- | ----------------- | -------------------------- |
+| 42  | Recap: the whole picture   | `recap`           | —                          |
+| 43  | From message to reply      | `end-to-end`      | —                          |
+| 44  | Is a model the right tool? | `when-to-use`     | 16, 25, 28, 32, 35         |
+| 45  | Picking a model            | `picking-a-model` | 12, 13, 14, 15, 26, 37, 39 |
+| 46  | Check yourself             | `quiz`            | —                          |
 
 ## Why this order
 
@@ -196,8 +197,9 @@ _How does it all fit together?_ Unnumbered Part.
   they draw on every earlier Part, including the KV cache (Ch 26) that recurrent models avoid, and
   the agent loop (Ch 29) that decision models replace with predicted moves.
 - **The Wrap-up puts it together.** The recap shows what the pieces are, From message to reply shows
-  the order they run in, Picking a model reads real model names with everything taught so far, and
-  the quiz comes last.
+  the order they run in, Is a model the right tool? turns the limits taught so far into four
+  questions for deciding whether to use one, Picking a model reads real model names with everything
+  taught so far, and the quiz comes last.
 
 ## Changing the organization
 

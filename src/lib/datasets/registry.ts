@@ -12,10 +12,14 @@ import { clip, clipImages, decisionRecording, fillMask } from './parsers/models.
 import {
 	baseVsInstruct,
 	fewShot,
+	fewShotLabels,
 	fragile,
+	manyRules,
+	pushback,
 	steps,
 	systemPrompts,
 	thinking,
+	wordProblems,
 	wording
 } from './parsers/prompts.ts';
 import {
@@ -65,6 +69,9 @@ export const DATASETS = {
 	'traces/quirk-france-qa': traceFile('quirk-france-qa'),
 	'traces/quirk-iphone': traceFile('quirk-iphone'),
 	'traces/quirk-loop': traceFile('quirk-loop'),
+	'traces/penalty-0': traceFile('penalty-0'),
+	'traces/penalty-05': traceFile('penalty-05'),
+	'traces/penalty-5': traceFile('penalty-5'),
 	'traces/quirk-nurse': traceFile('quirk-nurse'),
 	'traces/quirk-engineer': traceFile('quirk-engineer'),
 	'traces/quirk-math': traceFile('quirk-math'),
@@ -84,6 +91,10 @@ export const DATASETS = {
 	'reasoning/thinking': dataset('reasoning/thinking.json', thinking, 'reasoning'),
 	'prompts/wording': dataset('prompts/wording.json', wording, 'prompts'),
 	'prompts/fewshot': dataset('prompts/fewshot.json', fewShot, 'prompts'),
+	'prompts/labels': dataset('prompts/labels.json', fewShotLabels, 'prompts'),
+	'prompts/problems': dataset('prompts/problems.json', wordProblems, 'prompts'),
+	'prompts/pushback': dataset('prompts/pushback.json', pushback, 'prompts'),
+	'prompts/rules': dataset('prompts/rules.json', manyRules, 'prompts'),
 	'prompts/system': dataset('prompts/system.json', systemPrompts, 'prompts'),
 	'prompts/steps': dataset('prompts/steps.json', steps, 'prompts'),
 	'prompts/fragile': dataset('prompts/fragile.json', fragile, 'prompts'),

@@ -64,7 +64,9 @@ check exactly. Does the answer contain 7006652? Are all the user's files still t
 
 A trace explains one run. To know whether a change to the prompt, the tools, or the model made
 things better or worse, you need an <GlossaryPopover term="eval">eval</GlossaryPopover>: a fixed
-set of tasks, each with a way to check the result, run again after every change. It needn't be
+set of tasks, each with a way to check the result, run again after every change. That includes
+changes you didn't make: a provider can update the model behind the same name, and a prompt that
+worked can stop working (<ChapterRef to="picking-a-model" />). It needn't be
 big: Anthropic started with about 20 tasks drawn from real use, because early changes moved
 results so much that a few cases showed it.<Cite id="anthropic-multi-agent" />
 

@@ -5,6 +5,7 @@
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import GlassBoxGenerator from '#lib/components/widgets/GlassBoxGenerator.svelte';
+	import PenaltyRuns from './PenaltyRuns.svelte';
 </script>
 
 ## One token, then the next
@@ -75,6 +76,57 @@ repetitive, which is part of why open-ended writing samples instead.<Cite id="ho
 
 </At>
 
+## Penalizing repeats
+
+<At levels="simple">
+
+Apps that run a model can also make a token less likely each time it has been used, a
+**frequency penalty**. Here is GPT-2 continuing "The cat sat on the bed", always taking the most
+likely token, with no penalty, a small one, and a big one:
+
+</At>
+<At levels="standard deep">
+
+Most model APIs also offer a setting aimed straight at loops. A **frequency penalty** lowers the
+score of every token by a set amount for each time it has already appeared in the reply, so the more
+a token has been used, the less likely it gets. A **presence penalty** is the flat version: one
+fixed cut for any token already used, however many times.<Cite id="openai-chat-api" /> Here is GPT-2
+continuing "The cat sat on the bed", always taking the most likely token after the penalty:
+
+</At>
+
+<PenaltyRuns />
+
+<At levels="simple">
+
+With no penalty, the 32 tokens use only 7 different ones. A small penalty breaks the loop. A big
+one stops GPT-2 from using any token twice, even " the", so the cat sits on "her back".
+
+</At>
+<At levels="standard deep">
+
+With no penalty, the 32 tokens use only 7 different ones. At 0.5, "the cat sat on the bed" comes
+round once more, then the loop breaks and 25 of the 32 are different. At 5, no token appears twice.
+Even " the" is ruled out, so the cat sits on "her back". A penalty works on tokens, not ideas, so a
+strong one also pushes out the small words that every sentence needs.
+
+</At>
+<At levels="deep">
+
+Written down, with $z_i$ token $i$'s score and $c_i$ the number of times it has appeared in the
+reply so far, the recordings above use
+
+$$
+z_i' = z_i - \alpha_f\, c_i
+$$
+
+with $\alpha_f$ the frequency penalty, and a presence penalty $\alpha_p$ subtracts
+$\alpha_p$ once from every token with $c_i > 0$. The softmax and the pick follow as usual. How big
+a penalty needs to be depends on how spread out the model's scores are, so 0.5 for GPT-2 isn't
+the same as 0.5 for another model.
+
+</At>
+
 ## No going back
 
 <At levels="simple">
@@ -122,7 +174,8 @@ only run the newest token through the model; <ChapterRef to="caching" /> shows h
 <At levels="simple">
 
 The loop has to stop somehow. It stops when the model picks a special "end of text" token, or
-when it reaches a length limit it was given.
+when it reaches a length limit it was given. The model never sees that limit, so it doesn't write a
+shorter answer to fit: the reply just stops, even mid-sentence. To get a short answer, ask for one.
 
 </At>
 <At levels="standard deep">
@@ -131,6 +184,12 @@ The loop has to end somehow. GPT-2's vocabulary includes a special token, `<|end
 50,256), that means "end of text". When the model picks it, the program stops.<Cite id="gpt2-config" />
 Otherwise, the program stops at a length limit it was given. Chat models work the same way
 with their own end-of-turn token.
+
+The length limit is the program's, not the model's. The model never sees it, so it doesn't plan a
+shorter answer: if the limit comes first, the reply is cut off, even mid-sentence, and the API
+reports that it stopped for length. To get a short answer, ask for one in the prompt
+(<ChapterRef to="instructions-and-roles" />). The limit counts only the reply, including a reasoning model's thinking, and the
+prompt and reply together must still fit in the context window.<Cite id="openai-chat-api" />
 
 </At>
 
@@ -145,8 +204,10 @@ copy of GPT-2 small, with the tier's three other small models and the code that 
 
 - A model only predicts the next token. Generating text is a loop: predict, pick, append, repeat.
 - Each token costs one full run of the model, and once picked it is never revised.
-- Always taking the top token can loop; sampling with a temperature mostly avoids that.
-- Generation stops at a special end token or a length limit.
+- Always taking the top token can loop; sampling with a temperature mostly avoids that, and a
+  frequency penalty makes used tokens less likely.
+- Generation stops at a special end token or a length limit. The model never sees the limit, so a
+  low one cuts the reply off.
 
 <At levels="deep">
 

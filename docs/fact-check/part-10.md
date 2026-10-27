@@ -1,4 +1,4 @@
-# Fact-check: Part X, Other kinds of models (Ch 36–41), and the wrap-up (Ch 42–45)
+# Fact-check: Part X, Other kinds of models (Ch 36–41), and the wrap-up (Ch 42–46)
 
 Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.md)). Tests:
 each chapter's `facts.test.ts` (the recorded data says what the prose says),
@@ -175,7 +175,34 @@ existing recordings, labeled in the widget:
       with caching, 400 + 93 = 493 tokens of prompt work instead of 893 (test). About 80 runs:
       21 + 59 + the end-of-turn token.
 
-## Ch 44. Picking a model
+## Ch 44. Is a model the right tool?
+
+The four questions restate earlier chapters; each recorded example is quoted from an existing
+dataset, and `facts.test.ts` checks the widget's text (`src/lib/chapters/when-to-use/data.ts`)
+against it.
+
+| Claim                                                                                                                                                                                                     | Backing                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 453 college-educated professionals, occupation-specific writing tasks, half randomly given ChatGPT; 40% less time, quality 18% higher                                                                     | Cite `noy2023` (abstract)                      |
+| 758 BCG consultants, preregistered; on 18 tasks inside the frontier 12.2% more tasks, 25.1% faster, better quality; on one task outside it 19% less likely to be correct; "jagged technological frontier" | Cite `dellacqua2023` (abstract)                |
+| A model writes likely tokens from its prompt and its weights                                                                                                                                              | Ch 11, 16, 23                                  |
+| Exact answers may not be the likely ones                                                                                                                                                                  | Ch 16                                          |
+| Without a calculator, Qwen2.5-1.5B-Instruct got 7,050,952 for 1234 × 5678; the answer is 7,006,652                                                                                                        | Test (`agent/math-no-tools`), Ch 28            |
+| Nothing after its cutoff, little about rare topics                                                                                                                                                        | Ch 16; Ch 32 (`kandpal2023`)                   |
+| The made-up novel: nine different authors in ten tries                                                                                                                                                    | Test (`hallucination/samples`), Ch 32          |
+| Dropped chat couldn't name the child; retrieved, it said Lily                                                                                                                                             | Test (`agent/context`), Ch 24                  |
+| Eddy Merckx ten times out of ten for 1987; it was Stephen Roche                                                                                                                                           | Test (`hallucination/samples`), Ch 32          |
+| The small model was 79% sure Sydney is Australia's capital                                                                                                                                                | Test (`routing/cascade`), Ch 27                |
+| Answers can change from call to call                                                                                                                                                                      | Ch 3                                           |
+| The short call read a 400-token prompt; 10,000 calls is four million tokens                                                                                                                               | Test (`agent/chat`), Ch 43                     |
+| Keep a person in the loop where mistakes are costly; test before relying on it                                                                                                                            | Ch 34, 35                                      |
+| The widget's preset tasks and verdicts                                                                                                                                                                    | Illustrative; test checks each verdict         |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                                            | Reviewed against the Standard text             |
+| In depth: a + c + p f < T                                                                                                                                                                                 | Illustrative; each term is defined in the text |
+| In depth: the consistency check trusts 8 of 10; flags 4 of 5 wrong, 0 of 6 right; misses Roche                                                                                                            | Test (`summarize`, `consistencyCheck`), Ch 32  |
+| In depth: weaker writers gained most; inequality between workers decreased                                                                                                                                | Cite `noy2023` (abstract and editor's summary) |
+
+## Ch 45. Picking a model
 
 The decoder's names (`src/lib/chapters/picking-a-model/data.ts`) are from Google's Gemma 4, Gemma 4 QAT Mobile,
 and Gemma 4 QAT Q4_0 collections, two of DeepSeek's R1-Distill models, and the models this site
@@ -183,28 +210,35 @@ uses, as listed on 2026-10-23. Lineups
 and suffixes change often, so re-check the list in the final fact review. The unit test checks that
 every name splits into known parts that spell it back.
 
-| Claim                                                                                                                   | Backing                                                               |
-| ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up              | Cite `gemma4-model-card` (Dense Models table and the note on "E")     |
-| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                    | Cite `gemma4-model-card` (MoE table and the note on "A")              |
-| 12B: 11.95B; 31B: 30.7B                                                                                                 | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4)    |
-| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0       | Cite `gemma4-model-card`                                              |
-| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM | Cite `gemma4-qat`                                                     |
-| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                         | Cite `gguf-quant-types`                                               |
-| `-assistant` models are speculative-decoding drafters                                                                   | Cite `gemma4-assistant` (Ch 14)                                       |
-| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                      | Cite `diffusiongemma-model-card`                                      |
-| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                | Collection listing, 2026-10-23                                        |
-| E models are built for phones and laptops                                                                               | Cite `gemma4-model-card` ("Optimized for On-Device")                  |
-| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                     | `qwen2024`; `radford2019` and the Hugging Face model names            |
-| `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                            | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts) |
-| Simple: restates Standard in plainer words, with no new claims                                                          | Reviewed against the Standard text                                    |
-| In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                 | Cite `qwen25-model-card`; test (`weightBytes`)                        |
-| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                      | Ch 26 In depth (`qwen2024`, config); test                             |
-| In depth: at full context the cache outweighs the 4-bit weights                                                         | Test                                                                  |
+| Claim                                                                                                                                  | Backing                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| E2B: 2.3B effective, 5.1B with per-layer embeddings; E4B: 4.5B and 8B; per-layer tables are only looked up                             | Cite `gemma4-model-card` (Dense Models table and the note on "E")        |
+| 26B A4B: 25.2B total, 3.8B active, 8 of 128 experts plus 1 shared; runs almost as fast as a 4B model                                   | Cite `gemma4-model-card` (MoE table and the note on "A")                 |
+| 12B: 11.95B; 31B: 30.7B                                                                                                                | Cite `gemma4-model-card`; test (31B: 61 GB at 16 bits, 15 GB at 4)       |
+| Context: 128K tokens (E2B, E4B), 256K (12B, 26B A4B, 31B); audio only on E2B, E4B, 12B; thinking mode; Apache 2.0                      | Cite `gemma4-model-card`                                                 |
+| Four QAT versions: unquantized 16-bit, GGUF Q4_0, mobile (wNa8o8, with 2-bit layers), compressed tensors w4a16 for vLLM                | Cite `gemma4-qat`                                                        |
+| GGUF's Q4_0: 4-bit, blocks of 32 with one scale                                                                                        | Cite `gguf-quant-types`                                                  |
+| `-assistant` models are speculative-decoding drafters                                                                                  | Cite `gemma4-assistant` (Ch 14)                                          |
+| DiffusionGemma is based on 26B A4B and denoises a 256-token canvas                                                                     | Cite `diffusiongemma-model-card`                                         |
+| Hugging Face shows 5B for `gemma-4-E2B` (stored tensors)                                                                               | Collection listing, 2026-10-23                                           |
+| E models are built for phones and laptops                                                                                              | Cite `gemma4-model-card` ("Optimized for On-Device")                     |
+| Qwen2.5 is from Alibaba's Qwen team; GPT-2's sizes are small, medium, large, and XL                                                    | `qwen2024`; `radford2019` and the Hugging Face model names               |
+| `DeepSeek-R1-Distill-Qwen-1.5B` is a 1.5B Qwen model tuned on examples made with DeepSeek-R1                                           | Cite `deepseek2025` §2.4 (base: Qwen2.5-Math-1.5B); test (name parts)    |
+| A hosted model sees every prompt and charges per token; a model you run yourself keeps prompts on your machine                         | Follows from where the model runs; prices per token as in Ch 4 and Ch 11 |
+| Tokenizers split text differently, so compare prices on your own text                                                                  | Ch 4 (`anthropic-pricing`)                                               |
+| Reply tokens cost more than prompt tokens; a cached start costs a tenth or less; a cascade sends most questions to a cheap model       | Ch 11, Ch 26, Ch 27                                                      |
+| At about 1.3 tokens a word (the rhymes in Ch 4), 128K tokens is about 100,000 words; the ratio depends on tokenizer and text           | Test (128,000 ÷ 1.3 ≈ 98,000); Ch 4 test; labeled as approximate         |
+| Keep your own eval and rerun it when a new model comes out                                                                             | Ch 35 (evals)                                                            |
+| GPT-4, March vs June 2023: primes 84% → 51%, partly from following step-by-step prompts less well; GPT-3.5 got better at the same task | Cite `chen2023drift` (abstract)                                          |
+| Providers may offer fixed, dated versions; use one and rerun your eval before moving on                                                | Advice; follows from `chen2023drift` ("continuous monitoring")           |
+| Simple: restates Standard in plainer words, with no new claims                                                                         | Reviewed against the Standard text                                       |
+| In depth: Qwen2.5-1.5B-Instruct has 1.54B weights: about 3.1 GB at 16 bits, 0.8 GB at 4                                                | Cite `qwen25-model-card`; test (`weightBytes`)                           |
+| In depth: KV cache 14,336 numbers per token at 2 bytes: 0.11 GB at 4,000 tokens, 0.94 GB at 32,768                                     | Ch 26 In depth (`qwen2024`, config); test                                |
+| In depth: at full context the cache outweighs the 4-bit weights                                                                        | Test                                                                     |
 
-## Ch 45. Check yourself
+## Ch 46. Check yourself
 
-Fifteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
+Sixteen questions in reading order; Simple rewords three of them and In depth adds four more (`src/lib/chapters/quiz/data.ts`); the unit test checks every Part I–IX
 has at least one. Each answer restates its linked chapter:
 
 - [x] Temperature spreads probabilities so unlikely tokens are picked more often (Ch 2).
@@ -214,9 +248,11 @@ has at least one. Each answer restates its linked chapter:
 - [x] Speculative decoding writes exactly the big model's text in fewer passes (Ch 14; added in
       milestone 21).
 - [x] The other ten are unchanged from the recap's quiz (Ch 4, 16, 9, 11, 17, 19, 26, 28, 33, 34,
-      31). The e2e test answers all fifteen and checks the revisit list.
+      31). The e2e test answers all sixteen and checks the revisit list.
 - [x] A Decision Transformer asked for more than any training run scored plays like the best runs
       it has seen (Ch 41; added with the chapter).
+- [x] Rewording an email you'll read suits a model on its own; the other options need one exact
+      answer (Ch 44; added with the chapter).
 - [x] Simple rewordings (training on lots of text with small nudges; examples shape only this
       prompt; the provider reuses work on the prompt's start) restate Ch 7, 19, and 25 with no new
       claims.

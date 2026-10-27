@@ -1,0 +1,169 @@
+<script lang="ts">
+	import At from '#lib/components/page/At.svelte';
+	import ChapterRef from '#lib/components/page/ChapterRef.svelte';
+	import Cite from '#lib/components/page/Cite.svelte';
+	import RecapCard from '#lib/components/page/RecapCard.svelte';
+	import RightTool from './RightTool.svelte';
+</script>
+
+## The right tool for the job
+
+<At levels="simple">
+
+You've now seen what a language model does: it writes the likely next token, again and again, using
+only what's in its prompt and what training left in its weights. That tells you when it will help.
+
+It helps most with writing. In one experiment, 453 professionals did writing tasks from their own
+jobs, and half of them could use ChatGPT. Those who could finished 40% faster, and their work was
+rated 18% better.<Cite id="noy2023" /> But it can also make work worse. Consultants who used GPT-4
+did better on 18 tasks it was good at, but on one task just beyond it they got the right answer less
+often than those working alone.<Cite id="dellacqua2023" /> For other jobs, a calculator, a search,
+or an expert does better. Four questions tell them apart.
+
+</At>
+<At levels="standard deep">
+
+Everything so far comes down to one fact: a language model writes the likely next token, again and
+again, from what's in its prompt and what training left in its weights. That fact tells you when to
+reach for one, and when not to.
+
+Writing is where it shines. In a preregistered experiment, 453 college-educated professionals did
+writing tasks from their own occupations, and half of them, chosen at random, could use ChatGPT.
+They took 40% less time, and graders rated their work 18% better.<Cite id="noy2023" />
+
+Other jobs go the other way, even ones that look just as hard. In another preregistered experiment,
+758 consultants at Boston Consulting Group were given realistic consulting tasks, some with GPT-4
+and some without. On 18 tasks within its abilities, those using it finished 12.2% more tasks, 25.1%
+faster, and with better quality. On one task chosen to be just beyond its abilities, they were 19%
+less likely to reach a correct answer than those working alone. The researchers called the uneven
+line between the two a "jagged frontier": you can't tell from how hard a task looks which side it's
+on.<Cite id="dellacqua2023" /> Four questions, each from an earlier chapter, help tell them apart.
+
+</At>
+
+## Four questions
+
+<At levels="simple">
+
+**Would a likely-sounding answer be a good one?** For rewording, summing up, drafting, and
+brainstorming, yes: you want text that reads well. For a sum or a date, you want one exact answer,
+and the likely-looking one can be wrong. Without a calculator, the model in <ChapterRef to="tools" /> worked out
+1234 × 5678 step by step and got 7,050,952. The answer is 7,006,652.
+
+**Can you give it everything it needs to know?** It knows only its prompt and its training: nothing
+about your files, nothing after its cutoff, and little about rare things. Asked ten times who wrote a
+novel made up for this site, it named nine different authors (<ChapterRef to="making-things-up" />). Paste the facts in, or
+let the app search for them (<ChapterRef to="search-and-memory" />).
+
+**Can you check the result quickly, and live with a mistake?** The model sounds just as sure when
+it's wrong. Asked ten times who won the 1987 Tour de France, it said Eddy Merckx every time; it was
+Stephen Roche. So a model saves time only when checking its work is quicker than doing the job
+yourself. For anything that matters, have someone who knows check it.
+
+**Is there a simpler tool that gives the exact answer?** A calculator, a spreadsheet, or a search
+engine is exact, fast, and free, and gives the same answer every time. For the same sum over 10,000
+rows, write the formula once. A model can help you write it.
+
+</At>
+<At levels="standard deep">
+
+**Would a likely-sounding answer be a good one?** Rewording, summarizing, drafting, translating, and
+brainstorming ask for text that reads well, which is exactly what the model predicts. A product, a
+date, or a name asks for one exact answer, and the likely-looking one may not be it
+(<ChapterRef to="quirks-and-limits" />). Without a calculator, the model in <ChapterRef to="tools" /> worked out 1234 × 5678 step by
+step and got 7,050,952. The answer is 7,006,652. The fix is a tool, or doing the exact part in code.
+
+**Can you give it everything it needs to know?** A model knows only its prompt and what training left
+in its weights: nothing after its cutoff, nothing about your files or last week's meeting, and little
+about rare topics. Asked ten times who wrote *The Lanterns of Velmora*, a novel made up for this
+site, it named nine different authors (<ChapterRef to="making-things-up" />). Put the facts in the prompt, or have the
+harness search for them (<ChapterRef to="search-and-memory" />). In <ChapterRef to="managing-the-context" />, once the first exchange was dropped,
+the model couldn't say which child loved the cat rhyme; with the exchange retrieved, it said Lily.
+
+**Can you check the result quickly, and live with a mistake?** The model sounds just as sure when
+it's wrong. Asked ten times who won the 1987 Tour de France, it said Eddy Merckx every time; it was
+Stephen Roche. In <ChapterRef to="routing" />, the small model was 79% sure that Sydney is Australia's capital. So a
+model saves time only when checking its work is quicker than doing the job yourself. A reworded
+email takes seconds to read; a summary of a report you haven't read is hard to check without
+reading the report; a contract clause needs a lawyer. Where mistakes are costly, keep a person in
+the loop (<ChapterRef to="trust-and-guardrails" />), and test before you rely on it (<ChapterRef to="testing-agents" />).
+
+**Is there a simpler tool that gives the exact answer?** A calculator, a spreadsheet formula, a
+database query, or a search engine is exact, fast, and free, and gives the same answer every time.
+A model costs tokens on every call, and its answers can change from one call to the next
+(<ChapterRef to="probability-and-sampling" />). Even the short call in <ChapterRef to="end-to-end" /> had the model read a 400-token prompt, so
+ten thousand rows would be four million tokens. Write the rule once instead; a model can help you
+write it.
+
+</At>
+
+## Try it
+
+Pick a task, or answer the questions for one of your own. Each answer that doesn't suit a model
+brings up a recorded example from an earlier chapter and what to do instead.
+
+<RightTool />
+
+## Use both
+
+<At levels="simple">
+
+The best setups mix the two. The model does the wording, a tool does the exact part, the app fetches
+the facts, and checks catch the mistakes. That is what the apps in the Harnesses chapters do
+(<ChapterRef to="the-model-is-not-the-product" />).
+
+</At>
+<At levels="standard deep">
+
+The questions rarely say "never". More often they say "not on its own": the model does the wording,
+a tool does the exact work (<ChapterRef to="tools" />), the harness fetches the facts (<ChapterRef to="search-and-memory" />), and checks catch
+the mistakes (<ChapterRef to="testing-agents" />). That division of labor is what a harness is for
+(<ChapterRef to="the-model-is-not-the-product" />).
+
+</At>
+<At levels="deep">
+
+### The checking rule, written down
+
+Say doing a job yourself takes $T$. With a model, you spend $a$ asking, $c$ checking, and, with
+probability $p$ that the result is wrong, $f$ fixing it. The model saves time when
+
+$$a + c + p\,f < T$$
+
+Drafting does well: $c$ is a quick read and $f$ a quick edit. An unread report does badly: $c$ is
+close to $T$, since checking means reading it. High stakes make $f$ large: a wrong clause in a
+contract costs far more than the time it took to write.
+
+### Agreement isn't a check of truth
+
+The consistency check in <ChapterRef to="making-things-up" /> asked each of 11 questions ten times and trusted the
+most common answer only when 8 or more of the ten agreed. That check flagged 4 of the 5 wrong answers and none of the 6 right ones. It missed
+the Tour de France: all ten answers agreed, and all were wrong. Agreement measures how sure the
+model is, not whether it is right, so a check you can automate still needs a source of truth for
+what matters.
+
+### Who gains most
+
+In the writing experiment, the gap between the stronger and weaker writers shrank: those who scored
+lower on their own gained the most from the help.<Cite id="noy2023" />
+
+</At>
+
+<RecapCard>
+
+- A model writes likely text from its prompt and its training, so it suits jobs where likely text
+  is good text.
+- Exact answers, facts it wasn't given, and results you can't check are where it goes wrong.
+- It saves time only when checking its work is quicker than doing the job yourself.
+- A calculator, a formula, or a search beats it on exact, repeated work; a model can help write
+  them.
+
+<At levels="deep">
+
+- Worth it when asking, checking, and the expected cost of fixing add up to less than doing it
+  yourself: $a + c + p\,f < T$.
+
+</At>
+</RecapCard>
+
+**Next question:** if a model is the right tool, which one? There are hundreds to choose from.

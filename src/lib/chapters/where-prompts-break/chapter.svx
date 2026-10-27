@@ -4,6 +4,7 @@
 	import Cite from '#lib/components/page/Cite.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import FragileLab from './FragileLab.svelte';
+	import ProblemRuns from './ProblemRuns.svelte';
 </script>
 
 ## Changes that shouldn't matter
@@ -98,16 +99,95 @@ nearly all its probability on some other answer.
 
 </At>
 
+## A sentence that doesn't belong
+
+<At levels="simple">
+
+Adding a sentence that has nothing to do with the task can matter too. Here are 24 short word
+problems for Qwen2.5-1.5B-Instruct, as written and with one extra sentence, like "Her friend baked
+30 cookies.":
+
+</At>
+<At levels="standard deep">
+
+Adding a sentence that has nothing to do with the task can matter too. Here are 24 short word
+problems for Qwen2.5-1.5B-Instruct, each asked as written, then with one irrelevant sentence added,
+like "Her friend baked 30 cookies.":
+
+</At>
+
+<ProblemRuns title="One extra sentence" runs={['plain', 'distracted', 'ignore']} start="Nina" />
+
+<At levels="simple">
+
+As written, it solved all 24; with the extra sentence, 18. Most of the misses used the extra number:
+it added the friend's 30 cookies to Nina's and answered 63 instead of 33. Much larger models do this
+too.<Cite id="shi2023" /> Telling it to ignore anything irrelevant didn't help this small model.
+
+</At>
+<At levels="standard deep">
+
+As written, it solved all 24. With the extra sentence it solved 18, and 5 of its 6 misses used the
+irrelevant number: for Nina's cookies it took the 48 she baked, subtracted the 15 she gave away, and
+added her friend's 30, answering 63 instead of 33. Researchers found the same with much larger
+models: accuracy on grade-school math problems dropped sharply when one irrelevant sentence was
+added. One fix they found was to say that irrelevant information may be ignored.<Cite id="shi2023" />
+For this small model it didn't help: 17 of 24.
+
+</At>
+
+## Details over several turns
+
+<At levels="simple">
+
+People often ask the question first and add details as they go. Top models do much worse that way:
+they guess too early and don't recover.<Cite id="laban2025" /> Here are the same 24 problems, asked
+first as the bare question, with the two facts following in two more messages:
+
+</At>
+<At levels="standard deep">
+
+People often start a chat with the question and add details as they go. A large study found that
+top models did 39% worse on average when a task's details arrived over several turns instead of in
+one message: they made assumptions early, tried to answer too soon, and didn't
+recover.<Cite id="laban2025" /> Here are the same 24 problems, asked first as the bare question,
+with the two facts following in two more messages:
+
+</At>
+
+<ProblemRuns title="Details over several turns" runs={['plain', 'turns']} start="Omar" />
+
+<At levels="simple">
+
+In one message it solved all 24; over three turns, 18. It answered as soon as it had the first fact,
+then built on that early answer. Told only that Omar runs laps of a 400-meter track, it answered
+10; told he runs 4 laps, it answered 40 instead of 1,600.
+
+</At>
+<At levels="standard deep">
+
+In one message it solved all 24; over three turns, 18. Asked the bare question, it usually asked for
+the details, in 20 of the 24 chats. But as soon as it had the first fact it answered anyway, in 21 of
+the 24, and when the second fact came it built on that early answer. Told only that Omar runs laps
+of a 400-meter track, it answered 10; told he runs 4 laps, it answered 40, four times its own guess,
+instead of 1,600. Every earlier turn stays in the prompt (<ChapterRef to="managing-the-context" />), including the model's
+own wrong answers.
+
+</At>
+
 ## What to do about it
 
 Because the model only continues text, every one of these choices is part of the input, and none of
 them is neutral. Good prompting is less about magic words and more about testing: try a few
 wordings, orders, and layouts on real examples, keep what works, and put what matters most near the
-start or the end.
+start or the end. Leave out what the task doesn't need, and give the whole task in one message; if a
+chat has gone wrong, start a new one with everything in it.
 
 <RecapCard>
 
 - The order of examples, their layout, and where facts sit in a long prompt can all change answers.
+- An irrelevant sentence can pull its numbers into the answer, and a task spread over several
+  turns invites early guesses the model then builds on.
 - These effects show up in large models too, and differ from model to model.
 - Test several versions of a prompt on real examples instead of trusting one wording.
 

@@ -49,3 +49,53 @@ describe('where prompts break', () => {
 		expect(rest.filter((pt) => pt.p > 0.99)).toHaveLength(76);
 	});
 });
+
+describe('word problems', () => {
+	const { problems } = readDataset('prompts/problems');
+	const right = (k: 'plain' | 'distracted' | 'ignore' | 'turns') =>
+		problems.filter((p) => p.runs[k].correct).length;
+	const find = (start: string) => problems.find((p) => p.facts[0].startsWith(start))!;
+	const reply = (p: (typeof problems)[number], turn: number) =>
+		p.runs.turns.messages.filter((m) => m.role === 'assistant')[turn].content;
+
+	it('24 right as written, 18 with an extra sentence, 17 when told to ignore it', () => {
+		expect(problems).toHaveLength(24);
+		expect([right('plain'), right('distracted'), right('ignore')]).toEqual([24, 18, 17]);
+	});
+
+	it('5 of the 6 misses used the irrelevant number; Nina answered 63, not 33', () => {
+		const misses = problems.filter((p) => !p.runs.distracted.correct);
+		const got = Object.fromEntries(misses.map((p) => [p.facts[0], p.runs.distracted.answer]));
+		// Each answer below is worked out with the extra sentence's number; Raj's is not.
+		expect(got).toEqual({
+			'A baker makes 60 rolls.': '69', // 60 − 36 + 45
+			'Jo buys 3 packs of 6 eggs.': '25', // 18 − 4 + 11
+			'A tank holds 100 liters.': '-15', // 60 − 35 − 40
+			'Nina bakes 4 trays of 12 cookies.': '63', // 48 − 15 + 30
+			'Eva plants 6 rows of 8 carrots.': '57', // 48 − 11 + 20
+			'Tickets cost 8 dollars each.': '-18' // 32 − 50
+		});
+		for (const p of misses.filter((p) => !p.facts[0].startsWith('Tickets'))) {
+			expect(p.distractor).toContain(
+				{ '69': '45', '25': '11', '-15': '60', '63': '30', '57': '20' }[p.runs.distracted.answer!]!
+			);
+		}
+		const nina = find('Nina');
+		expect(nina.distractor).toBe('Her friend baked 30 cookies.');
+		expect(nina.facts[1]).toContain('15');
+		expect(nina.answer).toBe(33);
+	});
+
+	it('over three turns 18 of 24; it asked for details in 20 and answered early in 21', () => {
+		expect(right('turns')).toBe(18);
+		expect(problems.filter((p) => !reply(p, 0).includes('Answer:'))).toHaveLength(20);
+		expect(problems.filter((p) => reply(p, 1).includes('Answer:'))).toHaveLength(21);
+	});
+
+	it('Omar: 10 after the track length, then 40 instead of 1,600', () => {
+		const omar = find('Omar');
+		expect(omar.facts).toEqual(['Omar runs laps of a 400-meter track.', 'He runs 4 laps.']);
+		expect(reply(omar, 1)).toMatch(/Answer: 10\b/);
+		expect([omar.answer, omar.runs.turns.answer]).toEqual([1600, '40']);
+	});
+});

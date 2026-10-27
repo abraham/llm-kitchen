@@ -41,4 +41,7 @@ and a pattern for declining. Grouping, the check, and the entropy are computed i
 - [Levels](../levels.md): Simple keeps the court case, the ten samples and what they catch and miss,
   "I don't know", why guessing pays, package hallucinations, and what helps, without the benchmark
   count. In depth adds the entropy of the answers, semantic entropy, the break-even confidence
-  p > t with a t/(1 − t) penalty, and the singleton bound for birthdays.
+  p > t with a t/(1 − t) penalty, the singleton bound for birthdays, and FActScore's per-claim
+  scoring of long answers.
+- Made-up references (Walters and Wilder 2023) sit next to the court case: the same failure, measured
+  over many citations.

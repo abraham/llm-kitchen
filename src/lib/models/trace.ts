@@ -13,7 +13,7 @@ export interface Trace {
 	/** Step i is the distribution after the prompt plus the first i chosen tokens. */
 	steps: GenerationStep[];
 	attention?: Attention;
-	settings?: { topK: number; temperature: number; seed?: number };
+	settings?: { topK: number; temperature: number; seed?: number; frequencyPenalty?: number };
 	generatedAt?: string;
 	/** Where a recorded trace came from (model repo, revision, library version). */
 	source?: { huggingFaceId: string; revision: string | null; torch?: string };

@@ -12,7 +12,7 @@ Each Part has a claim checklist: every factual claim and number in its chapters,
 - [Part VII: Harnesses (Ch 23–27)](part-7.md)
 - [Part VIII: Agents (Ch 28–31)](part-8.md)
 - [Part IX: Safety (Ch 32–35)](part-9.md)
-- [Part X: Other kinds of models (Ch 36–41) and the wrap-up (Ch 42–45)](part-10.md)
+- [Part X: Other kinds of models (Ch 36–41) and the wrap-up (Ch 42–46)](part-10.md)
 
 ## Final review (milestone 12)
 

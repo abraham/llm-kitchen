@@ -58,8 +58,8 @@ Each Part cites at least these:
   Dosovitskiy et al. 2021 (ViT) and Radford et al. 2021 (CLIP), Ho et al. 2020 (diffusion), and
   Chen et al. 2021 (Decision Transformer), Reed et al. 2022 (Gato), and Sutton and Barto 2018
   (reinforcement learning).
-- **Wrap-up:** the Gemma 4 model cards and QAT announcement and the GGUF format docs, with accessed
-  dates.
+- **Wrap-up:** Noy and Zhang 2023 (writing with ChatGPT), and the Gemma 4 model cards and QAT
+  announcement and the GGUF format docs, with accessed dates.
 
 ## Expert review
 

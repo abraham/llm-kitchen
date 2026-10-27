@@ -282,5 +282,17 @@ export const QUESTIONS: QuizQuestion[] = [
 		answer: 1,
 		why: 'It plays like the runs that scored what you ask for, so it can’t beat the best one it learned from.',
 		chapters: ['decision-models']
+	},
+	{
+		q: 'Which of these jobs suits a language model on its own best?',
+		options: [
+			'Adding up 10,000 sales figures',
+			'Saying from memory who won a race in 1987',
+			'Rewording an email you’ll read before you send it',
+			'Multiplying two four-digit numbers'
+		],
+		answer: 2,
+		why: 'A likely-sounding rewording is a good one, and you can check it in seconds; the others need one exact answer.',
+		chapters: ['when-to-use']
 	}
 ];

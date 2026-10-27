@@ -73,7 +73,10 @@ same number to every score changes nothing; only the gaps matter.
 The recorded runs further down divide GPT-2's raw scores by $T$ and draw from all 50,257 tokens;
 the widget's cut to ten is only for the picture. Two other controls, next, cut off the long tail
 of unlikely tokens instead of flattening it. In the widget they apply after the temperature, top-k
-first, and what's left is rescaled to add up to 100%.
+first, and what's left is rescaled to add up to 100%. So the order matters: a higher temperature
+flattens the chances first, and top-p then needs more words to reach *p*. OpenAI's documentation
+suggests changing the temperature or top-p, not both, since each already decides how far down the
+list a pick can reach.<Cite id="openai-chat-api" />
 
 </At>
 

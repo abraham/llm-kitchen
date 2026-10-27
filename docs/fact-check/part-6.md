@@ -26,33 +26,45 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 
 ## Ch 19. Learning from examples in the prompt
 
-| Claim                                                                                                                                        | Backing                                                              |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Qwen: _sad_ for "happy ->" about 1% with no examples, 96% with four                                                                          | Test                                                                 |
-| Made-up labels: almost nothing with no examples, 22–78% with four                                                                            | Test                                                                 |
-| "light -> dark" got less likely as examples were added                                                                                       | Test                                                                 |
-| GPT-2 repeats the word for opposites and says "zork" for every made-up-label test                                                            | Test (its top guess)                                                 |
-| In-context learning improves with model size                                                                                                 | Cite `brown2020`                                                     |
-| Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it | Cite `olsson2022` (abstract)                                         |
-| GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                          | Test (recorded attention)                                            |
-| Simple: restates Standard in plainer words, with no new claims                                                                               | Reviewed against the Standard text                                   |
-| In depth: "blip" is " bl" + "ip" and "zork" is " z" + "ork"; an answer's chance is the product of its tokens'                                | Test (recorded tokens); implementation (`answer_prob` in the script) |
-| In depth: "horse ->" after four examples: about 0.69, with "ork" after " z" over 99%                                                         | Test                                                                 |
-| In depth: an induction head relies on an earlier previous-token head, so it needs two layers                                                 | Cite `olsson2022`                                                    |
-| In depth: head 5.0 sends 98% to the four opposites answers, rising from 5% to 35%                                                            | Test                                                                 |
+| Claim                                                                                                                                              | Backing                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Qwen: _sad_ for "happy ->" about 1% with no examples, 96% with four                                                                                | Test                                                                                 |
+| Made-up labels: almost nothing with no examples, 22–78% with four                                                                                  | Test                                                                                 |
+| "light -> dark" got less likely as examples were added                                                                                             | Test                                                                                 |
+| GPT-2 repeats the word for opposites and says "zork" for every made-up-label test                                                                  | Test (its top guess)                                                                 |
+| In-context learning improves with model size                                                                                                       | Cite `brown2020`                                                                     |
+| Induction heads look at what followed the current token last time; they appear with a jump in in-context learning and may explain most of it       | Cite `olsson2022` (abstract)                                                         |
+| GPT-2 head 5.0 sends over 90% of the final arrow's attention to the earlier answers                                                                | Test (recorded attention)                                                            |
+| Randomly replacing the examples' labels barely hurt, over 12 models including GPT-3; label space, input distribution, and format drive performance | Cite `min2022` (abstract)                                                            |
+| Small models ignore flipped labels; large models follow them; learning meaningless labels emerges mainly with scale                                | Cite `wei2023larger` (abstract)                                                      |
+| Reviews: 8 examples, 24 tests; right, 4 of 8 wrong, all 8 flipped, or foo/bar                                                                      | Test (`prompts/labels`, `record/prompts.py` `labels`)                                |
+| Qwen puts 27% on the two labels without examples, over 99% with any; GPT-2 under 1% and over 90%                                                   | Test                                                                                 |
+| Qwen: 24 of 24 by real sentiment with right or half-wrong labels; follows flipped labels 23 times; foo/bar 23                                      | Test                                                                                 |
+| GPT-2: 21 with right labels, 17 half wrong, one label for every review when flipped or made up                                                     | Test                                                                                 |
+| Copying explains why examples' exact words and quirks carry over; varied examples teach the rule best                                              | Follows from the induction-head mechanism above; stated as advice, not a measurement |
+| Zero-shot instructions often suffice for familiar tasks; examples cost tokens on every call; a fixed set at the start can be cached                | Ch 20, Ch 26 (prompt caching)                                                        |
+| Simple: restates Standard in plainer words, with no new claims                                                                                     | Reviewed against the Standard text                                                   |
+| In depth: "blip" is " bl" + "ip" and "zork" is " z" + "ork"; an answer's chance is the product of its tokens'                                      | Test (recorded tokens); implementation (`answer_prob` in the script)                 |
+| In depth: "horse ->" after four examples: about 0.69, with "ork" after " z" over 99%                                                               | Test                                                                                 |
+| In depth: an induction head relies on an earlier previous-token head, so it needs two layers                                                       | Cite `olsson2022`                                                                    |
+| In depth: head 5.0 sends 98% to the four opposites answers, rising from 5% to 35%                                                                  | Test                                                                                 |
 
 ## Ch 20. Instructions, roles, and the system prompt
 
-| Claim                                                                                                                                                                            | Backing                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| Chat models were tuned on instruction-following examples and human ratings                                                                                                       | Cite `ouyang2022`                         |
-| The widget's template matches the text the model read                                                                                                                            | Test (`chatTemplate` vs. recorded prompt) |
-| Specific instructions gave a shorter answer; the persona more than doubled it and added a muddled claim                                                                          | Test (token counts, quoted phrase)        |
-| "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                                                                                                | Test                                      |
-| Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random                                                                                | Cite `zheng2024` (abstract)               |
-| Simple: restates Standard in plainer words, with no new claims                                                                                                                   | Reviewed against the Standard text        |
-| In depth: with no system prompt, Qwen's template fills in "You are Qwen, created by Alibaba Cloud. …"                                                                            | Test (site template vs recorded prompt)   |
-| In depth: treating system prompts and untrusted text alike underlies prompt injection; training on an instruction hierarchy made GPT-3.5 much harder to attack, with little loss | Cite `wallace2024` (abstract)             |
+| Claim                                                                                                                                                                            | Backing                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Chat models were tuned on instruction-following examples and human ratings                                                                                                       | Cite `ouyang2022`                                            |
+| The widget's template matches the text the model read                                                                                                                            | Test (`chatTemplate` vs. recorded prompt)                    |
+| Specific instructions gave a shorter answer; the persona more than doubled it and added a muddled claim                                                                          | Test (token counts, quoted phrase)                           |
+| "Never makes mistakes" persona: 3 of 8 sums right, default 5 of 8                                                                                                                | Test                                                         |
+| Across 162 personas and 2,410 questions, personas didn't improve accuracy; effects largely random                                                                                | Cite `zheng2024` (abstract)                                  |
+| 12 notes under 1 to 10 checkable rules: one rule kept in 7 of 12; ten rules, 88 of 120 kept and no note kept all; every rule kept in 7, 7, 3, 4, 1, 0 of 12                      | Test (verdicts re-checked in TypeScript against the replies) |
+| With ten rules, most misses were no "the" (7), a question (7), or a number (6), at every position in the list                                                                    | Test                                                         |
+| IFScale: 500 keyword rules, 20 models; the best reached 68% at 500; bias toward earlier rules                                                                                    | Cite `jaroslawicz2025` (abstract)                            |
+| In depth: independent rules kept with chance p are all kept with chance p^k; 0.73^10 ≈ 4%, about half a note in 12; 0.9^10 ≈ 35%                                                 | Test checks the arithmetic                                   |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                   | Reviewed against the Standard text                           |
+| In depth: with no system prompt, Qwen's template fills in "You are Qwen, created by Alibaba Cloud. …"                                                                            | Test (site template vs recorded prompt)                      |
+| In depth: treating system prompts and untrusted text alike underlies prompt injection; training on an instruction hierarchy made GPT-3.5 much harder to attack, with little loss | Cite `wallace2024` (abstract)                                |
 
 ## Ch 21. Asking for steps and structure
 
@@ -83,6 +95,11 @@ changes a reply.
 | Formatting alone moved accuracy by up to 76 points, not fixed by size, examples, or instruction tuning                             | Cite `sclar2024` (abstract)        |
 | 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                                            | Test                               |
 | Models use information at the start and end of long prompts better than in the middle                                              | Cite `liu2024` (abstract)          |
+| 24 word problems: 24 right as written, 18 with an extra sentence, 17 when told to ignore it                                        | Test                               |
+| 5 of the 6 misses used the irrelevant number; Nina: 48 − 15 + 30 = 63 instead of 33                                                | Test                               |
+| An irrelevant sentence sharply cuts accuracy on grade-school math; an instruction to ignore irrelevant information helps           | Cite `shi2023` (abstract)          |
+| Over three turns 18 of 24; asked for details in 20, answered after the first fact in 21; Omar 10, then 40 instead of 1,600         | Test                               |
+| Top models 39% worse on average with details over several turns; early assumptions, premature answers, no recovery                 | Cite `laban2025` (abstract)        |
 | Simple: restates Standard in plainer words, with no new claims                                                                     | Reviewed against the Standard text |
 | In depth: all five 4-of-8 orders ended with a positive example; all twelve ending with a negative scored 6 or more                 | Test                               |
 | In depth: models favor labels near the end of the prompt or common in training; contextual calibration with "N/A", up to 30 points | Cite `zhao2021` (abstract)         |

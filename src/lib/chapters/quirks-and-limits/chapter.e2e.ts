@@ -12,3 +12,13 @@ test('quirks lab presets and the spelling blind spot', async ({ page }) => {
 	await spelling.getByLabel(/Text/).fill('strawberry');
 	await expect(spelling.getByText('the model sees: 3 tokens')).toBeVisible();
 });
+
+test('Are you sure?', async ({ page }) => {
+	await gotoHydrated(page, '/quirks-and-limits');
+	const lab = page.getByRole('region', { name: 'Are you sure?', exact: true });
+	await expect(lab.getByText('10 of 24 still right')).toBeVisible();
+	await expect(lab.getByText('It switched to a wrong answer.')).toBeVisible();
+	await expect(lab.getByText(/The correct answer is Saturn/)).toBeVisible();
+	await lab.getByLabel('Given a wrong guess first').check();
+	await expect(lab.getByText('It gave the right answer anyway.')).toBeVisible();
+});

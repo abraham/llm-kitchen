@@ -101,8 +101,10 @@ export const ROWS = [
 		'The whole picture in one place: tokens, vectors, attention, generation, assistants, agents, and the other kinds of models.'],
 	['end-to-end', 'From message to reply', 'wrapup', [],
 		'Follow one message through every stage, from the prompt the harness builds to the tokens the model picks and the tool it calls.'],
+	['when-to-use', 'Is a model the right tool?', 'wrapup', ['quirks-and-limits', 'search-and-memory', 'tools', 'making-things-up', 'testing-agents'],
+		'Four questions that tell you when a language model will help, and when a calculator, a search, or an expert will do better.'],
 	['picking-a-model', 'Picking a model', 'wrapup', ['scale', 'quantization', 'speculative-decoding', 'predictor-to-assistant', 'caching', 'mixture-of-experts', 'seeing-pictures'],
 		'Model names pack in size, tuning, experts, and bits per weight. Learn to read them, and see whether a model fits your device.'],
 	['quiz', 'Check yourself', 'wrapup', [],
-		'Fifteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
+		'Sixteen questions, at least one from every Part, with the chapter to revisit for each one you miss.']
 ] as const satisfies readonly Row[];

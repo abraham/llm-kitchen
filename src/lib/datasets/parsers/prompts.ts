@@ -4,6 +4,7 @@ import {
 	boolean,
 	dictionary,
 	integer,
+	literal,
 	nullable,
 	number,
 	object,
@@ -110,6 +111,80 @@ export const fewShot = object({
 	)
 });
 export type FewShot = Infer<typeof fewShot>;
+
+const labeled = object({ text: string, label: string });
+
+export const fewShotLabels = object({
+	models: record(['gpt2', 'qwen'], modelRef),
+	examples: array(labeled),
+	conditions: array(
+		object({ id: string, name: string, shown: array(string), labels: tuple(string, string) })
+	),
+	tests: array(labeled),
+	/** results[model][condition][test]: the chance of each of the condition's two labels. */
+	results: record(['gpt2', 'qwen'], dictionary(array(tuple(number, number))))
+});
+export type FewShotLabels = Infer<typeof fewShotLabels>;
+
+export const PROBLEM_RUNS = ['plain', 'distracted', 'ignore', 'turns'] as const;
+export type ProblemRun = (typeof PROBLEM_RUNS)[number];
+
+const problemRun = object({
+	messages: array(object({ role: string, content: string })),
+	answer: nullable(string),
+	correct: boolean
+});
+
+export const wordProblems = object({
+	model: modelRef,
+	ignoreInstruction: string,
+	problems: array(
+		object({
+			facts: tuple(string, string),
+			question: string,
+			distractor: string,
+			answer: integer,
+			runs: record(PROBLEM_RUNS, problemRun)
+		})
+	)
+});
+export type WordProblems = Infer<typeof wordProblems>;
+
+const gradedChat = object({
+	messages: array(object({ role: literal('user', 'assistant'), content: string })),
+	verdict: literal('right', 'wrong', 'mixed')
+});
+
+export const pushback = object({
+	model: modelRef,
+	pushback: string,
+	hint: string,
+	questions: array(
+		object({
+			question: string,
+			right: string,
+			wrong: string,
+			pushback: gradedChat,
+			hint: gradedChat
+		})
+	)
+});
+export type Pushback = Infer<typeof pushback>;
+
+export const manyRules = object({
+	model: modelRef,
+	rules: array(string),
+	counts: array(integer),
+	notes: array(
+		object({
+			task: string,
+			runs: array(
+				object({ rules: array(integer), prompt: string, reply: string, followed: array(boolean) })
+			)
+		})
+	)
+});
+export type ManyRules = Infer<typeof manyRules>;
 
 const answer = object({ text: string, correct: boolean });
 
