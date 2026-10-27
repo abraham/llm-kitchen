@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test';
 import { gotoHydrated } from '../../../../tests/e2e/helpers.ts';
 
+test('the penalty runs count different tokens', async ({ page }) => {
+	await gotoHydrated(page, '/generating-text');
+	const widget = page.getByRole('region', { name: 'Penalizing repeats' });
+	await expect(widget.getByText('7 different tokens of 32')).toBeVisible();
+	await expect(widget.getByText('25 different tokens of 32')).toBeVisible();
+	await expect(widget.getByText('32 different tokens of 32')).toBeVisible();
+	await expect(widget.getByText(/her back/)).toBeVisible();
+});
+
 test('the glass-box generator follows recordings and branches', async ({ page }) => {
 	await gotoHydrated(page, '/generating-text');
 	const widget = page.getByRole('region', { name: 'Glass-box generator' });

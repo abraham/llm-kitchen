@@ -5,6 +5,7 @@ import canonical from '../../../../models/canonical.json';
 
 import { encode } from 'gpt-tokenizer/encoding/gpt2';
 import { textAfter } from '#lib/models/trace.ts';
+import { markRepeats } from './penalty.ts';
 const trace = (name: TraceName) => readDataset(`traces/${name}`);
 const full = (name: TraceName) => {
 	const t = trace(name);
@@ -56,5 +57,34 @@ describe('generating text', () => {
 		const perToken = 2 * canonical.parameters;
 		expect(Math.abs(perToken - 250e6)).toBeLessThan(2e6);
 		expect(Math.round((500 * perToken) / 1e9)).toBe(124);
+	});
+
+	const distinct = (name: TraceName) =>
+		markRepeats(trace(name).steps.map((s) => s.chosen.text)).filter((t) => !t.repeat).length;
+
+	it('penalties: 32 tokens each from "The cat sat on the bed", greedy after the penalty', () => {
+		for (const [name, penalty] of [
+			['penalty-0', undefined],
+			['penalty-05', 0.5],
+			['penalty-5', 5]
+		] as const) {
+			const t = trace(name);
+			expect(t.prompt).toBe('The cat sat on the bed');
+			expect(t.steps).toHaveLength(32);
+			expect(t.settings?.temperature).toBe(0);
+			expect(t.settings?.frequencyPenalty).toBe(penalty);
+			for (const s of t.steps) expect(s.chosen.text).toBe(s.candidates[0].token.text);
+		}
+	});
+
+	it('no penalty: 7 different tokens of 32; 0.5: the phrase comes round once more, then 25; 5: all 32', () => {
+		expect(distinct('penalty-0')).toBe(7);
+		expect(full('penalty-05')).toMatch(/^The cat sat on the bed, and the cat sat on the bed\./);
+		expect(distinct('penalty-05')).toBe(25);
+		expect(distinct('penalty-5')).toBe(32);
+	});
+
+	it('penalty 5: " the" is ruled out, so the cat sits on "her back"', () => {
+		expect(full('penalty-5')).toMatch(/^The cat sat on the bed, and the cat sat on her back/);
 	});
 });

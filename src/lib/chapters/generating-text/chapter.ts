@@ -7,7 +7,10 @@ export const datasets: readonly DatasetId[] = [
 	'traces/the-cat-sat-bed',
 	'traces/the-cat-sat-couch',
 	'traces/the-cat-sat-ground',
-	'traces/the-cat-sat-edge'
+	'traces/the-cat-sat-edge',
+	'traces/penalty-0',
+	'traces/penalty-05',
+	'traces/penalty-5'
 ];
 
 /** The levels this chapter has passages for beyond Standard. */

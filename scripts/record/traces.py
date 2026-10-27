@@ -30,6 +30,8 @@ class Spec:
     max_new_tokens: int
     top_k: int = 10
     temperature: float = 0.0  # 0 = always take the most likely token
+    # Subtracted from a token's score once for every earlier time it was generated.
+    frequency_penalty: float = 0.0
     seed: int = 0
     attention: bool = False
     note: str = ""
@@ -96,6 +98,18 @@ SPECS = [
         )
         for word in ["bed", "couch", "ground", "edge"]
     ],
+    # `generating-text`: the greedy loop after " bed", without and with a frequency penalty.
+    *[
+        Spec(
+            f"penalty-{str(p).replace('.', '')}",
+            "The cat sat on the bed",
+            max_new_tokens=32,
+            top_k=10,
+            frequency_penalty=p,
+            note=f"`generating-text`: greedy with frequency penalty {p}.",
+        )
+        for p in [0, 0.5, 5]
+    ],
     # `quirks-and-limits`: quirks and limits, greedy with the top 50 at each step.
     *[
         Spec(name, prompt, max_new_tokens=n, top_k=50, note=f"`quirks-and-limits`: {note}")
@@ -129,10 +143,11 @@ def run(spec: Spec, model, tokenizer) -> dict:
     generator = torch.Generator().manual_seed(spec.seed)
     steps = []
     context = list(ids)
+    counts = torch.zeros(model.config.vocab_size)
 
     with torch.no_grad():
         for _ in range(spec.max_new_tokens):
-            logits = model(torch.tensor([context])).logits[0, -1]
+            logits = model(torch.tensor([context])).logits[0, -1] - spec.frequency_penalty * counts
             probs = torch.softmax(logits, dim=-1)
             top = torch.topk(probs, spec.top_k)
             if spec.temperature == 0:
@@ -153,6 +168,7 @@ def run(spec: Spec, model, tokenizer) -> dict:
                 }
             )
             context.append(chosen)
+            counts[chosen] += 1
             if spec.stop_at_newline and "\n" in tokenizer.decode([chosen]):
                 break
 
@@ -164,7 +180,8 @@ def run(spec: Spec, model, tokenizer) -> dict:
             "prompt": spec.prompt,
             "tokens": prompt_tokens,
             "steps": steps,
-            "settings": {"topK": spec.top_k, "temperature": spec.temperature, "seed": spec.seed},
+            "settings": {"topK": spec.top_k, "temperature": spec.temperature, "seed": spec.seed}
+            | ({"frequencyPenalty": spec.frequency_penalty} if spec.frequency_penalty else {}),
             "generatedAt": datetime.date.today().isoformat(),
             "source": {
                 "huggingFaceId": CANONICAL["huggingFaceId"],

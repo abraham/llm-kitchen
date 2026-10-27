@@ -59,4 +59,18 @@ describe('probability and sampling', () => {
 		const sum = words.filter((w) => kept.includes(w.item)).reduce((a, w) => a + w.p, 0);
 		expect(Math.round(sum * 100)).toBe(58);
 	});
+
+	it('In depth: "a higher temperature flattens the chances first, and top-p then needs more words"', () => {
+		const ten = trace('the-cat-sat').steps[0].candidates.slice(0, 10);
+		const kept = (t: number) =>
+			topP(
+				applyTemperature(
+					ten.map((c) => c.prob),
+					t
+				).map((p, i) => ({ item: i, p })),
+				0.5
+			).length;
+		expect(kept(0.5)).toBeLessThan(kept(1));
+		expect(kept(1)).toBeLessThan(kept(2));
+	});
 });

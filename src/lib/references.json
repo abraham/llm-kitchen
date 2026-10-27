@@ -1284,5 +1284,14 @@
 		"venue": "Science 381(6654)",
 		"year": 2023,
 		"url": "https://doi.org/10.1126/science.adh2586"
+	},
+	{
+		"id": "openai-chat-api",
+		"authors": ["OpenAI"],
+		"title": "API reference: Create chat completion",
+		"venue": "OpenAI",
+		"year": 2026,
+		"url": "https://developers.openai.com/api/reference/resources/chat",
+		"accessed": "2026-10-26"
 	}
 ]
