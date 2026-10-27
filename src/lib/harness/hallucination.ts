@@ -6,7 +6,6 @@ export interface HallucinationSamples {
 	seed: number;
 	prompts: { id: PromptId; system: string }[];
 	questions: SampledQuestion[];
-	generatedAt: string;
 }
 
 export type PromptId = 'plain' | 'allowed';

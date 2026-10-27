@@ -1,4 +1,84 @@
 {
+	"agent/chat": {
+		"module": "agent",
+		"outputs": [
+			"agent/chat",
+			"agent/math-no-tools",
+			"agent/math-tools",
+			"agent/agent-cat",
+			"agent/inject-none",
+			"agent/inject-ask",
+			"agent/inject-allowlist",
+			"agent/context"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct",
+			"sentence-transformers/all-MiniLM-L6-v2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"agent/grades": {
+		"module": "grading",
+		"outputs": [
+			"agent/grades"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [
+			"agent/chat"
+		],
+		"options": []
+	},
+	"agent/memory": {
+		"module": "memory",
+		"outputs": [
+			"agent/memory"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [
+			"agent/chat"
+		],
+		"options": []
+	},
+	"chat/base-vs-instruct": {
+		"module": "chat",
+		"outputs": [
+			"chat/base-vs-instruct"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-0.5B",
+			"Qwen/Qwen2.5-0.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"hallucination/samples": {
+		"module": "hallucination",
+		"outputs": [
+			"hallucination/samples"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"injection/lab": {
+		"module": "injection",
+		"outputs": [
+			"injection/lab"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
 	"prompts/fewshot": {
 		"module": "prompts",
 		"outputs": [
@@ -8,7 +88,8 @@
 			"openai-community/gpt2",
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/fragile": {
 		"module": "prompts",
@@ -19,7 +100,8 @@
 			"openai-community/gpt2",
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/labels": {
 		"module": "prompts",
@@ -30,7 +112,8 @@
 			"openai-community/gpt2",
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/problems": {
 		"module": "prompts",
@@ -40,7 +123,8 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/pushback": {
 		"module": "prompts",
@@ -50,7 +134,10 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": [
+			"pushback"
+		]
 	},
 	"prompts/rules": {
 		"module": "prompts",
@@ -60,7 +147,8 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/steps": {
 		"module": "prompts",
@@ -70,7 +158,8 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/system": {
 		"module": "prompts",
@@ -80,7 +169,8 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
 	},
 	"prompts/wording": {
 		"module": "prompts",
@@ -90,6 +180,30 @@
 		"models": [
 			"openai-community/gpt2"
 		],
-		"needs": []
+		"needs": [],
+		"options": []
+	},
+	"reasoning/thinking": {
+		"module": "reasoning",
+		"outputs": [
+			"reasoning/thinking"
+		],
+		"models": [
+			"Qwen/Qwen3-0.6B"
+		],
+		"needs": [],
+		"options": []
+	},
+	"routing/cascade": {
+		"module": "routing",
+		"outputs": [
+			"routing/cascade"
+		],
+		"models": [
+			"Qwen/Qwen2.5-0.5B-Instruct",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
 	}
 }

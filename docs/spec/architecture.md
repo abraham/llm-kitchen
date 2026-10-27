@@ -181,7 +181,8 @@ conventions every shared component follows, are in [components.md](components.md
   `scripts/.venv/bin/python -m scripts.record run <job|module|all>`; `status` lists what's recorded
   and `check` re-records and compares ([models-and-data.md](models-and-data.md#recording-scripts)).
 - `runtime.py` declares jobs (`@job`), loads each model once on first use, picks devices, keeps the
-  runner offline unless `--download`, logs progress, and writes `jobs.json`, the committed list of
+  runner offline unless `--download`, caches every model call in `scripts/.cache/`, runs trials
+  (`try`) into `scripts/.scratch/`, logs progress, and writes `jobs.json`, the committed list of
   jobs and the datasets each writes. `status.py` and `check.py` hold those commands.
 - `common.py` writes the envelope (finding each model and its revision in the data), looks up the
   revision of cached model files, reads datasets other modules recorded, and checks

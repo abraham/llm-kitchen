@@ -1,7 +1,7 @@
 """Record notes kept between chats, for `managing-the-context` (tier T0).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record memory
+    scripts/.venv/bin/python -m scripts.record run memory
 
 Takes the long chat that `agent` recorded (static/data/agent/context.json), asks
 Qwen2.5-1.5B-Instruct (greedy, so reruns match) to write notes about the user for next time, then
@@ -11,10 +11,9 @@ Writes static/data/agent/memory.json.
 
 from __future__ import annotations
 
-import datetime
-
-from .agent import CONTEXT_SYSTEM, DISPLAY, MODEL, Harness
-from .common import read_dataset, revision, write_dataset
+from .agent import CONTEXT_SYSTEM, MODEL, Harness
+from .common import read_dataset
+from .runtime import Run, job
 
 # Two ways to ask for notes: open-ended, and naming exactly what to keep.
 NOTES_PROMPTS = {
@@ -35,7 +34,8 @@ QUESTIONS = [
 ]
 
 
-def main() -> None:
+@job("agent/memory", models=[MODEL], needs=["agent/chat"])
+def memory(run: Run) -> dict:
     h = Harness()
     context = read_dataset("agent/context")
     chat = [{"role": "system", "content": CONTEXT_SYSTEM}]
@@ -48,7 +48,7 @@ def main() -> None:
 
     without = [{"question": q, **ask(CONTEXT_SYSTEM, q)} for q in QUESTIONS]
     notes = {}
-    for key, request in NOTES_PROMPTS.items():
+    for key, request in run.items(NOTES_PROMPTS.items(), label=lambda n: n[0]):
         prompt = h.prompt([*chat, {"role": "user", "content": request}], [])
         text = h.complete(prompt, max_new_tokens=300).strip()
         system = f"{CONTEXT_SYSTEM}\n\n{NOTES_HEADER}\n{text}"
@@ -58,24 +58,19 @@ def main() -> None:
             "tokens": h.tokens(text),
             "answers": [{"question": q, **ask(system, q)} for q in QUESTIONS],
         }
-        print(key, "NOTES:", text)
+        run.log(f"{key} NOTES: {text}")
         for a in notes[key]["answers"]:
-            print("   ", a["question"], "->", a["answer"][:160])
+            run.log(f"    {a['question']} -> {a['answer'][:160]}")
     for a in without:
-        print("without:", a["question"], "->", a["answer"][:160])
+        run.log(f"without: {a['question']} -> {a['answer'][:160]}")
     chat_tokens = h.tokens(h.prompt(chat, []))
 
-    write_dataset("agent/memory", {
+    return {
         "version": 1,
-        "model": {"id": MODEL, "displayName": DISPLAY, "revision": revision(MODEL)},
+        "model": run.info(MODEL),
         "system": CONTEXT_SYSTEM,
         "notesHeader": NOTES_HEADER,
         "chatTokens": chat_tokens,
         "without": without,
         "notes": notes,
-        "generatedAt": datetime.date.today().isoformat(),
-    }, "memory")
-
-
-if __name__ == "__main__":
-    main()
+    }

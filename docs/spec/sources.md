@@ -21,8 +21,8 @@ its chapters and what backs it. A pull request that adds or changes a claim upda
   `models/tokenizers.test.ts`, word vectors in `math/vectors.test.ts`, and the tiny networks in
   `math/mlp.test.ts`. Each Part's claim list names the test behind every number.
 - **Recordings are reproducible.** Scripts decode greedily or with a fixed seed, pin their Python
-  packages and model commits, and `python -m scripts.record check <module>` re-records a module and
-  compares it with the committed data.
+  packages and model commits, and `python -m scripts.record check <module>` re-records a module,
+  without the generation cache, and compares it with the committed data.
 - **Time-sensitive facts** (model lineups and cards, provider caching and tool-calling rules,
   frontier-model figures) carry accessed dates and are re-checked when the site is reviewed.
 - **Links** are checked weekly in CI (see [quality.md](quality.md)). Some publishers answer bots with

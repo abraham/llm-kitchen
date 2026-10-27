@@ -1,6 +1,6 @@
 """Record a small reasoning model with its thinking switched off and on, for `reasoning-models` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record reasoning
+Usage: scripts/.venv/bin/python -m scripts.record run reasoning
 
 Writes static/data/reasoning/thinking.json: for each puzzle, the model's reply with thinking off, and its
 thinking plus reply with thinking on. Sampled with Qwen's recommended settings and a fixed seed.
@@ -8,15 +8,12 @@ thinking plus reply with thinking on. Sampled with Qwen's recommended settings a
 
 from __future__ import annotations
 
-import datetime
 import re
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from . import runtime
+from .runtime import ModelSpec, Run, job
 
-from .common import revision, write_dataset
-
-MODEL = "Qwen/Qwen3-0.6B"
+MODEL = ModelSpec("Qwen/Qwen3-0.6B", "Qwen3-0.6B", device="mps")
 SEED = 1
 # Qwen3 model card: recommended sampling for each mode.
 SETTINGS = {
@@ -67,25 +64,17 @@ def boxed(text: str) -> str | None:
     return re.sub(r"\\text\{([^}]*)\}|[\\$ ]", lambda m: m.group(1) or "", found[-1]).strip()
 
 
-def main() -> None:
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).to(device).eval()
+@job("reasoning/thinking", models=[MODEL])
+def record_thinking(run: Run) -> dict:
+    tokenizer = runtime.tokenizer(MODEL)
     end_think = tokenizer.convert_tokens_to_ids("</think>")
 
-    def run(question: str, thinking: bool) -> dict:
-        prompt = tokenizer.apply_chat_template(
-            [{"role": "user", "content": question + SUFFIX}],
-            tokenize=False,
-            add_generation_prompt=True,
-            enable_thinking=thinking,
-        )
-        ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
-        torch.manual_seed(SEED)
+    def answer(question: str, thinking: bool) -> dict:
+        prompt = runtime.template(MODEL, [{"role": "user", "content": question + SUFFIX}], enable_thinking=thinking)
         settings = SETTINGS[thinking]
-        with torch.no_grad():
-            out = model.generate(ids, do_sample=True, pad_token_id=tokenizer.eos_token_id, **settings)
-        new = out[0, ids.shape[1] :].tolist()
+        new = runtime.generate(
+            MODEL, prompt, do_sample=True, seed=SEED, pad_token_id=tokenizer.eos_token_id, **settings
+        )["sequences"][0]
         stopped = bool(new) and new[-1] in {tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|im_end|>")}
         if stopped:
             new = new[:-1]
@@ -108,30 +97,23 @@ def main() -> None:
         }
 
     puzzles = []
-    for puzzle in PUZZLES:
+    for puzzle in run.items(PUZZLES, label=lambda p: p["question"][:60]):
         entry = {"question": puzzle["question"], "expected": puzzle["answer"]}
         for key, thinking in [("off", False), ("on", True)]:
-            result = run(puzzle["question"], thinking)
+            result = answer(puzzle["question"], thinking)
             result["correct"] = bool(
                 result["final"] and re.search(puzzle["pattern"], result["final"], re.IGNORECASE)
             )
             entry[key] = result
-            print(
+            run.log(
                 f"{key:3} {puzzle['answer']:>9} final={result['final']!r} correct={result['correct']}"
                 f" think={result['thinkingTokens']} answer={result['answerTokens']} stopped={result['stopped']}"
             )
         puzzles.append(entry)
 
-    data = {
+    return {
         "version": 1,
-        "model": {"id": MODEL, "displayName": "Qwen3-0.6B", "revision": revision(MODEL)},
+        "model": run.info(MODEL),
         "settings": {"off": SETTINGS[False], "on": SETTINGS[True], "seed": SEED, "suffix": SUFFIX},
         "puzzles": puzzles,
-        "generatedAt": datetime.date.today().isoformat(),
-        "source": {"torch": torch.__version__, "device": device},
     }
-    write_dataset("reasoning/thinking", data, "reasoning")
-
-
-if __name__ == "__main__":
-    main()

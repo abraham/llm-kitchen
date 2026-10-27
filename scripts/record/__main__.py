@@ -6,12 +6,16 @@ Usage, from the repository root:
     scripts/.venv/bin/python -m scripts.record run traces the-cat-sat    # some of a module's recordings
     scripts/.venv/bin/python -m scripts.record run all                   # everything, in order
     scripts/.venv/bin/python -m scripts.record status                    # what's recorded, from what
+    scripts/.venv/bin/python -m scripts.record try prompts/pushback --limit 3   # a trial, into scripts/.scratch/
     scripts/.venv/bin/python -m scripts.record check prompts/pushback    # re-record and compare (check.py)
     scripts/.venv/bin/python -m scripts.record check live
+    scripts/.venv/bin/python -m scripts.record cache prune               # drop cache entries no job uses
 
 Flags, anywhere: --device cpu|mps for every model, --download to allow downloads (the runner is
-offline otherwise), --force to download even when the disk is nearly full. The old form,
-`python -m scripts.record <module> [names]`, still works.
+offline otherwise), --force to download even when the disk is nearly full, --fresh to ignore the
+generation cache (scripts/.cache/) for one run. `try` also takes --limit N, --only LABEL (repeatable),
+and --set NAME=VALUE for the job's options. The old form, `python -m scripts.record <module> [names]`,
+still works.
 
 Modules in runtime.JOB_MODULES declare jobs (runtime.py); the others still have a main(). Either way
 datasets are written to static/data/ through common.write_dataset.
@@ -47,9 +51,11 @@ MODULES = [
 # Modules not yet ported to jobs whose main() takes names (traces: trace names) to rerun only some.
 TAKES_NAMES = {"traces"}
 USAGE = (
-    "usage: python -m scripts.record run <job|module|all> [names] [--device cpu|mps] [--download] [--force]\n"
+    "usage: python -m scripts.record run <job|module|all> [names] [--device cpu|mps] [--download] [--force] [--fresh]\n"
+    "       python -m scripts.record try <job> [--limit N] [--only LABEL] [--set NAME=VALUE]\n"
     "       python -m scripts.record status\n"
     "       python -m scripts.record check <job|module|live> [names]\n"
+    "       python -m scripts.record cache prune\n"
     f"modules: {', '.join(MODULES)}"
 )
 
@@ -60,8 +66,9 @@ def load_jobs() -> None:
 
 
 def targets(first: str, rest: list[str]) -> list[str]:
-    """`traces the-cat-sat` names the same recording as `traces/the-cat-sat`."""
-    if first == "all" or "/" in first or not rest:
+    """`traces the-cat-sat` names the same recording as `traces/the-cat-sat`; `chat agent` names
+    two modules."""
+    if first == "all" or "/" in first or not rest or all(r in MODULES or "/" in r for r in rest):
         return [first, *rest]
     return [f"{first}/{name}" for name in rest]
 
@@ -108,8 +115,19 @@ def main(argv: list[str]) -> None:
     if not args:
         raise SystemExit(USAGE)
     command, rest = args[0], args[1:]
+    trial_flags = runtime.SETTINGS.limit is not None or runtime.SETTINGS.only or runtime.SETTINGS.sets
+    if trial_flags and command != "try":
+        raise SystemExit("--limit, --only, and --set are for try")
     if command == "run" and rest:
         record(targets(rest[0], rest[1:]))
+    elif command == "try" and len(rest) == 1:
+        load_jobs()
+        runtime.write_manifest()
+        if rest[0] not in runtime.JOBS:
+            raise SystemExit(f"no job {rest[0]}; jobs: {', '.join(sorted(runtime.JOBS))}")
+        runtime.try_job(runtime.JOBS[rest[0]])
+    elif command == "cache" and rest == ["prune"]:
+        runtime.prune_cache()
     elif command == "status":
         from . import status
 
@@ -123,6 +141,7 @@ def main(argv: list[str]) -> None:
             check.live()
         else:
             names = targets(rest[0], rest[1:])
+            runtime.SETTINGS.fresh = True
             check.recordings(lambda: record(names), " ".join(names))
     elif command in MODULES or command == "all":
         record(targets(command, rest))

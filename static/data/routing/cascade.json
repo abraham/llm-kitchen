@@ -2,17 +2,26 @@
 	"dataset": "routing/cascade",
 	"version": 1,
 	"script": "record/routing.py",
+	"job": "routing/cascade",
 	"models": [
 		{
 			"id": "Qwen/Qwen2.5-0.5B-Instruct",
-			"revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+			"revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+			"device": "cpu",
+			"dtype": "float32"
 		},
 		{
 			"id": "Qwen/Qwen2.5-1.5B-Instruct",
-			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-24",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"system": "Answer with just the answer: a word, a name, or a number. No explanation.",
@@ -758,7 +767,6 @@
 					"correct": false
 				}
 			}
-		],
-		"generatedAt": "2026-10-24"
+		]
 	}
 }

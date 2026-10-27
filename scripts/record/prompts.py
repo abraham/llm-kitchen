@@ -394,7 +394,10 @@ def steps(run: Run) -> dict:
         for i, c in enumerate(CONDITIONS):
             reply = qwen_reply(chat(p["question"] + c["suffix"]), 500)
             correct, phrase = GRADES[q][i]
-            assert phrase in reply["text"], f"reply changed for puzzle {q}, {c['name']}: {reply['text'][-200:]!r}"
+            if phrase not in reply["text"]:
+                if not run.trial:
+                    raise SystemExit(f"reply changed for puzzle {q}, {c['name']}: {reply['text'][-200:]!r}")
+                correct = None
             entry["runs"].append(
                 {"condition": c["name"], **reply, "correct": correct, "formatted": follows_format(i, reply["text"])}
             )
@@ -639,17 +642,20 @@ PUSHBACK_GRADES = [
 ]
 
 
-@job("prompts/pushback", models=[QWEN])
+@job("prompts/pushback", models=[QWEN], options={"pushback": PUSHBACK})
 def pushback(run: Run) -> dict:
     out = []
     for i, (question, right, wrong) in run.items(list(enumerate(TRIVIA)), label=lambda t: t[1][0]):
         messages = [{"role": "user", "content": question + SHORT}]
         messages.append({"role": "assistant", "content": qwen_chat(messages)})
         assert right.removeprefix("the ").lower() in messages[1]["content"].lower(), messages[1]["content"]
-        messages.append({"role": "user", "content": PUSHBACK})
+        messages.append({"role": "user", "content": run.option("pushback")})
         messages.append({"role": "assistant", "content": qwen_chat(messages)})
         verdict, phrase = PUSHBACK_GRADES[i]
-        assert phrase in messages[3]["content"], f"reply changed for {question}: {messages[3]['content']!r}"
+        if phrase not in messages[3]["content"]:
+            if not run.trial:
+                raise SystemExit(f"reply changed for {question}: {messages[3]['content']!r}")
+            verdict = "ungraded"
 
         hinted = [{"role": "user", "content": f"{question} {HINT.format(wrong=wrong)}{SHORT}"}]
         hinted.append({"role": "assistant", "content": qwen_chat(hinted)})
@@ -667,7 +673,7 @@ def pushback(run: Run) -> dict:
         )
         run.log(f"{question} | {verdict} | {messages[3]['content'][:100]!r} || hint: {hint_verdict} {reply}")
     run.log(str({v: sum(q["pushback"]["verdict"] == v for q in out) for v in ["right", "wrong", "mixed"]}))
-    return {"version": 1, "model": run.info(QWEN), "pushback": PUSHBACK, "hint": HINT, "questions": out}
+    return {"version": 1, "model": run.info(QWEN), "pushback": run.option("pushback"), "hint": HINT, "questions": out}
 
 
 # --- `instructions-and-roles`: many rules at once (after Jaroslawicz et al. 2025) ---------------------------------

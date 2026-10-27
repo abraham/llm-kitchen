@@ -58,13 +58,20 @@ scripts/.venv/bin/python -m scripts.record run traces --download   # GPT-2 small
 scripts/.venv/bin/python -m scripts.record run traces the-cat-sat  # just one trace
 scripts/.venv/bin/python -m scripts.record run prompts/pushback    # one job
 scripts/.venv/bin/python -m scripts.record run all                 # everything
+scripts/.venv/bin/python -m scripts.record try prompts/pushback --limit 3 --set "pushback=Are you certain?"
 scripts/.venv/bin/python -m scripts.record status                  # what's recorded, and from what
 scripts/.venv/bin/python -m scripts.record check encoder           # re-record into a temp folder and compare
 scripts/.venv/bin/python -m scripts.record check live              # the live models' pinned downloads
+scripts/.venv/bin/python -m scripts.record cache prune             # drop cached calls no job uses
 ```
 
 Progress prints as it goes, even through a pipe, and is also logged to `scripts/.logs/`. Add
 `--device cpu` or `--device mps` to run every model on one device.
+
+Every model call the ported modules make is cached in `scripts/.cache/`, so a rerun only computes
+what changed; `--fresh` ignores the cache, and `check` always does. `try` runs a job on a few items
+(`--limit`, `--only`) into `scripts/.scratch/`, printing each reply, and `--set` changes one of the
+job's options for the trial; a later `run` reuses the replies the trial made.
 
 `traces` checks `models/canonical.json` against the model's own config before writing anything.
 

@@ -125,8 +125,7 @@ export const routingRecording: Check<RoutingRecording> = object({
 	big: routingModel,
 	questions: array(
 		object({ question: string, accepted: array(string), small: routingAnswer, big: routingAnswer })
-	),
-	generatedAt: string
+	)
 });
 
 const sampledAnswer = object({ text: string, verdict: literal('right', 'wrong', 'declined') });
@@ -148,6 +147,5 @@ export const hallucinationSamples: Check<HallucinationSamples> = object({
 			answers: object({ plain: sampledAnswers, allowed: sampledAnswers }),
 			greedy: object({ plain: sampledAnswer, allowed: sampledAnswer })
 		})
-	),
-	generatedAt: string
+	)
 });
