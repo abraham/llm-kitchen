@@ -79,6 +79,7 @@
 
 			<p class="verdict" class:wrong={r.verdict !== 'right'}>
 				The right answer is {q.right}. <span>{SAID[run][r.verdict]}.</span>
+				{#if run === 'pushback'}<span class="reason">Graded by hand: {q.pushback.reason}</span>{/if}
 			</p>
 			<ScrollBox label="{TITLE}: the conversation" maxHeight="26rem" framed>
 				<ChatLog label="The conversation" messages={r.messages} />
@@ -117,5 +118,9 @@
 
 	.verdict.wrong span {
 		color: var(--c-loss-ink);
+	}
+
+	.verdict .reason {
+		color: var(--ink-muted);
 	}
 </style>

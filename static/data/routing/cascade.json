@@ -2,17 +2,26 @@
 	"dataset": "routing/cascade",
 	"version": 1,
 	"script": "record/routing.py",
+	"job": "routing/cascade",
 	"models": [
 		{
 			"id": "Qwen/Qwen2.5-0.5B-Instruct",
-			"revision": "7ae557604adf67be50417f59c2c2f167def9a775"
+			"revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+			"device": "cpu",
+			"dtype": "float32"
 		},
 		{
 			"id": "Qwen/Qwen2.5-1.5B-Instruct",
-			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-24",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"system": "Answer with just the answer: a word, a name, or a number. No explanation.",
@@ -37,14 +46,12 @@
 				"small": {
 					"answer": "Twenty-two",
 					"tokens": 2,
-					"confidence": 0.4268,
-					"correct": false
+					"confidence": 0.4268
 				},
 				"big": {
 					"answer": "42",
 					"tokens": 2,
-					"confidence": 0.9999,
-					"correct": true
+					"confidence": 0.9999
 				}
 			},
 			{
@@ -55,14 +62,12 @@
 				"small": {
 					"answer": "90",
 					"tokens": 2,
-					"confidence": 0.416,
-					"correct": false
+					"confidence": 0.416
 				},
 				"big": {
 					"answer": "72",
 					"tokens": 2,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -73,14 +78,12 @@
 				"small": {
 					"answer": "481",
 					"tokens": 3,
-					"confidence": 0.5602,
-					"correct": false
+					"confidence": 0.5602
 				},
 				"big": {
 					"answer": "401",
 					"tokens": 3,
-					"confidence": 0.9849,
-					"correct": false
+					"confidence": 0.9849
 				}
 			},
 			{
@@ -91,14 +94,12 @@
 				"small": {
 					"answer": "12",
 					"tokens": 2,
-					"confidence": 0.3669,
-					"correct": true
+					"confidence": 0.3669
 				},
 				"big": {
 					"answer": "12",
 					"tokens": 2,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -109,14 +110,12 @@
 				"small": {
 					"answer": "125",
 					"tokens": 3,
-					"confidence": 0.7639,
-					"correct": true
+					"confidence": 0.7639
 				},
 				"big": {
 					"answer": "125",
 					"tokens": 3,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -127,14 +126,12 @@
 				"small": {
 					"answer": "1152",
 					"tokens": 4,
-					"confidence": 0.568,
-					"correct": false
+					"confidence": 0.568
 				},
 				"big": {
 					"answer": "864",
 					"tokens": 3,
-					"confidence": 0.9993,
-					"correct": true
+					"confidence": 0.9993
 				}
 			},
 			{
@@ -145,14 +142,12 @@
 				"small": {
 					"answer": "243",
 					"tokens": 3,
-					"confidence": 0.5483,
-					"correct": false
+					"confidence": 0.5483
 				},
 				"big": {
 					"answer": "643",
 					"tokens": 3,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -163,14 +158,12 @@
 				"small": {
 					"answer": "225",
 					"tokens": 3,
-					"confidence": 0.6806,
-					"correct": true
+					"confidence": 0.6806
 				},
 				"big": {
 					"answer": "225",
 					"tokens": 3,
-					"confidence": 0.9997,
-					"correct": true
+					"confidence": 0.9997
 				}
 			},
 			{
@@ -181,14 +174,12 @@
 				"small": {
 					"answer": "Paris",
 					"tokens": 1,
-					"confidence": 0.9772,
-					"correct": true
+					"confidence": 0.9772
 				},
 				"big": {
 					"answer": "Paris",
 					"tokens": 1,
-					"confidence": 0.9865,
-					"correct": true
+					"confidence": 0.9865
 				}
 			},
 			{
@@ -199,14 +190,12 @@
 				"small": {
 					"answer": "Tokyo",
 					"tokens": 2,
-					"confidence": 0.9843,
-					"correct": true
+					"confidence": 0.9843
 				},
 				"big": {
 					"answer": "Tokyo",
 					"tokens": 2,
-					"confidence": 0.9989,
-					"correct": true
+					"confidence": 0.9989
 				}
 			},
 			{
@@ -217,14 +206,12 @@
 				"small": {
 					"answer": "Sydney",
 					"tokens": 2,
-					"confidence": 0.79,
-					"correct": false
+					"confidence": 0.79
 				},
 				"big": {
 					"answer": "Canberra",
 					"tokens": 2,
-					"confidence": 0.9969,
-					"correct": true
+					"confidence": 0.9969
 				}
 			},
 			{
@@ -235,14 +222,12 @@
 				"small": {
 					"answer": "Toronto",
 					"tokens": 1,
-					"confidence": 0.3438,
-					"correct": false
+					"confidence": 0.3438
 				},
 				"big": {
 					"answer": "Ottawa",
 					"tokens": 3,
-					"confidence": 0.9454,
-					"correct": true
+					"confidence": 0.9454
 				}
 			},
 			{
@@ -254,14 +239,12 @@
 				"small": {
 					"answer": "Brasília",
 					"tokens": 3,
-					"confidence": 0.6712,
-					"correct": true
+					"confidence": 0.6712
 				},
 				"big": {
 					"answer": "Brasília",
 					"tokens": 3,
-					"confidence": 0.9134,
-					"correct": true
+					"confidence": 0.9134
 				}
 			},
 			{
@@ -272,14 +255,12 @@
 				"small": {
 					"answer": "Ankara",
 					"tokens": 1,
-					"confidence": 0.2546,
-					"correct": true
+					"confidence": 0.2546
 				},
 				"big": {
 					"answer": "Ankara",
 					"tokens": 3,
-					"confidence": 0.8992,
-					"correct": true
+					"confidence": 0.8992
 				}
 			},
 			{
@@ -290,14 +271,12 @@
 				"small": {
 					"answer": "Kampala",
 					"tokens": 3,
-					"confidence": 0.4139,
-					"correct": false
+					"confidence": 0.4139
 				},
 				"big": {
 					"answer": "Nairobi",
 					"tokens": 2,
-					"confidence": 0.9901,
-					"correct": true
+					"confidence": 0.9901
 				}
 			},
 			{
@@ -308,14 +287,12 @@
 				"small": {
 					"answer": "Wellington",
 					"tokens": 2,
-					"confidence": 0.5151,
-					"correct": true
+					"confidence": 0.5151
 				},
 				"big": {
 					"answer": "Wellington",
 					"tokens": 2,
-					"confidence": 0.9929,
-					"correct": true
+					"confidence": 0.9929
 				}
 			},
 			{
@@ -327,14 +304,12 @@
 				"small": {
 					"answer": "Bern",
 					"tokens": 1,
-					"confidence": 0.8691,
-					"correct": true
+					"confidence": 0.8691
 				},
 				"big": {
 					"answer": "Bern",
 					"tokens": 1,
-					"confidence": 0.945,
-					"correct": true
+					"confidence": 0.945
 				}
 			},
 			{
@@ -345,14 +320,12 @@
 				"small": {
 					"answer": "Marrakech",
 					"tokens": 4,
-					"confidence": 0.5558,
-					"correct": false
+					"confidence": 0.5558
 				},
 				"big": {
 					"answer": "Rabat",
 					"tokens": 3,
-					"confidence": 0.9897,
-					"correct": true
+					"confidence": 0.9897
 				}
 			},
 			{
@@ -364,14 +337,12 @@
 				"small": {
 					"answer": "Hanoi",
 					"tokens": 2,
-					"confidence": 0.8867,
-					"correct": true
+					"confidence": 0.8867
 				},
 				"big": {
 					"answer": "Hanoi",
 					"tokens": 2,
-					"confidence": 0.9478,
-					"correct": true
+					"confidence": 0.9478
 				}
 			},
 			{
@@ -382,14 +353,12 @@
 				"small": {
 					"answer": "Ibadan",
 					"tokens": 3,
-					"confidence": 0.6068,
-					"correct": false
+					"confidence": 0.6068
 				},
 				"big": {
 					"answer": "Abuja",
 					"tokens": 2,
-					"confidence": 0.9348,
-					"correct": true
+					"confidence": 0.9348
 				}
 			},
 			{
@@ -400,14 +369,12 @@
 				"small": {
 					"answer": "Lima",
 					"tokens": 2,
-					"confidence": 0.7365,
-					"correct": true
+					"confidence": 0.7365
 				},
 				"big": {
 					"answer": "Lima",
 					"tokens": 2,
-					"confidence": 0.992,
-					"correct": true
+					"confidence": 0.992
 				}
 			},
 			{
@@ -418,14 +385,12 @@
 				"small": {
 					"answer": "Cairo",
 					"tokens": 2,
-					"confidence": 0.6092,
-					"correct": true
+					"confidence": 0.6092
 				},
 				"big": {
 					"answer": "Cairo",
 					"tokens": 2,
-					"confidence": 0.972,
-					"correct": true
+					"confidence": 0.972
 				}
 			},
 			{
@@ -436,14 +401,12 @@
 				"small": {
 					"answer": "Au",
 					"tokens": 1,
-					"confidence": 0.9677,
-					"correct": true
+					"confidence": 0.9677
 				},
 				"big": {
 					"answer": "Au",
 					"tokens": 1,
-					"confidence": 0.7353,
-					"correct": true
+					"confidence": 0.7353
 				}
 			},
 			{
@@ -454,14 +417,12 @@
 				"small": {
 					"answer": "Na",
 					"tokens": 1,
-					"confidence": 0.9736,
-					"correct": true
+					"confidence": 0.9736
 				},
 				"big": {
 					"answer": "Na",
 					"tokens": 1,
-					"confidence": 0.9907,
-					"correct": true
+					"confidence": 0.9907
 				}
 			},
 			{
@@ -472,14 +433,12 @@
 				"small": {
 					"answer": "Jupiter",
 					"tokens": 2,
-					"confidence": 0.947,
-					"correct": true
+					"confidence": 0.947
 				},
 				"big": {
 					"answer": "Jupiter",
 					"tokens": 2,
-					"confidence": 0.841,
-					"correct": true
+					"confidence": 0.841
 				}
 			},
 			{
@@ -490,14 +449,12 @@
 				"small": {
 					"answer": "Mercury",
 					"tokens": 2,
-					"confidence": 0.8938,
-					"correct": true
+					"confidence": 0.8938
 				},
 				"big": {
 					"answer": "Mercury",
 					"tokens": 2,
-					"confidence": 0.9995,
-					"correct": true
+					"confidence": 0.9995
 				}
 			},
 			{
@@ -509,14 +466,12 @@
 				"small": {
 					"answer": "six legs.",
 					"tokens": 3,
-					"confidence": 0.603,
-					"correct": false
+					"confidence": 0.603
 				},
 				"big": {
 					"answer": "8",
 					"tokens": 1,
-					"confidence": 0.9205,
-					"correct": true
+					"confidence": 0.9205
 				}
 			},
 			{
@@ -527,14 +482,12 @@
 				"small": {
 					"answer": "100 Celsius degrees.",
 					"tokens": 6,
-					"confidence": 0.61,
-					"correct": true
+					"confidence": 0.61
 				},
 				"big": {
 					"answer": "100",
 					"tokens": 3,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -545,14 +498,12 @@
 				"small": {
 					"answer": "0 degrees Fahrenheit",
 					"tokens": 3,
-					"confidence": 0.5034,
-					"correct": false
+					"confidence": 0.5034
 				},
 				"big": {
 					"answer": "32",
 					"tokens": 2,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -563,14 +514,12 @@
 				"small": {
 					"answer": "William Shakespeare",
 					"tokens": 2,
-					"confidence": 0.8163,
-					"correct": true
+					"confidence": 0.8163
 				},
 				"big": {
 					"answer": "William Shakespeare",
 					"tokens": 2,
-					"confidence": 0.7229,
-					"correct": true
+					"confidence": 0.7229
 				}
 			},
 			{
@@ -582,14 +531,12 @@
 				"small": {
 					"answer": "Leonardo da Vinci",
 					"tokens": 4,
-					"confidence": 0.8442,
-					"correct": true
+					"confidence": 0.8442
 				},
 				"big": {
 					"answer": "Leonardo da Vinci",
 					"tokens": 4,
-					"confidence": 0.9765,
-					"correct": true
+					"confidence": 0.9765
 				}
 			},
 			{
@@ -600,14 +547,12 @@
 				"small": {
 					"answer": "Jane Austen",
 					"tokens": 3,
-					"confidence": 0.927,
-					"correct": true
+					"confidence": 0.927
 				},
 				"big": {
 					"answer": "Jane Austen",
 					"tokens": 3,
-					"confidence": 0.9929,
-					"correct": true
+					"confidence": 0.9929
 				}
 			},
 			{
@@ -618,14 +563,12 @@
 				"small": {
 					"answer": "Neil Armstrong",
 					"tokens": 2,
-					"confidence": 0.9021,
-					"correct": true
+					"confidence": 0.9021
 				},
 				"big": {
 					"answer": "Neil Armstrong",
 					"tokens": 2,
-					"confidence": 0.8982,
-					"correct": true
+					"confidence": 0.8982
 				}
 			},
 			{
@@ -636,14 +579,12 @@
 				"small": {
 					"answer": "Mediterranean Sea",
 					"tokens": 5,
-					"confidence": 0.7733,
-					"correct": false
+					"confidence": 0.7733
 				},
 				"big": {
 					"answer": "Atlantic Ocean",
 					"tokens": 2,
-					"confidence": 0.7444,
-					"correct": false
+					"confidence": 0.7444
 				}
 			},
 			{
@@ -654,14 +595,12 @@
 				"small": {
 					"answer": "366",
 					"tokens": 3,
-					"confidence": 0.9715,
-					"correct": true
+					"confidence": 0.9715
 				},
 				"big": {
 					"answer": "366",
 					"tokens": 3,
-					"confidence": 0.9999,
-					"correct": true
+					"confidence": 0.9999
 				}
 			},
 			{
@@ -673,14 +612,12 @@
 				"small": {
 					"answer": "six",
 					"tokens": 1,
-					"confidence": 0.9143,
-					"correct": true
+					"confidence": 0.9143
 				},
 				"big": {
 					"answer": "6",
 					"tokens": 1,
-					"confidence": 0.9288,
-					"correct": true
+					"confidence": 0.9288
 				}
 			},
 			{
@@ -692,14 +629,12 @@
 				"small": {
 					"answer": "18",
 					"tokens": 2,
-					"confidence": 0.4004,
-					"correct": false
+					"confidence": 0.4004
 				},
 				"big": {
 					"answer": "9",
 					"tokens": 1,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -710,14 +645,12 @@
 				"small": {
 					"answer": "1945",
 					"tokens": 4,
-					"confidence": 0.9997,
-					"correct": true
+					"confidence": 0.9997
 				},
 				"big": {
 					"answer": "1945",
 					"tokens": 4,
-					"confidence": 1.0,
-					"correct": true
+					"confidence": 1.0
 				}
 			},
 			{
@@ -729,14 +662,12 @@
 				"small": {
 					"answer": "two",
 					"tokens": 1,
-					"confidence": 0.3396,
-					"correct": true
+					"confidence": 0.3396
 				},
 				"big": {
 					"answer": "2",
 					"tokens": 1,
-					"confidence": 0.9963,
-					"correct": true
+					"confidence": 0.9963
 				}
 			},
 			{
@@ -748,17 +679,14 @@
 				"small": {
 					"answer": "seven",
 					"tokens": 1,
-					"confidence": 0.1925,
-					"correct": true
+					"confidence": 0.1925
 				},
 				"big": {
 					"answer": "5",
 					"tokens": 1,
-					"confidence": 0.7746,
-					"correct": false
+					"confidence": 0.7746
 				}
 			}
-		],
-		"generatedAt": "2026-10-24"
+		]
 	}
 }

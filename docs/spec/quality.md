@@ -10,6 +10,7 @@ Every check is an `npm run` script, so CI and local runs match:
 | `lint`            | `eslint .`                                                         | Any lint error.                                                                     |
 | `check`           | `svelte-kit sync && svelte-check --fail-on-warnings`               | Type errors or Svelte warnings, including a11y warnings.                            |
 | `test`            | `vitest run`                                                       | A unit test fails.                                                                  |
+| `test:python`     | `pytest scripts/tests` in `scripts/.venv`                          | A test of the recording runtime fails.                                              |
 | `build`           | `node scripts/build-og.ts && vite build`                           | Prerendering fails, e.g. a broken internal link or a chapter that throws.           |
 | `test:e2e`        | `playwright test` (Chromium) against the Firebase Hosting emulator | A page or widget test fails, or an accessibility, layout, budget, or hosting check. |
 | `test:lighthouse` | `playwright test --config playwright.lighthouse.config.ts`         | A page scores under 95 for Lighthouse performance or under 100 for accessibility.   |
@@ -24,6 +25,13 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
 - **Format, lint, type check, audits, unit tests** in one fast job. The audits are zizmor on the
   workflows and, on pull requests in a public repository, dependency review (see
   [security.md](security.md)).
+- **Recording runtime tests**: `pytest` on `scripts/tests/` with the CPU-only PyTorch build and the
+  pinned packages (`scripts/requirements.txt`, and `pytest` in `scripts/requirements-dev.txt`).
+  The tests build a one-layer GPT-2 with a ten-word vocabulary and download no model, so they run
+  in seconds: the cache key (every field changes it; key order, display name, and stop tokens
+  don't), cache hits and `--fresh`, seeded sampling, hand grades and stale grades, a run that
+  stops for grading, dependency order, trials writing only to the scratch folder, the envelope,
+  and the probe behind `status`.
 - **Build and Playwright**, split across 3 parallel jobs with Playwright's `--shard`, each uploading
   its report on failure. Tests are independent (`fullyParallel`), so a shard can take any of them.
   The build sets `VITE_FIXTURES` to add the test-only pages in `tests/e2e/fixtures`; a local

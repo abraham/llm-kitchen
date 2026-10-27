@@ -115,6 +115,7 @@ export default defineConfig(
 		files: [
 			'src/lib/math/**',
 			'src/lib/harness/**',
+			'src/lib/grading/**',
 			'src/lib/curriculum/**',
 			'src/lib/datasets/check.ts',
 			'src/lib/datasets/registry.ts',

@@ -42,33 +42,9 @@ describe('system prompts', () => {
 
 describe('many rules at once', () => {
 	const d = readDataset('prompts/rules');
-	// The same checks as the recording script, so the stored verdicts can't drift from the replies.
-	const CHECKS: ((t: string) => boolean)[] = [
-		(t) => t.trim().toLowerCase().startsWith('hello'),
-		(t) => t.toLowerCase().includes('harbor'),
-		(t) => t.split(/\s+/).filter(Boolean).length < 60,
-		(t) => !t.includes(','),
-		(t) => t === t.toLowerCase(),
-		(t) => /\d/.test(t),
-		(t) =>
-			t
-				.toLowerCase()
-				.replace(/[^a-z ]/g, '')
-				.trim()
-				.endsWith('see you soon'),
-		(t) => !/\bthe\b/i.test(t),
-		(t) => t.includes('?'),
-		(t) => t.toLowerCase().includes('lemonade')
-	];
 	const at = (k: number) => d.notes.map((n) => n.runs[d.counts.indexOf(k)]);
 	const kept = (k: number) => at(k).reduce((s, r) => s + r.followed.filter(Boolean).length, 0);
 	const every = (k: number) => at(k).filter((r) => r.followed.every(Boolean)).length;
-
-	it('every stored verdict matches its check', () => {
-		expect(d.rules).toHaveLength(CHECKS.length);
-		for (const n of d.notes)
-			for (const r of n.runs) expect(r.followed).toEqual(r.rules.map((i) => CHECKS[i](r.reply)));
-	});
 
 	it('the prompts list the rules in order', () => {
 		for (const n of d.notes)

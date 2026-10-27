@@ -49,7 +49,7 @@ ones. Step through GPT-2 small finishing "The cat sat on the" with the cache off
 
 <At levels="simple">
 
-Without the cache, each new token took longer than the last, and 500 tokens took 43.2 seconds.
+Without the cache, each new token took longer than the last, and 500 tokens took 43.0 seconds.
 With it, each took about the same time, about 20 milliseconds, and the run took 10.0 seconds. Both
 runs wrote exactly the same text.
 
@@ -57,8 +57,8 @@ runs wrote exactly the same text.
 <At levels="standard deep">
 
 Without the cache, every step runs the whole text through all 12 blocks again, so each step costs
-a little more than the last. Measured on a laptop, the time per new token grew from 24 to 139
-milliseconds over 500 tokens, and the whole run took 43.2 seconds. With the cache, each token took
+a little more than the last. Measured on a laptop, the time per new token grew from 23 to 139
+milliseconds over 500 tokens, and the whole run took 43.0 seconds. With the cache, each token took
 about 20 milliseconds, and the run took 10.0 seconds. Both runs picked exactly the same 500 tokens;
 their scores differed by at most 0.01, from rounding when the same sums are added up in a different
 order.

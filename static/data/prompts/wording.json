@@ -2,13 +2,20 @@
 	"dataset": "prompts/wording",
 	"version": 1,
 	"script": "record/prompts.py",
+	"job": "prompts/wording",
 	"models": [
 		{
 			"id": "openai-community/gpt2",
-			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-23",
+	"generatedAt": "2026-10-26",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"model": {
@@ -852,10 +859,6 @@
 					}
 				]
 			}
-		],
-		"generatedAt": "2026-10-23",
-		"source": {
-			"torch": "2.14.1"
-		}
+		]
 	}
 }

@@ -1,26 +1,20 @@
 """Record a small chat model answering the same questions many times, for `making-things-up` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record hallucination
+Usage: scripts/.venv/bin/python -m scripts.record run hallucination
 
 Asks Qwen2.5-1.5B-Instruct each question 10 times, sampled with the model card's settings and a
 fixed seed, and once greedily (temperature 0), under two system prompts: one that asks for a short answer, and one that also allows
 "I don't know". Some questions have well-known answers, some are harder, and some ask about a book
 or a person invented for this chapter. Writes static/data/hallucination/samples.json with every
-answer and a verdict from code: right, wrong, or declined.
+answer; the site grades each one (src/lib/grading/answers.ts): right, wrong, or declined.
 """
 
 from __future__ import annotations
 
-import datetime
-import re
+from . import runtime
+from .runtime import ModelSpec, Run, job
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-from .common import revision, write_dataset
-
-MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
-DISPLAY = "Qwen2.5-1.5B-Instruct"
+MODEL = ModelSpec("Qwen/Qwen2.5-1.5B-Instruct", "Qwen2.5-1.5B-Instruct", device="mps")
 SEED = 1
 SAMPLES = 10
 # Qwen2.5 generation_config.json defaults.
@@ -47,46 +41,23 @@ QUESTIONS: list[tuple[str, str, str, list[str], str | None]] = [
     ("quillfeather", "invented", "What is the population of the town of Quillfeather, Ontario?", [], None),
 ]
 
-DECLINE = re.compile(
-    r"don['’]t know|do not know|not sure|unsure|no (?:information|record|data|known)|not aware|"
-    r"couldn['’]t find|could not find|unable to|does(?:n['’]t| not) exist|fictional|not a real|"
-    r"there is no|i['’]m sorry|cannot (?:find|provide|answer|determine)|not possible to",
-    re.IGNORECASE,
-)
 
-
-def verdict(answer: str, accepted: list[str]) -> str:
-    if DECLINE.search(answer):
-        return "declined"
-    text = answer.lower().replace(",", "")
-    for a in accepted:
-        a = a.lower()
-        pattern = rf"(?<!\d){re.escape(a)}(?!\d)" if a.isdigit() else rf"\b{re.escape(a)}\b"
-        if re.search(pattern, text):
-            return "right"
-    return "wrong"
-
-
-def main() -> None:
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).to(device).eval()
+@job("hallucination/samples", models=[MODEL])
+def samples(run: Run) -> dict:
+    tokenizer = runtime.tokenizer(MODEL)
     stops = {tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|im_end|>")}
 
     def sample(system: str, question: str, greedy: bool = False) -> list[str]:
         messages = [{"role": "system", "content": system}, {"role": "user", "content": question}]
-        prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
-        torch.manual_seed(SEED)
+        prompt = runtime.template(MODEL, messages)
         settings = {"do_sample": False, "max_new_tokens": SETTINGS["max_new_tokens"]} if greedy else {
             "do_sample": True,
             "num_return_sequences": SAMPLES,
             **SETTINGS,
         }
-        with torch.no_grad():
-            out = model.generate(ids, pad_token_id=tokenizer.eos_token_id, **settings)
+        out = runtime.generate(MODEL, prompt, seed=SEED, pad_token_id=tokenizer.eos_token_id, **settings)
         answers = []
-        for row in out[:, ids.shape[1] :].tolist():
+        for row in out["sequences"]:
             kept = []
             for token in row:
                 if token in stops:
@@ -96,7 +67,7 @@ def main() -> None:
         return answers
 
     questions = []
-    for qid, kind, question, accepted, truth in QUESTIONS:
+    for qid, kind, question, accepted, truth in run.items(QUESTIONS, label=lambda q: q[0]):
         entry = {
             "id": qid,
             "kind": kind,
@@ -108,22 +79,17 @@ def main() -> None:
         }
         for key, system in PROMPTS:
             answers = sample(system, question)
-            entry["answers"][key] = [{"text": a, "verdict": verdict(a, accepted)} for a in answers]
+            entry["answers"][key] = [{"text": a} for a in answers]
             [greedy] = sample(system, question, greedy=True)
-            entry["greedy"][key] = {"text": greedy, "verdict": verdict(greedy, accepted)}
-            print(f"{qid:12} {key:7}", greedy, [a[:40] for a in answers])
+            entry["greedy"][key] = {"text": greedy}
+            run.log(f"{qid:12} {key:7} {greedy} {[a[:40] for a in answers]}")
         questions.append(entry)
 
-    write_dataset("hallucination/samples", {
+    return {
         "version": 1,
-        "model": {"id": MODEL, "displayName": DISPLAY, "revision": revision(MODEL)},
+        "model": run.info(MODEL),
         "settings": {k: v for k, v in SETTINGS.items() if k != "max_new_tokens"},
         "seed": SEED,
         "prompts": [{"id": key, "system": system} for key, system in PROMPTS],
         "questions": questions,
-        "generatedAt": datetime.date.today().isoformat(),
-    }, "hallucination")
-
-
-if __name__ == "__main__":
-    main()
+    }

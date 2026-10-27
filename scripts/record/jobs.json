@@ -1,0 +1,600 @@
+{
+	"agent/chat": {
+		"module": "agent",
+		"outputs": [
+			"agent/chat",
+			"agent/math-no-tools",
+			"agent/math-tools",
+			"agent/agent-cat",
+			"agent/inject-none",
+			"agent/inject-ask",
+			"agent/inject-allowlist",
+			"agent/context"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct",
+			"sentence-transformers/all-MiniLM-L6-v2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"agent/grades": {
+		"module": "grading",
+		"outputs": [
+			"agent/grades"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [
+			"agent/chat"
+		],
+		"options": []
+	},
+	"agent/memory": {
+		"module": "memory",
+		"outputs": [
+			"agent/memory"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [
+			"agent/chat"
+		],
+		"options": []
+	},
+	"agent/search": {
+		"module": "search",
+		"outputs": [
+			"agent/search"
+		],
+		"models": [
+			"sentence-transformers/all-MiniLM-L6-v2"
+		],
+		"needs": [
+			"agent/chat"
+		],
+		"options": []
+	},
+	"attention/ioi-scores": {
+		"module": "attention",
+		"outputs": [
+			"attention/ioi-scores"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"caching/kv-cache": {
+		"module": "caching",
+		"outputs": [
+			"caching/kv-cache"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"chat/base-vs-instruct": {
+		"module": "chat",
+		"outputs": [
+			"chat/base-vs-instruct"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-0.5B",
+			"Qwen/Qwen2.5-0.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"decisions/grid": {
+		"module": "decisions",
+		"outputs": [
+			"decisions/grid"
+		],
+		"models": [],
+		"needs": [],
+		"options": []
+	},
+	"embeddings/minilm-map": {
+		"module": "embeddings",
+		"outputs": [
+			"embeddings/minilm-map",
+			"embeddings/minilm-vectors"
+		],
+		"models": [
+			"sentence-transformers/all-MiniLM-L6-v2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"encoders/fill-mask": {
+		"module": "encoder",
+		"outputs": [
+			"encoders/fill-mask"
+		],
+		"models": [
+			"google-bert/bert-base-uncased",
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"hallucination/samples": {
+		"module": "hallucination",
+		"outputs": [
+			"hallucination/samples"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"injection/lab": {
+		"module": "injection",
+		"outputs": [
+			"injection/lab"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/fewshot": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/fewshot"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/fragile": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/fragile"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/labels": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/labels"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/problems": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/problems"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/pushback": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/pushback"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": [
+			"pushback"
+		]
+	},
+	"prompts/rules": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/rules"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/steps": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/steps"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [
+			"reasoning/thinking"
+		],
+		"options": []
+	},
+	"prompts/system": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/system"
+		],
+		"models": [
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"prompts/wording": {
+		"module": "prompts",
+		"outputs": [
+			"prompts/wording"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"quantize/precisions": {
+		"module": "quantize",
+		"outputs": [
+			"quantize/precisions"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"reasoning/thinking": {
+		"module": "reasoning",
+		"outputs": [
+			"reasoning/thinking"
+		],
+		"models": [
+			"Qwen/Qwen3-0.6B"
+		],
+		"needs": [],
+		"options": []
+	},
+	"routing/cascade": {
+		"module": "routing",
+		"outputs": [
+			"routing/cascade"
+		],
+		"models": [
+			"Qwen/Qwen2.5-0.5B-Instruct",
+			"Qwen/Qwen2.5-1.5B-Instruct"
+		],
+		"needs": [],
+		"options": []
+	},
+	"speculative/drafts": {
+		"module": "speculative",
+		"outputs": [
+			"speculative/drafts"
+		],
+		"models": [
+			"openai-community/gpt2",
+			"openai-community/gpt2-medium"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/attn-ioi": {
+		"module": "traces",
+		"outputs": [
+			"traces/attn-ioi"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/attn-mary-lamb": {
+		"module": "traces",
+		"outputs": [
+			"traces/attn-mary-lamb"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/attn-the-cat-sat": {
+		"module": "traces",
+		"outputs": [
+			"traces/attn-the-cat-sat"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/attn-trophy-big": {
+		"module": "traces",
+		"outputs": [
+			"traces/attn-trophy-big"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/attn-trophy-small": {
+		"module": "traces",
+		"outputs": [
+			"traces/attn-trophy-small"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/penalty-0": {
+		"module": "traces",
+		"outputs": [
+			"traces/penalty-0"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/penalty-05": {
+		"module": "traces",
+		"outputs": [
+			"traces/penalty-05"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/penalty-5": {
+		"module": "traces",
+		"outputs": [
+			"traces/penalty-5"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-engineer": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-engineer"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-france": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-france"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-france-qa": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-france-qa"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-iphone": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-iphone"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-loop": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-loop"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-math": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-math"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-moon": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-moon"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-nurse": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-nurse"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/quirk-painter": {
+		"module": "traces",
+		"outputs": [
+			"traces/quirk-painter"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-bed": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-bed"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-couch": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-couch"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-edge": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-edge"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-ground": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-ground"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-t00": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-t00"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-t07": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-t07"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"traces/the-cat-sat-t15": {
+		"module": "traces",
+		"outputs": [
+			"traces/the-cat-sat-t15"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"vectors/the-cat-sat": {
+		"module": "traces",
+		"outputs": [
+			"vectors/the-cat-sat"
+		],
+		"models": [
+			"openai-community/gpt2"
+		],
+		"needs": [],
+		"options": []
+	},
+	"vision/clip": {
+		"module": "clip",
+		"outputs": [
+			"vision/clip",
+			"vision/clip-images"
+		],
+		"models": [
+			"openai/clip-vit-base-patch32"
+		],
+		"needs": [],
+		"options": []
+	}
+}

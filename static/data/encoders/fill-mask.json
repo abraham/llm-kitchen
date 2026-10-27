@@ -2,17 +2,26 @@
 	"dataset": "encoders/fill-mask",
 	"version": 1,
 	"script": "record/encoder.py",
+	"job": "encoders/fill-mask",
 	"models": [
 		{
 			"id": "google-bert/bert-base-uncased",
-			"revision": "86b5e0934494bd15c9632b12f734a8a67f723594"
+			"revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+			"device": "cpu",
+			"dtype": "float32"
 		},
 		{
 			"id": "openai-community/gpt2",
-			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-23",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"models": {
@@ -509,7 +518,7 @@
 				]
 			}
 		],
-		"generatedAt": "2026-10-23",
+		"generatedAt": "2026-10-27",
 		"source": {
 			"torch": "2.14.1"
 		}

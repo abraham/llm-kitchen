@@ -1,6 +1,6 @@
 """Round GPT-2 small's weights to fewer bits and record what changes, for `quantization` (tier T0).
 
-Usage: HF_HUB_OFFLINE=1 scripts/.venv/bin/python -m scripts.record quantize
+Usage: scripts/.venv/bin/python -m scripts.record run quantize
 
 Writes static/data/quantize/<canonical model>/precisions.json. For each precision (32-bit floats as trained, 16-bit floats, and
 8, 4, 3, and 2-bit integers) it records the weights' size, the top next-token guesses for "The cat
@@ -15,10 +15,11 @@ from __future__ import annotations
 import datetime
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, revision, write_dataset
+from .common import CANONICAL, revision
+from .runtime import ModelSpec, Run, job
 
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"])
 PROMPT = "The cat sat on the"
 NEW_TOKENS = 12
 TOP_K = 5
@@ -72,15 +73,26 @@ def measure(model, tokenizer) -> dict:
     return {"candidates": candidates, "generated": generated, "loss": round(loss, 4)}
 
 
-def main() -> None:
-    torch.set_grad_enabled(False)
-    model_id = CANONICAL["huggingFaceId"]
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32).eval()
+@job("quantize/precisions", models=[GPT2])
+def precisions(run: Run) -> dict:
+    loaded = run.model(GPT2)
+    model, tokenizer = loaded.model, loaded.tokenizer
+    original = {n: p.detach().clone() for n, p in matrices(model)}
+    try:
+        with torch.no_grad():
+            return record_precisions(run, model, tokenizer, original)
+    finally:
+        # Other jobs in this process share the loaded model.
+        with torch.no_grad():
+            for name, p in matrices(model):
+                p.copy_(original[name])
+
+
+def record_precisions(run: Run, model, tokenizer, original: dict[str, torch.Tensor]) -> dict:
+    model_id = GPT2.id
     config = model.config
     assert (config.n_layer, config.n_embd) == (CANONICAL["layers"], CANONICAL["embeddingSize"])
 
-    original = {n: p.detach().clone() for n, p in matrices(model)}
     # wte and lm_head share one matrix, so count parameters once.
     parameters = sum(p.numel() for p in model.parameters())
     assert parameters == CANONICAL["parameters"], parameters
@@ -104,9 +116,9 @@ def main() -> None:
             {"label": label, "bits": bits, "kind": kind, "bytes": size, **result,
              "row": [round(float(v), 5) for v in row]}
         )
-        print(f"{label:>8}: {size / 1e6:6.1f} MB  loss {result['loss']:.3f}  "
-              f"top {result['candidates'][0]['token']['text']!r}  "
-              f"{''.join(t['text'] for t in result['generated'])!r}")
+        run.log(f"{label:>8}: {size / 1e6:6.1f} MB  loss {result['loss']:.3f}  "
+                f"top {result['candidates'][0]['token']['text']!r}  "
+                f"{''.join(t['text'] for t in result['generated'])!r}")
 
     record("32-bit", 32, "float", size_bytes(None, 32), sample)
 
@@ -121,23 +133,15 @@ def main() -> None:
         record(f"{bits}-bit", bits, "int", size_bytes(bits, 16), row)
 
     top = sample.abs().max()
-    write_dataset(
-        "quantize/precisions",
-        {
-            "version": 1,
-            "model": {"id": model_id, "displayName": CANONICAL["displayName"], "revision": revision(model_id)},
-            "prompt": PROMPT,
-            "passage": PASSAGE,
-            "parameters": parameters,
-            "block": BLOCK,
-            "scaleBits": SCALE_BITS,
-            "sample": {"layer": SAMPLE_LAYER, "max": round(float(top), 5)},
-            "precisions": precisions,
-            "generatedAt": datetime.date.today().isoformat(),
-        },
-        "quantize",
-    )
-
-
-if __name__ == "__main__":
-    main()
+    return {
+        "version": 1,
+        "model": {"id": model_id, "displayName": CANONICAL["displayName"], "revision": revision(model_id)},
+        "prompt": PROMPT,
+        "passage": PASSAGE,
+        "parameters": parameters,
+        "block": BLOCK,
+        "scaleBits": SCALE_BITS,
+        "sample": {"layer": SAMPLE_LAYER, "max": round(float(top), 5)},
+        "precisions": precisions,
+        "generatedAt": datetime.date.today().isoformat(),
+    }

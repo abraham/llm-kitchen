@@ -2,17 +2,26 @@
 	"dataset": "speculative/drafts",
 	"version": 1,
 	"script": "record/speculative.py",
+	"job": "speculative/drafts",
 	"models": [
 		{
 			"id": "openai-community/gpt2",
-			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+			"revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+			"device": "cpu",
+			"dtype": "float32"
 		},
 		{
 			"id": "openai-community/gpt2-medium",
-			"revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da"
+			"revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-23",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"drafter": {
@@ -1438,6 +1447,6 @@
 				]
 			}
 		],
-		"generatedAt": "2026-10-23"
+		"generatedAt": "2026-10-27"
 	}
 }

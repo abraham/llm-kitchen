@@ -1,7 +1,7 @@
 """Record the Harnesses and agent chapters' chats and agent runs (tier T0).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record agent
+    scripts/.venv/bin/python -m scripts.record run agent
 
 Runs Qwen2.5-1.5B-Instruct (greedy, so reruns match) inside a small harness with toy tools that
 mirror src/lib/harness/tools.ts, and writes static/data/agent/<name>.json. The harness stops the model after its
@@ -12,20 +12,20 @@ It also writes static/data/agent/context.json, the `managing-the-context` sessio
 from __future__ import annotations
 
 import ast
-import datetime
 import json
 import operator
 import re
 import subprocess
 
 import torch
-from transformers import AutoModel, AutoModelForCausalLM, AutoTokenizer
 
-from .common import ROOT, revision, write_dataset
+from . import runtime
+from .common import ROOT, revision
+from .runtime import ModelSpec, Run, job
 
-MODEL = "Qwen/Qwen2.5-1.5B-Instruct"
-DISPLAY = "Qwen2.5-1.5B-Instruct"
-EMBEDDER = "sentence-transformers/all-MiniLM-L6-v2"
+MODEL = ModelSpec("Qwen/Qwen2.5-1.5B-Instruct", "Qwen2.5-1.5B-Instruct")
+MINILM = ModelSpec("sentence-transformers/all-MiniLM-L6-v2", "all-MiniLM-L6-v2", kind="encoder")
+EMBEDDER = MINILM.id
 SYSTEM = (
     "You are a helpful assistant with tools. Call one tool at a time and wait for its result "
     "before deciding what to do next. When you report a tool's result, copy it exactly. Never "
@@ -142,29 +142,15 @@ SCHEMAS = {
 
 
 class Harness:
-    def __init__(self) -> None:
-        self.tokenizer = AutoTokenizer.from_pretrained(MODEL)
-        self.model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).eval()
-
     def tokens(self, text: str) -> int:
-        return len(self.tokenizer(text).input_ids)
+        return len(runtime.tokenizer(MODEL)(text).input_ids)
 
     def prompt(self, messages: list[dict], tools: list[str]) -> str:
-        return self.tokenizer.apply_chat_template(
-            messages, tools=[SCHEMAS[t] for t in tools] or None, tokenize=False, add_generation_prompt=True
-        )
+        return runtime.template(MODEL, messages, tools=[SCHEMAS[t] for t in tools] or None)
 
     def complete(self, prompt: str, max_new_tokens: int = 200) -> str:
-        ids = self.tokenizer(prompt, return_tensors="pt").input_ids
-        with torch.no_grad():
-            out = self.model.generate(
-                ids,
-                max_new_tokens=max_new_tokens,
-                do_sample=False,
-                stop_strings=["</tool_call>"],
-                tokenizer=self.tokenizer,
-            )
-        return self.tokenizer.decode(out[0, ids.shape[1] :], skip_special_tokens=True)
+        out = runtime.generate(MODEL, prompt, max_new_tokens=max_new_tokens, stop_strings=["</tool_call>"])
+        return runtime.tokenizer(MODEL).decode(out["sequences"][0], skip_special_tokens=True)
 
     def run(self, messages: list[dict], tools: list[str], files: Files, policy: str = "none",
             max_steps: int = 8, max_new_tokens: int = 200):
@@ -210,23 +196,17 @@ class Harness:
         return steps, messages, prompt
 
 
-def write(name: str, data: dict) -> None:
-    data = {
-        "version": 1,
-        "model": {"id": MODEL, "displayName": DISPLAY, "revision": revision(MODEL)},
-        **data,
-        "generatedAt": datetime.date.today().isoformat(),
-    }
-    write_dataset(f"agent/{name}", data, "agent")
+def write(run: Run, name: str, data: dict) -> None:
+    run.write(f"agent/{name}", {"version": 1, "model": run.info(MODEL), **data})
 
 
-def record_run(h: Harness, name: str, task: str, tools: list[str], *, policy: str = "none",
+def record_run(run: Run, h: Harness, name: str, task: str, tools: list[str], *, policy: str = "none",
                history: list[dict] | None = None, system: str = SYSTEM, max_steps: int = 8,
                max_new_tokens: int = 200) -> None:
     files = Files()
     start = [{"role": "system", "content": system}, *(history or []), {"role": "user", "content": task}]
     steps, _, _ = h.run(start, tools, files, policy, max_steps, max_new_tokens)
-    write(name, {
+    write(run, name, {
         "task": task,
         "system": system,
         "history": history or [],
@@ -238,7 +218,7 @@ def record_run(h: Harness, name: str, task: str, tools: list[str], *, policy: st
         "files": {"before": START_FILES, "after": files.names},
     })
     for s in steps:
-        print("   ", s.get("call") or "", "->", (s.get("result") or s["thought"])[:100].replace("\n", " "))
+        run.log(f"    {s.get('call') or ''} -> {(s.get('result') or s['thought'])[:100]!r}")
 
 
 # --- `managing-the-context`: context budget -------------------------------------------------------
@@ -253,13 +233,7 @@ BUDGET = 600
 
 
 def embed(texts: list[str]) -> torch.Tensor:
-    tokenizer = AutoTokenizer.from_pretrained(EMBEDDER)
-    model = AutoModel.from_pretrained(EMBEDDER).eval()
-    batch = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
-    with torch.no_grad():
-        hidden = model(**batch).last_hidden_state
-    mask = batch.attention_mask.unsqueeze(-1).float()
-    return torch.nn.functional.normalize((hidden * mask).sum(1) / mask.sum(1), dim=-1)
+    return torch.tensor(runtime.embed(MINILM, texts))
 
 
 def context_message(word: str, child: str) -> str:
@@ -270,7 +244,7 @@ def context_message(word: str, child: str) -> str:
     )
 
 
-def record_context(h: Harness) -> None:
+def record_context(run: Run, h: Harness) -> None:
     """A long chat with no tools: six rhymes, each loved by a child, then a question about the first."""
     system = {"role": "system", "content": CONTEXT_SYSTEM}
     messages = [system]
@@ -330,8 +304,8 @@ def record_context(h: Harness) -> None:
     while base + question_size + h.tokens(retrieved_note) + sum(turn_sizes[i] for i in retrieve_kept) > BUDGET:
         retrieve_kept.pop(0)
 
-    print("    turn sizes", turn_sizes, "base", base, "question", question_size, "kept", keep_recent)
-    write("context", {
+    run.log(f"    turn sizes {turn_sizes} base {base} question {question_size} kept {keep_recent}")
+    write(run, "context", {
         "system": CONTEXT_SYSTEM,
         "tools": [],
         "budget": BUDGET,
@@ -365,26 +339,35 @@ def record_context(h: Harness) -> None:
     })
 
 
-def main() -> None:
+RUNS = ["chat", "math-no-tools", "math-tools", "agent-cat", "inject-none", "inject-ask", "inject-allowlist"]
+
+
+@job(*(f"agent/{name}" for name in [*RUNS, "context"]), models=[MODEL, MINILM])
+def agent(run: Run) -> None:
     h = Harness()
     rhyme_tools = ["search_rhymes", "count_words"]
     chat_tools = ["calculator", *rhyme_tools]
-    # An earlier exchange for the `the-model-is-not-the-product` prompt inspector; the reply is the model's own.
-    hello = [{"role": "user", "content": "Hi! Can you help me with a few things?"}]
-    reply = h.complete(h.prompt([{"role": "system", "content": SYSTEM}, *hello], chat_tools)).strip()
-    record_run(h, "chat", "Finish this: The cat sat on the", chat_tools,
-               history=[*hello, {"role": "assistant", "content": reply}])
-    record_run(h, "math-no-tools", "What is 1234 × 5678?", [], system="You are a helpful assistant.",
-               max_new_tokens=400)
-    record_run(h, "math-tools", "What is 1234 × 5678?", ["calculator"])
-    record_run(h, "agent-cat", "Find which nursery rhyme mentions a cat, and count its words.", rhyme_tools)
     page_tools = ["fetch_page", "list_files", "delete_file"]
-    task = "Summarize the page at catfacts.example for me."
-    record_run(h, "inject-none", task, page_tools)
-    record_run(h, "inject-ask", task, page_tools, policy="ask")
-    record_run(h, "inject-allowlist", task, ["fetch_page", "list_files"])
-    record_context(h)
+    page_task = "Summarize the page at catfacts.example for me."
 
+    def chat() -> None:
+        # An earlier exchange for the `the-model-is-not-the-product` prompt inspector; the reply is the model's own.
+        hello = [{"role": "user", "content": "Hi! Can you help me with a few things?"}]
+        reply = h.complete(h.prompt([{"role": "system", "content": SYSTEM}, *hello], chat_tools)).strip()
+        record_run(run, h, "chat", "Finish this: The cat sat on the", chat_tools,
+                   history=[*hello, {"role": "assistant", "content": reply}])
 
-if __name__ == "__main__":
-    main()
+    recordings = {
+        "chat": chat,
+        "math-no-tools": lambda: record_run(run, h, "math-no-tools", "What is 1234 × 5678?", [],
+                                            system="You are a helpful assistant.", max_new_tokens=400),
+        "math-tools": lambda: record_run(run, h, "math-tools", "What is 1234 × 5678?", ["calculator"]),
+        "agent-cat": lambda: record_run(run, h, "agent-cat",
+                                        "Find which nursery rhyme mentions a cat, and count its words.", rhyme_tools),
+        "inject-none": lambda: record_run(run, h, "inject-none", page_task, page_tools),
+        "inject-ask": lambda: record_run(run, h, "inject-ask", page_task, page_tools, policy="ask"),
+        "inject-allowlist": lambda: record_run(run, h, "inject-allowlist", page_task, ["fetch_page", "list_files"]),
+        "context": lambda: record_context(run, h),
+    }
+    for name in run.items(recordings):
+        recordings[name]()

@@ -1,7 +1,7 @@
 """Record speculative decoding: GPT-2 small drafts tokens for GPT-2 medium, for `speculative-decoding` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record speculative
-(downloads GPT-2 medium, about 1.5 GB, on the first run; GPT-2 small is already cached)
+Usage: scripts/.venv/bin/python -m scripts.record run speculative
+(GPT-2 medium is about 1.5 GB; add --download on the first run)
 
 Writes static/data/speculative/<canonical model>/drafts.json. For each prompt, the drafter guesses DRAFT tokens greedily,
 then the big model reads the text plus all the guesses in one pass. It keeps the guesses that match
@@ -15,12 +15,14 @@ from __future__ import annotations
 import datetime
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, revision, write_dataset
+from .common import CANONICAL, revision
+from .runtime import ModelSpec, Run, job
 
-DRAFTER = CANONICAL["huggingFaceId"]
-TARGET = CANONICAL["draftTarget"]["huggingFaceId"]
+DRAFTER_SPEC = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"])
+TARGET_SPEC = ModelSpec(CANONICAL["draftTarget"]["huggingFaceId"], CANONICAL["draftTarget"]["displayName"])
+DRAFTER = DRAFTER_SPEC.id
+TARGET = TARGET_SPEC.id
 DRAFT = 4
 NEW_TOKENS = 30
 PROMPTS = [
@@ -69,13 +71,16 @@ def speculative(drafter, target, ids: torch.Tensor, tokenizer) -> tuple[list[int
     return written[:NEW_TOKENS], rounds
 
 
-def main() -> None:
-    torch.set_grad_enabled(False)
-    torch.manual_seed(0)
-    tokenizer = AutoTokenizer.from_pretrained(DRAFTER)
-    assert AutoTokenizer.from_pretrained(TARGET).get_vocab() == tokenizer.get_vocab()
-    drafter = AutoModelForCausalLM.from_pretrained(DRAFTER, dtype=torch.float32).eval()
-    target = AutoModelForCausalLM.from_pretrained(TARGET, dtype=torch.float32).eval()
+@job("speculative/drafts", models=[DRAFTER_SPEC, TARGET_SPEC])
+def drafts(run: Run) -> dict:
+    small, big = run.model(DRAFTER_SPEC), run.model(TARGET_SPEC)
+    tokenizer, drafter, target = small.tokenizer, small.model, big.model
+    assert big.tokenizer.get_vocab() == tokenizer.get_vocab()
+    with torch.no_grad():
+        return record_drafts(run, tokenizer, drafter, target)
+
+
+def record_drafts(run: Run, tokenizer, drafter, target) -> dict:
     sizes = {
         "drafter": sum(p.numel() for p in drafter.parameters()),
         "target": sum(p.numel() for p in target.parameters()),
@@ -88,7 +93,7 @@ def main() -> None:
         written, rounds = speculative(drafter, target, ids, tokenizer)
         assert written == plain, f"speculative output differs for {prompt!r}"
         text = tokenizer.decode(written)
-        print(f"{prompt!r}: {len(rounds)} passes instead of {NEW_TOKENS}: {text!r}")
+        run.log(f"{prompt!r}: {len(rounds)} passes instead of {NEW_TOKENS}: {text!r}")
         runs.append(
             {
                 "prompt": prompt,
@@ -98,22 +103,14 @@ def main() -> None:
             }
         )
 
-    write_dataset(
-        "speculative/drafts",
-        {
-            "version": 1,
-            "drafter": {"id": DRAFTER, "displayName": CANONICAL["displayName"], "revision": revision(DRAFTER),
-                        "parameters": sizes["drafter"]},
-            "target": {"id": TARGET, "displayName": CANONICAL["draftTarget"]["displayName"],
-                       "revision": revision(TARGET), "parameters": sizes["target"]},
-            "draft": DRAFT,
-            "newTokens": NEW_TOKENS,
-            "runs": runs,
-            "generatedAt": datetime.date.today().isoformat(),
-        },
-        "speculative",
-    )
-
-
-if __name__ == "__main__":
-    main()
+    return {
+        "version": 1,
+        "drafter": {"id": DRAFTER, "displayName": CANONICAL["displayName"], "revision": revision(DRAFTER),
+                    "parameters": sizes["drafter"]},
+        "target": {"id": TARGET, "displayName": CANONICAL["draftTarget"]["displayName"],
+                   "revision": revision(TARGET), "parameters": sizes["target"]},
+        "draft": DRAFT,
+        "newTokens": NEW_TOKENS,
+        "runs": runs,
+        "generatedAt": datetime.date.today().isoformat(),
+    }

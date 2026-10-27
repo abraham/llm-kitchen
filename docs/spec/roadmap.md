@@ -35,4 +35,10 @@ belongs to and remove it here.
 
 ## Open questions
 
-- None right now.
+- **Sharing the recording cache.** A cache committed or stored as a release artifact would let a
+  second machine rerun every recording job without a GPU. Proposal: no; it would hold several
+  hundred MB of replies nobody reviews, and `check` must regenerate anyway. Revisit if recording
+  moves to CI.
+- **A model as grader.** Hand grades for recorded replies could be drafted by a strong model and
+  confirmed by a person. Proposal: not yet; [Did it work?](chapters/testing-agents.md) shows why a
+  model's grades need checking, and the datasets are small enough to grade by hand.

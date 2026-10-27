@@ -5,7 +5,6 @@ export interface RoutingRecording {
 	small: RoutingModel;
 	big: RoutingModel;
 	questions: RoutingQuestion[];
-	generatedAt: string;
 }
 
 export interface RoutingModel {

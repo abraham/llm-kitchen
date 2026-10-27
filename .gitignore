@@ -30,6 +30,9 @@ lighthouse-report
 .firebase
 *-debug.log
 scripts/.venv
+scripts/.logs
+scripts/.cache
+scripts/.scratch
 __pycache__/
 
 # Social images and touch icon, rendered by scripts/build-og.ts during npm run build

@@ -7,7 +7,7 @@ import type { SpeculativeRecording } from '../../math/speculative.ts';
 import {
 	type Check,
 	array,
-	boolean,
+	derive,
 	dictionary,
 	integer,
 	literal,
@@ -17,6 +17,8 @@ import {
 	string,
 	tuple
 } from '../check.ts';
+import { answerVerdict, matchesAccepted } from '../../grading/answers.ts';
+import { followedInjection } from '../../grading/checks.ts';
 import { candidate, modelRef, token } from './common.ts';
 
 export const kvCacheRun: Check<KVCacheRun> = object({
@@ -42,17 +44,19 @@ export const injectionLab: Check<InjectionLab> = object({
 	/** Token ids of each chat marker, for counting the markers the model read. */
 	markerIds: dictionary(array(integer)),
 	runs: array(
-		object({
-			doc: string,
-			attack: string,
-			defense: string,
-			prompt: string,
-			documentSpan: span,
-			attackSpan: nullable(span),
-			markerTokens: integer,
-			reply: string,
-			followed: boolean
-		})
+		derive(
+			object({
+				doc: string,
+				attack: string,
+				defense: string,
+				prompt: string,
+				documentSpan: span,
+				attackSpan: nullable(span),
+				markerTokens: integer,
+				reply: string
+			}),
+			(r) => ({ ...r, followed: followedInjection(r.doc, r.reply) })
+		)
 	)
 });
 
@@ -114,8 +118,7 @@ const routingModel = object({
 const routingAnswer = object({
 	answer: string,
 	tokens: integer,
-	confidence: number,
-	correct: boolean
+	confidence: number
 });
 
 export const routingRecording: Check<RoutingRecording> = object({
@@ -124,12 +127,23 @@ export const routingRecording: Check<RoutingRecording> = object({
 	small: routingModel,
 	big: routingModel,
 	questions: array(
-		object({ question: string, accepted: array(string), small: routingAnswer, big: routingAnswer })
-	),
-	generatedAt: string
+		derive(
+			object({
+				question: string,
+				accepted: array(string),
+				small: routingAnswer,
+				big: routingAnswer
+			}),
+			(q) => ({
+				...q,
+				small: { ...q.small, correct: matchesAccepted(q.small.answer, q.accepted) },
+				big: { ...q.big, correct: matchesAccepted(q.big.answer, q.accepted) }
+			})
+		)
+	)
 });
 
-const sampledAnswer = object({ text: string, verdict: literal('right', 'wrong', 'declined') });
+const sampledAnswer = object({ text: string });
 const sampledAnswers = array(sampledAnswer);
 
 export const hallucinationSamples: Check<HallucinationSamples> = object({
@@ -139,15 +153,27 @@ export const hallucinationSamples: Check<HallucinationSamples> = object({
 	seed: integer,
 	prompts: array(object({ id: literal('plain', 'allowed'), system: string })),
 	questions: array(
-		object({
-			id: string,
-			kind: literal('known', 'obscure', 'invented'),
-			question: string,
-			accepted: array(string),
-			truth: nullable(string),
-			answers: object({ plain: sampledAnswers, allowed: sampledAnswers }),
-			greedy: object({ plain: sampledAnswer, allowed: sampledAnswer })
-		})
-	),
-	generatedAt: string
+		derive(
+			object({
+				id: string,
+				kind: literal('known', 'obscure', 'invented'),
+				question: string,
+				accepted: array(string),
+				truth: nullable(string),
+				answers: object({ plain: sampledAnswers, allowed: sampledAnswers }),
+				greedy: object({ plain: sampledAnswer, allowed: sampledAnswer })
+			}),
+			(q) => {
+				const graded = (a: { text: string }) => ({
+					...a,
+					verdict: answerVerdict(a.text, q.accepted)
+				});
+				return {
+					...q,
+					answers: { plain: q.answers.plain.map(graded), allowed: q.answers.allowed.map(graded) },
+					greedy: { plain: graded(q.greedy.plain), allowed: graded(q.greedy.allowed) }
+				};
+			}
+		)
+	)
 });

@@ -1,6 +1,6 @@
 """Measure GPT-2 small generating with and without its KV cache, for `caching` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record caching
+Usage: scripts/.venv/bin/python -m scripts.record run caching
 
 Writes static/data/caching/kv-cache.json: the greedy tokens from each run (they match), the largest
 difference between the two runs' next-token scores, and the time each new token took, measured on
@@ -15,17 +15,18 @@ import statistics
 import time
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from .common import CANONICAL, revision, write_dataset
+from .common import CANONICAL, revision
+from .runtime import ModelSpec, Run, job
 
+GPT2 = ModelSpec(CANONICAL["huggingFaceId"], CANONICAL["displayName"])
 PROMPT = "The cat sat on the"
 NEW_TOKENS = 500
 REPEATS = 3
 
 
 @torch.no_grad()
-def run(model, prompt_ids: torch.Tensor, cache: bool) -> tuple[list[int], list[float], list[torch.Tensor]]:
+def timed(model, prompt_ids: torch.Tensor, cache: bool) -> tuple[list[int], list[float], list[torch.Tensor]]:
     """Greedy generation, timing each step. Returns the new tokens, ms per step, and each step's scores."""
     ids = prompt_ids
     past = None
@@ -48,11 +49,11 @@ def run(model, prompt_ids: torch.Tensor, cache: bool) -> tuple[list[int], list[f
     return tokens, times, scores
 
 
-def main() -> None:
-    torch.manual_seed(0)
-    model_id = CANONICAL["huggingFaceId"]
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
-    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32).eval()
+@job("caching/kv-cache", models=[GPT2], compact=True)
+def kv_cache(run: Run) -> dict:
+    model_id = GPT2.id
+    loaded = run.model(GPT2)
+    model, tokenizer = loaded.model, loaded.tokenizer
     config = model.config
     assert (config.n_layer, config.n_head, config.n_embd) == (
         CANONICAL["layers"],
@@ -61,13 +62,13 @@ def main() -> None:
     ), "models/canonical.json doesn't match the model's config"
 
     prompt_ids = tokenizer(PROMPT, return_tensors="pt").input_ids
-    run(model, prompt_ids, cache=True)  # warm up
+    timed(model, prompt_ids, cache=True)  # warm up
 
     timings: dict[bool, list[list[float]]] = {True: [], False: []}
     results = {}
     for _ in range(REPEATS):
         for cache in (True, False):
-            tokens, times, scores = run(model, prompt_ids, cache)
+            tokens, times, scores = timed(model, prompt_ids, cache)
             timings[cache].append(times)
             results[cache] = (tokens, scores)
 
@@ -102,13 +103,9 @@ def main() -> None:
         },
         "generatedAt": datetime.date.today().isoformat(),
     }
-    write_dataset("caching/kv-cache", data, "caching", compact=True)
-    print(
+    run.log(
         f"{NEW_TOKENS} tokens, "
         f"{data['totalMs']['cache']} ms with the cache, {data['totalMs']['noCache']} ms without, "
         f"max score difference {max_diff:.2e}"
     )
-
-
-if __name__ == "__main__":
-    main()
+    return data

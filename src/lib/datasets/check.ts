@@ -137,3 +137,8 @@ export function refine<T>(check: Check<T>, test: (value: T, path: string) => voi
 		return value;
 	};
 }
+
+/** Adds what code can work out from a checked value, such as a verdict on a recorded reply. */
+export function derive<T, U>(check: Check<T>, add: (value: T, path: string) => U): Check<U> {
+	return (v, path) => add(check(v, path), path);
+}

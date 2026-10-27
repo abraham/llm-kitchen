@@ -1,29 +1,25 @@
 """Record a small and a bigger model answering the same questions, for `routing` (tier T0).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record routing
+    scripts/.venv/bin/python -m scripts.record run routing
 
 Asks Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct (greedy, so reruns match) 40 short questions
-with checkable answers, and writes static/data/routing/cascade.json: each answer, whether it is
-right (graded by code against the accepted answers below), and the model's confidence, the
+with checkable answers, and writes static/data/routing/cascade.json: each answer, the answers
+accepted as right (the site grades against them), and the model's confidence, the
 geometric mean of the probabilities it gave its own answer tokens. The widget replays a cascade
 from these: the small model answers, and the harness asks the big one when confidence is low.
 """
 
 from __future__ import annotations
 
-import datetime
 import math
-import re
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-from .common import revision, write_dataset
+from . import runtime
+from .runtime import ModelSpec, Run, job
 
 MODELS = [
-    ("small", "Qwen/Qwen2.5-0.5B-Instruct", "Qwen2.5-0.5B-Instruct"),
-    ("big", "Qwen/Qwen2.5-1.5B-Instruct", "Qwen2.5-1.5B-Instruct"),
+    ("small", ModelSpec("Qwen/Qwen2.5-0.5B-Instruct", "Qwen2.5-0.5B-Instruct")),
+    ("big", ModelSpec("Qwen/Qwen2.5-1.5B-Instruct", "Qwen2.5-1.5B-Instruct")),
 ]
 SYSTEM = "Answer with just the answer: a word, a name, or a number. No explanation."
 MAX_NEW_TOKENS = 16
@@ -73,56 +69,33 @@ QUESTIONS: list[tuple[str, list[str]]] = [
 ]
 
 
-def correct(answer: str, accepted: list[str]) -> bool:
-    text = answer.lower().replace(",", "")
-    for a in accepted:
-        a = a.lower()
-        pattern = rf"(?<!\d){re.escape(a)}(?!\d)" if a.isdigit() else rf"\b{re.escape(a)}\b"
-        if re.search(pattern, text):
-            return True
-    return False
-
-
-@torch.no_grad()
-def ask(tokenizer, model, question: str) -> dict:
+def ask(spec: ModelSpec, question: str) -> dict:
+    tokenizer = runtime.tokenizer(spec)
     messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": question}]
-    prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    ids = tokenizer(prompt, return_tensors="pt").input_ids
-    out = model.generate(ids, max_new_tokens=MAX_NEW_TOKENS, do_sample=False, output_scores=True,
-                         return_dict_in_generate=True)
-    new = out.sequences[0, ids.shape[1]:].tolist()
+    out = runtime.generate(spec, runtime.template(spec, messages), max_new_tokens=MAX_NEW_TOKENS, scores=True)
+    new = out["sequences"][0]
     logprobs = []
     for step, token in enumerate(new):
         if token == tokenizer.eos_token_id or token in tokenizer.all_special_ids:
             break
-        logprobs.append(torch.log_softmax(out.scores[step][0].float(), dim=-1)[token].item())
+        logprobs.append(out["logprobs"][step])
     text = tokenizer.decode(new, skip_special_tokens=True).strip()
     confidence = math.exp(sum(logprobs) / len(logprobs)) if logprobs else 0.0
     return {"answer": text, "tokens": len(logprobs), "confidence": round(confidence, 4)}
 
 
-def main() -> None:
-    torch.manual_seed(0)
+@job("routing/cascade", models=[spec for _, spec in MODELS])
+def cascade(run: Run) -> dict:
+    # Whether each answer is right is worked out by the site (src/lib/grading/answers.ts), not stored.
     models = {}
     answers: dict[str, list[dict]] = {}
-    for key, model_id, display in MODELS:
-        tokenizer = AutoTokenizer.from_pretrained(model_id)
-        model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32).eval()
-        models[key] = {
-            "id": model_id,
-            "displayName": display,
-            "revision": revision(model_id),
-            "parameters": sum(p.numel() for p in model.parameters()),
-        }
-        answers[key] = []
-        for question, accepted in QUESTIONS:
-            a = ask(tokenizer, model, question)
-            a["correct"] = correct(a["answer"], accepted)
-            answers[key].append(a)
-        right = sum(a["correct"] for a in answers[key])
-        print(f"{display}: {right} of {len(QUESTIONS)} right")
+    for key, spec in MODELS:
+        # The weight count needs the model itself; everything else can come from the cache.
+        weights = sum(p.numel() for p in run.model(spec).model.parameters())
+        models[key] = {**run.info(spec), "parameters": weights}
+        answers[key] = [ask(spec, q) for q, _ in run.items(QUESTIONS, label=lambda q: f"{key}: {q[0]}")]
 
-    write_dataset("routing/cascade", {
+    return {
         "version": 1,
         "system": SYSTEM,
         "small": models["small"],
@@ -131,9 +104,4 @@ def main() -> None:
             {"question": q, "accepted": accepted, "small": answers["small"][i], "big": answers["big"][i]}
             for i, (q, accepted) in enumerate(QUESTIONS)
         ],
-        "generatedAt": datetime.date.today().isoformat(),
-    }, "routing")
-
-
-if __name__ == "__main__":
-    main()
+    }

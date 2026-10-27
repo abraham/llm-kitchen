@@ -1,6 +1,6 @@
 """Draw simple pictures and record CLIP's view of them for `seeing-pictures` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record clip
+Usage: scripts/.venv/bin/python -m scripts.record run clip
 
 Writes:
   static/data/vision/<color>-<shape>.png  224x224 pictures of colored shapes, drawn here (no licensing
@@ -20,14 +20,17 @@ import math
 
 import torch
 from PIL import Image, ImageDraw
-from transformers import CLIPModel, CLIPProcessor
+from transformers import CLIPProcessor
 
-from .common import CLIP, ROOT, revision, write_dataset
+from . import common
+from .common import CLIP, ROOT, revision
+from .runtime import ModelSpec, Run, job
 
 # The pictures are served as images next to the data, not as a dataset.
 IMAGES = ROOT / "static" / "vision"
 
-MODEL = CLIP["huggingFaceId"]
+CLIP_SPEC = ModelSpec(CLIP["huggingFaceId"], CLIP["displayName"], kind="clip")
+MODEL = CLIP_SPEC.id
 SIZE = 224
 PATCH_DIMS = 32
 COLORS = {"red": "#d62828", "blue": "#1d4ed8", "green": "#15803d"}
@@ -64,9 +67,12 @@ def features(out) -> torch.Tensor:
     return tensor / tensor.norm(dim=-1, keepdim=True)
 
 
-def main() -> None:
-    IMAGES.mkdir(parents=True, exist_ok=True)
-    model = CLIPModel.from_pretrained(MODEL, dtype=torch.float32).eval()
+@job("vision/clip", "vision/clip-images", models=[CLIP_SPEC], compact=True)
+def clip(run: Run) -> None:
+    # A trial draws into its scratch folder, so it can't change the committed pictures.
+    images_dir = common.OUTPUT / "pictures" if run.trial else IMAGES
+    images_dir.mkdir(parents=True, exist_ok=True)
+    model = run.model(CLIP_SPEC).model
     processor = CLIPProcessor.from_pretrained(MODEL)
 
     names, images = [], []
@@ -74,7 +80,7 @@ def main() -> None:
         for shape in SHAPES:
             name = f"{color}-{shape}"
             img = draw(hex_color, shape)
-            img.save(IMAGES / f"{name}.png", optimize=True)
+            img.save(images_dir / f"{name}.png", optimize=True)
             names.append(name)
             images.append(img)
 
@@ -117,8 +123,8 @@ def main() -> None:
         "generatedAt": datetime.date.today().isoformat(),
         "source": {"torch": torch.__version__},
     }
-    write_dataset("vision/clip", data, "clip", compact=True)
-    write_dataset(
+    run.write("vision/clip", data)
+    run.write(
         "vision/clip-images",
         {
             "model": data["model"],
@@ -129,13 +135,7 @@ def main() -> None:
             ],
             "generatedAt": data["generatedAt"],
         },
-        "clip",
-        compact=True,
     )
     for j, t in enumerate(captions):
         best = probs[j].topk(3)
-        print(f"{t!r:28}", [(names[int(i)], round(float(v), 3)) for v, i in zip(*best)])
-
-
-if __name__ == "__main__":
-    main()
+        run.log(f"{t!r:28} {[(names[int(i)], round(float(v), 3)) for v, i in zip(*best)]}")

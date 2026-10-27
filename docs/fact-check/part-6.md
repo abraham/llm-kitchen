@@ -72,7 +72,7 @@ the pinned revision is in each file. Probabilities of an answer cover all of its
 | ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | Worked examples of reasoning improved math word problems in large models                                                        | Cite `wei2022`                                                               |
 | "Let's think step by step": 17.7% → 78.7% on MultiArith (InstructGPT text-davinci-002)                                          | Cite `kojima2022` (abstract)                                                 |
-| Each of the three endings got 4 of 6 right; the format was followed once                                                        | Test (hand grades, see below)                                                |
+| Each of the three endings got 4 of 6 right; the format was followed once                                                        | Test (hand grades: `scripts/record/grades/prompts-steps.json`)               |
 | Just the answer: "0.10" for the ball; step by step: "0.2 minutes" for the widgets                                               | Test                                                                         |
 | Simple: restates Standard in plainer words, with no new claims                                                                  | Reviewed against the Standard text                                           |
 | In depth: Qwen2.5-1.5B has 28 layers; about 2 operations per weight is about 3 billion per token                                | Cite `qwen2024` (Table 1); 2 per weight as in Generating text (`kaplan2020`) |

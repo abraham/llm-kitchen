@@ -65,17 +65,31 @@ def read_dataset(dataset_id: str) -> dict:
     return json.loads(dataset_file(dataset_id).read_text())["data"]
 
 
-def write_dataset(dataset_id: str, data: dict, script: str, *, compact: bool = False) -> Path:
-    """Write `data` in the envelope the site checks (src/lib/datasets/registry.ts)."""
+def write_dataset(
+    dataset_id: str,
+    data: dict,
+    script: str,
+    *,
+    compact: bool = False,
+    job: str | None = None,
+    source: dict | None = None,
+    devices: dict[str, dict] | None = None,
+) -> Path:
+    """Write `data` in the envelope the site checks (src/lib/datasets/registry.ts). Jobs also name
+    themselves, the package versions, and the device and dtype each model they loaded ran with."""
     models = _models(data)
     if not models:
         raise SystemExit(f"{dataset_id}: name the model and its revision in the data")
+    for m in models:
+        m.update((devices or {}).get(m["id"], {}))
     envelope = {
         "dataset": dataset_id,
         "version": VERSION,
         "script": f"record/{script}.py",
+        **({"job": job} if job else {}),
         "models": models,
         "generatedAt": data.get("generatedAt") or datetime.date.today().isoformat(),
+        **({"source": source} if source else {}),
         "data": data,
     }
     path = dataset_file(dataset_id, OUTPUT)

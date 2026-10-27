@@ -1,22 +1,18 @@
 """Record a small reasoning model with its thinking switched off and on, for `reasoning-models` (tier T0).
 
-Usage: scripts/.venv/bin/python -m scripts.record reasoning
+Usage: scripts/.venv/bin/python -m scripts.record run reasoning
 
 Writes static/data/reasoning/thinking.json: for each puzzle, the model's reply with thinking off, and its
-thinking plus reply with thinking on. Sampled with Qwen's recommended settings and a fixed seed.
+thinking plus reply with thinking on. Sampled with Qwen's recommended settings and a fixed seed. The
+site reads each boxed answer and grades it (src/lib/grading/answers.ts).
 """
 
 from __future__ import annotations
 
-import datetime
-import re
+from . import runtime
+from .runtime import ModelSpec, Run, job
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-from .common import revision, write_dataset
-
-MODEL = "Qwen/Qwen3-0.6B"
+MODEL = ModelSpec("Qwen/Qwen3-0.6B", "Qwen3-0.6B", device="mps")
 SEED = 1
 # Qwen3 model card: recommended sampling for each mode.
 SETTINGS = {
@@ -29,63 +25,41 @@ PUZZLES = [
     {
         "question": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
         "answer": "5 cents",
-        "pattern": r"^\$?0?\.05|^5\s*(cents)?$|^five cents",
     },
     {
         "question": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
         "answer": "5 minutes",
-        "pattern": r"^5\b(?!0)|^five",
     },
     {
         "question": "How many times does the letter r appear in the word strawberry?",
         "answer": "3",
-        "pattern": r"^3\b|^three",
     },
     {
         "question": "What is 17 × 24?",
         "answer": "408",
-        "pattern": r"^408\b",
     },
     {
         "question": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have?",
         "answer": "1",
-        "pattern": r"^1\b|^one",
     },
     {
         "question": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now?",
         "answer": "3",
-        "pattern": r"^3\b|^three",
     },
 ]
 
 
-def boxed(text: str) -> str | None:
-    """The contents of the last \\boxed{...}, allowing one level of nested braces."""
-    found = re.findall(r"\\boxed\{((?:[^{}]|\{[^{}]*\})*)\}", text)
-    if not found:
-        return None
-    return re.sub(r"\\text\{([^}]*)\}|[\\$ ]", lambda m: m.group(1) or "", found[-1]).strip()
-
-
-def main() -> None:
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
-    tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float32).to(device).eval()
+@job("reasoning/thinking", models=[MODEL])
+def record_thinking(run: Run) -> dict:
+    tokenizer = runtime.tokenizer(MODEL)
     end_think = tokenizer.convert_tokens_to_ids("</think>")
 
-    def run(question: str, thinking: bool) -> dict:
-        prompt = tokenizer.apply_chat_template(
-            [{"role": "user", "content": question + SUFFIX}],
-            tokenize=False,
-            add_generation_prompt=True,
-            enable_thinking=thinking,
-        )
-        ids = tokenizer(prompt, return_tensors="pt").input_ids.to(device)
-        torch.manual_seed(SEED)
+    def answer(question: str, thinking: bool) -> dict:
+        prompt = runtime.template(MODEL, [{"role": "user", "content": question + SUFFIX}], enable_thinking=thinking)
         settings = SETTINGS[thinking]
-        with torch.no_grad():
-            out = model.generate(ids, do_sample=True, pad_token_id=tokenizer.eos_token_id, **settings)
-        new = out[0, ids.shape[1] :].tolist()
+        new = runtime.generate(
+            MODEL, prompt, do_sample=True, seed=SEED, pad_token_id=tokenizer.eos_token_id, **settings
+        )["sequences"][0]
         stopped = bool(new) and new[-1] in {tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|im_end|>")}
         if stopped:
             new = new[:-1]
@@ -103,35 +77,24 @@ def main() -> None:
             "thinkingTokens": len(think_ids),
             "answer": answer,
             "answerTokens": len(answer_ids),
-            "final": boxed(answer),
             "stopped": stopped,
         }
 
     puzzles = []
-    for puzzle in PUZZLES:
+    for puzzle in run.items(PUZZLES, label=lambda p: p["question"][:60]):
         entry = {"question": puzzle["question"], "expected": puzzle["answer"]}
         for key, thinking in [("off", False), ("on", True)]:
-            result = run(puzzle["question"], thinking)
-            result["correct"] = bool(
-                result["final"] and re.search(puzzle["pattern"], result["final"], re.IGNORECASE)
-            )
+            result = answer(puzzle["question"], thinking)
             entry[key] = result
-            print(
-                f"{key:3} {puzzle['answer']:>9} final={result['final']!r} correct={result['correct']}"
+            run.log(
+                f"{key:3} {puzzle['answer']:>9} answer ends {result['answer'][-40:]!r}"
                 f" think={result['thinkingTokens']} answer={result['answerTokens']} stopped={result['stopped']}"
             )
         puzzles.append(entry)
 
-    data = {
+    return {
         "version": 1,
-        "model": {"id": MODEL, "displayName": "Qwen3-0.6B", "revision": revision(MODEL)},
+        "model": run.info(MODEL),
         "settings": {"off": SETTINGS[False], "on": SETTINGS[True], "seed": SEED, "suffix": SUFFIX},
         "puzzles": puzzles,
-        "generatedAt": datetime.date.today().isoformat(),
-        "source": {"torch": torch.__version__, "device": device},
     }
-    write_dataset("reasoning/thinking", data, "reasoning")
-
-
-if __name__ == "__main__":
-    main()

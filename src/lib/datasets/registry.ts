@@ -139,8 +139,17 @@ const envelope = object({
 	dataset: string,
 	version: integer,
 	script: string,
-	models: array(object({ id: string, revision: nullable(string) })),
-	generatedAt: nullable(string)
+	job: string,
+	models: array(
+		object({
+			id: string,
+			revision: nullable(string),
+			device: string,
+			dtype: string
+		})
+	),
+	generatedAt: nullable(string),
+	source: object({ torch: string, transformers: string })
 });
 
 /** Check a dataset file's envelope against the registry, then parse its data. */

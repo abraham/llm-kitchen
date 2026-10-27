@@ -1,7 +1,7 @@
 """Record question embeddings for the word-versus-meaning search in `managing-the-context` (tier T0).
 
 Usage:
-    scripts/.venv/bin/python -m scripts.record search
+    scripts/.venv/bin/python -m scripts.record run search
 
 Embeds a few questions about the recorded long chat (static/data/agent/context.json) with the
 same MiniLM model and pooling that recorded the chat's exchanges, and writes
@@ -13,8 +13,9 @@ from __future__ import annotations
 
 import datetime
 
-from .agent import EMBEDDER, embed
-from .common import read_dataset, revision, write_dataset
+from .agent import EMBEDDER, MINILM, embed
+from .common import read_dataset, revision
+from .runtime import Run, job
 
 # (question, index of the exchange it is about)
 QUESTIONS = [
@@ -26,12 +27,13 @@ QUESTIONS = [
 ]
 
 
-def main() -> None:
+@job("agent/search", models=[MINILM], needs=["agent/chat"])
+def search(run: Run) -> dict:
     context = read_dataset("agent/context")
     if context["embedder"]["revision"] != revision(EMBEDDER):
         raise SystemExit("agent/context was embedded with another MiniLM revision; re-record agent first")
     vectors = embed([q for q, _ in QUESTIONS])
-    write_dataset("agent/search", {
+    return {
         "version": 1,
         "embedder": {"id": EMBEDDER, "revision": revision(EMBEDDER)},
         "questions": [
@@ -39,8 +41,4 @@ def main() -> None:
             for i, (q, about) in enumerate(QUESTIONS)
         ],
         "generatedAt": datetime.date.today().isoformat(),
-    }, "search")
-
-
-if __name__ == "__main__":
-    main()
+    }
