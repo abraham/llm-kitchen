@@ -1,0 +1,113 @@
+{
+	"dataset": "prompts/steps",
+	"grades": [
+		{
+			"label": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost? | Just the answer",
+			"hash": "b4af9cbcd052a654a1a0298bffe1abc80d2ccd211031e89c4ee23d84bacd1d42",
+			"verdict": "wrong",
+			"reason": "Says $0.10, the intuitive wrong answer."
+		},
+		{
+			"label": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost? | Step by step",
+			"hash": "1ce4aa5c159ed286bccfa825bb9a356e6356cbd690c91ccaa26dafe835e369f2",
+			"verdict": "wrong",
+			"reason": "Works toward $0.10 and ends saying the problem may be misread."
+		},
+		{
+			"label": "A bat and a ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost? | Steps, then a fixed format",
+			"hash": "fd989e6df039726df8a4d7a62aea7d9173dc5fe89d788ef1d0c88b6e63e5dd34",
+			"verdict": "right",
+			"reason": "Ends with $0.05, or 5 cents."
+		},
+		{
+			"label": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets? | Just the answer",
+			"hash": "3170543ce47c2f0baa50254b13b82b58b0962675647c39a20643690168f572d7",
+			"verdict": "right",
+			"reason": "5 minutes."
+		},
+		{
+			"label": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets? | Step by step",
+			"hash": "d6bfe0905e694c27da53b901229a6bc0f178adb972e7bd211f5dcf10beee1339",
+			"verdict": "wrong",
+			"reason": "Ends with 0.2 minutes."
+		},
+		{
+			"label": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets? | Steps, then a fixed format",
+			"hash": "16e06fde817cbb69ca7ccdc93d13c7ddcb6cf85b4fa015839bc1fcc1c69c3697",
+			"verdict": "right",
+			"reason": "Ends with 5 minutes."
+		},
+		{
+			"label": "How many times does the letter r appear in the word strawberry? | Just the answer",
+			"hash": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+			"verdict": "right",
+			"reason": "3."
+		},
+		{
+			"label": "How many times does the letter r appear in the word strawberry? | Step by step",
+			"hash": "a46c74baec7a868db9caa3af4d3939518915e68a7de925d93428c894433f0164",
+			"verdict": "right",
+			"reason": "Counts 3."
+		},
+		{
+			"label": "How many times does the letter r appear in the word strawberry? | Steps, then a fixed format",
+			"hash": "79f9887427f364b01a96cffb50d1a6ec6f0ff8db3cd138c519981cfa5fd3a9d3",
+			"verdict": "right",
+			"reason": "Counts 3, with Answer: 3."
+		},
+		{
+			"label": "What is 17 × 24? | Just the answer",
+			"hash": "e6f47e008cc58b38596e6fdf2f50a0fea93fd10543e652522aeab3aa71355719",
+			"verdict": "right",
+			"reason": "408."
+		},
+		{
+			"label": "What is 17 × 24? | Step by step",
+			"hash": "e768e7839f0c63fb4f4c8f07571bb842a49d498d60ce3aa5c9150fce1a8ef55e",
+			"verdict": "right",
+			"reason": "Gets 408."
+		},
+		{
+			"label": "What is 17 × 24? | Steps, then a fixed format",
+			"hash": "864bcded51aa49820a19612a3aabeae059b316b3af87ec721b4049c19fbd5cb3",
+			"verdict": "wrong",
+			"reason": "Splits 24 into 20 and 4 but drops 10 × 4, getting 368."
+		},
+		{
+			"label": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have? | Just the answer",
+			"hash": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+			"verdict": "right",
+			"reason": "1."
+		},
+		{
+			"label": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have? | Step by step",
+			"hash": "bf36ea6ff4af12c0cd7fd732820f0b693bf5ebea4223d9a2ceac911f267ca3da",
+			"verdict": "right",
+			"reason": "One sister."
+		},
+		{
+			"label": "Sally has 3 brothers. Each of her brothers has 2 sisters. How many sisters does Sally have? | Steps, then a fixed format",
+			"hash": "23d73260876c5f8349c0aae617120d5d502f7c80d5dfe971700913923d2297df",
+			"verdict": "wrong",
+			"reason": "Says 2 sisters, counting Sally's sisters wrongly."
+		},
+		{
+			"label": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now? | Just the answer",
+			"hash": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+			"verdict": "wrong",
+			"reason": "Says 2."
+		},
+		{
+			"label": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now? | Step by step",
+			"hash": "5639a8913a085d4ddf24f6063b216af23e8d6c0615984937ae53244bebffddf8",
+			"verdict": "right",
+			"reason": "Ends with 3 apples."
+		},
+		{
+			"label": "I have 3 apples. I eat one, then buy 4 more, then give half of my apples to a friend. How many apples do I have now? | Steps, then a fixed format",
+			"hash": "c50ae8e22729503b24a075281a4b117e969aed1c4afc14b7df22e4c48cc7a003",
+			"verdict": "right",
+			"reason": "Ends with 3."
+		}
+	]
+}

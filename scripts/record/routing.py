@@ -4,8 +4,8 @@ Usage:
     scripts/.venv/bin/python -m scripts.record run routing
 
 Asks Qwen2.5-0.5B-Instruct and Qwen2.5-1.5B-Instruct (greedy, so reruns match) 40 short questions
-with checkable answers, and writes static/data/routing/cascade.json: each answer, whether it is
-right (graded by code against the accepted answers below), and the model's confidence, the
+with checkable answers, and writes static/data/routing/cascade.json: each answer, the answers
+accepted as right (the site grades against them), and the model's confidence, the
 geometric mean of the probabilities it gave its own answer tokens. The widget replays a cascade
 from these: the small model answers, and the harness asks the big one when confidence is low.
 """
@@ -13,7 +13,6 @@ from these: the small model answers, and the harness asks the big one when confi
 from __future__ import annotations
 
 import math
-import re
 
 from . import runtime
 from .runtime import ModelSpec, Run, job
@@ -70,16 +69,6 @@ QUESTIONS: list[tuple[str, list[str]]] = [
 ]
 
 
-def correct(answer: str, accepted: list[str]) -> bool:
-    text = answer.lower().replace(",", "")
-    for a in accepted:
-        a = a.lower()
-        pattern = rf"(?<!\d){re.escape(a)}(?!\d)" if a.isdigit() else rf"\b{re.escape(a)}\b"
-        if re.search(pattern, text):
-            return True
-    return False
-
-
 def ask(spec: ModelSpec, question: str) -> dict:
     tokenizer = runtime.tokenizer(spec)
     messages = [{"role": "system", "content": SYSTEM}, {"role": "user", "content": question}]
@@ -97,19 +86,14 @@ def ask(spec: ModelSpec, question: str) -> dict:
 
 @job("routing/cascade", models=[spec for _, spec in MODELS])
 def cascade(run: Run) -> dict:
+    # Whether each answer is right is worked out by the site (src/lib/grading/answers.ts), not stored.
     models = {}
     answers: dict[str, list[dict]] = {}
     for key, spec in MODELS:
         # The weight count needs the model itself; everything else can come from the cache.
         weights = sum(p.numel() for p in run.model(spec).model.parameters())
         models[key] = {**run.info(spec), "parameters": weights}
-        answers[key] = []
-        for question, accepted in run.items(QUESTIONS, label=lambda q: f"{key}: {q[0]}"):
-            a = ask(spec, question)
-            a["correct"] = correct(a["answer"], accepted)
-            answers[key].append(a)
-        right = sum(a["correct"] for a in answers[key])
-        run.log(f"{spec.name}: {right} of {len(QUESTIONS)} right")
+        answers[key] = [ask(spec, q) for q, _ in run.items(QUESTIONS, label=lambda q: f"{key}: {q[0]}")]
 
     return {
         "version": 1,

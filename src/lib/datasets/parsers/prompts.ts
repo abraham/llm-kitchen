@@ -1,7 +1,9 @@
 import {
 	type Infer,
+	DataError,
 	array,
 	boolean,
+	derive,
 	dictionary,
 	integer,
 	literal,
@@ -12,6 +14,8 @@ import {
 	string,
 	tuple
 } from '../check.ts';
+import { finalNumber, lastNumberIs, namesAnswer } from '../../grading/answers.ts';
+import { RULES, followsFormat } from '../../grading/checks.ts';
 import { guess, modelRef } from './common.ts';
 
 const output = object({ text: string, stopped: boolean });
@@ -130,100 +134,149 @@ export const PROBLEM_RUNS = ['plain', 'distracted', 'ignore', 'turns'] as const;
 export type ProblemRun = (typeof PROBLEM_RUNS)[number];
 
 const problemRun = object({
-	messages: array(object({ role: string, content: string })),
-	answer: nullable(string),
-	correct: boolean
+	messages: array(object({ role: string, content: string }))
 });
+
+const problem = derive(
+	object({
+		facts: tuple(string, string),
+		question: string,
+		distractor: string,
+		answer: integer,
+		runs: record(PROBLEM_RUNS, problemRun)
+	}),
+	// The model's answer is the number in its last reply; it's right if it's the problem's answer.
+	(p) => {
+		const graded = (k: ProblemRun) => {
+			const answer = finalNumber(p.runs[k].messages.at(-1)?.content ?? '');
+			return { ...p.runs[k], answer, correct: answer === String(p.answer) };
+		};
+		const runs = Object.fromEntries(PROBLEM_RUNS.map((k) => [k, graded(k)]));
+		return { ...p, runs: runs as Record<ProblemRun, ReturnType<typeof graded>> };
+	}
+);
 
 export const wordProblems = object({
 	model: modelRef,
 	ignoreInstruction: string,
-	problems: array(
-		object({
-			facts: tuple(string, string),
-			question: string,
-			distractor: string,
-			answer: integer,
-			runs: record(PROBLEM_RUNS, problemRun)
-		})
-	)
+	problems: array(problem)
 });
 export type WordProblems = Infer<typeof wordProblems>;
 
-const gradedChat = object({
-	messages: array(object({ role: literal('user', 'assistant'), content: string })),
-	verdict: literal('right', 'wrong', 'mixed')
-});
+const chatMessages = array(object({ role: literal('user', 'assistant'), content: string }));
 
 export const pushback = object({
 	model: modelRef,
 	pushback: string,
 	hint: string,
 	questions: array(
-		object({
-			question: string,
-			right: string,
-			wrong: string,
-			pushback: gradedChat,
-			hint: gradedChat
-		})
+		derive(
+			object({
+				question: string,
+				right: string,
+				wrong: string,
+				// Graded by hand (scripts/record/grades/prompts-pushback.json), with the reason.
+				pushback: object({
+					messages: chatMessages,
+					verdict: literal('right', 'wrong', 'mixed'),
+					reason: string
+				}),
+				hint: object({ messages: chatMessages })
+			}),
+			// With the wrong guess up front, a one-sentence reply that names the right answer kept it.
+			(q) => {
+				const kept = namesAnswer(q.hint.messages.at(-1)?.content ?? '', q.right);
+				return {
+					...q,
+					hint: { ...q.hint, verdict: kept ? ('right' as const) : ('wrong' as const) }
+				};
+			}
+		)
 	)
 });
 export type Pushback = Infer<typeof pushback>;
 
-export const manyRules = object({
-	model: modelRef,
-	rules: array(string),
-	counts: array(integer),
-	notes: array(
-		object({
-			task: string,
-			runs: array(
-				object({ rules: array(integer), prompt: string, reply: string, followed: array(boolean) })
-			)
-		})
-	)
-});
+export const manyRules = derive(
+	object({
+		model: modelRef,
+		rules: array(string),
+		counts: array(integer),
+		notes: array(
+			object({
+				task: string,
+				runs: array(object({ rules: array(integer), prompt: string, reply: string }))
+			})
+		)
+	}),
+	(d, path) => {
+		d.rules.forEach((text, i) => {
+			if (RULES[i]?.text !== text)
+				throw new DataError(`${path}.rules[${i}]`, `"${RULES[i]?.text}"`);
+		});
+		const notes = d.notes.map((n) => ({
+			...n,
+			runs: n.runs.map((r) => ({ ...r, followed: r.rules.map((i) => RULES[i].kept(r.reply)) }))
+		}));
+		return { ...d, notes };
+	}
+);
 export type ManyRules = Infer<typeof manyRules>;
 
-const answer = object({ text: string, correct: boolean });
+const mathAnswer = object({ text: string });
 
-export const systemPrompts = object({
-	model: modelRef,
-	question: string,
-	replies: array(
-		object({
-			name: string,
-			system: string,
-			prompt: string,
-			text: string,
-			tokens: integer,
-			stopped: boolean
-		})
-	),
-	persona: string,
-	math: array(object({ question: string, expected: number, default: answer, persona: answer }))
-});
+export const systemPrompts = derive(
+	object({
+		model: modelRef,
+		question: string,
+		replies: array(
+			object({
+				name: string,
+				system: string,
+				prompt: string,
+				text: string,
+				tokens: integer,
+				stopped: boolean
+			})
+		),
+		persona: string,
+		math: array(
+			object({ question: string, expected: number, default: mathAnswer, persona: mathAnswer })
+		)
+	}),
+	// A sum is right when the last number in the reply is the product.
+	(d) => ({
+		...d,
+		math: d.math.map((m) => ({
+			...m,
+			default: { ...m.default, correct: lastNumberIs(m.default.text, m.expected) },
+			persona: { ...m.persona, correct: lastNumberIs(m.persona.text, m.expected) }
+		}))
+	})
+);
 export type SystemPrompts = Infer<typeof systemPrompts>;
 
 export const steps = object({
 	model: modelRef,
 	conditions: array(object({ name: string, suffix: string })),
 	puzzles: array(
-		object({
-			question: string,
-			expected: string,
-			runs: array(
-				object({
-					condition: string,
-					text: string,
-					tokens: integer,
-					stopped: boolean,
-					correct: boolean,
-					formatted: boolean
-				})
-			)
-		})
+		derive(
+			object({
+				question: string,
+				expected: string,
+				runs: array(
+					object({
+						condition: string,
+						text: string,
+						tokens: integer,
+						stopped: boolean,
+						// Graded by hand (scripts/record/grades/prompts-steps.json), with the reason.
+						correct: boolean,
+						reason: string
+					})
+				)
+			}),
+			(p) => ({ ...p, runs: p.runs.map((r, i) => ({ ...r, formatted: followsFormat(i, r.text) })) })
+		)
 	)
 });
 export type Steps = Infer<typeof steps>;

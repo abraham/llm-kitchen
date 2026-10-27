@@ -7,6 +7,7 @@
 	import ScrollBox from '#lib/components/ui/ScrollBox.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import { chatTemplate } from '#lib/math/chat-template.ts';
+	import { lastNumberIs } from '#lib/grading/answers.ts';
 	import { useProvider } from '#lib/models/live.svelte.ts';
 
 	type Answer = { text: string; correct: boolean };
@@ -26,13 +27,6 @@
 	/** Live answers to the sums, by `default|question` or `persona|question`. */
 	let answers = $state<Record<string, Answer>>({});
 	let problem = $state('');
-
-	/** The last number in a reply, as the recording reads it. */
-	const correct = (text: string, expected: number) =>
-		text
-			.replaceAll(',', '')
-			.match(/-?\d[\d,]*/g)
-			?.at(-1) === String(expected);
 
 	async function ask(system: string, question: string) {
 		const provider = option.provider;
@@ -77,7 +71,10 @@
 					},
 					{ maxTokens: MATH_TOKENS }
 				);
-				answers[`${key}|${m.question}`] = { text: r.text, correct: correct(r.text, m.expected) };
+				answers[`${key}|${m.question}`] = {
+					text: r.text,
+					correct: lastNumberIs(r.text, m.expected)
+				};
 			}
 		}
 	}

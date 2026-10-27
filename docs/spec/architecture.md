@@ -68,7 +68,7 @@ src/
       widgets/                   widgets used by two or more chapters
     data/                        hand-written data shared by chapters and logic (the nursery rhymes)
     datasets/
-      check.ts                   small typed checks for untrusted JSON
+      check.ts                   small typed checks for untrusted JSON, and derive() for computed fields
       parsers/                   one parser per dataset shape (trace, agent run, injection lab, ...)
       registry.ts                every recorded dataset: id, file, parser, script, and version
       load.ts                    fetchDataset (route loads) and loadDataset (browser, cached)
@@ -79,6 +79,7 @@ src/
     workers/                     the tokenizer, inference, and trainer workers (workers.md)
     math/                        pure numeric code: sampling, BPE, MLP and backprop, attention, ...
     harness/                     pure toy harness: tools, agent loop, caching, injection
+    grading/                     verdicts code works out from a reply: answers, rules, formats, injections
     stores/                      progress, theme, motion preferences, the chosen model tier
     glossary.ts                  terms, definitions, and the slug of the chapter that introduces each
     references.json              the bibliography
@@ -91,7 +92,8 @@ static/
 models/canonical.json            the canonical small model
 models/embedder.json             the embedding model
 scripts/
-  record/                        Python package: common.py plus one module per recording
+  record/                        Python package: common.py plus one module per recording;
+                                 grades/ holds the hand grades
   build-og.ts                    social images
 tests/
   unit/, e2e/                    checks that span the site: curriculum and spec, citations,
@@ -112,7 +114,8 @@ per folder in `eslint.config.js`; tests are exempt):
 4. **Components** (`ui/`, `primitives/`, `frame/`, `page/`) render what they're given. They never
    import chapters, widgets, or the dataset loaders; [components.md](components.md#layers) has the
    rules between them.
-5. **Logic** (`math/`, `harness/`, `curriculum/`, and the dataset checks, parsers, and registry) is
+5. **Logic** (`math/`, `harness/`, `grading/`, `curriculum/`, and the dataset checks, parsers,
+   and registry) is
    plain TypeScript: no Svelte, `$app`, UI, worker, or browser-model imports, and no browser
    globals.
 
@@ -167,7 +170,9 @@ conventions every shared component follows, are in [components.md](components.md
   Datasets written by jobs also have `job`, `source` (the `torch` and `transformers` versions),
   and each model's `device` and `dtype`.
   `parseDataset` checks the id and version, then the shape of `data`, and returns typed data;
-  fields the parser doesn't list are dropped. Widgets never declare their own types for recorded
+  fields the parser doesn't list are dropped. A verdict code can work out from the recorded text
+  isn't stored: the parser adds it with `derive(check, add)`, calling a grader in `grading/`
+  ([models-and-data.md](models-and-data.md#recording-scripts)). Widgets never declare their own types for recorded
   data or cast JSON; they import types from `datasets/parsers/`.
 - `loadDataset(id)` fetches each file once and caches the parsed result. A parse error names the
   dataset and the path inside it, and `Loading` shows it.
@@ -182,8 +187,8 @@ conventions every shared component follows, are in [components.md](components.md
   and `check` re-records and compares ([models-and-data.md](models-and-data.md#recording-scripts)).
 - `runtime.py` declares jobs (`@job`), loads each model once on first use, picks devices, keeps the
   runner offline unless `--download`, caches every model call in `scripts/.cache/`, runs trials
-  (`try`) into `scripts/.scratch/`, logs progress, and writes `jobs.json`, the committed list of
-  jobs and the datasets each writes. `status.py` and `check.py` hold those commands.
+  (`try`) into `scripts/.scratch/`, looks up hand grades, logs progress, and writes `jobs.json`, the committed list of
+  jobs and the datasets each writes. `status.py`, `check.py`, and `grade.py` hold those commands.
 - `common.py` writes the envelope (finding each model and its revision in the data), looks up the
   revision of cached model files, reads datasets other modules recorded, and checks
   `models/canonical.json` against GPT-2's config.

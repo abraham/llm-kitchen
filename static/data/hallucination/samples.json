@@ -2,13 +2,20 @@
 	"dataset": "hallucination/samples",
 	"version": 1,
 	"script": "record/hallucination.py",
+	"job": "hallucination/samples",
 	"models": [
 		{
 			"id": "Qwen/Qwen2.5-1.5B-Instruct",
-			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+			"device": "mps",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-25",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"model": {
@@ -45,97 +52,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						},
 						{
-							"text": "Canberra",
-							"verdict": "right"
+							"text": "Canberra"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Canberra",
-						"verdict": "right"
+						"text": "Canberra"
 					},
 					"allowed": {
-						"text": "Canberra",
-						"verdict": "right"
+						"text": "Canberra"
 					}
 				}
 			},
@@ -150,97 +135,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						},
 						{
-							"text": "Jane Austen",
-							"verdict": "right"
+							"text": "Jane Austen"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Jane Austen",
-						"verdict": "right"
+						"text": "Jane Austen"
 					},
 					"allowed": {
-						"text": "Jane Austen",
-						"verdict": "right"
+						"text": "Jane Austen"
 					}
 				}
 			},
@@ -255,97 +218,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						}
 					],
 					"allowed": [
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						},
 						{
-							"text": "1945",
-							"verdict": "right"
+							"text": "1945"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "1945",
-						"verdict": "right"
+						"text": "1945"
 					},
 					"allowed": {
-						"text": "1945",
-						"verdict": "right"
+						"text": "1945"
 					}
 				}
 			},
@@ -360,97 +301,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						},
 						{
-							"text": "Mount Everest",
-							"verdict": "right"
+							"text": "Mount Everest"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Mount Everest",
-						"verdict": "right"
+						"text": "Mount Everest"
 					},
 					"allowed": {
-						"text": "Mount Everest",
-						"verdict": "right"
+						"text": "Mount Everest"
 					}
 				}
 			},
@@ -465,97 +384,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						},
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						},
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						},
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						},
 						{
-							"text": "Svetlana Alexievich",
-							"verdict": "wrong"
+							"text": "Svetlana Alexievich"
 						},
 						{
-							"text": "Svetlana Aleksievich",
-							"verdict": "wrong"
+							"text": "Svetlana Aleksievich"
 						},
 						{
-							"text": "Svetlana Alexievich",
-							"verdict": "wrong"
+							"text": "Svetlana Alexievich"
 						},
 						{
-							"text": "Svetlana Alexievich",
-							"verdict": "wrong"
+							"text": "Svetlana Alexievich"
 						},
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						},
 						{
-							"text": "Saul Bellow",
-							"verdict": "wrong"
+							"text": "Saul Bellow"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Federico Mancinelli",
-							"verdict": "wrong"
+							"text": "Federico Mancinelli"
 						},
 						{
-							"text": "Fiodar Dzhafarov",
-							"verdict": "wrong"
+							"text": "Fiodar Dzhafarov"
 						},
 						{
-							"text": "Vladimir Nabokov",
-							"verdict": "wrong"
+							"text": "Vladimir Nabokov"
 						},
 						{
-							"text": "Federico Garcia Lorca",
-							"verdict": "wrong"
+							"text": "Federico Garcia Lorca"
 						},
 						{
-							"text": "It is not possible to determine who won the Nobel Prize in Literature in 1995 based on the given information alone, as the identity of the laureate for that year was not specified.",
-							"verdict": "declined"
+							"text": "It is not possible to determine who won the Nobel Prize in Literature in 1995 based on the given information alone, as the identity of the laureate for that year was not specified."
 						},
 						{
-							"text": "Vladimir Nabokov",
-							"verdict": "wrong"
+							"text": "Vladimir Nabokov"
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Saul Bellow",
-						"verdict": "wrong"
+						"text": "Saul Bellow"
 					},
 					"allowed": {
-						"text": "It is not possible to definitively state who won the Nobel Prize in Literature in 1995 without additional context or information about specific winners from that year. The Nobel Committee for Literature typically announces",
-						"verdict": "declined"
+						"text": "It is not possible to definitively state who won the Nobel Prize in Literature in 1995 without additional context or information about specific winners from that year. The Nobel Committee for Literature typically announces"
 					}
 				}
 			},
@@ -570,97 +467,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						},
 						{
-							"text": "Eddy Merckx",
-							"verdict": "wrong"
+							"text": "Eddy Merckx"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Eddy Merckx",
-						"verdict": "wrong"
+						"text": "Eddy Merckx"
 					},
 					"allowed": {
-						"text": "Eddy Merckx",
-						"verdict": "wrong"
+						"text": "Eddy Merckx"
 					}
 				}
 			},
@@ -675,97 +550,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						}
 					],
 					"allowed": [
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						},
 						{
-							"text": "1088",
-							"verdict": "right"
+							"text": "1088"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "1088",
-						"verdict": "right"
+						"text": "1088"
 					},
 					"allowed": {
-						"text": "1088",
-						"verdict": "right"
+						"text": "1088"
 					}
 				}
 			},
@@ -780,97 +633,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						}
 					],
 					"allowed": [
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						},
 						{
-							"text": "Ouagadougou",
-							"verdict": "right"
+							"text": "Ouagadougou"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Ouagadougou",
-						"verdict": "right"
+						"text": "Ouagadougou"
 					},
 					"allowed": {
-						"text": "Ouagadougou",
-						"verdict": "right"
+						"text": "Ouagadougou"
 					}
 				}
 			},
@@ -883,97 +714,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "Evelyn Waugh",
-							"verdict": "wrong"
+							"text": "Evelyn Waugh"
 						},
 						{
-							"text": "Emily Brontë",
-							"verdict": "wrong"
+							"text": "Emily Brontë"
 						},
 						{
-							"text": "Liu Cixin",
-							"verdict": "wrong"
+							"text": "Liu Cixin"
 						},
 						{
-							"text": "Evelyn Waugh",
-							"verdict": "wrong"
+							"text": "Evelyn Waugh"
 						},
 						{
-							"text": "Rudyard Kipling",
-							"verdict": "wrong"
+							"text": "Rudyard Kipling"
 						},
 						{
-							"text": "Terry Pratchett",
-							"verdict": "wrong"
+							"text": "Terry Pratchett"
 						},
 						{
-							"text": "Herman Wouk",
-							"verdict": "wrong"
+							"text": "Herman Wouk"
 						},
 						{
-							"text": "Marilynne Robinson",
-							"verdict": "wrong"
+							"text": "Marilynne Robinson"
 						},
 						{
-							"text": "H.P. Lovecraft",
-							"verdict": "wrong"
+							"text": "H.P. Lovecraft"
 						},
 						{
-							"text": "Marianne Faithfull",
-							"verdict": "wrong"
+							"text": "Marianne Faithfull"
 						}
 					],
 					"allowed": [
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "Helen Macdonald",
-						"verdict": "wrong"
+						"text": "Helen Macdonald"
 					},
 					"allowed": {
-						"text": "I don't know.",
-						"verdict": "declined"
+						"text": "I don't know."
 					}
 				}
 			},
@@ -986,97 +795,75 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "1950",
-							"verdict": "wrong"
+							"text": "1950"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						},
 						{
-							"text": "1950",
-							"verdict": "wrong"
+							"text": "1950"
 						},
 						{
-							"text": "1907",
-							"verdict": "wrong"
+							"text": "1907"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						},
 						{
-							"text": "1907",
-							"verdict": "wrong"
+							"text": "1907"
 						},
 						{
-							"text": "1930",
-							"verdict": "wrong"
+							"text": "1930"
 						},
 						{
-							"text": "1927",
-							"verdict": "wrong"
+							"text": "1927"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						}
 					],
 					"allowed": [
 						{
-							"text": "1946",
-							"verdict": "wrong"
+							"text": "1946"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						},
 						{
-							"text": "1950",
-							"verdict": "wrong"
+							"text": "1950"
 						},
 						{
-							"text": "1907",
-							"verdict": "wrong"
+							"text": "1907"
 						},
 						{
-							"text": "1937",
-							"verdict": "wrong"
+							"text": "1937"
 						},
 						{
-							"text": "1907",
-							"verdict": "wrong"
+							"text": "1907"
 						},
 						{
-							"text": "1930",
-							"verdict": "wrong"
+							"text": "1930"
 						},
 						{
-							"text": "1927",
-							"verdict": "wrong"
+							"text": "1927"
 						},
 						{
-							"text": "1938",
-							"verdict": "wrong"
+							"text": "1938"
 						},
 						{
-							"text": "1947",
-							"verdict": "wrong"
+							"text": "1947"
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "1927",
-						"verdict": "wrong"
+						"text": "1927"
 					},
 					"allowed": {
-						"text": "1927",
-						"verdict": "wrong"
+						"text": "1927"
 					}
 				}
 			},
@@ -1089,101 +876,78 @@
 				"answers": {
 					"plain": [
 						{
-							"text": "The population of the town of Quillfeather, Ontario is 274 people.",
-							"verdict": "wrong"
+							"text": "The population of the town of Quillfeather, Ontario is 274 people."
 						},
 						{
-							"text": "800",
-							"verdict": "wrong"
+							"text": "800"
 						},
 						{
-							"text": "526",
-							"verdict": "wrong"
+							"text": "526"
 						},
 						{
-							"text": "The population of the town of Quillfeather, Ontario is 123.",
-							"verdict": "wrong"
+							"text": "The population of the town of Quillfeather, Ontario is 123."
 						},
 						{
-							"text": "536",
-							"verdict": "wrong"
+							"text": "536"
 						},
 						{
-							"text": "500",
-							"verdict": "wrong"
+							"text": "500"
 						},
 						{
-							"text": "1,085",
-							"verdict": "wrong"
+							"text": "1,085"
 						},
 						{
-							"text": "450",
-							"verdict": "wrong"
+							"text": "450"
 						},
 						{
-							"text": "800",
-							"verdict": "wrong"
+							"text": "800"
 						},
 						{
-							"text": "549",
-							"verdict": "wrong"
+							"text": "549"
 						}
 					],
 					"allowed": [
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						},
 						{
-							"text": "I don't know.",
-							"verdict": "declined"
+							"text": "I don't know."
 						}
 					]
 				},
 				"greedy": {
 					"plain": {
-						"text": "500",
-						"verdict": "wrong"
+						"text": "500"
 					},
 					"allowed": {
-						"text": "I don't know.",
-						"verdict": "declined"
+						"text": "I don't know."
 					}
 				}
 			}
-		],
-		"generatedAt": "2026-10-25"
+		]
 	}
 }

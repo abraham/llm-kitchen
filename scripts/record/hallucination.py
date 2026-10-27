@@ -6,12 +6,10 @@ Asks Qwen2.5-1.5B-Instruct each question 10 times, sampled with the model card's
 fixed seed, and once greedily (temperature 0), under two system prompts: one that asks for a short answer, and one that also allows
 "I don't know". Some questions have well-known answers, some are harder, and some ask about a book
 or a person invented for this chapter. Writes static/data/hallucination/samples.json with every
-answer and a verdict from code: right, wrong, or declined.
+answer; the site grades each one (src/lib/grading/answers.ts): right, wrong, or declined.
 """
 
 from __future__ import annotations
-
-import re
 
 from . import runtime
 from .runtime import ModelSpec, Run, job
@@ -42,25 +40,6 @@ QUESTIONS: list[tuple[str, str, str, list[str], str | None]] = [
     ("varlow", "invented", "In what year did the chemist Hendrik Varlow win the Nobel Prize?", [], None),
     ("quillfeather", "invented", "What is the population of the town of Quillfeather, Ontario?", [], None),
 ]
-
-DECLINE = re.compile(
-    r"don['’]t know|do not know|not sure|unsure|no (?:information|record|data|known)|not aware|"
-    r"couldn['’]t find|could not find|unable to|does(?:n['’]t| not) exist|fictional|not a real|"
-    r"there is no|i['’]m sorry|cannot (?:find|provide|answer|determine)|not possible to",
-    re.IGNORECASE,
-)
-
-
-def verdict(answer: str, accepted: list[str]) -> str:
-    if DECLINE.search(answer):
-        return "declined"
-    text = answer.lower().replace(",", "")
-    for a in accepted:
-        a = a.lower()
-        pattern = rf"(?<!\d){re.escape(a)}(?!\d)" if a.isdigit() else rf"\b{re.escape(a)}\b"
-        if re.search(pattern, text):
-            return "right"
-    return "wrong"
 
 
 @job("hallucination/samples", models=[MODEL])
@@ -100,9 +79,9 @@ def samples(run: Run) -> dict:
         }
         for key, system in PROMPTS:
             answers = sample(system, question)
-            entry["answers"][key] = [{"text": a, "verdict": verdict(a, accepted)} for a in answers]
+            entry["answers"][key] = [{"text": a} for a in answers]
             [greedy] = sample(system, question, greedy=True)
-            entry["greedy"][key] = {"text": greedy, "verdict": verdict(greedy, accepted)}
+            entry["greedy"][key] = {"text": greedy}
             run.log(f"{qid:12} {key:7} {greedy} {[a[:40] for a in answers]}")
         questions.append(entry)
 

@@ -2,13 +2,20 @@
 	"dataset": "agent/chat",
 	"version": 1,
 	"script": "record/agent.py",
+	"job": "agent/chat",
 	"models": [
 		{
 			"id": "Qwen/Qwen2.5-1.5B-Instruct",
-			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306"
+			"revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+			"device": "cpu",
+			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-23",
+	"generatedAt": "2026-10-27",
+	"source": {
+		"torch": "2.14.1",
+		"transformers": "5.20.2"
+	},
 	"data": {
 		"version": 1,
 		"model": {
@@ -113,7 +120,6 @@
 				"photos.zip",
 				"taxes.pdf"
 			]
-		},
-		"generatedAt": "2026-10-23"
+		}
 	}
 }

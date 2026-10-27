@@ -10,6 +10,7 @@ Usage, from the repository root:
     scripts/.venv/bin/python -m scripts.record check prompts/pushback    # re-record and compare (check.py)
     scripts/.venv/bin/python -m scripts.record check live
     scripts/.venv/bin/python -m scripts.record cache prune               # drop cache entries no job uses
+    scripts/.venv/bin/python -m scripts.record grade prompts/pushback    # hand-grade replies a job listed
 
 Flags, anywhere: --device cpu|mps for every model, --download to allow downloads (the runner is
 offline otherwise), --force to download even when the disk is nearly full, --fresh to ignore the
@@ -56,6 +57,7 @@ USAGE = (
     "       python -m scripts.record status\n"
     "       python -m scripts.record check <job|module|live> [names]\n"
     "       python -m scripts.record cache prune\n"
+    "       python -m scripts.record grade <dataset> [--list]\n"
     f"modules: {', '.join(MODULES)}"
 )
 
@@ -128,6 +130,10 @@ def main(argv: list[str]) -> None:
         runtime.try_job(runtime.JOBS[rest[0]])
     elif command == "cache" and rest == ["prune"]:
         runtime.prune_cache()
+    elif command == "grade" and rest and set(rest[1:]) <= {"--list"}:
+        from .grade import grade
+
+        grade(rest[0], listing="--list" in rest)
     elif command == "status":
         from . import status
 

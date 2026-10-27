@@ -32,6 +32,9 @@ MANIFEST = Path(__file__).with_name("jobs.json")
 LOGS = common.ROOT / "scripts" / ".logs"
 CACHE = common.ROOT / "scripts" / ".cache"
 USED = CACHE / "used"
+# Replies waiting for a hand grade, written by the job that met them and read by `grade`.
+PENDING = CACHE / "grading"
+GRADES = Path(__file__).with_name("grades")
 SCRATCH = common.ROOT / "scripts" / ".scratch"
 # A download may not leave less than this much free disk, unless --force.
 MIN_FREE_BYTES = 10 * 1000**3
@@ -461,6 +464,30 @@ def embed(spec: ModelSpec, texts: list[str]) -> list[list[float]]:
 # --- Runs -------------------------------------------------------------------------------------
 
 
+def grades_file(dataset: str) -> Path:
+    return GRADES / f"{dataset.replace('/', '-')}.json"
+
+
+def pending_file(dataset: str) -> Path:
+    return PENDING / f"{dataset.replace('/', '-')}.json"
+
+
+def load_grades(dataset: str) -> list[dict]:
+    """The hand grades for a dataset: label, SHA-256 of the text graded, verdict, and reason."""
+    path = grades_file(dataset)
+    return json.loads(path.read_text())["grades"] if path.exists() else []
+
+
+def save_grades(dataset: str, grades: list[dict]) -> None:
+    GRADES.mkdir(exist_ok=True)
+    text = json.dumps({"dataset": dataset, "grades": grades}, indent="\t", ensure_ascii=False)
+    grades_file(dataset).write_text(text + "\n")
+
+
+def text_hash(text: str) -> str:
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
 _LOG_FILE: Path | None = None
 
 
@@ -481,6 +508,7 @@ class Run:
     cached: int = 0
     keys: set[str] = field(default_factory=set)
     pending: list[tuple[str, dict]] = field(default_factory=list)
+    ungraded: list[dict] = field(default_factory=list)
 
     def model(self, spec: ModelSpec) -> Loaded:
         return loaded(spec)
@@ -511,6 +539,33 @@ class Run:
     def log(self, message: str) -> None:
         log(message)
 
+    def grade(
+        self, dataset: str, label: str, text: str, verdicts: tuple[str, ...], context: dict[str, str] | None = None
+    ) -> dict:
+        """The hand grade of `text`, the item `label` in `dataset`: `{"verdict", "reason"}` from
+        scripts/record/grades/. A text with no grade, or one that changed since it was graded, is
+        "ungraded" and listed for `grade`; the job then writes nothing (a trial carries on)."""
+        if dataset not in self.job.outputs:
+            raise SystemExit(f"{self.job.name} doesn't declare {dataset}")
+        digest = text_hash(text)
+        earlier = next((g for g in load_grades(dataset) if g["label"] == label), None)
+        if earlier and earlier["hash"] == digest:
+            if earlier["verdict"] not in verdicts:
+                raise SystemExit(f"{dataset}: {label!r} is graded {earlier['verdict']}, not one of {verdicts}")
+            return {"verdict": earlier["verdict"], "reason": earlier["reason"]}
+        self.ungraded.append(
+            {
+                "dataset": dataset,
+                "label": label,
+                "hash": digest,
+                "verdicts": list(verdicts),
+                "context": context or {},
+                "text": text,
+                "earlier": earlier,
+            }
+        )
+        return {"verdict": "ungraded", "reason": ""}
+
     def items(self, items: Iterable[T], label: Callable[[T], str] = str) -> Iterator[T]:
         """Yield each item, logging a progress line when the job is done with it. In a trial, only
         the items --only names (by part of their label), and at most --limit of them."""
@@ -534,6 +589,21 @@ class Run:
         self.pending.append((dataset_id, data))
 
 
+def _list_ungraded(declared: Job, ungraded: list[dict]) -> None:
+    """Keep the replies waiting for a grade where `grade` finds them, and clear the list when there are
+    none. A trial's replies aren't listed: grading them would replace the grades of the recorded ones."""
+    if SETTINGS.trial:
+        return
+    for dataset in declared.outputs:
+        items = [u for u in ungraded if u["dataset"] == dataset]
+        path = pending_file(dataset)
+        if items:
+            PENDING.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(items, ensure_ascii=False, indent="\t"))
+        elif path.exists():
+            path.unlink()
+
+
 def run_job(declared: Job) -> list[Path]:
     """Run one job and, if it finishes, write its datasets."""
     global _CURRENT, _LOG_FILE
@@ -550,6 +620,14 @@ def run_job(declared: Job) -> list[Path]:
         data = declared.fn(run)
         if data is not None:
             run.write(declared.outputs[0], data)
+        _list_ungraded(declared, run.ungraded)
+        if run.ungraded and not SETTINGS.trial:
+            datasets = sorted({u["dataset"] for u in run.ungraded})
+            commands = "\n".join(f"  scripts/.venv/bin/python -m scripts.record grade {d}" for d in datasets)
+            raise SystemExit(
+                f"{declared.name}: {len(run.ungraded)} replies need a hand grade, so nothing was written. "
+                f"Grade them, then run the job again (it's cached):\n{commands}"
+            )
         devices = {**run.devices, **{i: {"device": m.device, "dtype": m.spec.dtype} for i, m in run.used.items()}}
         written = [
             common.write_dataset(i, d, declared.module, job=declared.name, source=_versions(), devices=devices)

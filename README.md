@@ -63,6 +63,7 @@ scripts/.venv/bin/python -m scripts.record status                  # what's reco
 scripts/.venv/bin/python -m scripts.record check encoder           # re-record into a temp folder and compare
 scripts/.venv/bin/python -m scripts.record check live              # the live models' pinned downloads
 scripts/.venv/bin/python -m scripts.record cache prune             # drop cached calls no job uses
+scripts/.venv/bin/python -m scripts.record grade prompts/steps     # hand-grade replies a run stopped on
 ```
 
 Progress prints as it goes, even through a pipe, and is also logged to `scripts/.logs/`. Add
@@ -72,6 +73,11 @@ Every model call the ported modules make is cached in `scripts/.cache/`, so a re
 what changed; `--fresh` ignores the cache, and `check` always does. `try` runs a job on a few items
 (`--limit`, `--only`) into `scripts/.scratch/`, printing each reply, and `--set` changes one of the
 job's options for the trial; a later `run` reuses the replies the trial made.
+
+`prompts/steps` and `prompts/pushback` are graded by hand, in `scripts/record/grades/`. When a
+reply has no grade, or has changed since it was graded, the run stops without writing and prints
+the `grade` command, which shows each reply and asks for a verdict and a one-line reason (`--list`
+prints them for an editor instead). Then `run` again; it's cached.
 
 `traces` checks `models/canonical.json` against the model's own config before writing anything.
 

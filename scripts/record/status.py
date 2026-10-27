@@ -1,4 +1,4 @@
-"""`status`: every module's datasets, when each was recorded, and from which model commits."""
+"""`status`: every module's datasets, when each was recorded, from which model commits, and any replies waiting for a hand grade."""
 
 from __future__ import annotations
 
@@ -37,6 +37,12 @@ def _models(envelope: dict) -> str:
     return ", ".join(parts)
 
 
+def _waiting(dataset: str) -> str:
+    path = runtime.pending_file(dataset)
+    count = len(json.loads(path.read_text())) if path.exists() else 0
+    return f"  {count} to grade: grade {dataset}" if count else ""
+
+
 def show(modules: list[str]) -> None:
     envelopes = _envelopes()
     by_script: dict[str, list[str]] = {}
@@ -53,6 +59,6 @@ def show(modules: list[str]) -> None:
             envelope = envelopes.get(dataset)
             label = dataset if name in (None, dataset) else f"{dataset} ({name})"
             if not envelope:
-                print(f"  {label:34} not recorded")
+                print(f"  {label:34} not recorded{_waiting(dataset)}")
                 continue
-            print(f"  {label:34} {(envelope.get('generatedAt') or '?')[:10]}  {_models(envelope)}")
+            print(f"  {label:34} {(envelope.get('generatedAt') or '?')[:10]}  {_models(envelope)}{_waiting(dataset)}")

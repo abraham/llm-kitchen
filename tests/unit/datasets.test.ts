@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 import { describe, expect, it } from 'vitest';
@@ -27,6 +28,29 @@ describe('recorded datasets', () => {
 		expect(head.models.length).toBeGreaterThan(0);
 		for (const m of head.models) expect(m.revision, m.id).toMatch(/^[0-9a-f]{40}$/);
 		expect(head.generatedAt).toMatch(/^\d{4}-\d{2}-\d{2}/);
+	});
+
+	it('hand grades in scripts/record/grades/ each grade a reply in their dataset, with the stored reason', () => {
+		const strings = (value: unknown): string[] =>
+			typeof value === 'string'
+				? [value]
+				: value && typeof value === 'object'
+					? Object.values(value).flatMap(strings)
+					: [];
+		const graded = readdirSync('scripts/record/grades');
+		expect(graded.length).toBeGreaterThan(0);
+		for (const name of graded) {
+			const { dataset, grades } = JSON.parse(readFileSync(`scripts/record/grades/${name}`, 'utf8'));
+			expect(name).toBe(`${dataset.replace('/', '-')}.json`);
+			expect(ids).toContain(dataset);
+			const file = `static/data/${DATASETS[dataset as DatasetId].file}`;
+			const texts = strings(JSON.parse(readFileSync(file, 'utf8')).data);
+			const hashes = new Set(texts.map((s) => createHash('sha256').update(s).digest('hex')));
+			for (const g of grades) {
+				expect(hashes.has(g.hash), `${dataset}: ${g.label}`).toBe(true);
+				expect(texts, `${dataset}: ${g.label}`).toContain(g.reason);
+			}
+		}
 	});
 
 	it('names, in each file a job wrote, the job that declares it in scripts/record/jobs.json', () => {

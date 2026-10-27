@@ -11,7 +11,7 @@
 			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-26",
+	"generatedAt": "2026-10-27",
 	"source": {
 		"torch": "2.14.1",
 		"transformers": "5.20.2"
@@ -48,7 +48,7 @@
 						"tokens": 4,
 						"stopped": true,
 						"correct": false,
-						"formatted": true
+						"reason": "Says $0.10, the intuitive wrong answer."
 					},
 					{
 						"condition": "Step by step",
@@ -56,7 +56,7 @@
 						"tokens": 366,
 						"stopped": true,
 						"correct": false,
-						"formatted": false
+						"reason": "Works toward $0.10 and ends saying the problem may be misread."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -64,7 +64,7 @@
 						"tokens": 197,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Ends with $0.05, or 5 cents."
 					}
 				]
 			},
@@ -78,7 +78,7 @@
 						"tokens": 2,
 						"stopped": true,
 						"correct": true,
-						"formatted": true
+						"reason": "5 minutes."
 					},
 					{
 						"condition": "Step by step",
@@ -86,7 +86,7 @@
 						"tokens": 427,
 						"stopped": true,
 						"correct": false,
-						"formatted": false
+						"reason": "Ends with 0.2 minutes."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -94,7 +94,7 @@
 						"tokens": 223,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Ends with 5 minutes."
 					}
 				]
 			},
@@ -108,7 +108,7 @@
 						"tokens": 1,
 						"stopped": true,
 						"correct": true,
-						"formatted": true
+						"reason": "3."
 					},
 					{
 						"condition": "Step by step",
@@ -116,7 +116,7 @@
 						"tokens": 194,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Counts 3."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -124,7 +124,7 @@
 						"tokens": 115,
 						"stopped": true,
 						"correct": true,
-						"formatted": true
+						"reason": "Counts 3, with Answer: 3."
 					}
 				]
 			},
@@ -138,7 +138,7 @@
 						"tokens": 3,
 						"stopped": true,
 						"correct": true,
-						"formatted": true
+						"reason": "408."
 					},
 					{
 						"condition": "Step by step",
@@ -146,7 +146,7 @@
 						"tokens": 183,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Gets 408."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -154,7 +154,7 @@
 						"tokens": 145,
 						"stopped": true,
 						"correct": false,
-						"formatted": false
+						"reason": "Splits 24 into 20 and 4 but drops 10 × 4, getting 368."
 					}
 				]
 			},
@@ -168,7 +168,7 @@
 						"tokens": 1,
 						"stopped": true,
 						"correct": true,
-						"formatted": true
+						"reason": "1."
 					},
 					{
 						"condition": "Step by step",
@@ -176,7 +176,7 @@
 						"tokens": 66,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "One sister."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -184,7 +184,7 @@
 						"tokens": 97,
 						"stopped": true,
 						"correct": false,
-						"formatted": false
+						"reason": "Says 2 sisters, counting Sally's sisters wrongly."
 					}
 				]
 			},
@@ -198,7 +198,7 @@
 						"tokens": 1,
 						"stopped": true,
 						"correct": false,
-						"formatted": true
+						"reason": "Says 2."
 					},
 					{
 						"condition": "Step by step",
@@ -206,7 +206,7 @@
 						"tokens": 189,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Ends with 3 apples."
 					},
 					{
 						"condition": "Steps, then a fixed format",
@@ -214,7 +214,7 @@
 						"tokens": 134,
 						"stopped": true,
 						"correct": true,
-						"formatted": false
+						"reason": "Ends with 3."
 					}
 				]
 			}

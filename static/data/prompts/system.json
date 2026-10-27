@@ -11,7 +11,7 @@
 			"dtype": "float32"
 		}
 	],
-	"generatedAt": "2026-10-26",
+	"generatedAt": "2026-10-27",
 	"source": {
 		"torch": "2.14.1",
 		"transformers": "5.20.2"
@@ -56,96 +56,80 @@
 				"question": "What is 47 × 38? Reply with only the number.",
 				"expected": 1786,
 				"default": {
-					"text": "1796",
-					"correct": false
+					"text": "1796"
 				},
 				"persona": {
-					"text": "1796",
-					"correct": false
+					"text": "1796"
 				}
 			},
 			{
 				"question": "What is 63 × 29? Reply with only the number.",
 				"expected": 1827,
 				"default": {
-					"text": "1827",
-					"correct": true
+					"text": "1827"
 				},
 				"persona": {
-					"text": "1847",
-					"correct": false
+					"text": "1847"
 				}
 			},
 			{
 				"question": "What is 84 × 57? Reply with only the number.",
 				"expected": 4788,
 				"default": {
-					"text": "4818",
-					"correct": false
+					"text": "4818"
 				},
 				"persona": {
-					"text": "4836",
-					"correct": false
+					"text": "4836"
 				}
 			},
 			{
 				"question": "What is 125 × 16? Reply with only the number.",
 				"expected": 2000,
 				"default": {
-					"text": "2000",
-					"correct": true
+					"text": "2000"
 				},
 				"persona": {
-					"text": "2000",
-					"correct": true
+					"text": "2000"
 				}
 			},
 			{
 				"question": "What is 238 × 47? Reply with only the number.",
 				"expected": 11186,
 				"default": {
-					"text": "10966",
-					"correct": false
+					"text": "10966"
 				},
 				"persona": {
-					"text": "10966",
-					"correct": false
+					"text": "10966"
 				}
 			},
 			{
 				"question": "What is 19 × 99? Reply with only the number.",
 				"expected": 1881,
 				"default": {
-					"text": "1881",
-					"correct": true
+					"text": "1881"
 				},
 				"persona": {
-					"text": "1861",
-					"correct": false
+					"text": "1861"
 				}
 			},
 			{
 				"question": "What is 356 × 24? Reply with only the number.",
 				"expected": 8544,
 				"default": {
-					"text": "8544",
-					"correct": true
+					"text": "8544"
 				},
 				"persona": {
-					"text": "8544",
-					"correct": true
+					"text": "8544"
 				}
 			},
 			{
 				"question": "What is 73 × 73? Reply with only the number.",
 				"expected": 5329,
 				"default": {
-					"text": "5329",
-					"correct": true
+					"text": "5329"
 				},
 				"persona": {
-					"text": "5329",
-					"correct": true
+					"text": "5329"
 				}
 			}
 		]

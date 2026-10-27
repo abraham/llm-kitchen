@@ -8,11 +8,12 @@ files are made: faster to iterate on, cheaper to rerun, and with grading that ca
 text it grades. [roadmap.md](roadmap.md) points here. When a phase lands, its part moves into the
 spec it belongs to ([Specs that change](#specs-that-change)) and leaves this file.
 
-Phases 1 and 2 are built: jobs, lazily loaded models, devices, offline mode with the disk check,
+Phases 1 to 3 are built: jobs, lazily loaded models, devices, offline mode with the disk check,
 progress and logs, `status`, the job manifest, the envelope's `job` and `source`, `check` showing
-where files differ, the generation cache, `try` with options, and `cache prune`, with every module
-that runs a Qwen model ported. [models-and-data.md](models-and-data.md#recording-scripts)
-describes them. What follows is the rest.
+where files differ, the generation cache, `try` with options, `cache prune`, verdicts computed by
+the site, and hand grades with `grade`, with every module that runs a Qwen model ported.
+[models-and-data.md](models-and-data.md#recording-scripts) describes them. What follows is the
+rest.
 
 ## Goals
 
@@ -52,43 +53,14 @@ causal models and the MiniLM encoder the runtime loads now:
 
 ## Status
 
-`status` gains two columns once the cache and hand grades exist: whether a run now would be fully
-cached (nothing the job depends on has changed), and whether any hand grade is missing or stale.
+`status` gains a column: whether a run now would be fully cached (nothing the job depends on has
+changed).
 
 ## Grading
 
-### By code
-
-- A verdict a program can compute (a number matches, a rule is kept, an injected claim appears) is
-  written in TypeScript, in `src/lib/chapters/<slug>/grade.ts` or, when several chapters share it,
-  `src/lib/grading/`. The widget computes it from the recorded text, and `facts.test.ts` uses the
-  same function, so the prose, the widget, and the test can't disagree.
-- Datasets store the model's output, not these verdicts. Where today's data stores one
-  (`correct`, `followed`), the port removes it from the data and the parser, and the widget calls
-  the grader instead.
-- **The exception:** when the recording itself depends on a verdict (asking again only after a
-  wrong answer, or a job that asserts its first answer was right), Python computes it to decide,
-  and the TypeScript grader is the one the site and the tests use. A unit test runs the TypeScript
-  grader over the recorded text and checks it agrees with every decision the job made, which the
-  job records as data.
-
-### By hand
-
-- **Where grades live:** `scripts/record/grades/<dataset>.json`, committed, one entry per graded
-  text: the item's label, a SHA-256 of the exact text graded, the verdict from the job's list
-  (`right`, `wrong`, `mixed`, ...), and a one-line reason.
-- **How they're made:** `grade <dataset>` shows each text that has no grade, or whose text no
-  longer matches its grade's hash, in full with the question and the earlier grade if any, and asks
-  for a verdict and a reason. `grade <dataset> --list` prints them instead, for grading in an
-  editor.
-- **How they're used:** the job attaches each grade to its item with `run.grade(dataset, label,
-text)`. If any text lacks a current grade, the job writes nothing to `static/data/` and prints
-  the `grade` command to run; then `run` again, fully cached, writes the file. So grading happens
-  after the replies exist, against their full text, and a reply that changes on a rerun is graded
-  again, never silently kept.
-- **Review:** each grade's reason goes into the dataset beside its verdict, so the widget can show
-  why a reply counts as wrong, and the fact-check list ([sources.md](sources.md)) can say "graded by
-  hand" and point to the file.
+`reasoning/thinking` still stores `final` and `correct` from Python; it moves to the TypeScript
+graders with the phase 4 ports. A grader shared by one chapter's widgets only can live in that
+chapter as `grade.ts` instead of `src/lib/grading/`.
 
 ## Output
 
@@ -98,6 +70,7 @@ parser in `registry.ts` until every module is ported, then required.
 ## Checks
 
 - `check` runs without the cache, so it always proves the files can be made again from the models.
+  For a hand-graded dataset it needs the replies to come out the same, or it stops for grading.
 - **Python tests in CI.** `scripts/tests/` runs with `pytest` in a CI job that downloads no model:
   the cache key (every field changes it; key order doesn't), cache hits and `--fresh`, grade hashes
   and stale grades, dependency order, `try` writing only to the scratch folder, and the envelope.
@@ -111,20 +84,14 @@ each ported module's files unchanged.
 
 1. **Runtime.** Built.
 2. **Cache and trying.** Built.
-3. **Grading.** Hand grades for `prompts/steps` and `prompts/pushback`; code verdicts moved to
-   TypeScript for `prompts/problems`, `prompts/rules`, `prompts/system`, `routing/cascade`,
-   `hallucination/samples`, and `injection/lab`. (`agent/grades` keeps its verdicts: they are the
-   grading model's own PASS or FAIL, which is the output being shown.)
+3. **Grading.** Built.
 4. **The rest.** `traces`, `attention`, `embeddings`, `quantize`, `speculative`, `caching`,
    `search`, `encoder`, `clip`, and `decisions`; then the old command form and
    `main()` are removed, and the envelope's new fields become required.
 
 ## Specs that change
 
-- [models-and-data.md](models-and-data.md): Recording scripts (grading), and the table of modules
-  gains the jobs.
-- [architecture.md](architecture.md): `grade.ts` and `src/lib/grading/` in the source layout.
-- [sources.md](sources.md): hand grades and their reasons as backing for claims.
+- [models-and-data.md](models-and-data.md): the table of modules gains the jobs.
 - [quality.md](quality.md): the Python test job.
 - The README's recording steps, and [roadmap.md](roadmap.md).
 
@@ -133,8 +100,6 @@ each ported module's files unchanged.
 - **Sharing the cache.** A cache committed or stored as a release artifact would let a second
   machine rerun every job without a GPU. Proposal: no; it would hold several hundred MB of replies
   nobody reviews, and `check` must regenerate anyway. Revisit if recording moves to CI.
-- **Second grader.** Whether hand grades for claims the prose relies on need a second person's
-  verdict. Proposal: one grader, with the reason shown in the widget so a reader can disagree.
 - **A model as grader.** Hand grades could be drafted by a strong model and confirmed by a person.
   Proposal: not yet; [Did it work?](chapters/testing-agents.md) shows why a model's grades need
   checking, and the datasets are small enough to grade by hand.

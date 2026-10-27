@@ -158,7 +158,9 @@
 		"models": [
 			"Qwen/Qwen2.5-1.5B-Instruct"
 		],
-		"needs": [],
+		"needs": [
+			"reasoning/thinking"
+		],
 		"options": []
 	},
 	"prompts/system": {

@@ -117,8 +117,28 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   (git-ignored) instead of `static/data/`, with every reply printed in full. It uses and fills the
   cache, so once the prompts settle, `run` reuses every reply the trial made. A job can declare
   `options={...}` (`prompts/pushback` has its follow-up message), which `try` changes with
-  `--set NAME=VALUE`. A trial carries on when a hand-graded reply changes, marking it ungraded,
+  `--set NAME=VALUE`. A trial carries on when a reply has no hand grade, marking it ungraded,
   where a real run stops.
+- **Verdicts by code.** A verdict a program can work out from the recorded text (a number
+  matches, a rule is kept, an injected claim appears, an answer declines) isn't stored: the
+  dataset holds the model's output, and the parser adds the verdict with `derive`, calling a grader
+  in `src/lib/grading/` (`answers.ts` for answers, `checks.ts` for rules, formats, and injections).
+  So the widget, the live widget grading a reply in the browser, and `facts.test.ts` use one
+  function and can't disagree. Where the job's input must match the grader's (`prompts/rules`
+  lists its rules' wording), the parser checks it and throws when they differ. `reasoning/thinking`
+  still stores `final` and `correct` from Python.
+- **Verdicts by hand.** Replies that don't share a format, so no rule reads them all fairly
+  (`prompts/steps`, and the reply to the pushback in `prompts/pushback`), are graded by a person.
+  Grades live in `scripts/record/grades/<dataset>.json`, committed: per reply, its label, a
+  SHA-256 of the exact text graded, the verdict, and a one-line reason. The job looks each reply
+  up with `run.grade(dataset, label, text, verdicts)` and stores the verdict and the reason beside
+  it, so the widget can say why a reply counts as wrong. A reply with no grade, or whose text no
+  longer matches its grade's hash, stops the run before it writes anything and is listed in
+  `scripts/.cache/grading/`; `grade <dataset>` shows each in full, with its question and any
+  earlier grade, and asks for a verdict and a reason (`--list` prints them for grading in an
+  editor). Then `run` again, fully cached, writes the file. One person grades; the reason is shown
+  so a reader can disagree. `tests/unit/datasets.test.ts` checks that every grade's hash and reason
+  are in its dataset.
 - **Devices.** Each model has a default device: `cpu` for GPT-2, whose exact probabilities are the
   point, and for the modules that recorded on it (`chat`, `agent`, `grading`, `memory`,
   `routing`), and `mps` (Apple silicon, falling back to `cpu`) for the long generations in
@@ -132,8 +152,8 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   (`[12/24] prompts/pushback  What is the capital of Brazil?  3 calls, 2 cached  4.1 s`), then a
   summary per job. The same lines go to `scripts/.logs/<job>-<date>.log` (git-ignored).
 - **Status.** `python -m scripts.record status` lists every module's datasets with when each was
-  recorded and from which model commits, and flags a model whose downloaded commit differs or that
-  isn't downloaded.
+  recorded and from which model commits, flags a model whose downloaded commit differs or that
+  isn't downloaded, and counts replies waiting for a hand grade.
 - **Manifest.** Every run writes `scripts/record/jobs.json`: each job, its module, the datasets it
   writes, its models, what it needs, and its options. It's committed, and `tests/unit/datasets.test.ts` checks
   that each file a job wrote names that job and that the job declares it.
@@ -169,4 +189,4 @@ dataset names each model's Hugging Face commit. The README has setup steps.
   file that differs it prints the first five places inside it that differ, with both values, and
   the device or package versions if those changed too. Run it for a few modules when the Python
   packages or a model revision change.
-- Generated data is excluded from Prettier (`.prettierignore`).
+- Generated data and hand grades are excluded from Prettier (`.prettierignore`).
