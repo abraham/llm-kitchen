@@ -181,25 +181,26 @@ The four questions restate earlier chapters; each recorded example is quoted fro
 dataset, and `facts.test.ts` checks the widget's text (`src/lib/chapters/when-to-use/data.ts`)
 against it.
 
-| Claim                                                                                                                                 | Backing                                        |
-| ------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 453 college-educated professionals, occupation-specific writing tasks, half randomly given ChatGPT; 40% less time, quality 18% higher | Cite `noy2023` (abstract)                      |
-| A model writes likely tokens from its prompt and its weights                                                                          | Ch 11, 16, 23                                  |
-| Exact answers may not be the likely ones                                                                                              | Ch 16                                          |
-| Without a calculator, Qwen2.5-1.5B-Instruct got 7,050,952 for 1234 × 5678; the answer is 7,006,652                                    | Test (`agent/math-no-tools`), Ch 28            |
-| Nothing after its cutoff, little about rare topics                                                                                    | Ch 16; Ch 32 (`kandpal2023`)                   |
-| The made-up novel: nine different authors in ten tries                                                                                | Test (`hallucination/samples`), Ch 32          |
-| Dropped chat couldn't name the child; retrieved, it said Lily                                                                         | Test (`agent/context`), Ch 24                  |
-| Eddy Merckx ten times out of ten for 1987; it was Stephen Roche                                                                       | Test (`hallucination/samples`), Ch 32          |
-| The small model was 79% sure Sydney is Australia's capital                                                                            | Test (`routing/cascade`), Ch 27                |
-| Answers can change from call to call                                                                                                  | Ch 3                                           |
-| The short call read a 400-token prompt; 10,000 calls is four million tokens                                                           | Test (`agent/chat`), Ch 43                     |
-| Keep a person in the loop where mistakes are costly; test before relying on it                                                        | Ch 34, 35                                      |
-| The widget's preset tasks and verdicts                                                                                                | Illustrative; test checks each verdict         |
-| Simple: restates Standard in plainer words, with no new claims                                                                        | Reviewed against the Standard text             |
-| In depth: a + c + p f < T                                                                                                             | Illustrative; each term is defined in the text |
-| In depth: the consistency check trusts 8 of 10; flags 4 of 5 wrong, 0 of 6 right; misses Roche                                        | Test (`summarize`, `consistencyCheck`), Ch 32  |
-| In depth: weaker writers gained most; inequality between workers decreased                                                            | Cite `noy2023` (abstract and editor's summary) |
+| Claim                                                                                                                                                                                                     | Backing                                        |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 453 college-educated professionals, occupation-specific writing tasks, half randomly given ChatGPT; 40% less time, quality 18% higher                                                                     | Cite `noy2023` (abstract)                      |
+| 758 BCG consultants, preregistered; on 18 tasks inside the frontier 12.2% more tasks, 25.1% faster, better quality; on one task outside it 19% less likely to be correct; "jagged technological frontier" | Cite `dellacqua2023` (abstract)                |
+| A model writes likely tokens from its prompt and its weights                                                                                                                                              | Ch 11, 16, 23                                  |
+| Exact answers may not be the likely ones                                                                                                                                                                  | Ch 16                                          |
+| Without a calculator, Qwen2.5-1.5B-Instruct got 7,050,952 for 1234 × 5678; the answer is 7,006,652                                                                                                        | Test (`agent/math-no-tools`), Ch 28            |
+| Nothing after its cutoff, little about rare topics                                                                                                                                                        | Ch 16; Ch 32 (`kandpal2023`)                   |
+| The made-up novel: nine different authors in ten tries                                                                                                                                                    | Test (`hallucination/samples`), Ch 32          |
+| Dropped chat couldn't name the child; retrieved, it said Lily                                                                                                                                             | Test (`agent/context`), Ch 24                  |
+| Eddy Merckx ten times out of ten for 1987; it was Stephen Roche                                                                                                                                           | Test (`hallucination/samples`), Ch 32          |
+| The small model was 79% sure Sydney is Australia's capital                                                                                                                                                | Test (`routing/cascade`), Ch 27                |
+| Answers can change from call to call                                                                                                                                                                      | Ch 3                                           |
+| The short call read a 400-token prompt; 10,000 calls is four million tokens                                                                                                                               | Test (`agent/chat`), Ch 43                     |
+| Keep a person in the loop where mistakes are costly; test before relying on it                                                                                                                            | Ch 34, 35                                      |
+| The widget's preset tasks and verdicts                                                                                                                                                                    | Illustrative; test checks each verdict         |
+| Simple: restates Standard in plainer words, with no new claims                                                                                                                                            | Reviewed against the Standard text             |
+| In depth: a + c + p f < T                                                                                                                                                                                 | Illustrative; each term is defined in the text |
+| In depth: the consistency check trusts 8 of 10; flags 4 of 5 wrong, 0 of 6 right; misses Roche                                                                                                            | Test (`summarize`, `consistencyCheck`), Ch 32  |
+| In depth: weaker writers gained most; inequality between workers decreased                                                                                                                                | Cite `noy2023` (abstract and editor's summary) |
 
 ## Ch 45. Picking a model
 

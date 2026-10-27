@@ -30,7 +30,9 @@ in `src/lib/chapters/when-to-use/data.ts`, and `facts.test.ts` checks it against
 - Evidence is quoted rather than re-run, so the widget loads no data and each example links to the
   chapter that recorded it.
 - The productivity claim cites a randomized experiment (Noy and Zhang 2023) rather than vendor
-  figures; no prices or model rankings, which change too fast.
+  figures; no prices or model rankings, which change too fast. A second field experiment (Dell'Acqua
+  and colleagues 2023, the "jagged frontier") gives the downside: a task just beyond the model went
+  worse with it than without.
 - [Levels](../levels.md): Simple keeps the four questions with one example each. In depth writes the
   checking rule as $a + c + p f < T$, shows why agreement between samples isn't a check of truth, and
   adds who gained most in the writing experiment.

@@ -15,8 +15,10 @@ only what's in its prompt and what training left in its weights. That tells you 
 
 It helps most with writing. In one experiment, 453 professionals did writing tasks from their own
 jobs, and half of them could use ChatGPT. Those who could finished 40% faster, and their work was
-rated 18% better.<Cite id="noy2023" /> For other jobs, a calculator, a search, or an expert does
-better. Four questions tell them apart.
+rated 18% better.<Cite id="noy2023" /> But it can also make work worse. Consultants who used GPT-4
+did better on 18 tasks it was good at, but on one task just beyond it they got the right answer less
+often than those working alone.<Cite id="dellacqua2023" /> For other jobs, a calculator, a search,
+or an expert does better. Four questions tell them apart.
 
 </At>
 <At levels="standard deep">
@@ -27,8 +29,15 @@ reach for one, and when not to.
 
 Writing is where it shines. In a preregistered experiment, 453 college-educated professionals did
 writing tasks from their own occupations, and half of them, chosen at random, could use ChatGPT.
-They took 40% less time, and graders rated their work 18% better.<Cite id="noy2023" /> Other jobs go
-the other way, and four questions, each from an earlier chapter, tell them apart.
+They took 40% less time, and graders rated their work 18% better.<Cite id="noy2023" />
+
+Other jobs go the other way, even ones that look just as hard. In another preregistered experiment,
+758 consultants at Boston Consulting Group were given realistic consulting tasks, some with GPT-4
+and some without. On 18 tasks within its abilities, those using it finished 12.2% more tasks, 25.1%
+faster, and with better quality. On one task chosen to be just beyond its abilities, they were 19%
+less likely to reach a correct answer than those working alone. The researchers called the uneven
+line between the two a "jagged frontier": you can't tell from how hard a task looks which side it's
+on.<Cite id="dellacqua2023" /> Four questions, each from an earlier chapter, help tell them apart.
 
 </At>
 

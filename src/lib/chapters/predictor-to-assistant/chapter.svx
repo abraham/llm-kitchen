@@ -93,7 +93,8 @@ model more than 100 times bigger that it was built from.<Cite id="ouyang2022" />
 A 2022 paper on InstructGPT describes this recipe. People preferred the answers of a
 1.3-billion-weight tuned model over those of the 175-billion-weight GPT-3 it was built from.<Cite id="ouyang2022" />
 Qwen2.5's tuning used over a million examples in the second stage, followed by several stages of
-the third.<Cite id="qwen2024" />
+the third.<Cite id="qwen2024" /> Learning from people's preferences has a catch: people tend to
+prefer answers that agree with them, so the model learns that too (<ChapterRef to="quirks-and-limits" />).<Cite id="sharma2024" />
 
 </At>
 <At levels="deep">

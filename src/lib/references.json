@@ -1325,5 +1325,26 @@
 		"venue": "arXiv",
 		"year": 2025,
 		"url": "https://arxiv.org/abs/2505.06120"
+	},
+	{
+		"id": "dellacqua2023",
+		"authors": [
+			"Fabrizio Dell'Acqua",
+			"Edward McFowland III",
+			"Ethan Mollick",
+			"Hila Lifshitz-Assaf"
+		],
+		"title": "Navigating the Jagged Technological Frontier: Field Experimental Evidence of the Effects of Artificial Intelligence on Knowledge Worker Productivity and Quality",
+		"venue": "Harvard Business School Working Paper 24-013",
+		"year": 2023,
+		"url": "https://www.hbs.edu/faculty/Pages/item.aspx?num=64700"
+	},
+	{
+		"id": "sharma2024",
+		"authors": ["Mrinank Sharma", "Meg Tong", "Tomasz Korbak", "David Duvenaud"],
+		"title": "Towards Understanding Sycophancy in Language Models",
+		"venue": "ICLR 2024",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2310.13548"
 	}
 ]

@@ -4,6 +4,7 @@ import {
 	boolean,
 	dictionary,
 	integer,
+	literal,
 	nullable,
 	number,
 	object,
@@ -148,6 +149,27 @@ export const wordProblems = object({
 	)
 });
 export type WordProblems = Infer<typeof wordProblems>;
+
+const gradedChat = object({
+	messages: array(object({ role: literal('user', 'assistant'), content: string })),
+	verdict: literal('right', 'wrong', 'mixed')
+});
+
+export const pushback = object({
+	model: modelRef,
+	pushback: string,
+	hint: string,
+	questions: array(
+		object({
+			question: string,
+			right: string,
+			wrong: string,
+			pushback: gradedChat,
+			hint: gradedChat
+		})
+	)
+});
+export type Pushback = Infer<typeof pushback>;
 
 const answer = object({ text: string, correct: boolean });
 

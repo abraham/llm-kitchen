@@ -11,7 +11,8 @@ export const datasets: readonly DatasetId[] = [
 	'traces/quirk-france-qa',
 	'traces/quirk-loop',
 	'traces/quirk-nurse',
-	'traces/quirk-engineer'
+	'traces/quirk-engineer',
+	'prompts/pushback'
 ];
 
 /** The levels this chapter has passages for beyond Standard. */
