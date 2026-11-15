@@ -22,9 +22,9 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
 
 `.github/workflows/ci.yml` runs on every push to `main` and every pull request, including forks:
 
-- **Format, lint, type check, audits, unit tests** in one fast job. The audits are zizmor on the
-  workflows and, on pull requests in a public repository, dependency review (see
-  [security.md](security.md)).
+- **Format, lint, type check, audits, unit tests** in one fast job (`lint`). The audits are
+  `gh actions-lock --verify` and zizmor on the workflows and, on pull requests in a public
+  repository, dependency review (see [security.md](security.md)).
 - **Recording runtime tests**: `pytest` on `scripts/tests/` with the CPU-only PyTorch build and the
   pinned packages (`scripts/requirements.txt`, and `pytest` in `scripts/requirements-dev.txt`).
   The tests build a one-layer GPT-2 with a ten-word vocabulary and download no model, so they run
@@ -38,11 +38,11 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
   `playwright test` builds the same way.
 - **Lighthouse**, split across 4 parallel jobs the same way, each uploading its failing pages'
   Lighthouse reports. Within a job, pages still run one at a time.
-- **`ci-success`** `needs` every other job and runs with `if: always()`. It fails if any of them
-  failed, was cancelled, or was skipped. It is the only required check on `main`, so jobs can be
-  added, renamed, or split without changing branch protection; new jobs must be added to its
+- **`ci-required`** `needs` every other job and runs with `if: ${{ !cancelled() }}`. It fails if any
+  of them failed, was cancelled, or was skipped. It is the only required check on `main`, so jobs
+  can be added, renamed, or split without changing branch protection; new jobs must be added to its
   `needs`.
-- Node comes from `.nvmrc`. Dependencies install with `npm ci` and the npm cache; Playwright browsers
+- Node comes from `package.json`. Dependencies install with `npm ci` and the npm cache; Playwright browsers
   are cached by version. Chromium runs on the libraries already in the runner image; installing
   them with apt (`--with-deps`) took up to 5 minutes when a mirror was slow.
 - Workflows default to `permissions: contents: read`, pin actions to full versions (locked in
@@ -50,7 +50,7 @@ svelte-check doesn't type-check `.svx` files, so a chapter error may only show u
   superseded runs on the same branch with `concurrency`.
 
 `.github/workflows/links.yml` checks every cited source and documentation link (`lychee.toml`)
-weekly and on pull requests that touch them. It isn't part of `ci-success`, so an outside site being
+weekly and on pull requests that touch them. It isn't part of `ci-required`, so an outside site being
 down never blocks a merge; a failure shows up as a failed run.
 
 ## Tests

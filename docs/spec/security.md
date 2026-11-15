@@ -119,7 +119,7 @@ the trust boundary, so it stays limited to maintainers.
 - Dependabot proposes npm and GitHub Actions updates weekly (`.github/dependabot.yml`), once a
   release is 7 days old (`cooldown`), so a hijacked release is usually caught and pulled before it
   reaches the lockfile. Security updates aren't held back.
-- On pull requests, the `checks` job runs `actions/dependency-review-action`, which fails when the
+- On pull requests, the `lint` job runs `actions/dependency-review-action`, which fails when the
   pull request adds a dependency (npm or GitHub Actions) with a known vulnerability of high severity
   or higher. The step is skipped while the repository is private, where it would need GitHub
   Advanced Security.
@@ -128,8 +128,8 @@ the trust boundary, so it stays limited to maintainers.
 
 - Every workflow defaults to `permissions: contents: read`; only deploy jobs add `id-token: write`,
   and the preview job `pull-requests: write` and `checks: write` for its comment.
-- Actions are locked to commits in `.github/workflows/actions.lock` (see
-  [quality.md](quality.md#ci)).
+- Actions are locked to commits in `.github/workflows/actions.lock` and verified in the `lint` job
+  (see [quality.md](quality.md#ci)).
 - Every `actions/checkout` sets `persist-credentials: false`, so later steps can't read or push with
   the job's token from `.git/config`. No job pushes.
 - Deploys authenticate with OIDC, run `firebase-tools` at the lockfile's version, and use the
@@ -137,7 +137,7 @@ the trust boundary, so it stays limited to maintainers.
   [deployment.md](deployment.md)).
 - No workflow uses `pull_request_target` or `workflow_run`, or puts `${{ github.event.* }}` text
   into a `run:` script.
-- The `checks` job runs [zizmor](https://docs.zizmor.sh) (pinned) on `.github/workflows/`, with its
+- The `lint` job runs [zizmor](https://docs.zizmor.sh) (pinned) on `.github/workflows/`, with its
   online audits, and fails on any finding of medium severity or higher. `.github/zizmor.yml` accepts
   tag references, because `actions.lock` locks each tag to a commit.
 
@@ -158,7 +158,7 @@ No file holds these, so they're recorded here; `gh api repos/abraham/llm-kitchen
 `/private-vulnerability-reporting`, and `/actions/permissions/fork-pr-contributor-approval`
 endpoints show them.
 
-- The `CI` ruleset on the default branch requires `ci-success` and blocks force pushes and deletion,
+- The `CI` ruleset on the default branch requires `ci-required` and blocks force pushes and deletion,
   with no bypass.
 - Dependabot alerts and Dependabot security updates are on.
 - Write access stays limited to maintainers (see [Threats](#threats)).

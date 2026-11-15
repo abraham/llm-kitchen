@@ -13,18 +13,22 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  checks:
+  lint:
     name: Format, lint, type check, audits, unit tests
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
+      - name: Verify Actions lockfile
+        run: |
+          gh extension install github/gh-actions-lock --pin v0.4.1
+          gh actions-lock --verify
       # Online audits (impostor commits, known-vulnerable actions) use the job's read-only token.
       - name: Audit workflows
         run: pipx run zizmor==1.31.1 --min-severity medium .github/workflows
-        env:
-          GH_TOKEN: ${{ github.token }}
       # Dependency review needs GitHub Advanced Security on a private repository.
       - name: Review new dependencies
         if: github.event_name == 'pull_request' && !github.event.repository.private
@@ -33,7 +37,7 @@ jobs:
           fail-on-severity: high
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: .nvmrc
+          node-version-file: package.json
           cache: npm
       - run: npm ci
       - run: npm run format:check
@@ -54,7 +58,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: .nvmrc
+          node-version-file: package.json
           cache: npm
       - run: npm ci
       - name: Get Playwright version
@@ -92,7 +96,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v7.1.0
         with:
-          node-version-file: .nvmrc
+          node-version-file: package.json
           cache: npm
       - run: npm ci
       - name: Get Playwright version
@@ -127,11 +131,12 @@ jobs:
       - run: scripts/.venv/bin/pip install -r scripts/requirements.txt -r scripts/requirements-dev.txt
       - run: npm run test:python
 
-  ci-success:
-    name: ci-success
-    if: always()
-    needs: [checks, python, build-e2e, lighthouse]
+  ci-required:
+    name: ci-required
+    if: ${{ !cancelled() }}
+    needs: [lint, python, build-e2e, lighthouse]
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: All CI jobs passed
         env:
