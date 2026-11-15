@@ -43,7 +43,7 @@
 		"eslint": "^10.14.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.24.0",
-		"firebase-tools": "^15.35.0",
+		"firebase-tools": "^15.36.0",
 		"globals": "^17.14.0",
 		"lighthouse": "^13.6.0",
 		"mdsvex": "^0.12.8",
