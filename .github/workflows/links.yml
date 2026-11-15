@@ -1,7 +1,7 @@
 name: Links
 
 # Checks every cited source and documentation link. Runs weekly (sources can disappear without any
-# change here) and on pull requests that touch them. Not part of ci-success, so an outside site
+# change here) and on pull requests that touch them. Not part of ci-required, so an outside site
 # being down never blocks a merge; failures show up as a failed run to look at.
 on:
   schedule:

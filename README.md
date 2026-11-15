@@ -6,11 +6,11 @@ works and why.
 
 ## Development
 
-Requires Node 26 (see `.nvmrc`).
+Requires Node 26 (see `package.json`).
 
 ```sh
 npm install
-npm start.             # dev server
+npm start              # dev server
 npm run build          # social images, then the static build in build/
 npm run preview        # serve the build on :4173
 npm run serve          # serve the build through the Firebase Hosting emulator on :4173
@@ -122,7 +122,7 @@ Both outputs are git-ignored.
 
 ## Manual setup (not automated)
 
-- **Branch protection on `main`:** require the `ci-success` status check.
+- **Branch protection on `main`:** require the `ci-required` status check.
 - **Firebase project:** create it (or change the `default` project in `.firebaserc` to an existing
   one) and enable Hosting.
 - **Workload Identity Federation:** with `gcloud` and `gh` signed in, run
@@ -138,4 +138,4 @@ Both outputs are git-ignored.
 - `firebase-hosting-pr.yml`: every same-repo PR deploys to a `pr-<number>` preview channel that
   expires after 7 days. Fork PRs only run CI.
 - `firebase-hosting-merge.yml`: every merge to `main` deploys to the live channel. The `CI`
-  ruleset on `main` requires the `ci-success` check to pass before a change can merge.
+  ruleset on `main` requires the `ci-required` check to pass before a change can merge.
