@@ -1,23 +1,11 @@
 version: 2
 updates:
-  # Cooldowns hold back version updates, not security updates, until a release is a week old.
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: weekly
-    cooldown:
-      default-days: 7
-    groups:
-      npm-dependencies:
-        patterns: ['*']
-        update-types: [minor, patch]
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
-    cooldown:
-      default-days: 7
-    groups:
-      github-actions:
-        patterns: ['*']
