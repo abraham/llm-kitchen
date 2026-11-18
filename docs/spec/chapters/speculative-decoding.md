@@ -28,6 +28,10 @@ output.
   GPT-2's tokenizer.
 - Simplified: real systems also tune how far ahead to guess. Gemma 4's `-assistant` drafters are
   mentioned as a real example, citing their model cards.
+- When it doesn't pay: smolmaxxing (a hobby project, cited with an accessed date) measured the same
+  trick both ways on one TV box, slower for an in-memory 2B on a processor limited by arithmetic and
+  69% faster for a 9B read from flash, so the text shows the chapter's premise has limits. Prose
+  only; the measured rates are constants in the facts test.
 - [Levels](../levels.md): Simple explains guess-then-check and the 7 passes without the sampling
   rule. In depth gives the accept-or-resample rule and the expected tokens per pass, next to the
-  recorded run's average.
+  recorded run's average, and works out what a checking pass cost on the TV box.

@@ -52,4 +52,11 @@ describe('fewer bits per number', () => {
 		expect(run.block).toBe(32);
 		expect(run.scaleBits / run.block).toBe(0.5);
 	});
+
+	it('Bonsai 8B: 8.19 billion weights at 1.125 bits is 1.15 GB, against 16.4 GB at 16 bits', () => {
+		const bits = 1 + 16 / 128;
+		expect(bits).toBe(1.125);
+		expect((weightBytes(8.19e9, bits) / 1e9).toFixed(2)).toBe('1.15');
+		expect((weightBytes(8.19e9, 16) / 1e9).toFixed(1)).toBe('16.4');
+	});
 });

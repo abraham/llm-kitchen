@@ -250,6 +250,23 @@ likely.<Cite id="radford2019" />
 </At>
 <At levels="deep">
 
+### Per token or per byte
+
+The tiny model's loss is per character; GPT-2's is per token, and a token is often several
+characters (<ChapterRef to="tokens" />). So the two numbers can't be compared, and neither can the perplexities of two
+models with different tokenizers: cut the same text into more pieces and the same total surprise
+is spread over more of them, so the loss per piece looks lower. The fix is to add up the surprise
+over the whole text, in bits, and divide by its length in bytes (<ChapterRef to="text-is-numbers" />). For a loss of $L$ per
+token over $T$ tokens and $B$ bytes,
+
+$$\text{bits per byte} = \frac{T}{B} \cdot \frac{L}{\ln 2},$$
+
+which doesn't depend on how the text was cut up.<Cite id="gao2020pile" /> GPT-2 small's loss on the
+opening sentence of *Alice's Adventures in Wonderland* is 3.31 per token, a perplexity of about
+27. After the first token it predicts 65 tokens, covering 294 bytes: 310 bits in all, about 1.06
+bits per byte. A model reading one character at a time that did exactly as well would score 0.73
+per character, a perplexity of about 2.1: the same model, a very different-looking number.
+
 ### Overfitting
 
 A network can keep getting better at its training text while getting worse at text it hasn't
@@ -319,6 +336,8 @@ text that's true, which is one reason models make things up (<ChapterRef to="qui
   average of $-\ln p$ for the real next tokens.
 - Overfitting: the training loss falls while the loss on set-aside text rises. Dropout guards
   against it.
+- Losses per token depend on the tokenizer; bits per byte, $(T/B)\,L/\ln 2$, compares models on
+  the same text whatever their tokenizers.
 
 </At>
 </RecapCard>

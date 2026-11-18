@@ -114,6 +114,11 @@ On real hardware this makes big models write about two to three times faster, wi
 text.<Cite id="leviathan2023" /><Cite id="chen2023" /> Some model families ship their own small
 guessers, like Google's Gemma 4 models with `-assistant` in the name.<Cite id="gemma4-assistant" />
 
+It only pays when reading the weights is the slow part. A hobby project tried it on a TV box. A
+2-billion-weight model that fit in memory got slower, because the box's small processor was busy
+with the math, not the reading. A 9-billion-weight model that had to read most of its weights from
+storage for every token got 69% faster.<Cite id="smolmaxxing" />
+
 </At>
 <At levels="standard deep">
 
@@ -123,6 +128,28 @@ drafters. Google's Gemma 4 models have matching drafters named with `-assistant`
 to half a billion weights, and the model card reports up to three times faster
 writing.<Cite id="gemma4-assistant" /> They guess several tokens ahead for their big model, which
 is why the card calls them multi-token prediction drafters.
+
+The whole trick rests on checking a few extra tokens being nearly free, and that holds only when
+reading the weights is the slow part. smolmaxxing, a hobby project, tried it on a TV box with a
+small processor, using the drafter built into Qwen3.5 models to guess one token ahead. Qwen3.5-2B
+fit in memory, and there the processor's arithmetic was the slow part: each extra token to check
+cost nearly a whole pass. Even with 76% of the guesses kept, it wrote 4.5 tokens a second instead
+of 6.6. Qwen3.5-9B didn't fit, so every pass read about 1.6 GB of weights from flash storage, and
+checking two tokens cost about the same as one. With 91% of the guesses kept, it went from 0.16 to
+0.27 tokens a second, 69% faster.<Cite id="smolmaxxing" /> Same trick, opposite results.
+
+</At>
+<At levels="deep">
+
+### When it pays
+
+With one guess per pass ($k = 1$), the formula above gives $1 + \alpha$ tokens per pass. The
+speed-up is that divided by what a checking pass costs, counted in ordinary passes and including
+the guess. For the 2B, $\alpha = 0.76$ gives 1.76 tokens per pass, yet the speed fell to
+$4.50 / 6.58 \approx 0.68$ of what it was, so each checking pass cost about $1.76 / 0.68 \approx 2.6$
+ordinary ones. For the 9B, $\alpha = 0.91$ gives 1.91 tokens per pass at $0.27 / 0.16 \approx 1.69$
+times the speed: each checking pass cost only about 1.1. Where reading dominates, the extra tokens
+ride along almost free; where arithmetic dominates, each one costs nearly a pass.<Cite id="smolmaxxing" />
 
 </At>
 
@@ -134,11 +161,14 @@ is why the card calls them multi-token prediction drafters.
 - Each pass adds at least one token, and the text is exactly what the big model would write alone.
 - Real systems report writing about two to three times faster; Gemma 4 ships drafters named
   `-assistant`.
+- It only pays when reading the weights is the slow part: on a small processor with the model in
+  memory, it can make writing slower.
 
 <At levels="deep">
 
 - A guess is kept with chance $\min(1, p/q)$; a pass adds $(1 - \alpha^{k+1}) / (1 - \alpha)$
   tokens on average.
+- The speed-up is the tokens per pass divided by what a checking pass costs in ordinary passes.
 
 </At>
 </RecapCard>

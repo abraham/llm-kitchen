@@ -664,6 +664,65 @@
 		"url": "https://arxiv.org/abs/2412.19437"
 	},
 	{
+		"id": "yang2025gated",
+		"authors": ["Songlin Yang", "Jan Kautz", "Ali Hatamizadeh"],
+		"title": "Gated Delta Networks: Improving Mamba2 with Delta Rule",
+		"venue": "ICLR 2025",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2412.06464"
+	},
+	{
+		"id": "qwen35-2b-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3.5-2B model card and config.json",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/Qwen/Qwen3.5-2B",
+		"accessed": "2026-11-17"
+	},
+	{
+		"id": "qwen3-next-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3-Next-80B-A3B-Instruct model card",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct",
+		"accessed": "2026-11-17"
+	},
+	{
+		"id": "eliseev2023",
+		"authors": ["Artyom Eliseev", "Denis Mazur"],
+		"title": "Fast Inference of Mixture-of-Experts Language Models with Offloading",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.17238"
+	},
+	{
+		"id": "alizadeh2023",
+		"authors": ["Keivan Alizadeh", "Iman Mirzadeh", "Dmitry Belenko", "Karen Khatamifard"],
+		"title": "LLM in a flash: Efficient Large Language Model Inference with Limited Memory",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.11514"
+	},
+	{
+		"id": "skliar2025",
+		"authors": ["Andrii Skliar", "Ties van Rozendaal", "Romain Lepert", "Todor Boinovski"],
+		"title": "Mixture of Cache-Conditional Experts for Efficient Mobile Device Inference",
+		"venue": "Transactions on Machine Learning Research",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2412.00099"
+	},
+	{
+		"id": "smolmaxxing",
+		"authors": ["hyperionaidev"],
+		"title": "smolmaxxing: run the biggest model you can on the smallest hardware you own",
+		"venue": "GitHub",
+		"year": 2026,
+		"url": "https://github.com/hyperionaidev/smolmaxxing",
+		"accessed": "2026-11-17"
+	},
+	{
 		"id": "elman1990",
 		"authors": ["Jeffrey L. Elman"],
 		"title": "Finding Structure in Time",
@@ -873,6 +932,47 @@
 		"venue": "CVPR",
 		"year": 2018,
 		"url": "https://arxiv.org/abs/1712.05877"
+	},
+	{
+		"id": "ranzato2016",
+		"authors": ["Marc'Aurelio Ranzato", "Sumit Chopra", "Michael Auli", "Wojciech Zaremba"],
+		"title": "Sequence Level Training with Recurrent Neural Networks",
+		"venue": "ICLR 2016",
+		"year": 2016,
+		"url": "https://arxiv.org/abs/1511.06732"
+	},
+	{
+		"id": "gao2020pile",
+		"authors": ["Leo Gao", "Stella Biderman", "Sid Black", "Laurence Golding"],
+		"title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+		"venue": "arXiv",
+		"year": 2020,
+		"url": "https://arxiv.org/abs/2101.00027"
+	},
+	{
+		"id": "frantar2023",
+		"authors": ["Elias Frantar", "Saleh Ashkboos", "Torsten Hoefler", "Dan Alistarh"],
+		"title": "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2210.17323"
+	},
+	{
+		"id": "ma2024bitnet",
+		"authors": ["Shuming Ma", "Hongyu Wang", "Lingxiao Ma", "Lei Wang"],
+		"title": "The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.17764"
+	},
+	{
+		"id": "bonsai-8b-model-card",
+		"authors": ["PrismML"],
+		"title": "Bonsai-8B-GGUF-1bit model card",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/prism-ml/Bonsai-8B-gguf",
+		"accessed": "2026-11-17"
 	},
 	{
 		"id": "dettmers2022",

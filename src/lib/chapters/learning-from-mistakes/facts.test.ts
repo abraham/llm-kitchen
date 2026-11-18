@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { Adam, CharModel } from '#lib/math/mlp.ts';
 import { RHYMES } from '#lib/data/rhymes.ts';
+import { readDataset } from '#lib/datasets/read.ts';
+import { tokenize } from '#lib/models/tokenizers.ts';
 
 describe('learning from mistakes, In depth', () => {
 	it('guessing evenly among V choices gives a loss of ln V; perplexity e^L undoes it', () => {
@@ -59,5 +61,21 @@ describe('learning from mistakes, Standard', () => {
 		expect(model.parameterCount).toBe(V * 8 + 3 * 8 * 64 + 64 + 64 * V + V);
 		expect(model.parameterCount).toBe(3790);
 		expect(model.probabilities([1, 2, 3]).length).toBe(V);
+	});
+
+	it('GPT-2 on the Alice sentence: 3.31 per token (perplexity 27), 65 tokens over 294 bytes, 310 bits, 1.06 bits per byte; 0.73 per character (2.1)', async () => {
+		const q = readDataset('quantize/precisions');
+		const loss = q.precisions.find((p) => p.bits === 32)!.loss;
+		const predicted = (await tokenize('gpt2', q.passage)).slice(1);
+		const bytes = new TextEncoder().encode(predicted.map((t) => t.text).join('')).length;
+		const nats = loss * predicted.length;
+		expect(q.passage).toMatch(/^Alice was beginning to get very tired/);
+		expect(loss.toFixed(2)).toBe('3.31');
+		expect(Math.round(Math.exp(loss))).toBe(27);
+		expect([predicted.length, bytes]).toEqual([65, 294]);
+		expect(Math.round(nats / Math.LN2)).toBe(310);
+		expect(((predicted.length / bytes) * (loss / Math.LN2)).toFixed(2)).toBe('1.06');
+		expect((nats / bytes).toFixed(2)).toBe('0.73');
+		expect(Math.exp(nats / bytes).toFixed(1)).toBe('2.1');
 	});
 });

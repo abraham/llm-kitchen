@@ -127,9 +127,86 @@ very large values and multiplies them in 16 bits, and everything else in 8.<Cite
 
 </At>
 
-A small model like GPT-2 has less to spare than a big one, and this demo rounds everything,
-including the token table. So read the 4-bit result as "plain rounding has limits", not "4 bits is
-too few".
+A small model like GPT-2 has less to spare than a big one: larger models are generally easier to
+round.<Cite id="frantar2023" /> And this demo rounds everything, including the token table. So read
+the 4-bit result as "plain rounding has limits", not "4 bits is too few".
+
+## One bit per weight
+
+<At levels="simple">
+
+Rounding a finished model has a floor. A hobby project rounded a 2-billion-weight model after
+training: at 2 bits it still wrote fluently but said Australia's capital is Canterbury and repeated
+itself, and at 1 bit it stopped answering at all.<Cite id="smolmaxxing" />
+
+A model that learns with very few values from the start does far better. BitNet b1.58 lets every
+weight be only −1, 0, or 1 while it trains, and from 3 billion weights up it matched a 16-bit model
+of the same size.<Cite id="ma2024bitnet" /> Bonsai 8B stores every weight as a single bit: 8
+billion weights in 1.15 GB instead of 16.4 GB.<Cite id="bonsai-8b-model-card" /> It runs on a TV box
+with about 2 GB of memory.<Cite id="smolmaxxing" />
+
+</At>
+<At levels="standard deep">
+
+How few bits can a weight get? Rounding a finished model has a floor. With plain rounding, the
+method in the demo above, the GPTQ paper's models collapsed at 3 bits.<Cite id="frantar2023" /> A
+hobby project, smolmaxxing, rounded the blocks of Qwen3.5-2B after training. At about 2 bits it
+still wrote fluently, but said Australia's capital is Canterbury and fell into loops. At 1 bit,
+where each weight is only a sign times its block's scale, its perplexity (<ChapterRef to="learning-from-mistakes" />) went from about 9
+to over 75,000, and it answered nothing.<Cite id="smolmaxxing" />
+
+Quantization-aware training taken to the extreme does much better. BitNet b1.58 is trained from
+scratch with every weight restricted to −1, 0, or 1, and from 3 billion weights up it matched a
+16-bit model of the same size trained on the same data, in perplexity and in benchmark
+scores.<Cite id="ma2024bitnet" /> Bonsai 8B, which PrismML built from Qwen3-8B with a method it hasn't
+published, stores every weight as a single bit, in the same 1-bit format that destroyed the rounded
+model: 8.19 billion weights in 1.15 GB instead of 16.4 GB at 16 bits. Its makers report benchmark
+scores matching full-precision 8-billion-weight models.<Cite id="bonsai-8b-model-card" /> smolmaxxing
+runs it on a TV box with about 2 GB of memory at about 5 tokens a second.<Cite id="smolmaxxing" /> The
+bits a model can live with depend on how it was made, not only on its size.
+
+</At>
+<At levels="deep">
+
+### Three values, written down
+
+Three values need $\log_2 3 \approx 1.58$ bits each, hence the name. BitNet b1.58 rounds a weight
+matrix $W$ by its average size $\gamma$, the mean of $|w|$ over the matrix:
+
+$$\widetilde{W} = \operatorname{clip}\!\left(\operatorname{round}\!\left(\frac{W}{\gamma}\right), -1, 1\right)$$
+
+so every weight becomes −1, 0, or 1, with $\gamma$ kept as the matrix's one scale. Multiplying by
+−1, 0, or 1 needs almost no multiplications, only adding, subtracting, or skipping.<Cite id="ma2024bitnet" /> Bonsai's format keeps one 16-bit scale per block of 128 one-bit
+weights, $1 + 16/128 = 1.125$ bits per weight, which is how 8.19 billion weights fit in
+1.15 GB.<Cite id="bonsai-8b-model-card" />
+
+</At>
+
+## Checking a rounded model
+
+<At levels="simple">
+
+The demo judges each precision by its loss on a test passage. That score checks each next token
+with the real text before it, but when the model writes, it reads its own words, and small slips
+can pile up.<Cite id="ranzato2016" /> So a good score can hide a broken model. smolmaxxing rounded
+part of an 8-billion-weight model to 2 bits: its score on test text got somewhat worse, but
+every one of 7 long answers fell into a loop.<Cite id="smolmaxxing" /> Test a rounded model the way
+you'll use it: let it write, and read what it writes.
+
+</At>
+<At levels="standard deep">
+
+The demo judges each precision by its loss on a test passage, as most comparisons do. But the loss
+scores each next token with the real text before it. When the model writes, it reads its own
+output instead, and small slips can pile up.<Cite id="ranzato2016" /> A score on clean text can't
+see that. smolmaxxing rounded the largest part of Moon-Beam-8B-A1B, an 8-billion-weight model, to
+2 bits. Its perplexity on test text went from 10.1 at 4 bits to 11.8, but on the TV box all 7 of
+its long answers, about 1,000 tokens each, fell into loops; with 8-bit weights, run on a Mac, none
+of 6 did.<Cite id="smolmaxxing" /> In the setup it used every day, 12 of 13 long answers looped, and a
+penalty for repeated tokens (<ChapterRef to="generating-text" />) brought that down to 1. So test a rounded model the way you'll use it: let it
+write long answers, and read them.
+
+</At>
 
 <RecapCard>
 
@@ -137,11 +214,17 @@ too few".
 - Quantization rounds each weight to one of a few allowed values, shared in blocks with one scale.
 - GPT-2 small is unchanged at 8 bits, drifts at 6 and 5, and breaks at 4 with plain rounding.
 - Better methods, like quantization-aware training, keep quality at 4 bits.
+- Rounding a finished model to 1 or 2 bits breaks it, but models made for it work with weights of
+  only −1, 0, or 1, or a single bit.
+- A loss on test text can look fine while the model's own long answers fall apart; test it by
+  letting it write.
 
 <At levels="deep">
 
 - A block's scale is $s = m / (2^{n-1} - 1)$ and each weight stores $\operatorname{round}(w / s)$:
   about 4.5 bits per weight at 4 bits.
+- Three values take $\log_2 3 \approx 1.58$ bits; one bit plus a 16-bit scale per 128 weights is
+  1.125.
 
 </At>
 </RecapCard>
