@@ -908,6 +908,31 @@
 		"url": "https://arxiv.org/abs/1712.05877"
 	},
 	{
+		"id": "frantar2023",
+		"authors": ["Elias Frantar", "Saleh Ashkboos", "Torsten Hoefler", "Dan Alistarh"],
+		"title": "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers",
+		"venue": "ICLR 2023",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2210.17323"
+	},
+	{
+		"id": "ma2024bitnet",
+		"authors": ["Shuming Ma", "Hongyu Wang", "Lingxiao Ma", "Lei Wang"],
+		"title": "The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits",
+		"venue": "arXiv",
+		"year": 2024,
+		"url": "https://arxiv.org/abs/2402.17764"
+	},
+	{
+		"id": "bonsai-8b-model-card",
+		"authors": ["PrismML"],
+		"title": "Bonsai-8B-GGUF-1bit model card",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/prism-ml/Bonsai-8B-gguf",
+		"accessed": "2026-11-17"
+	},
+	{
 		"id": "dettmers2022",
 		"authors": ["Tim Dettmers", "Mike Lewis", "Younes Belkada", "Luke Zettlemoyer"],
 		"title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
