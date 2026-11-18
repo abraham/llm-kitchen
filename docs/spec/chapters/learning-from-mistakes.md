@@ -42,4 +42,7 @@ Computed in the browser. The MLP, backpropagation, and Adam optimizer are hand-w
   without the network sizes or the guessing line. In depth gives mean squared error, cross-entropy,
   and perplexity, the gradient descent step, backpropagation's chain rule for one neuron, and what
   Adam does with its usual settings, and dropout: what it is, GPT-2's chance of 0.1, and that it's
-  only used in training.
+  only used in training. It also converts a per-token loss to bits per byte, with GPT-2 small's
+  recorded loss on the Alice sentence (from the [quantization](quantization.md) recording, at 32
+  bits) set against the tiny model's per-character loss, because perplexities from different
+  tokenizers can't be compared.

@@ -182,6 +182,32 @@ weights, $1 + 16/128 = 1.125$ bits per weight, which is how 8.19 billion weights
 
 </At>
 
+## Checking a rounded model
+
+<At levels="simple">
+
+The demo judges each precision by its loss on a test passage. That score checks each next token
+with the real text before it, but when the model writes, it reads its own words, and small slips
+can pile up.<Cite id="ranzato2016" /> So a good score can hide a broken model. smolmaxxing rounded
+part of an 8-billion-weight model to 2 bits: its score on test text got somewhat worse, but
+every one of 7 long answers fell into a loop.<Cite id="smolmaxxing" /> Test a rounded model the way
+you'll use it: let it write, and read what it writes.
+
+</At>
+<At levels="standard deep">
+
+The demo judges each precision by its loss on a test passage, as most comparisons do. But the loss
+scores each next token with the real text before it. When the model writes, it reads its own
+output instead, and small slips can pile up.<Cite id="ranzato2016" /> A score on clean text can't
+see that. smolmaxxing rounded the largest part of Moon-Beam-8B-A1B, an 8-billion-weight model, to
+2 bits. Its perplexity on test text went from 10.1 at 4 bits to 11.8, but on the TV box all 7 of
+its long answers, about 1,000 tokens each, fell into loops; with 8-bit weights, run on a Mac, none
+of 6 did.<Cite id="smolmaxxing" /> In the setup it used every day, 12 of 13 long answers looped, and a
+penalty for repeated tokens (<ChapterRef to="generating-text" />) brought that down to 1. So test a rounded model the way you'll use it: let it
+write long answers, and read them.
+
+</At>
+
 <RecapCard>
 
 - Memory for the weights is about the number of weights × bits per weight ÷ 8 bytes.
@@ -190,6 +216,8 @@ weights, $1 + 16/128 = 1.125$ bits per weight, which is how 8.19 billion weights
 - Better methods, like quantization-aware training, keep quality at 4 bits.
 - Rounding a finished model to 1 or 2 bits breaks it, but models made for it work with weights of
   only −1, 0, or 1, or a single bit.
+- A loss on test text can look fine while the model's own long answers fall apart; test it by
+  letting it write.
 
 <At levels="deep">
 

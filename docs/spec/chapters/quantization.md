@@ -33,6 +33,11 @@ Recorded by `scripts/record/quantize.py` (`static/data/quantize/gpt2/precisions.
   smolmaxxing (a hobby project, cited with an accessed date) gives the measured failure of rounding
   Qwen3.5-2B to 2 and 1 bits after training; BitNet b1.58 (paper) and Bonsai 8B (model card) are the
   models made for it. Bonsai's training method is unpublished, and the text says so.
+- Checking a rounded model: the demo's loss on a passage scores each token with the real text
+  before it, so it can miss failures that only show when the model writes for itself. smolmaxxing's
+  Moon-Beam-8B-A1B is the measured example (perplexity 10.1 → 11.8 from 4 to 2 bits, yet 7 of 7
+  long answers looped); Ranzato et al. back the reason. It says "the largest part" rather than
+  "experts", since mixtures of experts come later.
 - [Levels](../levels.md): Simple keeps the memory rule and what happens at each precision, and
   names QAT without the outlier method. In depth writes block rounding as formulas, works it on the
   widget's block, counts the scale's half bit, says how QAT and the outlier method work, and writes
