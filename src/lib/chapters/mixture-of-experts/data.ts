@@ -23,3 +23,6 @@ export const MOE_MODELS: MoeModel[] = [
 		cite: 'deepseek2024'
 	}
 ];
+
+/** Mixtral 8x7B's blocks, each with 8 experts of which a token uses 2 (jiang2024, Table 1). */
+export const MIXTRAL = { blocks: 32, experts: 8, perToken: 2 } as const;

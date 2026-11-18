@@ -227,7 +227,7 @@ function part(text: string): NamePart {
 		return {
 			text,
 			kind: 'active',
-			meaning: `Active size: a mixture of experts that runs only about ${m[1]} billion of its weights for each token. All of them still have to fit in memory.`,
+			meaning: `Active size: a mixture of experts that runs only about ${m[1]} billion of its weights for each token. All of them still have to be stored, and it runs fastest when they all fit in memory.`,
 			chapters: ['mixture-of-experts']
 		};
 	const word = WORDS[text.toLowerCase()];

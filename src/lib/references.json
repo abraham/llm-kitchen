@@ -664,6 +664,39 @@
 		"url": "https://arxiv.org/abs/2412.19437"
 	},
 	{
+		"id": "eliseev2023",
+		"authors": ["Artyom Eliseev", "Denis Mazur"],
+		"title": "Fast Inference of Mixture-of-Experts Language Models with Offloading",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.17238"
+	},
+	{
+		"id": "alizadeh2023",
+		"authors": ["Keivan Alizadeh", "Iman Mirzadeh", "Dmitry Belenko", "Karen Khatamifard"],
+		"title": "LLM in a flash: Efficient Large Language Model Inference with Limited Memory",
+		"venue": "arXiv",
+		"year": 2023,
+		"url": "https://arxiv.org/abs/2312.11514"
+	},
+	{
+		"id": "skliar2025",
+		"authors": ["Andrii Skliar", "Ties van Rozendaal", "Romain Lepert", "Todor Boinovski"],
+		"title": "Mixture of Cache-Conditional Experts for Efficient Mobile Device Inference",
+		"venue": "Transactions on Machine Learning Research",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2412.00099"
+	},
+	{
+		"id": "smolmaxxing",
+		"authors": ["hyperionaidev"],
+		"title": "smolmaxxing: run the biggest model you can on the smallest hardware you own",
+		"venue": "GitHub",
+		"year": 2026,
+		"url": "https://github.com/hyperionaidev/smolmaxxing",
+		"accessed": "2026-11-17"
+	},
+	{
 		"id": "elman1990",
 		"authors": ["Jeffrey L. Elman"],
 		"title": "Finding Structure in Time",

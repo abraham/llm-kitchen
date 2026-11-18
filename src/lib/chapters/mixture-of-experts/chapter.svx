@@ -102,18 +102,90 @@ on different topics, they found no obvious pattern. What showed up instead was s
 
 </At>
 
+## Too big to fit
+
+<At levels="simple">
+
+Using a quarter of the weights for each token doesn't mean storing only a quarter. The next token
+might need any expert, so normally all of them sit in memory: Mixtral needs room for all 47
+billion weights. When memory runs short, a program can keep the most-used experts in memory and
+leave the rest on the device's storage, reading each one when the router picks it.<Cite id="eliseev2023" />
+Storage holds far more but is slower to read, so every expert that isn't already in memory means a
+wait.<Cite id="alizadeh2023" />
+
+It works because the router is fairly predictable: the same experts often come up again, and a
+block's router can be tried early to guess its picks before they're needed.<Cite id="eliseev2023" />
+A hobby project used these tricks to run a 16-billion-weight mixture of experts on a TV box with about
+2 GB of memory, at about 5 tokens a second.<Cite id="smolmaxxing" />
+
+</At>
+<At levels="standard deep">
+
+Using a quarter of the weights for each token isn't the same as needing room for only a quarter.
+The router may pick any expert for the next token, so normally every expert sits in memory: by
+the rule in <ChapterRef to="quantization" />, Mixtral's 47 billion weights need about 94 GB at 16 bits and 24 GB at 4, though
+each token uses 13 billion.
+
+When memory runs short, the program running the model can keep only some of the experts in memory
+and leave the rest on the device's storage, reading an expert in only when the router picks it.<Cite id="eliseev2023" />
+Phones and laptops store models on flash, which holds far more than memory but is much slower to
+read, so every expert that isn't already in memory is a wait.<Cite id="alizadeh2023" /> Two
+habits of trained routers make this workable. The same experts often come up again for the next
+token, so the program keeps the recently used ones. And since each block only adds to the token's
+vector (<ChapterRef to="the-transformer-block" />), the vector going into one block is close to the one going into the next, so running
+the next block's router early predicts most of its picks, and those experts can be read while the
+current block works. With both, Mixtral ran on a free cloud computer with a 16 GB graphics card at
+about 2 tokens a second, three times as fast as fetching each expert only when it was
+needed.<Cite id="eliseev2023" />
+
+How often the needed expert is already in memory sets the speed. A hobby project, smolmaxxing, ran
+Ling-mini-2.0, a mixture of experts with 16.3 billion weights and 1.4 billion per token, on a TV
+box with about 2 GB of memory. It keeps about 1.1 GB in memory: the 279 MB of weights every token uses,
+and 43 of the 256 experts in each block. The other 5 GB of experts stay on flash. It writes about
+5 tokens a second, and still spends about 85 of every 190 milliseconds waiting for flash.<Cite id="smolmaxxing" />
+Its rule of thumb: what limits a mixture of experts on a small device is how many bytes must stay
+in memory, not the total number of weights.
+
+One more trick trades quality for speed: give the router a small bonus for experts that are
+already in memory, so it picks a nearly-as-good one that needs no wait. Tried on phones, this
+doubled the speed.<Cite id="skliar2025" /> In one of smolmaxxing's tests, it cut the experts that
+had to be read from 24% to 14% of those picked, and made the model's perplexity (<ChapterRef to="learning-from-mistakes" />) 1.6%
+worse.<Cite id="smolmaxxing" />
+
+</At>
+<At levels="deep">
+
+### How much has to stay
+
+From the shared and per-expert sizes worked out above, Mixtral at 4 bits keeps its 1.7 billion
+shared weights, about 0.8 GB, in memory no matter what. Its 32 blocks each have 8 experts,<Cite id="jiang2024" />
+so one expert in one block holds about $5.7 / 32 \approx 0.18$ billion weights, about 89 MB.
+Each token uses 2 experts in each of the 32 blocks: 64 experts, about 5.7 GB. If none were in
+memory, every token would read that much from storage, almost a quarter of the model. If 9 in 10
+are found in memory, it reads about 0.57 GB. The time spent waiting is roughly
+
+$$\text{wait per token} \approx \frac{\text{misses} \times \text{bytes per expert}}{\text{read speed}},$$
+
+so halving the misses halves the wait, while the work done per token stays the same.
+
+</At>
+
 <RecapCard>
 
 - A mixture-of-experts model splits each MLP into many experts, and a router sends each token to
   only a few of them.
 - The model can hold far more weights than it uses for any one token: Mixtral uses 13 of its 47
   billion.
+- All the experts still have to be stored. When memory is short, most can wait on slower storage
+  and be read when the router picks them; how often the needed expert is already in memory sets
+  the speed.
 - Experts aren't neat topic specialists; the router learns its own way of dividing the work.
 
 <At levels="deep">
 
 - The output is a weighted sum of the top $k$ experts; only the MLPs are split, so a token uses
   more than $k/n$ of the weights.
+- At 4 bits, a Mixtral token touches 64 experts of about 89 MB each, 5.7 GB if none were in memory.
 
 </At>
 </RecapCard>

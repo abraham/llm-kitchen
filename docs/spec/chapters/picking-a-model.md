@@ -20,7 +20,8 @@ runtime. Narrow by task, inputs, device, speed, context, and license, then test 
     token table in [Meaning as position](embeddings.md), so each token costs about as much as a
     smaller model.
   - **Active size** (`26B-A4B`): a mixture of experts ([Many experts](mixture-of-experts.md)); all
-    of it must fit in memory, but it runs nearly as fast as a 4B model.
+    of it must be stored and it runs fastest when it all fits in memory, but it runs nearly as fast
+    as a 4B model.
   - **Tuning** (`-it`, `-Instruct`, or nothing): instruction-tuned, or a base model
     ([From predictor to assistant](predictor-to-assistant.md)).
   - **Drafter** (`-assistant`): a drafter for [speculative decoding](speculative-decoding.md).
