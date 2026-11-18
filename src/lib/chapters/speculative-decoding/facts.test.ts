@@ -55,4 +55,21 @@ describe('guessing ahead', () => {
 			4.3
 		);
 	});
+
+	it('In depth: smolmaxxing (E31, E51): a checking pass cost about 2.6 passes on the 2B, 1.1 on the 9B; +69%', () => {
+		// Measured tokens per second and the share of guesses kept, with one guess per pass.
+		const ram = { without: 6.58, with: 4.5, alpha: 0.76 };
+		const flash = { without: 0.16, with: 0.27, alpha: 0.91 };
+		const expected = (alpha: number, k: number) => (1 - alpha ** (k + 1)) / (1 - alpha);
+		const passCost = (m: typeof ram) => expected(m.alpha, 1) / (m.with / m.without);
+
+		expect(expected(ram.alpha, 1).toFixed(2)).toBe('1.76');
+		expect((ram.with / ram.without).toFixed(2)).toBe('0.68');
+		expect(passCost(ram).toFixed(1)).toBe('2.6');
+
+		expect(expected(flash.alpha, 1).toFixed(2)).toBe('1.91');
+		expect((flash.with / flash.without).toFixed(2)).toBe('1.69');
+		expect(passCost(flash).toFixed(1)).toBe('1.1');
+		expect(Math.round((flash.with / flash.without - 1) * 100)).toBe(69);
+	});
 });

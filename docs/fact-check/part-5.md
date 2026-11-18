@@ -112,19 +112,23 @@ Data: `static/data/speculative/gpt2/drafts.json` from `scripts/record/speculativ
 weights) guesses 4 tokens per round for GPT-2 medium (354,823,168), greedy, 30 new tokens per prompt.
 The script asserts the result equals GPT-2 medium's own greedy output.
 
-| Claim                                                                                                                                      | Backing                                                                      |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
-| Big-model inference is limited by reading weights from memory, not arithmetic                                                              | Cite `leviathan2023` (§1)                                                    |
-| One transformer pass predicts the next token after every position                                                                          | Architecture (causal attention, Ch 9); the script relies on it               |
-| 30 tokens in 7 passes ("The cat sat on the" and the counting prompt), 9 for "The capital of France is", with two passes keeping no guesses | Test (recorded data)                                                         |
-| The output is exactly the big model's greedy text                                                                                          | Assertion in the script; test                                                |
-| With sampling, an accept-or-resample rule keeps the big model's probabilities exactly                                                      | Cite `leviathan2023`, `chen2023`                                             |
-| About 2–3× faster with identical output                                                                                                    | Cite `leviathan2023` (2–3× on T5-XXL), `chen2023` (2–2.5× on Chinchilla 70B) |
-| Gemma 4 `-assistant` drafters: 78M to 0.5B weights, up to 3× faster, multi-token prediction                                                | Cite `gemma4-assistant`; collection listing (accessed 2026-10-23)            |
-| Simple: restates Standard in plainer words, with no new claims                                                                             | Reviewed against the Standard text                                           |
-| In depth: keep a guess with chance min(1, p/q); otherwise draw from max(0, p − q), rescaled; the result is exactly p                       | Cite `leviathan2023`, `chen2023`; test                                       |
-| In depth: with acceptance α and k guesses, a pass adds (1 − α^(k+1)) / (1 − α) tokens on average                                           | Cite `leviathan2023` (eq. 1); test (3.4 at α 0.8, k 4)                       |
-| In depth: the cat run averaged about 4.3 tokens per pass                                                                                   | Test (30 / 7)                                                                |
+| Claim                                                                                                                                             | Backing                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Big-model inference is limited by reading weights from memory, not arithmetic                                                                     | Cite `leviathan2023` (§1)                                                         |
+| One transformer pass predicts the next token after every position                                                                                 | Architecture (causal attention, Ch 9); the script relies on it                    |
+| 30 tokens in 7 passes ("The cat sat on the" and the counting prompt), 9 for "The capital of France is", with two passes keeping no guesses        | Test (recorded data)                                                              |
+| The output is exactly the big model's greedy text                                                                                                 | Assertion in the script; test                                                     |
+| With sampling, an accept-or-resample rule keeps the big model's probabilities exactly                                                             | Cite `leviathan2023`, `chen2023`                                                  |
+| About 2–3× faster with identical output                                                                                                           | Cite `leviathan2023` (2–3× on T5-XXL), `chen2023` (2–2.5× on Chinchilla 70B)      |
+| Gemma 4 `-assistant` drafters: 78M to 0.5B weights, up to 3× faster, multi-token prediction                                                       | Cite `gemma4-assistant`; collection listing (accessed 2026-10-23)                 |
+| It pays only when reading the weights is the slow part                                                                                            | Cite `leviathan2023` (memory-bound premise); `smolmaxxing` (E31, E51)             |
+| Qwen3.5's built-in drafter, one token ahead, on a TV box: in-memory 2B, each extra checked token cost nearly a pass; 76% kept, 6.6 → 4.5 tokens/s | Cite `smolmaxxing` (EXPERIMENT.md E31: 6.58 → 4.50 at n_max = 1, acceptance 0.76) |
+| Streamed 9B, ~1.6 GB from flash per pass: 91% kept, 0.16 → 0.27 tokens/s, 69% faster                                                              | Cite `smolmaxxing` (E50, E51)                                                     |
+| Simple: restates Standard in plainer words, with no new claims                                                                                    | Reviewed against the Standard text                                                |
+| In depth: keep a guess with chance min(1, p/q); otherwise draw from max(0, p − q), rescaled; the result is exactly p                              | Cite `leviathan2023`, `chen2023`; test                                            |
+| In depth: with acceptance α and k guesses, a pass adds (1 − α^(k+1)) / (1 − α) tokens on average                                                  | Cite `leviathan2023` (eq. 1); test (3.4 at α 0.8, k 4)                            |
+| In depth: the cat run averaged about 4.3 tokens per pass                                                                                          | Test (30 / 7)                                                                     |
+| In depth: k = 1 gives 1 + α per pass; a checking pass cost about 2.6 ordinary passes on the 2B (1.76 ÷ 0.68) and 1.1 on the 9B (1.91 ÷ 1.69)      | Test (measured rates as constants, cite `smolmaxxing`)                            |
 
 ## Ch 15. From predictor to assistant
 
