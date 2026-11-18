@@ -41,6 +41,11 @@ meaning got right. So many systems run both searches and combine the two lists, 
 points for how high it comes in each.<Cite id="cormack2009" /> Here that picked the right exchange
 for 4 of the 5 questions; words alone got 4 and meaning alone 2.
 
+A last step fixed the fifth. A <GlossaryPopover term="reranker">reranker</GlossaryPopover> is a small
+model that reads the question together with one text and scores how well they match.<Cite id="nogueira2019" />
+It's slower, so it only reorders the top few results: here, the top three of the combined list.
+It put the right exchange first for all 5 questions, Leo's too.
+
 </At>
 <At levels="standard deep">
 
@@ -53,6 +58,16 @@ passages.<Cite id="anthropic-contextual-retrieval" /> Here the merged list put t
 first for 4 of the 5 questions, words alone for 4, and meaning alone for 2. It still missed Leo:
 meaning ranked the star rhyme first and words second, which beat Leo's rhyme, first by words but
 only third by meaning.
+
+A last step catches what both lists miss. Each exchange's vector was made before anyone asked
+anything, so it can't depend on the question. A <GlossaryPopover term="reranker">reranker</GlossaryPopover>
+is a small model that reads the question and one text together, as a single input, and gives a
+score from 0 to 1 for how well the text answers it.<Cite id="nogueira2019" /> That means a fresh
+pass of the model for every pair, too slow for every text, so a first search narrows the list and
+the reranker reorders only its top few.<Cite id="sbert-retrieve-rerank" /> Here it reads the top
+three of the merged list, and puts the right exchange first for all 5 questions: Leo's rhyme
+scores 99.8%, the star rhyme 0.4%. For "kitty" it still picks the cat rhyme, but scores all three
+below 0.1%. A rank always has a first place; a score can also say that nothing fits.
 
 </At>
 <At levels="deep">
@@ -76,6 +91,17 @@ Reciprocal rank fusion merges the lists using only ranks, so it needn't compare 
 cosines: each text scores $\sum 1/(k + r)$ over the lists that rank it, at rank $r$, with
 $k = 60$.<Cite id="cormack2009" /> For Leo's question the star rhyme gets
 $1/62 + 1/61 \approx 0.0325$ and Leo's rhyme $1/61 + 1/63 \approx 0.0323$.
+
+### Reading the pair
+
+The reranker here, ms-marco-MiniLM-L6-v2, has the same shape as the model that made the vectors:
+6 transformer blocks of 384 numbers. It was trained on MS MARCO, a million real search questions
+with passages people marked as answering them.<Cite id="nogueira2019" /><Cite id="ms-marco-minilm-model-card" />
+It reads the question and the exchange as one input, so attention can link "Leo" in one to "Leo"
+in the other, and ends with a single number $z$. The logistic function turns that into a score,
+$1/(1 + e^{-z})$: Leo's rhyme gets $z \approx 6.22$, a score of 0.998. A collection of $N$ texts
+needs $N$ vectors, made once; a reranker needs a pass for every pair of question and text, every
+time a question is asked. That's why it only reads the top few.
 
 </At>
 
@@ -145,6 +171,8 @@ only those that match the question.
 
 - Keyword search finds exact words such as names; search by meaning finds the same idea in other
   words. Many systems run both and merge the results.
+- A reranker reads the question with each of the top few results and reorders them. It's slower,
+  but it can catch what both searches missed.
 - A new chat starts empty. Memory features save notes and put them into later prompts, and a
   wrong note is repeated in every chat after.
 
@@ -152,6 +180,8 @@ only those that match the question.
 
 - BM25 rewards rare words and repeated use, with diminishing returns; rank fusion adds
   $1/(k + r)$ from each list.
+- A reranker's single output $z$ becomes a score with $1/(1 + e^{-z})$; it needs a pass for every
+  pair of question and text.
 
 </At>
 </RecapCard>

@@ -5,6 +5,7 @@
 	import GlossaryPopover from '#lib/components/page/GlossaryPopover.svelte';
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import RoutingCascade from './RoutingCascade.svelte';
+	import CalibrationChart from './CalibrationChart.svelte';
 </script>
 
 ## Two models, one app
@@ -89,18 +90,98 @@ names for the COVID-19 vaccines in more than 50 languages, in seconds rather tha
 hours it would have taken people. After people checked the list, Google Search used it to show
 up-to-date information about the vaccines.<Cite id="google-mum-vaccines" />
 
+## Where to put the line
+
+<At levels="simple">
+
+A line at 60% only makes sense if "60% sure" means something. A model is <GlossaryPopover term="calibration">calibrated</GlossaryPopover>
+when its confidence matches how often it's right: of all the answers it's 80% sure of, about 80%
+are right.<Cite id="guo2017" /> Group each model's answers by how sure it was, and count:
+
+</At>
+<At levels="standard deep">
+
+The slider treats the small model's confidence as a measure of how likely it is to be right. That
+holds only if the model is <GlossaryPopover term="calibration">calibrated</GlossaryPopover>: of all
+the answers it gives with 80% confidence, about 80% should be right.<Cite id="guo2017" /> Group
+each model's 40 answers by confidence, and count how many in each group were right:
+
+</At>
+
+<CalibrationChart />
+
+<At levels="simple">
+
+When the small model was very sure, it was right: all 15 answers it was 80% or more sure of. Lower
+down, the numbers don't match. Of 10 answers it was about 50% sure of, only 1 was right; of 5 it
+was about 30% sure of, 4 were. So test where a model's mistakes fall before choosing a line, and
+test again for a new model.
+
+Where the line goes also depends on which mistake costs more. A company that checks summaries for
+people's names, with a small model, rewrites anything it's at least 40% sure has a name, because
+a missed name costs more than an extra rewrite. Its chat bot answers a question nobody asked it
+only when it's at least 85% sure, because a wrong interruption annoys people.<Cite id="posthog-decision-models" />
+
+</At>
+<At levels="standard deep">
+
+At the top, the small model is honest: all 15 answers it was 80% or more sure of (92% on average)
+were right, and 6 of the 10 between 60% and 80% (68% on average). Below that it misses both ways.
+Of the 10 answers between 40% and 60%, only 1 was right; of the 5 below 40%, 4 were. Forty
+questions make small groups, so this is a warning rather than a measurement: test where a model's
+mistakes fall before trusting the number. The big model was at least 80% sure of 36 answers, and
+35 were right.
+
+A line set for one model doesn't carry over to another, or even to the next version of the same
+model. PostHog found that the thresholds for one of its checks moved between two versions of one
+model, so it made them a setting and set them again from answers graded by
+hand.<Cite id="posthog-decision-models" />
+
+Where the line goes also depends on which mistake costs more. A cascade can make two: pass on a
+question the small model had right, which costs a bigger call, or keep an answer that's wrong.
+When wrong answers are expensive, set the line high; when calls are, set it low. PostHog asks small
+models yes-or-no questions with a probability, and puts the line in opposite places. A check
+for personal details in session summaries sends anything scoring 0.4 or more to be rewritten,
+because a missed name is worse than an extra rewrite. A chat bot that can answer questions it
+wasn't tagged in speaks up only at 0.85 or more, because a wrong interruption is worse than a
+missed one.<Cite id="posthog-decision-models" />
+
+</At>
+<At levels="deep">
+
+### Measuring calibration
+
+On average, the small model looks honest: its mean confidence is 68%, and it got 65% right. The
+groups show the average hides misses in both directions. The expected calibration error adds up
+each group's gap, weighted by its share of the answers:
+
+$$\text{ECE} = \sum_{b} \frac{n_b}{N}\,\big|\,\text{right}_b - \text{conf}_b\,\big|$$
+
+where group $b$ has $n_b$ of the $N$ answers, $\text{right}_b$ is the share of them that were
+right, and $\text{conf}_b$ their mean confidence.<Cite id="guo2017" /> It's 0.21 for the small
+model and 0.03 for the big one. Guo and colleagues found modern neural networks often poorly
+calibrated, and that dividing a model's scores by one number fitted on held-out answers, called
+temperature scaling (<ChapterRef to="probability-and-sampling" />), often fixes much of
+it.<Cite id="guo2017" />
+
+</At>
+
 <RecapCard>
 
 - An app can use several models, and the harness decides which one answers.
 - A router picks a model up front; a cascade asks a small model first and passes the question on
   when its confidence is low.
 - The threshold trades cost against quality, and confidence is a useful hint, not proof.
+- A model is calibrated when its confidence matches how often it's right. Check where its mistakes
+  fall, set the line again for every model, and put it where the costlier mistake is rarer.
 - Answers to questions you can predict can be worked out ahead of time and checked first.
 
 <At levels="deep">
 
 - Confidence here is the geometric mean of the answer tokens' probabilities; cost is
   $(n + m\,r)/(n\,r)$ of always asking the big model.
+- Expected calibration error weighs each group's gap between share right and mean confidence: 0.21
+  for the small model, 0.03 for the big one.
 
 </At>
 </RecapCard>

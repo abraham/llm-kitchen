@@ -14,6 +14,10 @@ test('words and meaning find different exchanges', async ({ page }) => {
 	await widget.getByLabel('Question').selectOption({ label: 'What did I tell you about Sam?' });
 	await expect(status).toContainText('By words: Sam: Humpty Dumpty sat on a wall');
 	await expect(status).toContainText('Combined: Sam');
+
+	await widget.getByLabel('Question').selectOption({ label: 'Which rhyme does Leo love?' });
+	await expect(status).toContainText('Combined: Mei');
+	await expect(status).toContainText('Reranked: Leo');
 });
 
 test('notes carry what was written, right or wrong, into a new chat', async ({ page }) => {

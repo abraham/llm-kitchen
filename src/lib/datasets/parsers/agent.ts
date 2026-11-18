@@ -64,7 +64,10 @@ export const agentGrades: Check<AgentGrades> = object({
 
 export const searchQuestions: Check<SearchQuestions> = object({
 	embedder: object({ id: string, revision: string }),
-	questions: array(object({ question: string, about: integer, vector: array(number) }))
+	reranker: modelRef,
+	questions: array(
+		object({ question: string, about: integer, vector: array(number), rerank: array(number) })
+	)
 });
 
 const memoryAnswer = object({ question: string, tokens: integer, answer: string });

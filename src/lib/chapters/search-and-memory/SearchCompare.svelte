@@ -4,7 +4,7 @@
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
 	import Status from '#lib/components/ui/Status.svelte';
-	import { search } from '#lib/harness/search.ts';
+	import { RERANK_TOP, search } from '#lib/harness/search.ts';
 
 	const data = all([useDataset('agent/context'), useDataset('agent/search')]);
 	let picked = $state(0);
@@ -17,6 +17,12 @@
 	}
 
 	const ordinal = (r: number) => ['1st', '2nd', '3rd'][r] ?? `${r + 1}th`;
+
+	function match(p: number): string {
+		if (p < 0.001) return 'below 0.1%';
+		if (p > 0.999) return 'above 99.9%';
+		return `${(p * 100).toFixed(1)}%`;
+	}
 </script>
 
 {#snippet list(
@@ -47,7 +53,7 @@
 
 <WidgetFrame
 	title="Search by words or by meaning"
-	source={{ kind: 'recorded', model: 'all-MiniLM-L6-v2' }}
+	source={{ kind: 'recorded', model: 'all-MiniLM-L6-v2 and ms-marco-MiniLM-L6-v2' }}
 	onreset={() => (picked = 0)}
 >
 	<Loading promise={data}>
@@ -78,12 +84,21 @@
 					const m = r.meaning.order.indexOf(i);
 					return `${w < 0 ? 'no words' : ordinal(w)} + ${ordinal(m)}`;
 				})}
+				{@render list(
+					`Top ${RERANK_TOP} combined, reranked`,
+					'reranked',
+					r.reranked.order,
+					q.about,
+					names,
+					(i) => `match ${match(r.reranked.scores[i])}`
+				)}
 			</div>
 			<Status>
 				The top exchange goes back into the prompt. By words: <strong
 					>{r.keyword.order.length ? names[r.keyword.order[0]] : 'nothing'}</strong
 				>. By meaning: <strong>{names[r.meaning.order[0]]}</strong>. Combined:
-				<strong>{names[r.both.order[0]]}</strong>.
+				<strong>{names[r.both.order[0]]}</strong>. Reranked:
+				<strong>{names[r.reranked.order[0]]}</strong>.
 			</Status>
 		{/snippet}
 	</Loading>
@@ -115,6 +130,12 @@
 	.both {
 		--accent: var(--c-harness);
 		--tint: var(--c-harness-tint);
+	}
+
+	/* The reranker gives a 0-to-1 score, so it takes the probability color. */
+	.reranked {
+		--accent: var(--c-prob);
+		--tint: var(--c-prob-tint);
 	}
 
 	h3 {

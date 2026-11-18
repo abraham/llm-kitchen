@@ -522,6 +522,32 @@
 		"url": "https://doi.org/10.1145/1571941.1572114"
 	},
 	{
+		"id": "nogueira2019",
+		"authors": ["Rodrigo Nogueira", "Kyunghyun Cho"],
+		"title": "Passage Re-ranking with BERT",
+		"venue": "arXiv",
+		"year": 2019,
+		"url": "https://arxiv.org/abs/1901.04085"
+	},
+	{
+		"id": "sbert-retrieve-rerank",
+		"authors": ["Sentence Transformers"],
+		"title": "Retrieve & Re-Rank",
+		"venue": "Sentence Transformers documentation",
+		"year": 2025,
+		"url": "https://www.sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html",
+		"accessed": "2026-11-17"
+	},
+	{
+		"id": "ms-marco-minilm-model-card",
+		"authors": ["Sentence Transformers"],
+		"title": "ms-marco-MiniLM-L6-v2 model card",
+		"venue": "Hugging Face",
+		"year": 2021,
+		"url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+		"accessed": "2026-11-17"
+	},
+	{
 		"id": "anthropic-contextual-retrieval",
 		"authors": ["Daniel Ford"],
 		"title": "Introducing Contextual Retrieval",
@@ -965,6 +991,23 @@
 		"venue": "arXiv",
 		"year": 2024,
 		"url": "https://arxiv.org/abs/2406.18665"
+	},
+	{
+		"id": "guo2017",
+		"authors": ["Chuan Guo", "Geoff Pleiss", "Yu Sun", "Kilian Q. Weinberger"],
+		"title": "On Calibration of Modern Neural Networks",
+		"venue": "ICML 2017",
+		"year": 2017,
+		"url": "https://arxiv.org/abs/1706.04599"
+	},
+	{
+		"id": "posthog-decision-models",
+		"authors": ["Jina Yoon"],
+		"title": "Not everything needs an LLM",
+		"venue": "PostHog newsletter",
+		"year": 2026,
+		"url": "https://newsletter.posthog.com/p/decision-models",
+		"accessed": "2026-11-17"
 	},
 	{
 		"id": "lindsey2025biology",

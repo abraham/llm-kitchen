@@ -3,8 +3,18 @@ import { cosine } from '#lib/math/vectors.ts';
 /** Questions about the long chat, embedded like its exchanges (scripts/record/search.py). */
 export interface SearchQuestions {
 	embedder: { id: string; revision: string };
-	questions: { question: string; about: number; vector: number[] }[];
+	reranker: { id: string; displayName: string; revision: string | null };
+	questions: {
+		question: string;
+		about: number;
+		vector: number[];
+		/** The reranker's raw score (a logit) for the question read with each exchange. */
+		rerank: number[];
+	}[];
 }
+
+/** How many of the merged list's top exchanges the reranker reads. */
+export const RERANK_TOP = 3;
 
 /** Words too common to tell texts apart, dropped before keyword matching, as search engines do. */
 const STOP = new Set(
@@ -58,14 +68,29 @@ export function fuse(rankings: readonly number[][], n: number, k = 60): number[]
 	return scores;
 }
 
+/**
+ * Reorder the first `top` texts of `order` by the reranker's scores. Its logits become 0 to 1
+ * with the logistic function, as cross-encoders trained on yes/no relevance are read.
+ */
+export function rerank(
+	order: readonly number[],
+	logits: readonly number[],
+	top = RERANK_TOP
+): { order: number[]; scores: number[] } {
+	const scores = logits.map((z) => 1 / (1 + Math.exp(-z)));
+	const picked = order.slice(0, top);
+	return { order: [...picked].sort((x, y) => logits[y] - logits[x] || x - y), scores };
+}
+
 export interface Search {
 	keyword: { order: number[]; scores: number[] };
 	meaning: { order: number[]; scores: number[] };
 	both: { order: number[]; scores: number[] };
+	reranked: { order: number[]; scores: number[] };
 }
 
 export function search(
-	question: { question: string; vector: readonly number[] },
+	question: { question: string; vector: readonly number[]; rerank: readonly number[] },
 	texts: readonly string[],
 	vectors: readonly number[][]
 ): Search {
@@ -74,5 +99,6 @@ export function search(
 	const keyword = { order: ranking(kw), scores: kw };
 	const meaning = { order: ranking(sim, true), scores: sim };
 	const fused = fuse([keyword.order, meaning.order], texts.length);
-	return { keyword, meaning, both: { order: ranking(fused), scores: fused } };
+	const both = { order: ranking(fused), scores: fused };
+	return { keyword, meaning, both, reranked: rerank(both.order, question.rerank) };
 }

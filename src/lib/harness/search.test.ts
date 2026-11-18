@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
-import { bm25, fuse, keywords, ranking, search } from './search.ts';
+import { bm25, fuse, keywords, ranking, rerank, search } from './search.ts';
 
 const context = readDataset('agent/context');
 const recorded = readDataset('agent/search');
@@ -42,6 +42,12 @@ describe('keyword search', () => {
 		expect(scores[1]).toBeGreaterThan(scores[0]);
 		expect(scores[0]).toBeGreaterThan(scores[2]);
 	});
+
+	it('reranks only the top few, and reads logits as 0 to 1', () => {
+		const r = rerank([0, 1, 2, 3], [1, 2, 0, 9], 3);
+		expect(r.order).toEqual([1, 0, 2]);
+		expect(r.scores[2]).toBe(0.5);
+	});
 });
 
 describe('the recorded questions', () => {
@@ -50,17 +56,23 @@ describe('the recorded questions', () => {
 		expect(recorded.embedder).toEqual(context.embedder);
 	});
 
-	it('put the right exchange first: keywords, meaning, both', () => {
+	it('put the right exchange first: keywords, meaning, both, reranked', () => {
 		const firsts = recorded.questions.map((q, i) => {
 			const r = run(i);
-			return [r.keyword.order[0] ?? null, r.meaning.order[0], r.both.order[0], q.about];
+			return [
+				r.keyword.order[0] ?? null,
+				r.meaning.order[0],
+				r.both.order[0],
+				r.reranked.order[0],
+				q.about
+			];
 		});
 		expect(firsts).toEqual([
-			[0, 0, 0, 0],
-			[null, 0, 0, 0],
-			[3, 4, 3, 3],
-			[2, 3, 2, 2],
-			[5, 4, 4, 5]
+			[0, 0, 0, 0, 0],
+			[null, 0, 0, 0, 0],
+			[3, 4, 3, 3, 3],
+			[2, 3, 2, 2, 2],
+			[5, 4, 4, 5, 5]
 		]);
 	});
 });
