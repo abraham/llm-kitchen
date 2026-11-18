@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import canonicalJson from '../../../../models/canonical.json';
 import { RHYMES } from '#lib/data/rhymes.ts';
+import { QWEN35_2B as q } from '#lib/chapters/recurrent-models/data.ts';
 import { CharRNN, RNNTrainer } from '#lib/math/rnn.ts';
 import { seededRandom } from '#lib/math/sampling.ts';
 
@@ -37,4 +38,19 @@ describe('recurrent models', () => {
 		for (const c of encode('humpty d')) ({ h, probs } = trainer.model.step(h, c));
 		expect(vocab[probs.indexOf(Math.max(...probs))]).toBe('u');
 	}, 60_000);
+
+	it('in depth: Qwen3.5-2B keeps 4.7 million numbers of fixed memory, plus 6,144 per token: 1.6 billion at 262,144 tokens, against 6.4 billion if all attention', () => {
+		const attention = q.layers / q.attentionEvery;
+		const delta = q.layers - attention;
+		expect([attention, delta]).toEqual([6, 18]);
+		const perLayer = q.deltaHeads * q.deltaKeyDim * q.deltaValueDim;
+		expect(perLayer).toBe(262_144);
+		expect(((delta * perLayer) / 1e6).toFixed(1)).toBe('4.7');
+		const perToken = 2 * attention * q.kvHeads * q.headDim;
+		expect(perToken).toBe(6144);
+		expect(((perToken * q.context) / 1e9).toFixed(1)).toBe('1.6');
+		const allAttention = 2 * q.layers * q.kvHeads * q.headDim;
+		expect(allAttention / perToken).toBe(4);
+		expect(((allAttention * q.context) / 1e9).toFixed(1)).toBe('6.4');
+	});
 });

@@ -664,6 +664,32 @@
 		"url": "https://arxiv.org/abs/2412.19437"
 	},
 	{
+		"id": "yang2025gated",
+		"authors": ["Songlin Yang", "Jan Kautz", "Ali Hatamizadeh"],
+		"title": "Gated Delta Networks: Improving Mamba2 with Delta Rule",
+		"venue": "ICLR 2025",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2412.06464"
+	},
+	{
+		"id": "qwen35-2b-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3.5-2B model card and config.json",
+		"venue": "Hugging Face",
+		"year": 2026,
+		"url": "https://huggingface.co/Qwen/Qwen3.5-2B",
+		"accessed": "2026-11-17"
+	},
+	{
+		"id": "qwen3-next-model-card",
+		"authors": ["Qwen Team"],
+		"title": "Qwen3-Next-80B-A3B-Instruct model card",
+		"venue": "Hugging Face",
+		"year": 2025,
+		"url": "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct",
+		"accessed": "2026-11-17"
+	},
+	{
 		"id": "eliseev2023",
 		"authors": ["Artyom Eliseev", "Denis Mazur"],
 		"title": "Fast Inference of Mixture-of-Experts Language Models with Offloading",

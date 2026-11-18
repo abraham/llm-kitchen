@@ -126,6 +126,11 @@ Recurrent ideas are back in newer designs like Mamba, which learns what to keep 
 whose cost grows only in step with the length of the text.<Cite id="gu2023" /> But a fixed memory
 still struggles to copy long passages word for word, which a transformer does easily.<Cite id="jelassi2024" />
 
+So some new models use both. In Qwen3.5 and Qwen3-Next, three of every four layers keep a
+fixed-size memory, and the fourth is full attention, which keeps every earlier token. The fixed
+memories make long texts cheap; the attention layers can still look anything up
+again.<Cite id="qwen35-2b-model-card" /><Cite id="qwen3-next-model-card" />
+
 </At>
 <At levels="standard deep">
 
@@ -135,6 +140,29 @@ keep and what to forget, and its cost grows only in step with the length of the 
 The fixed memory still has a price: a transformer can copy a long passage it was shown word for
 word, while a model with a fixed-size state struggles once the passage outgrows its
 memory.<Cite id="jelassi2024" />
+
+So some of the newest models use both. Qwen3.5 and Qwen3-Next have two kinds of layer. Three of
+every four are Gated DeltaNet layers, a recurrent design whose fixed-size memory works like a
+small table: at each token, a gate lets old contents fade, and the rest of the update rewrites
+just the part the new token is about.<Cite id="yang2025gated" /> The fourth layer is full
+attention, with a KV cache. Qwen3.5-2B stacks 24 layers as six rounds of three and one, Qwen3-Next
+48 as twelve, and both read up to 262,144 tokens.<Cite id="qwen35-2b-model-card" /><Cite id="qwen3-next-model-card" />
+The fixed memories keep long texts cheap, and the attention layers keep the exact lookups a fixed
+memory does badly. The Gated DeltaNet authors found that mixing their layers with other kinds,
+such as attention over a window of recent tokens, did better than their layers
+alone.<Cite id="yang2025gated" />
+
+</At>
+<At levels="deep">
+
+### Memory in a hybrid
+
+The main memory of each of Qwen3.5-2B's 18 Gated DeltaNet layers is 16 heads of 128 × 128
+numbers: 262,144 per layer, about 4.7 million in all, however long the text. Each of its 6 attention layers keeps a key
+and a value for every token, in 2 heads of 256 numbers: $2 \times 6 \times 2 \times 256 = 6{,}144$
+numbers per token.<Cite id="qwen35-2b-model-card" /> At its full 262,144 tokens that's about 1.6
+billion numbers. If all 24 layers were attention, it would be four times as many, about 6.4
+billion.
 
 </At>
 
@@ -147,11 +175,14 @@ memory.<Cite id="jelassi2024" />
   again.
 - Transformers replaced recurrent models mainly because they train on every position of a text at
   once.
+- Some new models mix the two: in Qwen3.5 and Qwen3-Next, three of every four layers keep a
+  fixed-size memory and the fourth is attention.
 
 <At levels="deep">
 
 - $h_t = \tanh(W_h h_{t-1} + W_x x_t + b)$; the error fades over many steps, which the LSTM's
   added cell avoids.
+- Qwen3.5-2B: 4.7 million numbers of fixed memory, plus 6,144 per token in its attention layers.
 
 </At>
 </RecapCard>
