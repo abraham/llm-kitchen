@@ -54,3 +54,51 @@ export function cascade(rec: RoutingRecording, threshold: number): CascadeResult
 	const n = rec.questions.length;
 	return { escalated, right, cost: (n + escalated * ratio) / (n * ratio) };
 }
+
+/** Where the calibration widget splits confidence into bands. */
+export const BANDS = [0, 0.4, 0.6, 0.8, 1] as const;
+
+export interface Band {
+	from: number;
+	to: number;
+	answers: number;
+	/** Mean confidence of the band's answers, or null when it has none. */
+	confidence: number | null;
+	right: number;
+}
+
+/**
+ * Group one model's answers by confidence and count how many in each band were right. A
+ * calibrated model's right share matches its mean confidence in every band. The last band
+ * includes its upper edge.
+ */
+export function calibration(
+	rec: RoutingRecording,
+	model: 'small' | 'big',
+	edges: readonly number[] = BANDS
+): Band[] {
+	return edges.slice(0, -1).map((from, i) => {
+		const to = edges[i + 1];
+		const last = i === edges.length - 2;
+		const answers = rec.questions
+			.map((q) => q[model])
+			.filter((a) => a.confidence >= from && (last ? a.confidence <= to : a.confidence < to));
+		const sum = answers.reduce((s, a) => s + a.confidence, 0);
+		return {
+			from,
+			to,
+			answers: answers.length,
+			confidence: answers.length ? sum / answers.length : null,
+			right: answers.filter((a) => a.correct).length
+		};
+	});
+}
+
+/** Expected calibration error: each band's gap between share right and mean confidence, weighted by its share of the answers. */
+export function calibrationError(bands: readonly Band[]): number {
+	const n = bands.reduce((s, b) => s + b.answers, 0);
+	return bands.reduce(
+		(s, b) => (b.answers ? s + (b.answers / n) * Math.abs(b.right / b.answers - b.confidence!) : s),
+		0
+	);
+}

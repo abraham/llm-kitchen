@@ -5,15 +5,17 @@ search, and what can the harness keep once the chat is over?
 
 **Key idea:** Keyword search finds a question's exact words, such as names and codes; search by
 meaning finds the same idea in other words. Each misses what the other finds, so many systems run
-both and merge the results by rank. A new chat starts empty: memory features save notes outside
+both and merge the results by rank, and a reranker, a model that reads the question with each of
+the top few results, can reorder them. A new chat starts empty: memory features save notes outside
 the model and put them into later prompts, so a wrong note is repeated in every chat after.
 
 ## Widgets
 
 - `SearchCompare`: pick one of five questions about the long chat from
   [Managing the context](managing-the-context.md). Three ranked lists show the six exchanges by
-  keyword score (BM25, computed in the browser), by cosine similarity of MiniLM vectors, and merged
-  by reciprocal rank fusion, with the exchange the question is about marked.
+  keyword score (BM25, computed in the browser), by cosine similarity of MiniLM vectors, merged
+  by reciprocal rank fusion, and the merged list's top three reordered by a reranker's recorded
+  scores, with the exchange the question is about marked.
 - `MemoryNotes`: what a new chat starts with: no notes, notes the model wrote when asked openly, or
   notes it wrote when asked for each child and rhyme. Shows the request, the notes and their size
   against the whole chat, and the new chat's answers to three questions, each marked against what
@@ -23,7 +25,9 @@ the model and put them into later prompts, so a wrong note is repeated in every 
 
 The chat is the one recorded by `scripts/record/agent.py` (`static/data/agent/context.json`). The
 questions' vectors are recorded by `scripts/record/search.py` (`static/data/agent/search.json`)
-with the same MiniLM revision, and the rankings computed in `src/lib/harness/search.ts`. The notes
+with the same MiniLM revision, along with the ms-marco-MiniLM-L6-v2 reranker's raw score (a logit)
+for every question and exchange, and the rankings computed in `src/lib/harness/search.ts`, which
+turns the logits into 0-to-1 scores with the logistic function. The notes
 and the new chats' answers are recorded by `scripts/record/memory.py`
 (`static/data/agent/memory.json`) from the same chat.
 
@@ -35,6 +39,10 @@ and the new chats' answers are recorded by `scripts/record/memory.py`
 - The search questions were chosen to show each method failing: "kitty" shares no word with any
   exchange, names and "crown" defeat MiniLM, and Leo's question defeats the merged list too. The
   text reports all five outcomes.
+- The reranker reads only the merged list's top three, as real systems rerank only a first
+  search's top results; it gets all five, and the text says so. "Kitty" is kept as the case where it
+  picks the right exchange but scores every candidate below 0.1%, to show that a score, unlike a
+  rank, can say nothing fits. Scoring every pair is recorded, so no reranker runs in the browser.
 - Search by the agent itself (choosing when and what to search) is in
   [Designing an agent](designing-agents.md), since it needs tools.
 - The memory notes are written by the same small model and kept even though both sets are wrong
@@ -43,4 +51,5 @@ and the new chats' answers are recorded by `scripts/record/memory.py`
   itself is mentioned with MemGPT only.
 - [Levels](../levels.md): Simple keeps the search results and the notes' outcomes, without BM25's
   details or the Anthropic figures. In depth gives the BM25 formula, reciprocal rank fusion with
-  Leo's scores, and what notes cost.
+  Leo's scores, the reranker's logistic score and why it reads only the top few, and what notes
+  cost.

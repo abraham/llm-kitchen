@@ -53,7 +53,8 @@ class ModelSpec:
     # Tokens besides the tokenizer's end-of-sequence token that mean the reply ended.
     stop: tuple[str, ...] = ()
     # "causal" for text generators, "encoder" for models whose hidden states are pooled into vectors,
-    # "masked" for fill-in-the-blank models (BERT), "clip" for CLIP's text and image halves.
+    # "masked" for fill-in-the-blank models (BERT), "clip" for CLIP's text and image halves,
+    # "reranker" for cross-encoders that score a question and a text read together.
     kind: str = "causal"
 
 
@@ -262,13 +263,24 @@ def loaded(spec: ModelSpec) -> Loaded:
     if key not in _LOADED:
         tok = tokenizer(spec)
         import torch
-        from transformers import AutoModel, AutoModelForCausalLM, AutoModelForMaskedLM, CLIPModel
+        from transformers import (
+            AutoModel,
+            AutoModelForCausalLM,
+            AutoModelForMaskedLM,
+            AutoModelForSequenceClassification,
+            CLIPModel,
+        )
 
         started = time.time()
         options: dict[str, Any] = {"dtype": getattr(torch, spec.dtype)}
         if spec.attention:
             options["attn_implementation"] = spec.attention
-        cls = {"encoder": AutoModel, "masked": AutoModelForMaskedLM, "clip": CLIPModel}.get(spec.kind, AutoModelForCausalLM)
+        cls = {
+            "encoder": AutoModel,
+            "masked": AutoModelForMaskedLM,
+            "clip": CLIPModel,
+            "reranker": AutoModelForSequenceClassification,
+        }.get(spec.kind, AutoModelForCausalLM)
         try:
             model = cls.from_pretrained(spec.id, **options).to(device).eval()
         except OSError as error:
@@ -475,6 +487,21 @@ def embed(spec: ModelSpec, texts: list[str]) -> list[list[float]]:
         return torch.nn.functional.normalize((hidden * mask).sum(1) / mask.sum(1), dim=-1).tolist()
 
     return _cached("embed", spec, {"texts": texts}, compute)
+
+
+def rerank(spec: ModelSpec, query: str, texts: list[str]) -> list[float]:
+    """A cross-encoder's raw relevance score (a logit) for `query` read together with each text."""
+
+    def compute() -> list[float]:
+        import torch
+
+        m = loaded(spec)
+        batch = m.tokenizer([query] * len(texts), texts, padding=True, truncation=True, return_tensors="pt")
+        with torch.no_grad():
+            logits = m.model(**batch.to(m.device)).logits
+        return logits[:, 0].float().tolist()
+
+    return _cached("rerank", spec, {"query": query, "texts": texts}, compute)
 
 
 # --- Runs -------------------------------------------------------------------------------------

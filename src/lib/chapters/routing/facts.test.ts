@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
-import { cascade, type RoutingRecording } from '#lib/harness/routing.ts';
+import {
+	calibration,
+	calibrationError,
+	cascade,
+	type RoutingRecording
+} from '#lib/harness/routing.ts';
 
 describe('which model answers?', () => {
 	const rec: RoutingRecording = readDataset('routing/cascade');
@@ -44,6 +49,34 @@ describe('which model answers?', () => {
 		expect(turkey.answer).toBe('Ankara');
 		expect(pct(turkey.confidence)).toBe(25);
 		expect(turkey.correct).toBe(true);
+	});
+
+	describe('calibration', () => {
+		const small = calibration(rec, 'small');
+		const big = calibration(rec, 'big');
+		const row = (b: (typeof small)[number]) => [b.answers, pct(b.confidence ?? 0), b.right];
+
+		it('small: 80%+ 15 of 15 (92%); 60–80% 6 of 10 (68%); 40–60% 1 of 10; below 40% 4 of 5', () => {
+			expect(small.map(row)).toEqual([
+				[5, 30, 4],
+				[10, 49, 1],
+				[10, 68, 6],
+				[15, 92, 15]
+			]);
+		});
+
+		it('big: at least 80% sure of 36 answers, 35 right', () => {
+			expect(row(big[3])).toEqual([36, 97, 35]);
+			expect(big.reduce((s, b) => s + b.answers, 0)).toBe(40);
+		});
+
+		it('in depth: small mean confidence 68% against 65% right; ECE 0.21 and 0.03', () => {
+			const mean = rec.questions.reduce((s, x) => s + x.small.confidence, 0) / 40;
+			expect(pct(mean)).toBe(68);
+			expect(pct(26 / 40)).toBe(65);
+			expect(calibrationError(small).toFixed(2)).toBe('0.21');
+			expect(calibrationError(big).toFixed(2)).toBe('0.03');
+		});
 	});
 
 	it('in depth: weights 0.49 and 1.54 billion (r ≈ 3.12); small alone costs 32%', () => {

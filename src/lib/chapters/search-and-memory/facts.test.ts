@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import type { ContextSession } from '#lib/harness/agent.ts';
-import { search } from '#lib/harness/search.ts';
+import { RERANK_TOP, search } from '#lib/harness/search.ts';
 import { remembered } from '#lib/harness/memory.ts';
 
 describe('search and memory', () => {
@@ -16,7 +16,7 @@ describe('search and memory', () => {
 				c.turns.map((t) => t.vector)
 			)
 		);
-		const right = (key: 'keyword' | 'meaning' | 'both') =>
+		const right = (key: 'keyword' | 'meaning' | 'both' | 'reranked') =>
 			results.filter((r, i) => r[key].order[0] === questions[i].about).length;
 
 		it('words find Sam, Leo, and the crown; meaning finds "kitty", a word in no exchange', () => {
@@ -51,6 +51,27 @@ describe('search and memory', () => {
 			expect(r.both.scores[star]).toBeCloseTo(1 / 62 + 1 / 61, 10);
 			expect(r.both.scores[star].toFixed(4)).toBe('0.0325');
 			expect(r.both.scores[questions[i].about].toFixed(4)).toBe('0.0323');
+		});
+
+		it('reranking the merged top three: 5 of 5; Leo 99.8% against the star’s 0.4%', () => {
+			expect(RERANK_TOP).toBe(3);
+			expect(right('reranked')).toBe(5);
+			const i = questions.findIndex((q) => q.question.includes('Leo'));
+			const r = results[i];
+			const star = c.turns.findIndex((t) => t.text.includes('Twinkle'));
+			expect(r.reranked.order.slice(0, 2)).toEqual([questions[i].about, star]);
+			expect((r.reranked.scores[questions[i].about] * 100).toFixed(1)).toBe('99.8');
+			expect((r.reranked.scores[star] * 100).toFixed(1)).toBe('0.4');
+			expect(questions[i].rerank[questions[i].about].toFixed(2)).toBe('6.22');
+			expect(r.reranked.scores[questions[i].about].toFixed(3)).toBe('0.998');
+		});
+
+		it('kitty: the reranker still picks the cat rhyme, but scores all three below 0.1%', () => {
+			const i = questions.findIndex((q) => q.question.includes('kitty'));
+			const r = results[i];
+			expect(r.reranked.order).toHaveLength(3);
+			expect(r.reranked.order[0]).toBe(questions[i].about);
+			for (const j of r.reranked.order) expect(r.reranked.scores[j]).toBeLessThan(0.001);
 		});
 	});
 

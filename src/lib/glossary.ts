@@ -212,6 +212,14 @@ export const GLOSSARY = {
 		simple: 'Finding texts that contain the same words as the question.',
 		chapter: 'search-and-memory'
 	},
+	reranker: {
+		term: 'reranker',
+		definition:
+			'A small model that reads a question and one text together and scores how well the text answers it. Too slow to run on every text, it reorders the top few results of a faster search.',
+		simple:
+			'A model that rereads the top search results with the question and puts the best one first.',
+		chapter: 'search-and-memory'
+	},
 	'tool-call': {
 		term: 'tool call',
 		definition:
@@ -256,6 +264,13 @@ export const GLOSSARY = {
 		term: 'cascade',
 		definition:
 			'A harness that asks a small, cheap model first and passes the question to a bigger one only when the small model seems unsure.',
+		chapter: 'routing'
+	},
+	calibration: {
+		term: 'calibrated',
+		definition:
+			'A model is calibrated when its confidence matches how often it is right: of all the answers it gives with 80% confidence, about 80% are right.',
+		simple: 'When a model’s “80% sure” really means it’s right about 80% of the time.',
 		chapter: 'routing'
 	},
 	'kv-cache': {
