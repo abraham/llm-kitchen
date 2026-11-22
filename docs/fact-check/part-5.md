@@ -106,6 +106,7 @@ short public-domain passage (Lewis Carroll).
 | In depth: the outlier method keeps a few large feature dimensions in 16 bits and the rest in 8                                                                            | Cite `dettmers2022`                                                                                                                    |
 | In depth: three values need log₂ 3 ≈ 1.58 bits; BitNet b1.58 divides by the mean                                                                                          | w                                                                                                                                      | and rounds and clips to −1, 0, 1; almost no multiplications | Cite `ma2024bitnet` (§1, Eq. 1–3) |
 | In depth: one bit plus a 16-bit scale per 128 weights is 1.125 bits per weight                                                                                            | Cite `bonsai-8b-model-card` (Q1_0 g128); test                                                                                          |
+| Weight bit inspector: IEEE 754 float32/float16 fields, dropped bits, and signed integer codes for GPT-2's sample block                                                    | Computed in browser (`annotateWeightBits`); `quantize.test.ts`, `chapter.e2e.ts`                                                       |
 
 ## Ch 14. Guessing ahead
 
