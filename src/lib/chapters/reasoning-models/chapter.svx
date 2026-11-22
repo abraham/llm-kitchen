@@ -63,6 +63,20 @@ five times as much as an input token.<Cite id="anthropic-pricing" />
 the thinking went around in circles, full of "Wait, …", until it hit the limit of 6,000 tokens
 without ever answering.
 
+<At levels="deep">
+
+### More thinking doesn't guarantee a better answer
+
+The same trade-off appears in frontier models. Asked to analyze a 4.6 KB Windows executable from
+its raw hex dump with no tools, GPT-6.1 Sol spent 5,178 reasoning tokens (211 seconds) and
+recovered all 13 hidden API names and the exact URL the program contacted. Given the same prompt,
+the open-weight DeepSeek V4.1 Flash reached the same high-level conclusion but spent 89,902
+reasoning tokens—about 17 times as many—over 859 seconds, repeatedly revising false starts, and
+still got 9 of the 13 API names right while misreading one URL parameter.<Cite id="xenos2026machinecode" />
+Reasoning tokens buy room to backtrack, not certainty.
+
+</At>
+
 ## Trained to think
 
 <At levels="simple">

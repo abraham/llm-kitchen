@@ -39,6 +39,14 @@ the last of its four rows was right. It wrote 98,072 for 1234 × 8 (really 9,872
 1234 × 5000 was right. Its rows don't even add up to its own answer: they make 6,946,772, not
 7,050,952. Each number is a run of likely-looking tokens, and nothing checks that the steps agree.
 
+Frontier models have gotten much better at exact, multi-step work without tools: in one
+demonstration, GPT-6.1 Sol patched three small binaries and wrote three working executables from
+scratch byte by byte with no compiler or assembler.<Cite id="xenos2026machinecode" /> Doing so
+still took 3,440 to 25,069 output tokens and 93 to 504 seconds per program (patching used 1.8 to
+3.7 times fewer output tokens than writing from scratch), whereas a compiler does the same exact
+work in milliseconds. Tools aren't only for what a model *can't* do; they are also for what code
+does faster, cheaper, and reliably.
+
 </At>
 
 ## A tool call is just text

@@ -49,6 +49,20 @@ full tracing in production is what let them see why their agents failed to find 
 information.<Cite id="anthropic-multi-agent" />
 
 </At>
+<At levels="deep">
+
+### Auditing what the harness actually sent
+
+Traces also check the harness itself, not just the model. In a series of "no-tools" experiments on
+compiled binaries, researchers routed requests through a local relay that stripped every tool,
+audited each turn's event stream, and ran a live check asking the model to read a planted file, run
+a command, and fetch a URL. When they repeated one experiment in a second harness without that
+relay, the harness recorded no tool calls, yet had skipped their MCP disable settings and connected
+an inherited server anyway—leaving them unable to verify which tools were actually sent to the
+provider.<Cite id="xenos2026machinecode" /> A config setting is only a wish until a trace or
+network log confirms what went on the wire.
+
+</At>
 
 ## A fixed set of tests
 

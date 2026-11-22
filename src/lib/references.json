@@ -1521,5 +1521,22 @@
 		"venue": "arXiv",
 		"year": 2023,
 		"url": "https://arxiv.org/abs/2307.09009"
+	},
+	{
+		"id": "zhang2025rlm",
+		"authors": ["Alex L. Zhang", "Tim Kraska", "Omar Khattab"],
+		"title": "Recursive Language Models",
+		"venue": "arXiv",
+		"year": 2025,
+		"url": "https://arxiv.org/abs/2512.24601"
+	},
+	{
+		"id": "xenos2026machinecode",
+		"authors": ["George Xenos", "Sotiris Giannopoulos"],
+		"title": "Programming in the Machine Code Space: LLMs can read & write executables byte by byte",
+		"venue": "Blog post",
+		"year": 2026,
+		"url": "https://sgiannopoulos.github.io/blog/machine-code-programming/",
+		"accessed": "2026-11-21"
 	}
 ]

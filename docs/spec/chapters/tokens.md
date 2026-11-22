@@ -25,4 +25,5 @@ Tier T1: `gpt-tokenizer` in the browser, no model download. BPE is computed in t
 - "strawberry" shows why counting letters is hard: the word reaches the model as a few token IDs.
 - [Levels](../levels.md): Simple drops the token numbers and BPE's history. In depth counts GPT-2's
   vocabulary (256 bytes, 50,000 merges, one end-of-text token), gives the merge rule as an
-  equation, and notes the real tokenizer's rules the toy lacks.
+  equation, notes the real tokenizer's rules the toy lacks, and gives the token cost of raw binary
+  hex dumps.

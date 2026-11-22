@@ -137,6 +137,13 @@ where $L$ is the loss in nats per token and $N$ counts the weights outside the t
 tables.<Cite id="kaplan2020" /> Ten times the weights multiplies the loss by $10^{-0.076} \approx 0.84$,
 about 16% lower, at any size. That's what a straight line on a log–log chart means.
 
+Even unexpected abilities can show up at the frontier. In a small-scale demonstration with no
+compiler, disassembler, or other tools, GPT-6.1 Sol read raw hex dumps of compiled programs up to
+67 KB, patched three of them in place by editing their bytes, and wrote three working executables
+from 391 bytes to 4 KB from scratch; on a stripped FreeBSD statistics binary (`ministat`), it even
+spotted a real bug in the program's floating-point table from the bytes alone.<Cite id="xenos2026machinecode" />
+The smooth loss curve predicts lower average surprise, not which specific skills will appear.
+
 </At>
 
 ## More text, not just more weights

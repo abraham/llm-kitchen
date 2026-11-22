@@ -196,6 +196,14 @@ languages often need many more tokens for the same meaning. In one study, the sa
 room in the model's window and costs more.
 
 </At>
+<At levels="deep">
+
+Non-text data is even costlier. When researchers fed compiled programs into a frontier model as hex
+dumps (each byte written out as two hexadecimal characters), the text took about 2.4 tokens per
+byte: a 67 KB binary filled roughly 163,000 tokens, and a 10 MB program would need about 24
+million, far beyond a single prompt.<Cite id="xenos2026machinecode" />
+
+</At>
 
 <RecapCard>
 

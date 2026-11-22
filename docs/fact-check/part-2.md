@@ -46,6 +46,7 @@ Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.m
 | In depth: new text is split by applying the learned merges, earliest first                                                                    | Cite `sennrich2016` (§3.2); the rank table orders the merges                      |
 | Limits and prices are counted in tokens; the six rhymes are 145 words and 195 GPT-2 tokens (about 1.3 per word); punctuation is its own token | Test (`tokens/facts.test.ts`, r50k_base)                                          |
 | The same text can take up to 15 times as many tokens in some languages as in others                                                           | Cite `petrov2023` (abstract)                                                      |
+| In depth: compiled binaries as hex dumps took ~2.4 tokens per byte; 67 KB ≈ 163,000 tokens; 10 MB ≈ 24 million tokens                         | Cite `xenos2026machinecode` ("Limitations")                                       |
 
 ## Ch 5. Embeddings
 
