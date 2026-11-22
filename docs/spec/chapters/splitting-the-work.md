@@ -35,5 +35,6 @@ for a helper's first prompt, and 80 for the lead per subtask.
   [Trust and guardrails](trust-and-guardrails.md) for limiting tools.
 - [Levels](../levels.md): Simple keeps the lead, the helpers, the 15× cost, and when splitting fits,
   without the 4× and 90.2% figures. In depth works out the tokens read with and without splitting,
-  BrowseComp's link between tokens spent and score, and why a lead that waits for each round of
-  helpers can be held up by the slowest.
+  BrowseComp's link between tokens spent and score, why a lead that waits for each round of helpers
+  can be held up by the slowest, and Recursive Language Models for inputs that don't fit in a
+  prompt.

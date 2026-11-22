@@ -15,10 +15,12 @@ The cache saves work; it doesn't change the answer, and it isn't memory between 
 - `KVCacheStepper`: steps through generation with the cache off and on. Off, every new token reruns
   the whole text so far; on, earlier tokens' keys and values are reused and only the new token is
   computed. A counter tallies the work for each, alongside measured time per token.
-- `PromptCacheView`: the calls from the recorded chat, each drawn as a bar of blocks (system
-  prompt, turns), with the part that matches an earlier call's start shaded as cached. The visitor
-  makes the edits harnesses make (append a turn, change the system prompt, put the time at the top,
-  drop or summarize old turns) and sees tokens reused and an illustrative cost.
+- `PromptCacheView`: the calls from the recorded chat, each drawn as a bar of clickable blocks
+  (system prompt, turns, summary, question), showing which blocks were read from the cache, which
+  block broke the prefix, and which earlier blocks had to be recomputed after a break. Selecting
+  any block inspects what changed at that slot and how many downstream tokens were recomputed. The
+  visitor makes the edits harnesses make (append a turn, change the system prompt, put the time at
+  the top, drop or summarize old turns) and sees tokens reused and an illustrative cost.
 
 ## Data
 

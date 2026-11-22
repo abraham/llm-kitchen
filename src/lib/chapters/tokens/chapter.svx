@@ -6,6 +6,7 @@
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import BPEStepper from './BPEStepper.svelte';
 	import LiveTokenizer from './LiveTokenizer.svelte';
+	import TokenDiffInspector from './TokenDiffInspector.svelte';
 </script>
 
 ## Not letters, not words
@@ -134,6 +135,11 @@ token 41236, not by looking at the letters.
 
 </At>
 
+A single space, accent, or emoji can change every token boundary around it. Compare two strings
+below—or switch tokenizers—and select any token to see its ID and UTF-8 bytes.
+
+<TokenDiffInspector />
+
 ## Every model has its own alphabet
 
 <At levels="simple">
@@ -194,6 +200,14 @@ more than one. Other
 languages often need many more tokens for the same meaning. In one study, the same text took up to
 15 times as many tokens in some languages as in others.<Cite id="petrov2023" /> That leaves less
 room in the model's window and costs more.
+
+</At>
+<At levels="deep">
+
+Non-text data is even costlier. When researchers fed compiled programs into a frontier model as hex
+dumps (each byte written out as two hexadecimal characters), the text took about 2.4 tokens per
+byte: a 67 KB binary filled roughly 163,000 tokens, and a 10 MB program would need about 24
+million, far beyond a single prompt.<Cite id="xenos2026machinecode" />
 
 </At>
 

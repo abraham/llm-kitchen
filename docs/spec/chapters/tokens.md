@@ -14,6 +14,11 @@ letters inside a token.
   IDs (`TokenChip`) by the GPT-2, GPT-4, and GPT-4o tokenizers side by side.
 - `BPEStepper`: steps through byte pair encoding on a small corpus: the most frequent pair merges,
   the vocabulary grows, and the token count drops.
+- `TokenDiffInspector`: compares two short strings token by token across GPT-2, GPT-4, or GPT-4o
+  (presets such as `strawberry → ·strawberry`, `cafe → café`, `The cat → The 🐱`, and Python
+  indentation, or custom text), showing removed tokens struck through and added tokens highlighted.
+  Selecting any token shows its ID, position, UTF-8 bytes (or notes when a multi-byte character was
+  split mid-byte), and shape.
 
 ## Data
 
@@ -25,4 +30,5 @@ Tier T1: `gpt-tokenizer` in the browser, no model download. BPE is computed in t
 - "strawberry" shows why counting letters is hard: the word reaches the model as a few token IDs.
 - [Levels](../levels.md): Simple drops the token numbers and BPE's history. In depth counts GPT-2's
   vocabulary (256 bytes, 50,000 merges, one end-of-text token), gives the merge rule as an
-  equation, and notes the real tokenizer's rules the toy lacks.
+  equation, notes the real tokenizer's rules the toy lacks, and gives the token cost of raw binary
+  hex dumps.

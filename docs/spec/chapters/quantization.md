@@ -13,8 +13,10 @@ per weight, where rounding a finished model destroys it.
 ## Widgets
 
 - `QuantizeLab`: slide GPT-2 small from 32 bits per weight down to 2 and see the weights' size, one
-  block of weights snapping to the allowed values, the top guesses for the running example
-  (`ProbBars`), a short continuation, and the loss on a test passage.
+  block of weights snapping to the allowed values, an annotated bit-field inspector for a chosen
+  weight from the block (highlighting dropped bits, the stored integer code, shared block scale, and
+  exact rounding error), the top guesses for the running example (`ProbBars`), a short continuation,
+  and the loss on a test passage.
 
 ## Data
 

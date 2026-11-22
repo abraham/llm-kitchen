@@ -7,6 +7,15 @@ test('order, layout, and position', async ({ page }) => {
 	await expect(widget.getByRole('row', { name: /8 of 8/ })).toBeVisible();
 	await widget.getByLabel('Formatting').check();
 	await expect(widget.getByRole('row', { name: /Sentiment.*7 of 8/ })).toBeVisible();
+	await expect(widget.getByRole('status')).toContainText('7 of 8 → 4 of 8');
+	await widget.getByRole('button', { name: /Text \/ label in brackets/ }).click();
+	await widget
+		.getByRole('button', { name: /added: \[/ })
+		.first()
+		.click();
+	await expect(widget.getByRole('status')).toContainText(
+		'only the layout punctuation/labels changed'
+	);
 	await widget.getByLabel('Position in a long prompt').check();
 	await expect(widget.getByText(/8 of 88 answers went wrong/)).toBeVisible();
 });

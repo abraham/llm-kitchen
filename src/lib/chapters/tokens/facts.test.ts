@@ -39,4 +39,15 @@ describe('tokens', () => {
 		expect(count(prose)).toEqual([20, 20, 20]);
 		expect(count('        return 0')).toEqual([9, 4, 4]);
 	});
+
+	it('TokenDiffInspector seed matches GPT-2 for strawberry → " strawberry"', () => {
+		expect(encode('strawberry').map((id) => ({ id, text: decode([id]) }))).toEqual([
+			{ id: 301, text: 'st' },
+			{ id: 1831, text: 'raw' },
+			{ id: 8396, text: 'berry' }
+		]);
+		expect(encode(' strawberry').map((id) => ({ id, text: decode([id]) }))).toEqual([
+			{ id: 41236, text: ' strawberry' }
+		]);
+	});
 });

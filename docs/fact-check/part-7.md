@@ -110,6 +110,7 @@ written to `static/data/caching/kv-cache.json`. The prompt-cache view is compute
 | In depth: 2 bytes each: about 29 KB per token, 0.94 GB for 32,768 tokens                                                 | Test; config (bfloat16, 32,768 positions)                         |
 | In depth: appending costs 633 + 234 = 867 full-price tokens, 29%; the time at the top costs 2,975                        | Test (`cacheTotals`, illustrative 0.1 price)                      |
 | Cached tokens still count toward the context window; caching changes the price, not the room                             | Cite `anthropic-context-windows` (compaction section)             |
+| Prompt-cache block inspector: per-block cache hits, prefix breaks, and downstream invalidated tokens                     | Test (`annotateCacheCalls`, `facts.test.ts`, `chapter.e2e.ts`)    |
 
 ## Ch 27. Which model answers?
 

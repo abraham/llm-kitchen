@@ -29,3 +29,20 @@ test('BPE merges e+s first, then es+t', async ({ page }) => {
 	await expect(explain).toContainText('“es” + “t” appeared 9 times');
 	await expect(widget.getByText('Tokens needed for the whole text: 77')).toBeVisible();
 });
+
+test('token diff inspector compares edits and switches tokenizers', async ({ page }) => {
+	await gotoHydrated(page, '/tokens');
+	const widget = page.getByRole('region', { name: 'Compare how text splits' });
+	await expect(widget.getByText('3 → 1 token')).toBeVisible();
+	await expect(widget.getByRole('status')).toContainText('token 41236 in GPT-2');
+
+	await widget.getByRole('button', { name: 'cafe → café' }).click();
+	await expect(widget.getByText('2 → 3 tokens')).toBeVisible();
+	await widget.getByRole('button', { name: /"é", token 2634/ }).click();
+	await expect(widget.getByText('C3 A9')).toBeVisible();
+
+	await widget.getByRole('button', { name: 'return 0 → indented' }).click();
+	await expect(widget.getByText('2 → 9 tokens')).toBeVisible();
+	await widget.getByLabel('GPT-4', { exact: true }).check();
+	await expect(widget.getByText('3 → 4 tokens')).toBeVisible();
+});

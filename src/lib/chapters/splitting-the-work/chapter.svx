@@ -118,6 +118,19 @@ rest.<Cite id="anthropic-multi-agent" /> Splitting the work across helpers is on
 more. Their lead also waits for each round of helpers to finish before going on: simpler, but one
 slow helper holds up the rest.<Cite id="anthropic-multi-agent" />
 
+### Keeping the input outside the prompt
+
+Subagents split work that fits in a prompt; **Recursive Language Models** (RLMs) apply the same
+idea when the input itself doesn't. Instead of putting a huge document into the context window
+(see <ChapterRef to="managing-the-context" />), the harness stores the prompt in an external code
+environment—like the sandbox in <ChapterRef to="designing-agents" />—and lets the model write code
+to inspect slices of it and recursively call itself on the pieces. Zhang and colleagues found that
+RLMs handled inputs up to two orders of magnitude beyond a model's context window, and with GPT-5
+beat prompt compaction by a median of 26% across four long-context tasks at comparable
+cost.<Cite id="zhang2025rlm" /> Researchers analyzing compiled binaries as hex dumps proposed the
+same pattern for files too large for one window: read the headers first, follow jumps by offset,
+and hand each function to a sub-call.<Cite id="xenos2026machinecode" />
+
 </At>
 
 <RecapCard>

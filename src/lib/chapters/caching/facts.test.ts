@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import type { ContextSession } from '#lib/harness/agent.ts';
 import {
+	annotateCacheCalls,
 	cacheCalls,
 	cacheTotals,
+	describeCacheBlock,
 	kvNumbersPerToken,
 	positionsProcessed,
 	type KVCacheRun
@@ -99,5 +101,32 @@ describe('caching', () => {
 		expect(Math.round(append.cost)).toBe(867);
 		expect(Math.round((append.cost / append.sent) * 100)).toBe(29);
 		expect(cacheTotals(cacheCalls(session, 'time')).cost).toBe(2975);
+	});
+
+	it('annotates cache hits, prefix breaks, and invalidated blocks across edits', () => {
+		const appendRows = annotateCacheCalls(cacheCalls(session, 'append'));
+		expect(appendRows.flat().some((b) => b.status === 'break')).toBe(false);
+		expect(appendRows[1].map((b) => b.status)).toEqual(['cached', 'cached', 'new']);
+
+		const sysCalls = cacheCalls(session, 'system');
+		const sysRows = annotateCacheCalls(sysCalls);
+		// Editing the system prompt before turn 4 breaks at offset 0 and invalidates turns 1–3.
+		expect(sysRows[3].map((b) => b.status)).toEqual([
+			'break',
+			'invalidated',
+			'invalidated',
+			'invalidated',
+			'new'
+		]);
+		expect(sysRows[3][0].recomputedTokens).toBe(sysCalls[3].tokens);
+		expect(describeCacheBlock(sysRows[3][0])).toContain('broke the cache');
+		expect(describeCacheBlock(sysRows[3][1])).toContain('unchanged from Turn 3');
+		// Turn 5 reuses the edited prefix again.
+		expect(sysRows[4].slice(0, 5).every((b) => b.status === 'cached')).toBe(true);
+
+		const dropRows = annotateCacheCalls(cacheCalls(session, 'drop'));
+		const firstDropBreak = dropRows.flat().find((b) => b.status === 'break');
+		expect(firstDropBreak?.replacedLabel).toBe('Turn 1');
+		expect(dropRows[firstDropBreak!.callIndex][0].status).toBe('cached');
 	});
 });

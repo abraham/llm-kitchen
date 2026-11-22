@@ -42,5 +42,7 @@ checks and totals are computed in the browser (`src/lib/harness/evals.ts`).
 - The chapter closes Safety because it replays the runs of the earlier chapters: tools,
   the loop, and the guardrails' effect on the user's files.
 - [Levels](../levels.md): Simple keeps the trace, the eval, code checks, the grader's mistakes,
-  watching real use, and GAIA, without the τ-bench and judge-bias figures. In depth adds how
-  success on every one of k tries falls as pᵏ, and τ-bench's pass^k estimate.
+  watching real use, and GAIA, without the τ-bench and judge-bias figures. In depth adds auditing
+  what a harness actually sends on the wire (illustrated by a no-tools binary experiment where a
+  second harness silently connected an inherited MCP server), how success on every one of k tries
+  falls as pᵏ, and τ-bench's pass^k estimate.

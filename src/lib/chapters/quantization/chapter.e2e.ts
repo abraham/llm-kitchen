@@ -17,4 +17,10 @@ test('rounding to fewer bits holds, drifts, then breaks', async ({ page }) => {
 	await expect(bits).toHaveAttribute('aria-valuetext', '4 bits');
 	await expect(widget).toContainText('70 MB');
 	await expect(widget.locator('.generated')).toContainText('stack. The stack.');
+
+	await expect(widget.getByRole('status')).toContainText('Stored integer q = −5');
+	await widget.getByRole('button', { name: /Smallest/ }).click();
+	await expect(widget.getByRole('status')).toContainText('rounded all the way to 0');
+	await widget.getByRole('button', { name: /Dropped/ }).click();
+	await expect(widget.getByRole('status')).toContainText('28 bits dropped per weight');
 });

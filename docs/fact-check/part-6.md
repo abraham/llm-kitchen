@@ -87,20 +87,21 @@ changes a reply.
 
 ## Ch 22. Where prompts break
 
-| Claim                                                                                                                              | Backing                            |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| The 24 orders of four examples gave 4 to 8 of 8 reviews right                                                                      | Test                               |
-| Some orders near state of the art, others random; good orders don't transfer between models                                        | Cite `lu2022` (abstract)           |
-| Layouts gave 7, 6, 4, and 4 of 8                                                                                                   | Test                               |
-| Formatting alone moved accuracy by up to 76 points, not fixed by size, examples, or instruction tuning                             | Cite `sclar2024` (abstract)        |
-| 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                                            | Test                               |
-| Models use information at the start and end of long prompts better than in the middle                                              | Cite `liu2024` (abstract)          |
-| 24 word problems: 24 right as written, 18 with an extra sentence, 17 when told to ignore it                                        | Test                               |
-| 5 of the 6 misses used the irrelevant number; Nina: 48 − 15 + 30 = 63 instead of 33                                                | Test                               |
-| An irrelevant sentence sharply cuts accuracy on grade-school math; an instruction to ignore irrelevant information helps           | Cite `shi2023` (abstract)          |
-| Over three turns 18 of 24; asked for details in 20, answered after the first fact in 21; Omar 10, then 40 instead of 1,600         | Test                               |
-| Top models 39% worse on average with details over several turns; early assumptions, premature answers, no recovery                 | Cite `laban2025` (abstract)        |
-| Simple: restates Standard in plainer words, with no new claims                                                                     | Reviewed against the Standard text |
-| In depth: all five 4-of-8 orders ended with a positive example; all twelve ending with a negative scored 6 or more                 | Test                               |
-| In depth: models favor labels near the end of the prompt or common in training; contextual calibration with "N/A", up to 30 points | Cite `zhao2021` (abstract)         |
-| In depth: every miss gave the right number under 2%; 76 of the other 80 answers were over 99%                                      | Test                               |
+| Claim                                                                                                                              | Backing                                                                            |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| The 24 orders of four examples gave 4 to 8 of 8 reviews right                                                                      | Test                                                                               |
+| Some orders near state of the art, others random; good orders don't transfer between models                                        | Cite `lu2022` (abstract)                                                           |
+| Layouts gave 7, 6, 4, and 4 of 8                                                                                                   | Test                                                                               |
+| Formatting alone moved accuracy by up to 76 points, not fixed by size, examples, or instruction tuning                             | Cite `sclar2024` (abstract)                                                        |
+| 30 locker lines: 8 of 88 answers wrong, all with the line in the middle                                                            | Test                                                                               |
+| Models use information at the start and end of long prompts better than in the middle                                              | Cite `liu2024` (abstract)                                                          |
+| 24 word problems: 24 right as written, 18 with an extra sentence, 17 when told to ignore it                                        | Test                                                                               |
+| 5 of the 6 misses used the irrelevant number; Nina: 48 − 15 + 30 = 63 instead of 33                                                | Test                                                                               |
+| An irrelevant sentence sharply cuts accuracy on grade-school math; an instruction to ignore irrelevant information helps           | Cite `shi2023` (abstract)                                                          |
+| Over three turns 18 of 24; asked for details in 20, answered after the first fact in 21; Omar 10, then 40 instead of 1,600         | Test                                                                               |
+| Top models 39% worse on average with details over several turns; early assumptions, premature answers, no recovery                 | Cite `laban2025` (abstract)                                                        |
+| Simple: restates Standard in plainer words, with no new claims                                                                     | Reviewed against the Standard text                                                 |
+| In depth: all five 4-of-8 orders ended with a positive example; all twelve ending with a negative scored 6 or more                 | Test                                                                               |
+| In depth: models favor labels near the end of the prompt or common in training; contextual calibration with "N/A", up to 30 points | Cite `zhao2021` (abstract)                                                         |
+| In depth: every miss gave the right number under 2%; 76 of the other 80 answers were over 99%                                      | Test                                                                               |
+| Formatting diff inspector: word/delimiter diff isolating changed wrapper labels and punctuation between layouts                    | Computed in browser (`diffPromptLayouts`); `prompt-diff.test.ts`, `chapter.e2e.ts` |

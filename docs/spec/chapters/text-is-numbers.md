@@ -11,6 +11,10 @@ English letters, up to four for others.
 
 - `TextToNumbers`: the visitor types text, and each character flips like a split-flap display to
   land on its code number, with its UTF-8 bytes.
+- `ByteInspector`: compares two short strings byte by byte (presets such as `The cat → The 🐱` and
+  `cafe → café`, or custom text), showing removed bytes struck through and added bytes highlighted.
+  Selecting any byte highlights sibling bytes from the same character and shows its hex, decimal,
+  offset, UTF-8 prefix/payload bits, and role.
 
 ## Data
 

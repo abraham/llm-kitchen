@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { readDataset } from '#lib/datasets/read.ts';
 import canonical from '../../../../models/canonical.json';
-import { writtenAfter, type SpeculativeRecording } from '#lib/math/speculative.ts';
+import {
+	annotateRound,
+	describeRoundSlot,
+	writtenAfter,
+	type SpeculativeRecording
+} from '#lib/math/speculative.ts';
 
 describe('guessing ahead', () => {
 	const rec: SpeculativeRecording = readDataset('speculative/drafts');
@@ -71,5 +76,31 @@ describe('guessing ahead', () => {
 		expect((flash.with / flash.without).toFixed(2)).toBe('1.69');
 		expect(passCost(flash).toFixed(1)).toBe('1.1');
 		expect(Math.round((flash.with / flash.without - 1) * 100)).toBe(69);
+	});
+
+	it('annotates each speculative round into kept, wrong, dropped, and added slots', () => {
+		const round = run('The cat sat on the').rounds[0];
+		const slots = annotateRound(round);
+		expect(slots.map((s) => s.kind)).toEqual(['kept', 'kept', 'wrong', 'dropped', 'added']);
+		expect(slots[2].counterpart).toEqual(round.added);
+		expect(slots[4].counterpart).toEqual(round.guesses[2]);
+		expect(
+			describeRoundSlot(
+				slots[2],
+				rec.drafter.displayName,
+				rec.target.displayName,
+				round.kept,
+				rec.draft
+			)
+		).toContain('first mismatch');
+		expect(
+			describeRoundSlot(
+				slots[3],
+				rec.drafter.displayName,
+				rec.target.displayName,
+				round.kept,
+				rec.draft
+			)
+		).toContain('dropped because guess #3 disagreed');
 	});
 });
