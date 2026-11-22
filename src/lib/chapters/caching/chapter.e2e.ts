@@ -11,6 +11,14 @@ test('the KV cache and the prompt cache', async ({ page }) => {
 
 	const view = page.getByRole('region', { name: 'What the provider can reuse' });
 	await expect(view.getByText('2,342 (79%)')).toBeVisible();
+	await expect(view.getByRole('status')).toContainText('Your question · Your question');
+
+	await view.getByLabel('Edit the system prompt before turn 4').check();
+	await expect(view.getByRole('status')).toContainText('Turn 4 · System prompt');
+	await expect(view.getByRole('status')).toContainText('broke the cache');
+	await view.getByRole('button', { name: /Turn 4, Turn 1, .*Recomputed/ }).click();
+	await expect(view.getByRole('status')).toContainText('unchanged from Turn 3');
+
 	await view.getByLabel('Put the time at the top').check();
 	await expect(view.getByText('0 (0%)')).toBeVisible();
 });

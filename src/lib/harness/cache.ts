@@ -137,3 +137,100 @@ export function cacheTotals(calls: CacheCall[]) {
 	const cached = calls.reduce((a, c) => a + c.cached, 0);
 	return { sent, cached, processed: sent - cached, cost: sent - cached + cached * CACHED_PRICE };
 }
+
+export type CacheBlockStatus = 'cached' | 'break' | 'invalidated' | 'new';
+
+/** One prompt block enriched with why it was cached, broke the cache, or had to be recomputed. */
+export interface AnnotatedCacheBlock {
+	block: CacheBlock;
+	callIndex: number;
+	callLabel: string;
+	blockIndex: number;
+	startToken: number;
+	status: CacheBlockStatus;
+	/** Label of the block that previously occupied this slot when `status === 'break'`. */
+	replacedLabel?: string;
+	/** Tokens from this block through the end of the call that had to be computed from scratch. */
+	recomputedTokens: number;
+	/** Label of the earlier call whose prefix was compared against. */
+	comparedTo?: string;
+}
+
+/** Annotate every block in every call with its cache status and where any prefix break happened. */
+export function annotateCacheCalls(calls: readonly CacheCall[]): AnnotatedCacheBlock[][] {
+	return calls.map((call, callIndex) => {
+		let best: CacheCall | undefined;
+		let bestPrefix = -1;
+		for (let p = 0; p < callIndex; p++) {
+			const shared = sharedPrefix(calls[p].blocks, call.blocks);
+			if (shared >= bestPrefix) {
+				bestPrefix = shared;
+				best = calls[p];
+			}
+		}
+
+		let sharedBlocks = 0;
+		if (best) {
+			while (
+				sharedBlocks < best.blocks.length &&
+				sharedBlocks < call.blocks.length &&
+				best.blocks[sharedBlocks].key === call.blocks[sharedBlocks].key
+			) {
+				sharedBlocks++;
+			}
+		}
+		const broke = best !== undefined && sharedBlocks < best.blocks.length;
+		const bestKeys = best ? new Set(best.blocks.map((b) => b.key)) : new Set<string>();
+
+		let offset = 0;
+		return call.blocks.map((block, blockIndex) => {
+			const startToken = offset;
+			offset += block.tokens;
+			let status: CacheBlockStatus;
+			let replacedLabel: string | undefined;
+			if (!best) {
+				status = 'new';
+			} else if (blockIndex < sharedBlocks) {
+				status = 'cached';
+			} else if (broke && blockIndex === sharedBlocks) {
+				status = 'break';
+				const prev = best.blocks[blockIndex];
+				replacedLabel = prev.label === block.label ? `earlier ${prev.label}` : prev.label;
+			} else if (broke && bestKeys.has(block.key)) {
+				status = 'invalidated';
+			} else {
+				status = 'new';
+			}
+			return {
+				block,
+				callIndex,
+				callLabel: call.label,
+				blockIndex,
+				startToken,
+				status,
+				replacedLabel,
+				recomputedTokens: status === 'cached' ? 0 : call.tokens - startToken,
+				comparedTo: best?.label
+			};
+		});
+	});
+}
+
+/** Plain-English explanation of a selected prompt block for the live status readout. */
+export function describeCacheBlock(item: AnnotatedCacheBlock): string {
+	const { block, callLabel, status, replacedLabel, recomputedTokens, comparedTo } = item;
+	const toks = `${block.tokens} ${block.tokens === 1 ? 'token' : 'tokens'}`;
+	if (status === 'cached') {
+		return `${callLabel} · ${block.label} (${toks}): read from the cache because the prompt matched ${comparedTo} from the start.`;
+	}
+	if (status === 'break') {
+		return `${callLabel} · ${block.label} (${toks}): broke the cache by replacing ${replacedLabel} from ${comparedTo}, forcing ${recomputedTokens} tokens from here on to be processed from scratch.`;
+	}
+	if (status === 'invalidated') {
+		return `${callLabel} · ${block.label} (${toks}): unchanged from ${comparedTo}, but processed from scratch because an earlier block broke the prefix.`;
+	}
+	if (!comparedTo) {
+		return `${callLabel} · ${block.label} (${toks}): processed from scratch on the first call, before any cache exists.`;
+	}
+	return `${callLabel} · ${block.label} (${toks}): newly added at the end of the prompt and processed from scratch.`;
+}
