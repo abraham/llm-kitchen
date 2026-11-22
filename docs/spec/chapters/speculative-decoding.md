@@ -13,8 +13,9 @@ probabilities exactly.
 ## Widgets
 
 - `SpeculativeStepper`: steps through GPT-2 small guessing four tokens at a time for GPT-2 medium,
-  which keeps the guesses it agrees with and adds its own (`TokenChip`). A counter compares the big
-  model's passes with and without the drafter.
+  showing each guess and the big model's replacement as clickable diff buttons (kept, wrong,
+  dropped, or added) with a verdict detail strip and live status readout explaining why each token
+  was kept or discarded. A counter compares the big model's passes with and without the drafter.
 
 ## Data
 

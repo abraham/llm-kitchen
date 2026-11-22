@@ -3,12 +3,20 @@
 	import Loading from '#lib/components/frame/Loading.svelte';
 	import WidgetFrame from '#lib/components/frame/WidgetFrame.svelte';
 	import Choice from '#lib/components/ui/Choice.svelte';
+	import Status from '#lib/components/ui/Status.svelte';
 	import Figure from '#lib/components/ui/Figure.svelte';
 	import { formatPercent } from '#lib/components/primitives/format.ts';
+	import {
+		describePromptDiffChunk,
+		diffPromptLayouts,
+		type PromptDiffChunk
+	} from '#lib/math/prompt-diff.ts';
 	import { scaleLinear } from '#lib/math/scale.ts';
 
 	const data = useDataset('prompts/fragile');
 	let tab = $state<'order' | 'format' | 'position'>('order');
+	let compareFormat = $state(1);
+	let pickedChunk = $state<{ fmt: number; index: number } | null>(null);
 	const TABS = [
 		['order', 'Example order'],
 		['format', 'Formatting'],
@@ -19,12 +27,24 @@
 	let W = $state(MAX_W);
 	const H = 180;
 	const P = 36;
+
+	function resolveChunk(chunks: readonly PromptDiffChunk[], fmt: number): number {
+		if (pickedChunk && pickedChunk.fmt === fmt && pickedChunk.index < chunks.length) {
+			return pickedChunk.index;
+		}
+		const first = chunks.findIndex((c) => c.kind !== 'same');
+		return first >= 0 ? first : 0;
+	}
 </script>
 
 <WidgetFrame
 	title="Small changes, different answers"
 	source={{ kind: 'recorded', model: 'GPT-2 small and Qwen2.5-1.5B-Instruct' }}
-	onreset={() => (tab = 'order')}
+	onreset={() => {
+		tab = 'order';
+		compareFormat = 1;
+		pickedChunk = null;
+	}}
 >
 	<Choice
 		legend="Change"
@@ -62,6 +82,11 @@
 					</tbody>
 				</table>
 			{:else if tab === 'format'}
+				{@const baseFmt = s.formats[0]}
+				{@const otherFmt = s.formats[compareFormat] ?? s.formats[1]}
+				{@const chunks = diffPromptLayouts(baseFmt.example, otherFmt.example)}
+				{@const chunkIndex = resolveChunk(chunks, compareFormat)}
+				{@const activeChunk = chunks[chunkIndex]}
 				<p>
 					The same {s.examples.length} examples and {n} reviews for GPT-2 small, laid out four ways.
 				</p>
@@ -82,6 +107,57 @@
 						{/each}
 					</tbody>
 				</table>
+
+				<div class="format-diff">
+					<div class="compare-picks" role="group" aria-label="Compare against the first layout">
+						<span class="label">What changed from {baseFmt.name}</span>
+						{#each s.formats.slice(1) as f, idx (f.name)}
+							{@const fmtIdx = idx + 1}
+							<button
+								type="button"
+								aria-pressed={compareFormat === fmtIdx}
+								onclick={() => {
+									compareFormat = fmtIdx;
+									pickedChunk = null;
+								}}
+							>
+								{f.name} <span class="mono">({f.correct}/{n})</span>
+							</button>
+						{/each}
+					</div>
+
+					<div class="chunks" role="group" aria-label="Layout diff, select any piece to inspect it">
+						{#each chunks as c, i (i)}
+							<button
+								type="button"
+								class="chunk {c.kind}"
+								aria-pressed={i === chunkIndex}
+								onclick={() => (pickedChunk = { fmt: compareFormat, index: i })}
+							>
+								<span class="chunk-mark mono" aria-hidden="true">
+									{c.kind === 'removed' ? '−' : c.kind === 'added' ? '+' : ''}
+								</span>
+								<span class="chunk-text mono" aria-hidden="true">{c.display}</span>
+								<span class="visually-hidden">
+									{c.kind === 'same' ? 'unchanged' : c.kind}: {c.display}
+								</span>
+							</button>
+						{/each}
+					</div>
+
+					<Status lines={2}>
+						{#if activeChunk}
+							{describePromptDiffChunk(
+								activeChunk,
+								baseFmt.name,
+								otherFmt.name,
+								baseFmt.correct,
+								otherFmt.correct,
+								n
+							)}
+						{/if}
+					</Status>
+				</div>
 			{:else}
 				{@const pos = d.position}
 				{@const sx = scaleLinear([0, pos.facts - 1], [P, W - 10])}
@@ -215,5 +291,83 @@
 
 	.readout {
 		margin: var(--space-2) 0 0;
+	}
+
+	.format-diff {
+		margin-top: var(--space-3);
+		padding-top: var(--space-3);
+		border-top: 1px solid var(--rule);
+	}
+
+	.compare-picks {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+		margin-bottom: var(--space-2);
+	}
+
+	.compare-picks button[aria-pressed='true'] {
+		border-color: var(--c-token);
+		background: var(--c-token-tint);
+		color: var(--c-token-ink);
+	}
+
+	.chunks {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-1);
+	}
+
+	.chunk {
+		display: inline-flex;
+		align-items: center;
+		gap: 3px;
+		min-width: 24px;
+		min-height: 24px;
+		max-width: 100%;
+		padding: 3px var(--space-2);
+		border-radius: var(--radius);
+		border: 1.5px solid var(--rule);
+		background: var(--surface-2);
+		color: var(--ink);
+		font-size: 0.85rem;
+		line-height: 1.3;
+		transition:
+			transform var(--duration) var(--ease),
+			border-color var(--duration) var(--ease);
+	}
+
+	.chunk.removed {
+		border-color: var(--c-loss);
+		background: var(--c-loss-tint);
+		color: var(--c-loss-ink);
+	}
+
+	.chunk.removed .chunk-text {
+		text-decoration: line-through;
+		text-decoration-thickness: 1.5px;
+	}
+
+	.chunk.added {
+		border-color: var(--c-token);
+		background: var(--c-token-tint);
+		color: var(--c-token-ink);
+	}
+
+	.chunk[aria-pressed='true'] {
+		outline: 2px solid var(--ink);
+		outline-offset: 1px;
+		transform: translateY(-1px);
+	}
+
+	.chunk-mark {
+		font-weight: 700;
+	}
+
+	.chunk-text {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
 	}
 </style>

@@ -15,4 +15,10 @@ test("the big model checks the small model's guesses", async ({ page }) => {
 	await widget.getByLabel('Prompt').selectOption('The capital of France is');
 	await expect(count).toContainText('1 token in 1 pass');
 	await expect(widget.locator('.explain')).toContainText('The first guess is wrong');
+	await expect(widget.getByRole('status')).toContainText('first mismatch');
+	await widget
+		.getByRole('button', { name: /, dropped$/ })
+		.first()
+		.click();
+	await expect(widget.getByRole('status')).toContainText('dropped because guess #1 disagreed');
 });

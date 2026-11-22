@@ -131,6 +131,7 @@ The script asserts the result equals GPT-2 medium's own greedy output.
 | In depth: with acceptance α and k guesses, a pass adds (1 − α^(k+1)) / (1 − α) tokens on average                                                  | Cite `leviathan2023` (eq. 1); test (3.4 at α 0.8, k 4)                            |
 | In depth: the cat run averaged about 4.3 tokens per pass                                                                                          | Test (30 / 7)                                                                     |
 | In depth: k = 1 gives 1 + α per pass; a checking pass cost about 2.6 ordinary passes on the 2B (1.76 ÷ 0.68) and 1.1 on the 9B (1.91 ÷ 1.69)      | Test (measured rates as constants, cite `smolmaxxing`)                            |
+| Round token-diff inspector: per-guess kept, first-mismatch, dropped, and replacement annotations                                                  | Computed in browser (`annotateRound`); `facts.test.ts`, `chapter.e2e.ts`          |
 
 ## Ch 15. From predictor to assistant
 

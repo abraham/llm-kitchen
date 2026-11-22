@@ -9,8 +9,9 @@ several versions of a prompt on real examples instead of trusting one wording.
 ## Widgets
 
 - `FragileLab`: three changes, each on its own: the order of few-shot examples (all 24 orders of
-  four), their layout, and the position of a key line in a list of 30, with the answers and a tally
-  for each.
+  four), their layout (with a clickable diff highlighting the exact wrapper labels and punctuation
+  that changed between layouts while the review and label stayed identical), and the position of a
+  key line in a list of 30, with the answers and a tally for each.
 - `ProblemRuns` (twice): 24 short word problems, each run two or three ways (as written, with an
   irrelevant sentence, with that sentence plus an instruction to ignore it, or with the question first
   and the two facts in later turns). Shows the score for each way and one chosen conversation.
