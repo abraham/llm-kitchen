@@ -6,17 +6,18 @@ Claim checklist for the per-chapter fact-check (see [the spec](../spec/sources.m
 
 ## Ch 3. Text is just numbers
 
-| Claim                                                                                                          | Backing                                                         |
-| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| T is 84, h is 104, space is 32, é is 233, 🐱 is 128,049                                                        | Test (`encodeText`)                                             |
-| Unicode has room for more than a million characters                                                            | Cite `unicode` (U+0000–U+10FFFF), test                          |
-| A byte holds 0–255; UTF-8 uses 1 byte for basic English, 2–4 for others                                        | Cite `rfc3629`, test (é = 2, 🐱 = 4)                            |
-| GPT-2 starts from bytes so it can read any text                                                                | Cite `radford2019` (§2.2, byte-level BPE)                       |
-| Simple: restates Standard in plainer words, with no new claims                                                 | Reviewed against the Standard text                              |
-| In depth: Unicode numbers run from 0 to 1,114,111 (U+0000 to U+10FFFF)                                         | Cite `unicode`; test                                            |
-| In depth: UTF-8 uses 1 byte below 128, 2 below 2,048, 3 below 65,536, 4 for the rest                           | Cite `rfc3629` (§3 table); test (`encodeText` at each boundary) |
-| In depth: two bytes are 192 + floor(c / 64) and 128 + (c mod 64); é (233) is 195, 169                          | Cite `rfc3629` (§3 bit patterns); test                          |
-| In depth: English text is byte for byte ASCII; later bytes are 128 to 191, so boundaries can be found anywhere | Cite `rfc3629` (§1); test                                       |
+| Claim                                                                                                          | Backing                                                                                 |
+| -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| T is 84, h is 104, space is 32, é is 233, 🐱 is 128,049                                                        | Test (`encodeText`)                                                                     |
+| Unicode has room for more than a million characters                                                            | Cite `unicode` (U+0000–U+10FFFF), test                                                  |
+| A byte holds 0–255; UTF-8 uses 1 byte for basic English, 2–4 for others                                        | Cite `rfc3629`, test (é = 2, 🐱 = 4)                                                    |
+| GPT-2 starts from bytes so it can read any text                                                                | Cite `radford2019` (§2.2, byte-level BPE)                                               |
+| Simple: restates Standard in plainer words, with no new claims                                                 | Reviewed against the Standard text                                                      |
+| In depth: Unicode numbers run from 0 to 1,114,111 (U+0000 to U+10FFFF)                                         | Cite `unicode`; test                                                                    |
+| In depth: UTF-8 uses 1 byte below 128, 2 below 2,048, 3 below 65,536, 4 for the rest                           | Cite `rfc3629` (§3 table); test (`encodeText` at each boundary)                         |
+| In depth: two bytes are 192 + floor(c / 64) and 128 + (c mod 64); é (233) is 195, 169                          | Cite `rfc3629` (§3 bit patterns); test                                                  |
+| In depth: English text is byte for byte ASCII; later bytes are 128 to 191, so boundaries can be found anywhere | Cite `rfc3629` (§1); test                                                               |
+| Byte diff inspector: UTF-8 prefix/payload bit splits and byte-level diffs for presets and custom text          | Computed in browser (`annotateUtf8`, `diffBytes`); `encoding.test.ts`, `chapter.e2e.ts` |
 
 ## Ch 4. Tokens
 
