@@ -6,6 +6,7 @@
 	import RecapCard from '#lib/components/page/RecapCard.svelte';
 	import BPEStepper from './BPEStepper.svelte';
 	import LiveTokenizer from './LiveTokenizer.svelte';
+	import TokenDiffInspector from './TokenDiffInspector.svelte';
 </script>
 
 ## Not letters, not words
@@ -133,6 +134,11 @@ it. Asked how many *r*s are in strawberry, the model can only answer from what i
 token 41236, not by looking at the letters.
 
 </At>
+
+A single space, accent, or emoji can change every token boundary around it. Compare two strings
+below—or switch tokenizers—and select any token to see its ID and UTF-8 bytes.
+
+<TokenDiffInspector />
 
 ## Every model has its own alphabet
 

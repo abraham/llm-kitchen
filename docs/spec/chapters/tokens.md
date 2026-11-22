@@ -14,6 +14,11 @@ letters inside a token.
   IDs (`TokenChip`) by the GPT-2, GPT-4, and GPT-4o tokenizers side by side.
 - `BPEStepper`: steps through byte pair encoding on a small corpus: the most frequent pair merges,
   the vocabulary grows, and the token count drops.
+- `TokenDiffInspector`: compares two short strings token by token across GPT-2, GPT-4, or GPT-4o
+  (presets such as `strawberry → ·strawberry`, `cafe → café`, `The cat → The 🐱`, and Python
+  indentation, or custom text), showing removed tokens struck through and added tokens highlighted.
+  Selecting any token shows its ID, position, UTF-8 bytes (or notes when a multi-byte character was
+  split mid-byte), and shape.
 
 ## Data
 
